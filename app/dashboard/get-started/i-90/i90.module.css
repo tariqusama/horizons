@@ -1,0 +1,220 @@
+.pageWrapper {
+    width: 100%;
+    max-width: 1240px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    padding: 0 1.5rem 2.5rem;
+}
+
+/* Header */
+.topHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    font-size: 0.85rem;
+    color: #64748b;
+    font-weight: 500;
+}
+
+.progressBarContainer {
+    width: 100%;
+    height: 4px;
+    background-color: #e2e8f0;
+    border-radius: 2px;
+    margin-bottom: 2rem;
+    overflow: hidden;
+}
+
+.progressBar {
+    height: 100%;
+    background-color: #10b981; /* green */
+    width: 14%;
+}
+
+.pageTitle {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0 0 0.5rem 0;
+}
+
+.pageSubtitle {
+    font-size: 0.95rem;
+    color: #64748b;
+    margin: 0 0 2rem 0;
+    max-width: 800px;
+    line-height: 1.5;
+}
+
+.formSection {
+    background-color: #ffffff;
+    border-radius: 1rem;
+    padding: 2.5rem 2.5rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+    border: 1px solid #e2e8f0;
+    display: flex;
+    flex-direction: column;
+}
+
+.partLabel {
+    color: #ef4444; /* red */
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
+}
+
+.sectionHeading {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0 0 2rem 0;
+}
+
+.formGrid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.5rem;
+    row-gap: 2rem;
+}
+
+.formGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.formGroupFull {
+    grid-column: span 2;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #334155;
+}
+
+.required {
+    color: #ef4444;
+}
+
+.input {
+    width: 100%;
+    padding: 0.875rem 1rem;
+    border-radius: 9999px; /* full rounded */
+    border: 1px solid #cbd5e1;
+    background-color: #ffffff;
+    font-size: 0.95rem;
+    color: #0f172a;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.input:focus {
+    border-color: #f97316;
+}
+
+.radioGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.radioLabel {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.95rem;
+    color: #334155;
+    padding: 0.875rem 1rem;
+    border-radius: 9999px;
+    border: 1px solid #cbd5e1;
+    cursor: pointer;
+}
+
+.radioLabel input {
+    margin: 0;
+    accent-color: #f97316;
+    width: 1.1rem;
+    height: 1.1rem;
+}
+
+.dateInputWrapper {
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.dateInput {
+    width: 100%;
+    padding: 0.875rem 1rem;
+    border-radius: 9999px;
+    border: 1px solid #cbd5e1;
+    background-color: #ffffff;
+    font-size: 0.95rem;
+    color: #0f172a;
+    outline: none;
+}
+
+.calendarIcon {
+    position: absolute;
+    right: 1.25rem;
+    color: #64748b;
+    pointer-events: none;
+}
+
+.footerActions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #f1f5f9;
+}
+
+.btnPrev {
+    color: #94a3b8;
+    font-weight: 600;
+    font-size: 0.95rem;
+    background: none;
+    border: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: not-allowed;
+}
+
+.btnNext {
+    background-color: #f97316;
+    color: white;
+    font-weight: 600;
+    font-size: 0.95rem;
+    padding: 0.75rem 2rem;
+    border-radius: 9999px;
+    border: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btnNext:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(249, 115, 22, 0.25);
+}
+
+@media (max-width: 768px) {
+    .formGrid {
+        grid-template-columns: 1fr;
+    }
+    .formGroupFull {
+        grid-column: span 1;
+    }
+}

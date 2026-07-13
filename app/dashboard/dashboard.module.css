@@ -1,0 +1,441 @@
+.dashboardGrid {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 1.5rem;
+}
+
+.leftColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.welcomeBanner {
+  background: linear-gradient(135deg, #f3e8ff 0%, #e0e7ff 100%);
+  border-radius: 1.5rem;
+  padding: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  overflow: hidden;
+}
+
+.welcomeText h1 {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #111c44;
+  margin-bottom: 0.5rem;
+}
+
+.welcomeText p {
+  color: #6b7280;
+  font-size: 1rem;
+}
+
+.chatButton {
+  background-color: #ffffff;
+  color: #1b2559;
+  border: 1px solid #e5e7eb;
+  border-radius: 9999px;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+  transition: all 0.2s;
+}
+
+.chatButton:hover {
+  background-color: #f9fafb;
+}
+
+.chatIcon {
+  color: #3b82f6;
+}
+
+.metricsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+}
+
+.metricCard {
+  background-color: #ffffff;
+  border-radius: 1.25rem;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+}
+
+.metricHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.metricLabel {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #6b7280;
+}
+
+.metricIcon {
+  width: 36px;
+  height: 36px;
+  border-radius: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.iconOrange { background-color: #fff1eb; color: #f0501a; }
+.iconGreen { background-color: #ecfdf5; color: #10b981; }
+.iconPurple { background-color: #f3e8ff; color: #8b5cf6; }
+.iconBlue { background-color: #eff6ff; color: #3b82f6; }
+
+.metricValue {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #111c44;
+}
+
+.metricDesc {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  margin-top: 0.25rem;
+}
+
+.metricValueWithTrend {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.trendIcon {
+  color: #3b82f6;
+}
+
+.quickActions {
+  background-color: #ffffff;
+  border-radius: 1.5rem;
+  padding: 1.5rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+}
+
+.sectionTitle {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #111c44;
+  margin-bottom: 1.5rem;
+}
+
+.actionList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.actionItem {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.25rem;
+  border: 1px solid #f3f4f6;
+  border-radius: 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.actionItem:hover {
+  border-color: #e5e7eb;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+}
+
+.actionIconBox {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #fff1eb;
+  color: #f0501a;
+  flex-shrink: 0;
+}
+
+.actionIconBox.blue {
+  background-color: #eff6ff;
+  color: #3b82f6;
+}
+
+.actionContent h4 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #111c44;
+  margin-bottom: 0.25rem;
+}
+
+.actionContent p {
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+
+.rightColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.purchasesCard {
+  background-color: #ffffff;
+  border-radius: 1.5rem;
+  padding: 1.5rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+}
+
+.purchasesHeader {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.purchasesIconBox {
+  width: 48px;
+  height: 48px;
+  border-radius: 1rem;
+  background-color: #fff1eb;
+  color: #f0501a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.purchasesTitle {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #111c44;
+}
+
+.purchasesDesc {
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+
+.purchaseItem {
+  border: 1px solid #f3f4f6;
+  border-radius: 1rem;
+  padding: 1.25rem;
+}
+
+.purchaseItemTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.75rem;
+}
+
+.purchaseName {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #111c44;
+}
+
+.purchasePrice {
+  font-size: 1rem;
+  font-weight: 800;
+  color: #f0501a;
+}
+
+.purchaseBadge {
+  display: inline-block;
+  background-color: #eff6ff;
+  color: #3b82f6;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+}
+
+.statusCard {
+  background-color: #ffffff;
+  border-radius: 1.5rem;
+  padding: 1.5rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+  flex: 1;
+}
+
+@media (max-width: 1280px) {
+  .metricsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 1024px) {
+  .dashboardGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.actionIconBox.green {
+  background-color: #ecfdf5;
+  color: #10b981;
+}
+
+.actionIconBox.teal {
+  background-color: #f0fdfa;
+  color: #0d9488;
+}
+
+/* Application Status Styles */
+.statusTimeline {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.statusItem {
+  display: flex;
+  gap: 1rem;
+  position: relative;
+}
+
+.statusItem:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  left: 15px;
+  top: 36px;
+  bottom: -20px;
+  width: 2px;
+  background-color: #e5e7eb;
+}
+
+.statusIcon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  z-index: 1;
+}
+
+.statusIcon.done {
+  background-color: #ecfdf5;
+  color: #10b981;
+  border: 1px solid #10b981;
+}
+
+.statusIcon.current {
+  background-color: #3b82f6;
+  color: #ffffff;
+}
+
+.statusIcon.upcoming {
+  background-color: #f3f4f6;
+  color: #9ca3af;
+  border: 1px solid #e5e7eb;
+}
+
+.statusContent {
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 0.5rem;
+}
+
+.statusText h4 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #111c44;
+  margin-bottom: 0.2rem;
+}
+
+.statusText p {
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+.statusBadge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.25rem 0.6rem;
+  border-radius: 9999px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.badgeDone {
+  background-color: #ecfdf5;
+  color: #10b981;
+}
+
+.badgeCurrent {
+  background-color: #eff6ff;
+  color: #3b82f6;
+}
+
+.badgeUpcoming {
+  background-color: #f3f4f6;
+  color: #9ca3af;
+}
+
+/* Immigration Journey Styles */
+.journeySection {
+  background-color: #ffffff;
+  border-radius: 1.5rem;
+  padding: 2rem;
+  margin-top: 1.5rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+  grid-column: 1 / -1;
+}
+
+.journeyHeader {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #6b7280;
+  margin-bottom: 1.5rem;
+}
+
+.journeyContent h3 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #111c44;
+  margin-bottom: 1rem;
+}
+
+.journeyContent p {
+  color: #6b7280;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  max-width: 800px;
+  margin-bottom: 1.5rem;
+}
+
+.journeyButton {
+  background-color: #111c44;
+  color: #ffffff;
+  border: none;
+  border-radius: 0.5rem;
+  padding: 0.875rem 1.5rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: background-color 0.2s;
+}
+
+.journeyButton:hover {
+  background-color: #0b1437;
+}

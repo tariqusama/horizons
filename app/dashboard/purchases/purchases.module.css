@@ -1,0 +1,120 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.header h1 {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #111c44;
+  margin-bottom: 0.25rem;
+}
+
+.header p {
+  color: #6b7280;
+  font-size: 0.95rem;
+}
+
+.purchaseCard {
+  background-color: #ffffff;
+  border-radius: 1rem;
+  padding: 2rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+  border: 1px solid #f3f4f6;
+}
+
+.cardTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.titleSection h2 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #111c44;
+  margin-bottom: 0.25rem;
+}
+
+.titleSection p {
+  color: #9ca3af;
+  font-size: 0.9rem;
+}
+
+.priceSection {
+  text-align: right;
+}
+
+.price {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #f0501a;
+  margin-bottom: 0.5rem;
+}
+
+.statusBadge {
+  display: inline-block;
+  background-color: #f3f4f6;
+  color: #6b7280;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  text-transform: uppercase;
+}
+
+.planTier {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.planTierLabel {
+  font-weight: 600;
+  color: #6b7280;
+  font-size: 0.95rem;
+}
+
+.planTierBadge {
+  background-color: #fff1eb;
+  color: #f0501a;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+}
+
+.featuresSection h3 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #111c44;
+  margin-bottom: 1rem;
+}
+
+.featuresGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.featureItem {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #6b7280;
+  font-size: 0.95rem;
+}
+
+.checkIcon {
+  color: #10b981;
+}

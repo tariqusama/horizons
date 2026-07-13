@@ -1,0 +1,280 @@
+.pageWrapper {
+    width: 100%;
+    max-width: 1240px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.75rem;
+    padding: 1.5rem 1.5rem 2.5rem;
+}
+
+.heroCard {
+    background: linear-gradient(180deg, rgba(248, 250, 255, 0.94) 0%, rgba(255, 255, 255, 1) 100%);
+    border-radius: 2rem;
+    padding: 2.5rem 2.5rem 2rem;
+    box-shadow: 0 28px 80px rgba(15, 23, 42, 0.08);
+    border: 1px solid rgba(226, 232, 240, 0.7);
+}
+
+.heroText {
+    max-width: 780px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.heroEyebrow {
+    color: #475569;
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.heroCard h1 {
+    margin: 0;
+    font-size: clamp(2.1rem, 4vw, 3.6rem);
+    line-height: 1.02;
+    color: #0f172a;
+}
+
+.heroSubtitle {
+    margin: 0;
+    font-size: 1rem;
+    color: #475569;
+    max-width: 640px;
+}
+
+.infoSection {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.sectionTitleWrapper {
+    display: flex;
+    flex-direction: column;
+}
+
+.sectionTitleWrapper h2 {
+    margin: 0;
+    font-size: 2rem;
+    color: #0f172a;
+    font-weight: 800;
+    line-height: 1.05;
+}
+
+.infoGrid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.infoCard {
+    background-color: #ffffff;
+    border-radius: 1.75rem;
+    padding: 1.75rem 1.75rem;
+    box-shadow: 0 20px 50px rgba(15, 23, 42, 0.05);
+    border: 1px solid #e2e8f0;
+}
+
+.infoCardLabel {
+    display: block;
+    margin-bottom: 0.85rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #475569;
+}
+
+.infoCardValue {
+    font-size: 1.05rem;
+    color: #111827;
+    font-weight: 700;
+    line-height: 1.5;
+}
+
+.confirmationCard {
+    background-color: #ffffff;
+    border-radius: 1.75rem;
+    padding: 2rem;
+    box-shadow: 0 28px 80px rgba(15, 23, 42, 0.08);
+    border: 1px solid #e2e8f0;
+}
+
+.confirmationHeading h3 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: #0f172a;
+    font-weight: 800;
+}
+
+.confirmationText {
+    margin: 1rem 0 0;
+    color: #475569;
+    font-size: 1rem;
+    line-height: 1.8;
+    max-width: 720px;
+}
+
+.noteText {
+    margin-top: 1rem;
+    color: #64748b;
+    font-size: 0.95rem;
+    line-height: 1.7;
+}
+
+.buttonRow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 1.75rem;
+}
+
+.buttonPrimary,
+.buttonSecondary {
+    min-width: 240px;
+    border: none;
+    border-radius: 999px;
+    padding: 1rem 1.75rem;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.buttonPrimary {
+    background-color: #0f172a;
+    color: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.buttonPrimary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 16px 40px rgba(15, 23, 42, 0.16);
+}
+
+.buttonSecondary {
+    background-color: #f97316;
+    color: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.buttonSecondary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 16px 40px rgba(249, 115, 22, 0.2);
+}
+
+.buttonSelected {
+    opacity: 0.98;
+}
+
+@media (max-width: 960px) {
+    .pageWrapper {
+        padding: 1rem 1rem 2rem;
+    }
+
+    .heroCard {
+        padding: 2rem 1.75rem;
+    }
+
+    .infoGrid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 640px) {
+    .buttonRow {
+        flex-direction: column;
+    }
+}
+
+.modalOverlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modalContent {
+    background-color: #f8fafc;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.modalHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0.5rem;
+}
+
+.modalTitle {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #1e293b;
+    margin: 0;
+}
+
+.modalClose {
+    background: none;
+    border: none;
+    color: #64748b;
+    cursor: pointer;
+    padding: 0.25rem;
+}
+
+.modalDescription {
+    color: #64748b;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+    line-height: 1.4;
+}
+
+.modalTextarea {
+    width: 100%;
+    border: 2px solid #f97316;
+    border-radius: 0.5rem;
+    padding: 0.75rem;
+    font-family: inherit;
+    font-size: 0.9rem;
+    color: #334155;
+    resize: vertical;
+    min-height: 120px;
+    margin-bottom: 1rem;
+}
+
+.modalActions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+}
+
+.modalButtonCancel {
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    color: #0f172a;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.modalButtonSend {
+    background-color: #f97316;
+    border: none;
+    color: #ffffff;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    cursor: pointer;
+}
