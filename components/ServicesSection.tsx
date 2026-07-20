@@ -50,8 +50,8 @@ export default function ServicesSection() {
 
       <div className="relative max-w-2xl mx-auto mb-20 group">
         <div className="absolute -inset-1 bg-gradient-to-r from-[#E3755D]/20 to-[#1B3A64]/20 rounded-[24px] blur opacity-50 group-hover:opacity-100 transition duration-500"></div>
-        <select className="relative w-full appearance-none bg-white border border-gray-200/50 text-[#1B3A64] font-bold text-[18px] rounded-[20px] px-8 py-6 pr-12 focus:outline-none shadow-[0_15px_30px_-10px_rgba(27,58,100,0.1)] cursor-pointer transition-shadow">
-          <option value="adjustment" selected>Adjustment of Status (Inside U.S.)</option>
+        <select defaultValue="adjustment" className="relative w-full appearance-none bg-white border border-gray-200/50 text-[#1B3A64] font-bold text-[18px] rounded-[20px] px-8 py-6 pr-12 focus:outline-none shadow-[0_15px_30px_-10px_rgba(27,58,100,0.1)] cursor-pointer transition-shadow">
+          <option value="adjustment">Adjustment of Status (Inside U.S.)</option>
           <option value="consular">Consular Processing (Outside U.S.)</option>
         </select>
         <div className="absolute inset-y-0 right-0 flex items-center px-8 pointer-events-none text-[#1B3A64]">

@@ -1,0 +1,109 @@
+{
+    "checklists": [
+        {
+            "id": "spouse_abroad",
+            "title": "Application for Spouse Abroad",
+            "forms": [
+                "G-1145 (E-notification)",
+                "I-130 (Petition for Alien Relative)",
+                "I-130A (Beneficiary Supplement)"
+            ],
+            "totalDocuments": 17,
+            "sections": [
+                {
+                    "title": "Petitioner (U.S. Citizen or Green Card Holder) Documents",
+                    "documents": [
+                        {
+                            "name": "Proof of U.S. citizenship OR green card (front and back)",
+                            "required": true
+                        },
+                        {
+                            "name": "Government-issued photo ID (passport, driver's license, etc.)",
+                            "required": true
+                        }
+                    ]
+                },
+                {
+                    "title": "Beneficiary (Spouse) Documents",
+                    "documents": [
+                        {
+                            "name": "Birth certificate (certified translation if not in English)",
+                            "required": true
+                        },
+                        {
+                            "name": "Passport biographic page",
+                            "required": true
+                        }
+                    ]
+                },
+                {
+                    "title": "Marriage & Relationship Evidence",
+                    "documents": [
+                        {
+                            "name": "Marriage certificate (original or certified copy)",
+                            "required": true
+                        },
+                        {
+                            "name": "Proof of termination of all prior marriages (if applicable)",
+                            "required": false
+                        },
+                        {
+                            "name": "Photos together over time, labeled with dates/locations",
+                            "required": true
+                        },
+                        {
+                            "name": "Birth certificates of children born to the marriage (if any)",
+                            "required": false
+                        }
+                    ]
+                },
+                {
+                    "title": "At Least Five (5) of the Following — Required",
+                    "documents": [
+                        {
+                            "name": "Proof of ongoing relationship (money transfers, shared accounts, etc.)",
+                            "required": false
+                        },
+                        {
+                            "name": "Wedding souvenir / invitation",
+                            "required": false
+                        },
+                        {
+                            "name": "Wedding rings and/or wedding venue booking receipts",
+                            "required": false
+                        },
+                        {
+                            "name": "Insurance policies naming each other (health, life)",
+                            "required": false
+                        },
+                        {
+                            "name": "Notarized affidavits from family/friends (at least 2 letters)",
+                            "required": false
+                        },
+                        {
+                            "name": "Travel records (flight itineraries, boarding passes, hotel bookings)",
+                            "required": false
+                        },
+                        {
+                            "name": "Social media evidence (posts, comments, tagged photos)",
+                            "required": false
+                        },
+                        {
+                            "name": "Correspondence (emails, chats, SMS, call records)",
+                            "required": false
+                        }
+                    ]
+                },
+                {
+                    "title": "Any Other Additional Documents (Optional)",
+                    "documents": [
+                        {
+                            "name": "Marriage certificate, divorce decree, adoption decree, or court order for name changes (if applicable)",
+                            "required": false
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

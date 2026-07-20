@@ -1,4 +1,5 @@
-﻿import React from "react";
+import React from "react";
+import Link from 'next/link';
 import styles from './helpline.module.css';
 
 export default function DashboardHelplinePage() {
@@ -18,7 +19,9 @@ export default function DashboardHelplinePage() {
         <div className={styles.supportCard}>
           <h2>Live Chat</h2>
           <p>Connect with your case manager instantly for urgent questions and application guidance.</p>
-          <button className={styles.primaryButton}>Start chat</button>
+          <Link href="/dashboard/chat" className={styles.primaryButton} style={{ display: 'inline-block', textAlign: 'center', textDecoration: 'none' }}>
+            Start chat
+          </Link>
         </div>
         <div className={styles.supportCard}>
           <h2>Request callback</h2>

@@ -1,0 +1,152 @@
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    height: 80vh;
+    display: flex;
+    flex-direction: column;
+    background: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(27, 58, 100, 0.08);
+    overflow: hidden;
+    border: 1px solid #e2e8f0;
+}
+
+.header {
+    padding: 24px 32px;
+    border-bottom: 1px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    background: #FAFAFB;
+}
+
+.headerTitle {
+    font-size: 20px;
+    font-weight: 800;
+    color: #1B3A64;
+    margin: 0;
+}
+
+.headerSubtitle {
+    font-size: 14px;
+    color: #5A6579;
+    margin: 4px 0 0;
+}
+
+.chatWindow {
+    flex: 1;
+    padding: 32px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    background: #f8f9fa;
+}
+
+.messageRow {
+    display: flex;
+    width: 100%;
+}
+
+.messageRowUser {
+    justify-content: flex-end;
+}
+
+.messageRowAdmin {
+    justify-content: flex-start;
+}
+
+.messageBubble {
+    max-width: 70%;
+    padding: 16px 20px;
+    border-radius: 20px;
+    font-size: 15px;
+    line-height: 1.5;
+    position: relative;
+    word-break: break-word;
+}
+
+.messageBubbleUser {
+    background: #FA6514;
+    color: white;
+    border-bottom-right-radius: 4px;
+}
+
+.messageBubbleAdmin {
+    background: #ffffff;
+    color: #1B3A64;
+    border: 1px solid #e2e8f0;
+    border-bottom-left-radius: 4px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+}
+
+.messageTime {
+    font-size: 12px;
+    margin-top: 8px;
+    color: #8c98a9;
+}
+
+.messageRowUser .messageTime {
+    text-align: right;
+}
+
+.inputArea {
+    padding: 24px 32px;
+    background: #ffffff;
+    border-top: 1px solid #e2e8f0;
+}
+
+.inputForm {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+}
+
+.inputField {
+    flex: 1;
+    padding: 16px 24px;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    font-size: 16px;
+    color: #1B3A64;
+    background: #f8f9fa;
+    outline: none;
+    transition: all 0.2s;
+}
+
+.inputField:focus {
+    border-color: #FA6514;
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(250, 101, 20, 0.1);
+}
+
+.sendButton {
+    background: #FA6514;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 0 24px;
+    height: 54px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.sendButton:hover {
+    background: #E3755D;
+}
+
+.sendButton:disabled {
+    background: #e2e8f0;
+    cursor: not-allowed;
+}
+
+.loader {
+    text-align: center;
+    color: #5A6579;
+    padding: 40px;
+    font-size: 14px;
+}

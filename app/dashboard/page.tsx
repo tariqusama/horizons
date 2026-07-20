@@ -1,13 +1,51 @@
 "use client";
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from './dashboard.module.css';
+import { useAuth } from '@/contexts/AuthContext';
+import api from '@/lib/api';
+import ApplicationSelectionModal from "@/app/components/ApplicationSelectionModal";
 
 export default function DashboardPage() {
     const router = useRouter();
+    const { user } = useAuth();
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [applications, setApplications] = useState<any[]>([]);
+    const [documents, setDocuments] = useState<any[]>([]);
+    const [messages, setMessages] = useState<any[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        const loadData = async () => {
+            setIsLoading(true);
+            try {
+                const [appsRes, docsRes, messagesRes] = await Promise.all([
+                    api.get('/api/applications'),
+                    api.get('/api/documents'),
+                    api.get('/api/messages'),
+                ]);
+
+                setApplications(appsRes.data || []);
+                setDocuments(docsRes.data || []);
+                setMessages(messagesRes.data || []);
+            } catch (error) {
+                console.error('Failed to load dashboard metrics', error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        loadData();
+    }, []);
 
     const openForm = () => router.push('/dashboard/get-started');
+
+    const headlineName = user?.name ? user.name.split(' ')[0] : 'there';
+    const activeCount = applications.length;
+    const pendingDocuments = documents.filter((doc) => doc.status !== 'Uploaded').length;
+    const unreadMessages = messages.length;
+
+    const latestApplication = applications[0];
 
     return (
         <div className={styles.dashboardGrid}>
@@ -15,10 +53,10 @@ export default function DashboardPage() {
 
                 <div className={styles.welcomeBanner}>
                     <div className={styles.welcomeText}>
-                        <h1>Welcome back, Shehryar!</h1>
-                        <p>Track your immigration applications and documents</p>
+                        <h1>Welcome back, {headlineName}!</h1>
+                        <p>Track your immigration applications, documents, and support requests in one place.</p>
                     </div>
-                    <button className={styles.chatButton}>
+                    <button className={styles.chatButton} onClick={() => router.push('/dashboard/chat')}>
                         <svg className={styles.chatIcon} width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                             <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
                         </svg>
@@ -35,50 +73,47 @@ export default function DashboardPage() {
                             </div>
                         </div>
                         <div>
-                            <div className={styles.metricValue}>0</div>
-                            <div className={styles.metricDesc}>No active applications</div>
+                            <div className={styles.metricValue}>{isLoading ? '–' : activeCount}</div>
+                            <div className={styles.metricDesc}>{activeCount === 0 ? 'No active applications' : `${activeCount} active application${activeCount > 1 ? 's' : ''}`}</div>
                         </div>
                     </div>
 
                     <div className={styles.metricCard}>
                         <div className={styles.metricHeader}>
-                            <span className={styles.metricLabel}>Total Purchases</span>
+                            <span className={styles.metricLabel}>Pending Documents</span>
                             <div className={`${styles.metricIcon} ${styles.iconGreen}`}>
                                 <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M16 6V4c0-1.11-.89-2-2-2h-4c-1.11 0-2 .89-2 2v2H2v13c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6h-6zm-6-2h4v2h-4V4zM4 8h16v11H4V8z" /></svg>
                             </div>
                         </div>
                         <div>
-                            <div className={styles.metricValue}>1</div>
-                            <div className={styles.metricDesc}>Service packages purchased</div>
+                            <div className={styles.metricValue}>{isLoading ? '–' : pendingDocuments}</div>
+                            <div className={styles.metricDesc}>{pendingDocuments === 0 ? 'All files uploaded' : 'Need to upload documents'}</div>
                         </div>
                     </div>
 
                     <div className={styles.metricCard}>
                         <div className={styles.metricHeader}>
-                            <span className={styles.metricLabel}>Pending Actions</span>
+                            <span className={styles.metricLabel}>Messages</span>
                             <div className={`${styles.metricIcon} ${styles.iconPurple}`}>
                                 <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" /></svg>
                             </div>
                         </div>
                         <div>
-                            <div className={styles.metricValue}>0</div>
-                            <div className={styles.metricDesc}>Items requiring attention</div>
+                            <div className={styles.metricValue}>{isLoading ? '–' : unreadMessages}</div>
+                            <div className={styles.metricDesc}>{unreadMessages === 0 ? 'No new messages' : 'New messages available'}</div>
                         </div>
                     </div>
 
                     <div className={styles.metricCard}>
                         <div className={styles.metricHeader}>
-                            <span className={styles.metricLabel}>Success Place Rate</span>
+                            <span className={styles.metricLabel}>Latest Application</span>
                             <div className={`${styles.metricIcon} ${styles.iconBlue}`}>
                                 <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" /></svg>
                             </div>
                         </div>
                         <div>
-                            <div className={styles.metricValueWithTrend}>
-                                <div className={styles.metricValue}>100%</div>
-                                <svg className={styles.trendIcon} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M23 6l-9.5 9.5-5-5L1 18"></path><polyline points="17 6 23 6 23 12"></polyline></svg>
-                            </div>
-                            <div className={styles.metricDesc}>Application success rate</div>
+                            <div className={styles.metricValue}>{latestApplication ? latestApplication.title : 'No app'}</div>
+                            <div className={styles.metricDesc}>{latestApplication ? `Last updated ${new Date(latestApplication.created_at).toLocaleDateString()}` : 'Start a new application'}</div>
                         </div>
                     </div>
                 </div>
@@ -96,7 +131,7 @@ export default function DashboardPage() {
                             </div>
                         </div>
 
-                        <div className={styles.actionItem}>
+                        <div className={styles.actionItem} onClick={() => router.push('/dashboard/applications')} role="button" tabIndex={0} style={{ cursor: 'pointer' }}>
                             <div className={`${styles.actionIconBox} ${styles.blue}`}>
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm-2 14l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z" /></svg>
                             </div>
@@ -143,10 +178,10 @@ export default function DashboardPage() {
 
                     <div className={styles.purchaseItem}>
                         <div className={styles.purchaseItemTop}>
-                            <span className={styles.purchaseName}>Green Card Renewal</span>
-                            <span className={styles.purchasePrice}>$449.99</span>
+                            <span className={styles.purchaseName}>{latestApplication?.title || 'No application yet'}</span>
+                            <span className={styles.purchasePrice}>{latestApplication ? '$449.99' : '--'}</span>
                         </div>
-                        <span className={styles.purchaseBadge}>Advanced Plan</span>
+                        <span className={styles.purchaseBadge}>{latestApplication ? (latestApplication.subtitle || 'Purchased plan').replace('Plan: ', '') : 'No plan'}</span>
                     </div>
                 </div>
 
@@ -195,8 +230,6 @@ export default function DashboardPage() {
                 </div>
             </div>
 
-            {/* navigation now opens a full page form at /dashboard/get-started */}
-
             <div className={styles.journeySection}>
                 <h2 className={styles.journeyHeader}>Immigration Journey</h2>
                 <div className={styles.journeyContent}>
@@ -206,12 +239,14 @@ export default function DashboardPage() {
                         begin another immigration process, Horizon Pathways makes it easy to manage all your cases in one secure account.
                         Continue your immigration journey by adding your next application directly from your dashboard.
                     </p>
-                    <button className={styles.journeyButton}>
+                    <button className={styles.journeyButton} onClick={() => setIsModalOpen(true)}>
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                         Start Your Next Application
                     </button>
                 </div>
             </div>
+
+            <ApplicationSelectionModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
         </div>
     );
 }

@@ -1,6 +1,54 @@
-import React from 'react';
+'use client';
+import React, { useEffect, useState } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
+import { getManagerAssignedCases, Application } from '@/lib/api/cases';
 
 export default function AnalyticsPage() {
+    const { user } = useAuth();
+    const [cases, setCases] = useState<Application[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        if (!user) return;
+        const loadData = async () => {
+            try {
+                const myCases = await getManagerAssignedCases();
+                setCases(myCases);
+            } catch (err) {
+                console.error('Failed to fetch analytics cases:', err);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        loadData();
+    }, [user]);
+
+    if (isLoading) {
+        return (
+            <div className="max-w-[1200px] mx-auto w-full h-[60vh] flex items-center justify-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#E3755D]"></div>
+            </div>
+        );
+    }
+
+    const totalCases = cases.length;
+    const approvedCases = cases.filter(c => c.status === 'Approved').length;
+    const approvalRate = totalCases > 0 ? ((approvedCases / totalCases) * 100).toFixed(1) : '0.0';
+
+    const handledCases = cases.filter(c => c.status === 'Approved' || c.status === 'Completed').length;
+
+    // Calculate Cases by Type
+    const casesByType = cases.reduce((acc, c) => {
+        const type = c.title || 'Other';
+        acc[type] = (acc[type] || 0) + 1;
+        return acc;
+    }, {} as Record<string, number>);
+
+    // Get top 4 types
+    const topTypes = Object.entries(casesByType)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 4);
+
     return (
         <div className="max-w-[1200px] mx-auto w-full pb-12">
             <div className="flex justify-between items-end mb-8">
@@ -39,30 +87,32 @@ export default function AnalyticsPage() {
                         15% faster than last month
                     </p>
                 </div>
-                
+
                 <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm">
                     <p className="text-gray-500 text-sm font-semibold uppercase tracking-wide mb-1">Approval Rate</p>
                     <div className="flex items-end space-x-3">
-                        <p className="text-4xl font-black text-gray-900">94.2</p>
+                        <p className="text-4xl font-black text-gray-900">{approvalRate}</p>
                         <p className="text-gray-500 font-medium mb-1">%</p>
                     </div>
-                    <p className="text-sm text-green-600 font-bold mt-4 flex items-center gap-1">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <line x1="12" y1="19" x2="12" y2="5"></line>
-                            <polyline points="5 12 12 5 19 12"></polyline>
-                        </svg>
-                        2.1% increase
-                    </p>
+                    {approvalRate > '0.0' && (
+                        <p className="text-sm text-green-600 font-bold mt-4 flex items-center gap-1">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <line x1="12" y1="19" x2="12" y2="5"></line>
+                                <polyline points="5 12 12 5 19 12"></polyline>
+                            </svg>
+                            Based on your {totalCases} cases
+                        </p>
+                    )}
                 </div>
 
                 <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm">
                     <p className="text-gray-500 text-sm font-semibold uppercase tracking-wide mb-1">Total Cases Handled</p>
                     <div className="flex items-end space-x-3">
-                        <p className="text-4xl font-black text-gray-900">328</p>
-                        <p className="text-gray-500 font-medium mb-1">cases</p>
+                        <p className="text-4xl font-black text-gray-900">{handledCases}</p>
+                        <p className="text-gray-500 font-medium mb-1">cases processed</p>
                     </div>
                     <p className="text-sm text-gray-500 font-bold mt-4 flex items-center gap-1">
-                        Consistent with average volume
+                        Out of {totalCases} total assigned cases
                     </p>
                 </div>
             </div>
@@ -99,42 +149,25 @@ export default function AnalyticsPage() {
                 <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
                     <h2 className="text-lg font-bold text-gray-900 mb-6 border-b border-gray-100 pb-4">Cases by Type</h2>
                     <div className="space-y-6 mt-4">
-                        <div>
-                            <div className="flex justify-between text-sm font-bold text-gray-900 mb-2">
-                                <span>I-90 Replacement</span>
-                                <span>45%</span>
-                            </div>
-                            <div className="w-full bg-gray-100 rounded-full h-2">
-                                <div className="bg-[#E3755D] h-2 rounded-full" style={{ width: '45%' }}></div>
-                            </div>
-                        </div>
-                        <div>
-                            <div className="flex justify-between text-sm font-bold text-gray-900 mb-2">
-                                <span>N-400 Naturalization</span>
-                                <span>30%</span>
-                            </div>
-                            <div className="w-full bg-gray-100 rounded-full h-2">
-                                <div className="bg-[#111827] h-2 rounded-full" style={{ width: '30%' }}></div>
-                            </div>
-                        </div>
-                        <div>
-                            <div className="flex justify-between text-sm font-bold text-gray-900 mb-2">
-                                <span>I-130 Petition</span>
-                                <span>15%</span>
-                            </div>
-                            <div className="w-full bg-gray-100 rounded-full h-2">
-                                <div className="bg-blue-400 h-2 rounded-full" style={{ width: '15%' }}></div>
-                            </div>
-                        </div>
-                        <div>
-                            <div className="flex justify-between text-sm font-bold text-gray-900 mb-2">
-                                <span>Other</span>
-                                <span>10%</span>
-                            </div>
-                            <div className="w-full bg-gray-100 rounded-full h-2">
-                                <div className="bg-gray-400 h-2 rounded-full" style={{ width: '10%' }}></div>
-                            </div>
-                        </div>
+                        {topTypes.length === 0 ? (
+                            <div className="text-gray-500 text-sm py-4">No cases assigned yet.</div>
+                        ) : (
+                            topTypes.map(([type, count], index) => {
+                                const percentage = Math.round((count / totalCases) * 100);
+                                const colors = ['bg-[#E3755D]', 'bg-[#111827]', 'bg-blue-400', 'bg-gray-400'];
+                                return (
+                                    <div key={type}>
+                                        <div className="flex justify-between text-sm font-bold text-gray-900 mb-2">
+                                            <span>{type}</span>
+                                            <span>{percentage}%</span>
+                                        </div>
+                                        <div className="w-full bg-gray-100 rounded-full h-2">
+                                            <div className={`${colors[index % colors.length]} h-2 rounded-full`} style={{ width: `${percentage}%` }}></div>
+                                        </div>
+                                    </div>
+                                );
+                            })
+                        )}
                     </div>
                 </div>
             </div>

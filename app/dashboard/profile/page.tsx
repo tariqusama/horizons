@@ -1,10 +1,17 @@
 "use client";
 
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/contexts/AuthContext';
 import styles from './profile.module.css';
 
 export default function AccountSettingsPage() {
+    const router = useRouter();
+    const { user } = useAuth();
     const [activeTab, setActiveTab] = useState('profile');
+
+    const initials = user?.name?.split(' ').map((part) => part[0]).join('').slice(0, 2).toUpperCase() || 'US';
+    const profileImage = user?.profile_picture_url;
 
     return (
         <div className={styles.pageWrapper}>
@@ -14,7 +21,7 @@ export default function AccountSettingsPage() {
             </div>
 
             <div className={styles.tabsContainer}>
-                <button 
+                <button
                     onClick={() => setActiveTab('profile')}
                     className={`${styles.tab} ${activeTab === 'profile' ? styles.tabActive : ''}`}
                 >
@@ -23,7 +30,7 @@ export default function AccountSettingsPage() {
                     </svg>
                     Profile
                 </button>
-                <button 
+                <button
                     onClick={() => setActiveTab('notifications')}
                     className={`${styles.tab} ${activeTab === 'notifications' ? styles.tabActive : ''}`}
                 >
@@ -32,7 +39,7 @@ export default function AccountSettingsPage() {
                     </svg>
                     Notifications
                 </button>
-                <button 
+                <button
                     onClick={() => setActiveTab('security')}
                     className={`${styles.tab} ${activeTab === 'security' ? styles.tabActive : ''}`}
                 >
@@ -41,7 +48,7 @@ export default function AccountSettingsPage() {
                     </svg>
                     Security
                 </button>
-                <button 
+                <button
                     onClick={() => setActiveTab('privacy')}
                     className={`${styles.tab} ${activeTab === 'privacy' ? styles.tabActive : ''}`}
                 >
@@ -59,9 +66,15 @@ export default function AccountSettingsPage() {
                         <p className={styles.cardSubtitle}>Update your personal information and profile picture</p>
 
                         <div className={styles.avatarSection}>
-                            <div className={styles.avatarCircle}>SS</div>
+                            <div className={styles.avatarCircle}>
+                                {profileImage ? (
+                                    <img src={profileImage} alt={user?.name || 'Profile photo'} className="h-full w-full object-cover rounded-full" />
+                                ) : (
+                                    initials
+                                )}
+                            </div>
                             <div className={styles.avatarActions}>
-                                <button className={styles.btnChangePhoto}>Change Photo</button>
+                                <button className={styles.btnChangePhoto} onClick={() => router.push('/dashboard/profile/edit')}>Change Photo</button>
                                 <p className={styles.avatarHint}>JPG, GIF or PNG. Max size of 2MB</p>
                             </div>
                         </div>
@@ -69,22 +82,22 @@ export default function AccountSettingsPage() {
                         <div className={styles.formGrid}>
                             <div className={styles.formGroup}>
                                 <label className={styles.label}>First Name</label>
-                                <input type="text" className={styles.input} defaultValue="Shehryar" />
+                                <input type="text" className={styles.input} defaultValue={user?.name?.split(' ')[0] ?? ''} />
                             </div>
                             <div className={styles.formGroup}>
                                 <label className={styles.label}>Last Name</label>
-                                <input type="text" className={styles.input} defaultValue="Shafique" />
+                                <input type="text" className={styles.input} defaultValue={user?.name?.split(' ').slice(1).join(' ') ?? ''} />
                             </div>
 
                             <div className={styles.formGroupFull}>
                                 <label className={styles.label}>Email Address</label>
-                                <input type="text" className={`${styles.input} ${styles.inputReadonly}`} defaultValue="shehryarshafique04@gmail.com" readOnly />
+                                <input type="text" className={`${styles.input} ${styles.inputReadonly}`} defaultValue={user?.email ?? ''} readOnly />
                                 <p className={styles.inputHint}>Contact support to change your email</p>
                             </div>
 
                             <div className={styles.formGroupFull}>
                                 <label className={styles.label}>Phone Number</label>
-                                <input type="text" className={styles.input} />
+                                <input type="text" className={styles.input} defaultValue={user?.phone ?? ''} />
                             </div>
                         </div>
 
@@ -105,7 +118,7 @@ export default function AccountSettingsPage() {
                                     <div style={{ fontSize: '0.85rem', color: '#64748b' }}>Receive updates about your application status via email.</div>
                                 </div>
                             </label>
-                            
+
                             <label style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer' }}>
                                 <input type="checkbox" defaultChecked style={{ width: '1.25rem', height: '1.25rem', accentColor: '#ea580c' }} />
                                 <div>
@@ -153,7 +166,7 @@ export default function AccountSettingsPage() {
 
                         <h3 style={{ fontSize: '1.1rem', fontWeight: 600, marginBottom: '0.5rem', color: '#0f172a' }}>Two-Factor Authentication</h3>
                         <p style={{ fontSize: '0.9rem', color: '#64748b', marginBottom: '1.5rem' }}>Add an extra layer of security to your account by enabling two-factor authentication.</p>
-                        
+
                         <button className={styles.btnChangePhoto}>Enable 2FA</button>
                     </>
                 )}
@@ -171,7 +184,7 @@ export default function AccountSettingsPage() {
                                     <div style={{ fontSize: '0.85rem', color: '#64748b' }}>Allow us to collect usage data to improve your experience.</div>
                                 </div>
                             </label>
-                            
+
                             <label style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer' }}>
                                 <input type="checkbox" style={{ width: '1.25rem', height: '1.25rem', accentColor: '#ea580c' }} />
                                 <div>

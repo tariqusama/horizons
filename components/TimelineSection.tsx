@@ -29,8 +29,8 @@ export default function TimelineSection() {
           </label>
 
           <div className="relative mb-10 z-10">
-            <select className="w-full appearance-none bg-white/10 backdrop-blur-md border border-white/20 text-white font-bold text-[18px] rounded-[24px] px-8 py-6 pr-14 focus:outline-none focus:ring-2 focus:ring-[#E3755D]/50 focus:border-[#E3755D] transition-all cursor-pointer shadow-inner">
-              <option value="" disabled selected className="text-black">Choose from 40+ immigration case types...</option>
+            <select defaultValue="" className="w-full appearance-none bg-white/10 backdrop-blur-md border border-white/20 text-white font-bold text-[18px] rounded-[24px] px-8 py-6 pr-14 focus:outline-none focus:ring-2 focus:ring-[#E3755D]/50 focus:border-[#E3755D] transition-all cursor-pointer shadow-inner">
+              <option value="" disabled className="text-black">Choose from 40+ immigration case types...</option>
               <option value="marriage" className="text-black">Marriage Green Card</option>
               <option value="fiance" className="text-black">K-1 Fiance Visa</option>
               <option value="citizenship" className="text-black">Citizenship & Naturalization</option>

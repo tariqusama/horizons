@@ -1,21 +1,46 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
+import { getNotifications, markAsRead, Notification } from '../lib/api/notifications';
 
 export default function Header({ isDashboard = false }: { isDashboard?: boolean }) {
   const [showNotifications, setShowNotifications] = useState(false);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
   const pathname = usePathname();
+  const unreadCount = notifications.filter((n) => !n.read_at).length;
+
+  useEffect(() => {
+    if (!isDashboard) return;
+    loadNotifications();
+  }, [isDashboard]);
+
+  const loadNotifications = async () => {
+    try {
+      const data = await getNotifications();
+      setNotifications(data);
+    } catch (err) {
+      console.error('Failed to load notifications', err);
+    }
+  };
+
+  const handleMarkAllRead = async () => {
+    try {
+      await markAsRead();
+      await loadNotifications();
+    } catch (err) {
+      console.error('Failed to mark all read', err);
+    }
+  };
 
   const navLinkClass = (path: string) => {
     const isActive = pathname === path;
-    return `pb-1 border-b-[3px] transition-colors font-bold ${
-      isActive 
-        ? 'text-[#E3755D] border-[#E3755D]' 
-        : 'text-[#5A6579] border-transparent hover:text-[#1B3A64]'
-    }`;
+    return `pb-1 border-b-[3px] transition-colors font-bold ${isActive
+      ? 'text-[#E3755D] border-[#E3755D]'
+      : 'text-[#5A6579] border-transparent hover:text-[#1B3A64]'
+      }`;
   };
 
   return (
@@ -59,37 +84,47 @@ export default function Header({ isDashboard = false }: { isDashboard?: boolean 
               onClick={() => setShowNotifications(!showNotifications)}
               className="relative p-2 text-[#5A6579] hover:text-[#1B3A64] transition-colors focus:outline-none"
             >
-              <span className="absolute top-1 right-2 w-2 h-2 rounded-full bg-[#E3755D]"></span>
               <span className="material-icons text-[24px]">notifications</span>
+              {unreadCount > 0 && (
+                <span className="absolute top-0 right-0 inline-flex h-4 min-w-[1rem] rounded-full bg-[#E3755D] px-[0.25rem] text-[10px] font-bold text-white items-center justify-center">
+                  {unreadCount}
+                </span>
+              )}
             </button>
 
             {/* Notifications Dropdown */}
             {showNotifications && (
-              <div className="absolute top-14 right-16 w-[320px] bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden z-50">
+              <div className="absolute top-14 right-16 w-[360px] bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden z-50">
                 <div className="px-5 py-3 border-b border-gray-100 flex justify-between items-center bg-[#F8F9FA]">
                   <h3 className="font-bold text-[#1B3A64] text-sm">Notifications</h3>
-                  <button onClick={() => setShowNotifications(false)} className="text-xs text-[#5A6579] hover:text-[#E3755D] font-medium">Mark all as read</button>
+                  <div className="flex items-center gap-3">
+                    <button onClick={handleMarkAllRead} className="text-xs text-[#5A6579] hover:text-[#E3755D] font-medium">Mark all as read</button>
+                    <button onClick={() => setShowNotifications(false)} className="text-xs text-[#5A6579] hover:text-[#E3755D] font-medium">Close</button>
+                  </div>
                 </div>
-                <div className="max-h-[300px] overflow-y-auto">
-                  <div className="px-5 py-4 border-b border-gray-50 hover:bg-[#F8F9FA] transition-colors cursor-pointer flex gap-3">
-                    <div className="w-2 h-2 rounded-full bg-[#E3755D] mt-1.5 shrink-0"></div>
-                    <div>
-                      <p className="text-sm font-bold text-[#1B3A64]">USCIS receipt notice received</p>
-                      <p className="text-xs text-[#5A6579] font-medium mt-1">Your I-130 receipt notice has been added to your documents.</p>
-                      <span className="text-[10px] font-bold text-[#5A6579] mt-2 block uppercase tracking-wider">2 HOURS AGO</span>
-                    </div>
-                  </div>
-                  <div className="px-5 py-4 border-b border-gray-50 hover:bg-[#F8F9FA] transition-colors cursor-pointer flex gap-3 opacity-70">
-                    <div className="w-2 h-2 rounded-full bg-gray-300 mt-1.5 shrink-0"></div>
-                    <div>
-                      <p className="text-sm font-bold text-[#1B3A64]">Biometrics appointment scheduled</p>
-                      <p className="text-xs text-[#5A6579] font-medium mt-1">Check your calendar for the upcoming ASC appointment date.</p>
-                      <span className="text-[10px] font-bold text-[#5A6579] mt-2 block uppercase tracking-wider">YESTERDAY</span>
-                    </div>
-                  </div>
+                <div className="max-h-[320px] overflow-y-auto">
+                  {notifications.length === 0 && (
+                    <div className="p-6 text-center text-sm text-[#5B6472]">No notifications</div>
+                  )}
+                  {notifications.map((n) => {
+                    const parsedData = typeof n.data === 'string' ? JSON.parse(n.data) : n.data;
+                    const isUnread = !n.read_at;
+                    return (
+                      <div key={n.id} className={`p-4 transition-colors flex gap-3 items-start border-b border-gray-50 ${isUnread ? 'bg-[#FDFCFB]' : 'bg-white hover:bg-[#F9F8F6]'}`}>
+                        <div className="w-3 h-3 mt-2 rounded-full shrink-0" style={{ background: isUnread ? '#E3755D' : '#D1D5DB' }}></div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex justify-between items-start mb-1 gap-2">
+                            <p className={`text-sm ${isUnread ? 'font-black text-[#101F38]' : 'font-bold text-[#101F38]'}`}>{parsedData.title}</p>
+                            <span className="text-[10px] font-semibold text-[#8A8F98] whitespace-nowrap">{new Date(n.created_at).toLocaleString()}</span>
+                          </div>
+                          <p className={`text-sm ${isUnread ? 'text-[#101F38] font-medium' : 'text-[#5B6472]'}`}>{parsedData.text}</p>
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
                 <div className="px-5 py-3 border-t border-gray-100 text-center bg-[#F8F9FA]">
-                  <Link href="/dashboard/notifications" onClick={() => setShowNotifications(false)} className="text-xs font-bold text-[#E3755D] hover:text-[#C8634D]">
+                  <Link href={pathname.startsWith('/admin') ? '/admin/notifications' : '/dashboard/notifications'} onClick={() => setShowNotifications(false)} className="text-xs font-bold text-[#E3755D] hover:text-[#C8634D]">
                     View all notifications
                   </Link>
                 </div>

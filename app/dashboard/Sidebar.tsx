@@ -1,7 +1,11 @@
 "use client";
 
+import Image from 'next/image';
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useState, useEffect } from "react";
+import api from "@/lib/api";
+import { useAuth } from "@/contexts/AuthContext";
 import styles from "./dashboardLayout.module.css";
 
 interface SidebarProps {
@@ -11,42 +15,93 @@ interface SidebarProps {
 
 export default function Sidebar({ isOpen = false, onClose }: SidebarProps) {
     const pathname = usePathname();
-
     const isGetStartedFlow = pathname.startsWith('/dashboard/get-started');
+    const { logout } = useAuth();
+
+    const [goalTitle, setGoalTitle] = useState<string>('');
+
+    useEffect(() => {
+        if (isGetStartedFlow) {
+            api.get('/api/applications').then((res) => {
+                if (res.data && res.data.length > 0) {
+                    setGoalTitle(res.data[0].title);
+                }
+            }).catch(err => console.error(err));
+        }
+    }, [isGetStartedFlow]);
+
+    const getDynamicSteps = () => {
+        const baseSteps = [
+            { path: '/dashboard/get-started', name: '1. Start Application' }
+        ];
+
+        let formSteps: { path: string; name: string }[] = [];
+        if (!goalTitle || goalTitle.includes('Replace or fix a Green Card')) {
+            formSteps = [
+                { path: '/dashboard/get-started/i-90', name: '2. I-90 Form' },
+                { path: '/dashboard/get-started/g-1145', name: '3. G-1145 e-Notification' }
+            ];
+        } else if (goalTitle.includes('DACA')) {
+            formSteps = [
+                { path: '/dashboard/get-started/i-821d', name: '2. I-821D Form' },
+                { path: '/dashboard/get-started/i-765', name: '3. I-765 Form' },
+                { path: '/dashboard/get-started/i-765ws', name: '4. I-765WS Worksheet' }
+            ];
+        } else if (goalTitle.includes('Naturalization') || goalTitle.includes('Citizenship')) {
+            formSteps = [
+                { path: '/dashboard/get-started/n-400', name: '2. N-400 Form' }
+            ];
+        } else if (goalTitle.includes('fiancé(e) or spouse/relative')) {
+            formSteps = [
+                { path: '/dashboard/get-started/i-130', name: '2. I-130 Petition' },
+                { path: '/dashboard/get-started/i-130a', name: '3. I-130A Supp.' }
+            ];
+        } else if (goalTitle.includes('Adjust status')) {
+            formSteps = [
+                { path: '/dashboard/get-started/i-130', name: '2. I-130 Form' },
+                { path: '/dashboard/get-started/i-485', name: '3. I-485 Form' },
+                { path: '/dashboard/get-started/i-864', name: '4. I-864 Affidavit' }
+            ];
+        } else if (goalTitle.includes('Remove conditions')) {
+            formSteps = [
+                { path: '/dashboard/get-started/i-751', name: '2. I-751 Form' }
+            ];
+        } else {
+            formSteps = [
+                { path: '/dashboard/get-started/forms', name: '2. Required Forms' }
+            ];
+        }
+
+        const nextIndex = formSteps.length + 2;
+        const endSteps = [
+            { path: '/dashboard/get-started/document-upload', name: `${nextIndex}. Document Upload` },
+            { path: '/dashboard/get-started/submission', name: `${nextIndex + 1}. Submission` }
+        ];
+
+        return [...baseSteps, ...formSteps, ...endSteps];
+    };
+
+    const dynamicSteps = getDynamicSteps();
 
     return (
         <aside className={`${styles.sidebar} ${isOpen ? styles.open : ''}`}>
             <div className={styles.logoContainer}>
-                <div className={styles.logoIcon}>
-                    <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="20" cy="20" r="20" fill="#1B3A64"/>
-                        <path d="M12 25L20 15L28 25H12Z" fill="white"/>
-                    </svg>
-                </div>
-                <div>
-                    <div className={styles.logoText}>Horizon</div>
-                    <div className={styles.logoSub}>PATHWAYS</div>
-                </div>
+                <Image src="/horizonlogo.png" alt="Horizon Pathways" width={150} height={40} className="object-contain" />
             </div>
 
             {isGetStartedFlow ? (
                 <div className={styles.navSection}>
                     <div className={styles.navSectionTitle}>MAIN</div>
-                    <Link href="/dashboard/get-started" onClick={onClose} className={pathname === '/dashboard/get-started' ? styles.flowNavItemActive : styles.flowNavItem}>
-                        1. Start Application
-                    </Link>
-                    <Link href="/dashboard/get-started/i-90" onClick={onClose} className={pathname === '/dashboard/get-started/i-90' ? styles.flowNavItemActive : styles.flowNavItem}>
-                        2. I-90 Form
-                    </Link>
-                    <Link href="/dashboard/get-started/g-1145" onClick={onClose} className={pathname === '/dashboard/get-started/g-1145' ? styles.flowNavItemActive : styles.flowNavItem}>
-                        3. G-1145 e-Notification
-                    </Link>
-                    <Link href="/dashboard/get-started/document-upload" onClick={onClose} className={pathname === '/dashboard/get-started/document-upload' ? styles.flowNavItemActive : styles.flowNavItem}>
-                        4. Document Upload
-                    </Link>
-                    <Link href="/dashboard/get-started/submission" onClick={onClose} className={pathname === '/dashboard/get-started/submission' ? styles.flowNavItemActive : styles.flowNavItem}>
-                        5. Submission
-                    </Link>
+                    {dynamicSteps.map((step, idx) => (
+                        <Link
+                            key={idx}
+                            href={step.path}
+                            onClick={onClose}
+                            className={pathname === step.path ? styles.flowNavItemActive : styles.flowNavItem}
+                        >
+                            {step.name}
+                        </Link>
+                    ))}
                 </div>
             ) : (
                 <div className={styles.navSection}>
@@ -94,14 +149,14 @@ export default function Sidebar({ isOpen = false, onClose }: SidebarProps) {
                 </div>
             )}
 
-            <Link href="/" className={styles.signoutBtn}>
+            <button onClick={logout} className={styles.signoutBtn}>
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
                     <polyline points="16 17 21 12 16 7"></polyline>
                     <line x1="21" y1="12" x2="9" y2="12"></line>
                 </svg>
                 Signout
-            </Link>
+            </button>
         </aside>
     );
 }

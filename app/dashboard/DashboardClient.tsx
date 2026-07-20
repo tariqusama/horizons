@@ -1,17 +1,37 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from "next/link";
+import { useRouter } from 'next/navigation';
 import Sidebar from "./Sidebar";
 import styles from "./dashboardLayout.module.css";
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function DashboardClient({ children }: { children: React.ReactNode }) {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const { user, isLoading } = useAuth();
+    const router = useRouter();
+
+    useEffect(() => {
+        if (!isLoading) {
+            if (!user) {
+                router.push('/login');
+            } else if (user.role === 'admin') {
+                router.push('/admin');
+            } else if (user.role === 'manager') {
+                router.push('/manager');
+            }
+        }
+    }, [user, isLoading, router]);
+
+    if (isLoading || !user) {
+        return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+    }
 
     return (
         <div className={styles.layoutContainer}>
             {/* Sidebar Overlay */}
-            <div 
+            <div
                 className={`${styles.sidebarOverlay} ${isSidebarOpen ? styles.open : ''}`}
                 onClick={() => setIsSidebarOpen(false)}
             />
@@ -20,7 +40,7 @@ export default function DashboardClient({ children }: { children: React.ReactNod
 
             <main className={styles.mainWrapper}>
                 <header className={styles.topbar}>
-                    <button 
+                    <button
                         className={styles.mobileMenuBtn}
                         onClick={() => setIsSidebarOpen(true)}
                     >
@@ -28,7 +48,7 @@ export default function DashboardClient({ children }: { children: React.ReactNod
                             <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
                         </svg>
                     </button>
-                    
+
                     <div className={styles.searchContainer}>
                         <svg className={styles.searchIcon} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -49,18 +69,22 @@ export default function DashboardClient({ children }: { children: React.ReactNod
                         </button>
                         <Link href="/dashboard/profile" className={styles.userProfile}>
                             <div className={styles.userAvatar}>
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-                                </svg>
+                                {user?.profile_picture_url ? (
+                                    <img src={user.profile_picture_url} alt={user?.name || 'Profile avatar'} className="h-full w-full object-cover rounded-full" />
+                                ) : (
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                                    </svg>
+                                )}
                             </div>
-                            <span className={styles.userName}>Shehryar Shafique</span>
+                            <span className={styles.userName}>{user.name}</span>
                             <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20" className="text-gray-400">
                                 <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
                             </svg>
                         </Link>
                     </div>
                 </header>
-                
+
                 <div className={styles.contentArea}>
                     {children}
                 </div>
