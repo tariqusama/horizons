@@ -1,13 +1,12 @@
 import axios from 'axios';
 
 const api = axios.create({
-    baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000',
-    headers: {
-        'X-Requested-With': 'XMLHttpRequest',
-        Accept: 'application/json',
-    },
+    baseURL: "https://horizon.co3.solutions/api",
     withCredentials: true,
-    withXSRFToken: true,
+    headers: {
+        Accept: "application/json",
+        "X-Requested-With": "XMLHttpRequest",
+    },
 });
 
 api.interceptors.response.use(
