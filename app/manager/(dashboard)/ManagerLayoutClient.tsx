@@ -6,7 +6,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { getNotifications, markAsRead, Notification } from '@/lib/api/notifications';
 
-type MenuItem = { href: string; label: string; icon?: JSX.Element; iconBg?: string; iconFg?: string };
+type MenuItem = { href: string; label: string; icon?: React.ReactNode; iconBg?: string; iconFg?: string };
 type MenuGroup = { title: string; collapsible?: boolean; defaultOpen?: boolean; items: MenuItem[] };
 
 const managerMenu: MenuGroup[] = [
