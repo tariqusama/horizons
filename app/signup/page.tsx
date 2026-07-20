@@ -153,7 +153,7 @@ function SignupFlowContent() {
 
     setIsRegistering(true);
     try {
-      await api.post('/api/auth/send-otp', { email });
+      await api.post('/auth/send-otp', { email });
       setCurrentStep(questions.length + 3);
     } catch (err: any) {
       setError(err.response?.data?.message || 'Failed to send verification code');
@@ -172,7 +172,7 @@ function SignupFlowContent() {
     setError('');
     setIsRegistering(true);
     try {
-      await api.post('/api/auth/verify-otp', { email, otp: code });
+      await api.post('/auth/verify-otp', { email, otp: code });
       setCurrentStep(questions.length + 4);
     } catch (err: any) {
       setError(err.response?.data?.message || 'Invalid or expired code');
@@ -231,7 +231,7 @@ function SignupFlowContent() {
       const planTitle = `${pricing.title} - ${selectedPlanName}`;
 
       // 3. Get Stripe Checkout URL
-      const response = await api.post('/api/payment/process', {
+      const response = await api.post('/payment/process', {
         amount: amount,
         email: email,
         plan: planTitle,
@@ -287,7 +287,7 @@ function SignupFlowContent() {
       const amount = baseAmount + addonsTotal;
 
       // Process payment with backend
-      await api.post('/api/payment/process', {
+      await api.post('/payment/process', {
         payment_method_id: paymentMethod.id,
         amount: amount,
         email: email

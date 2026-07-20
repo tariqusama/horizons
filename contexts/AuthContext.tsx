@@ -34,7 +34,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const checkAuth = async () => {
         setIsLoading(true);
         try {
-            const res = await api.get('/api/user');
+            const res = await api.get('/user');
             setUser(res.data);
         } catch (error) {
             setUser(null);
@@ -47,18 +47,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         checkAuth();
     }, []);
 
-    const csrf = () => api.get('/sanctum/csrf-cookie');
-
     const login = async (data: any) => {
-        await csrf();
-        const res = await api.post('/api/login', data);
+        const res = await api.post('/login', data);
         setUser(res.data);
         redirectBasedOnRole(res.data.role);
     };
 
     const register = async (data: any, skipRedirect = false) => {
-        await csrf();
-        const res = await api.post('/api/register', data);
+        const res = await api.post('/register', data);
         setUser(res.data);
         if (!skipRedirect) {
             redirectBasedOnRole(res.data.role);
@@ -67,7 +63,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const logout = async () => {
         try {
-            await api.post('/api/logout');
+            await api.post('/logout');
         } catch (error) {
             console.error('Logout failed on server:', error);
         } finally {
