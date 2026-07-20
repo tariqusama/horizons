@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import api from '@/lib/api';
+import api, { setAuthToken } from '@/lib/api';
 import { useRouter } from 'next/navigation';
 
 interface User {
@@ -34,6 +34,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const checkAuth = async () => {
         setIsLoading(true);
         try {
+            const token = typeof window !== 'undefined' ? localStorage.getItem('authToken') : null;
+            if (!token) {
+                throw new Error('No auth token');
+            }
+            setAuthToken(token);
             const res = await api.get('/user');
             setUser(res.data);
         } catch (error) {
@@ -49,15 +54,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const login = async (data: any) => {
         const res = await api.post('/login', data);
-        setUser(res.data);
-        redirectBasedOnRole(res.data.role);
+        const token = res.data.token ?? res.data.access_token ?? null;
+        if (!token) {
+            throw new Error('No auth token received');
+        }
+        setAuthToken(token);
+        const user = res.data.user ?? res.data;
+        setUser(user);
+        redirectBasedOnRole(user.role);
     };
 
     const register = async (data: any, skipRedirect = false) => {
         const res = await api.post('/register', data);
-        setUser(res.data);
+        const token = res.data.token ?? res.data.access_token ?? null;
+        if (!token) {
+            throw new Error('No auth token received');
+        }
+        setAuthToken(token);
+        const user = res.data.user ?? res.data;
+        setUser(user);
         if (!skipRedirect) {
-            redirectBasedOnRole(res.data.role);
+            redirectBasedOnRole(user.role);
         }
     };
 
@@ -67,6 +84,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         } catch (error) {
             console.error('Logout failed on server:', error);
         } finally {
+            setAuthToken(null);
             setUser(null);
             router.push('/login');
         }

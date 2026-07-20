@@ -1,25 +1,37 @@
 import axios from 'axios';
 
-// Root domain (no /api) — used for Sanctum's CSRF cookie endpoint
 const BACKEND_URL = "https://horizon.co3.solutions";
 
 const api = axios.create({
     baseURL: `${BACKEND_URL}/api`,
-    withCredentials: true,
     headers: {
         Accept: "application/json",
         "X-Requested-With": "XMLHttpRequest",
     },
 });
 
-// Call this BEFORE login/register (or any state-changing request)
-// to get Sanctum's CSRF cookie set. Do NOT use the `api` instance here,
-// since Sanctum registers this route at /sanctum/csrf-cookie, not
-// /api/sanctum/csrf-cookie.
-export const getCsrfCookie = () =>
-    axios.get(`${BACKEND_URL}/sanctum/csrf-cookie`, {
-        withCredentials: true,
-    });
+const getStoredToken = () => {
+    if (typeof window === 'undefined') return null;
+    return localStorage.getItem('authToken');
+};
+
+export const setAuthToken = (token: string | null) => {
+    if (typeof window !== 'undefined') {
+        if (token) {
+            localStorage.setItem('authToken', token);
+        } else {
+            localStorage.removeItem('authToken');
+        }
+    }
+
+    if (token) {
+        api.defaults.headers.common.Authorization = `Bearer ${token}`;
+    } else {
+        delete api.defaults.headers.common.Authorization;
+    }
+};
+
+setAuthToken(getStoredToken());
 
 api.interceptors.response.use(
     (response) => response,

@@ -110,7 +110,8 @@ const getPackagePricing = (selectedGoal: string | null, answers: Record<number, 
   return defaultPricing;
 };
 
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || '');
+const stripeKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || '';
+const stripePromise = stripeKey ? loadStripe(stripeKey) : null;
 
 function SignupFlowContent() {
   const { register } = useAuth();
