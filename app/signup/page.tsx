@@ -1003,13 +1003,12 @@ function SignupFlowContent() {
                 {isRegistering ? 'Creating Account...' : 'Create Account'}
               </button>
             </form>
-          </form>
+          </div>
         </div>
-        </div >
       );
-}
+    }
 
-if (currentStep === questions.length + 3) {
+    if (currentStep === questions.length + 3) {
   return (
     <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-[480px] mx-auto">
       <div className="bg-white border border-gray-200 rounded-[12px] p-8 md:p-10 shadow-sm text-center">
