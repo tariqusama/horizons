@@ -1,6 +1,8 @@
 'use client';
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { Elements, useStripe, useElements, CardElement } from '@stripe/react-stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
 import { useAuth } from '@/contexts/AuthContext';
 import api from '@/lib/api';
 
@@ -108,6 +110,8 @@ const getPackagePricing = (selectedGoal: string | null, answers: Record<number, 
   return defaultPricing;
 };
 
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || '');
+
 function SignupFlow() {
   const { register } = useAuth();
   const [currentStep, setCurrentStep] = useState(0); // 0 = Goal selection, 1+ = questions, Final = account creation
@@ -127,6 +131,9 @@ function SignupFlow() {
   const [error, setError] = useState('');
   const [isRegistering, setIsRegistering] = useState(false);
   const [selectedAddons, setSelectedAddons] = useState<string[]>([]);
+
+  const stripe = useStripe();
+  const elements = useElements();
 
   const handleSendOtp = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
@@ -686,8 +693,8 @@ function SignupFlow() {
                   key={idx}
                   onClick={() => handleGoalSelect(goal)}
                   className={`relative flex items-center p-6 border rounded-[20px] transition-all duration-300 ${selectedGoal === goal
-                      ? 'border-[#E3755D] bg-[#FDFBF9] shadow-[0_10px_20px_rgba(227,117,93,0.1)]'
-                      : 'border-gray-200 bg-white hover:border-[#E3755D]/50 hover:shadow-sm'
+                    ? 'border-[#E3755D] bg-[#FDFBF9] shadow-[0_10px_20px_rgba(227,117,93,0.1)]'
+                    : 'border-gray-200 bg-white hover:border-[#E3755D]/50 hover:shadow-sm'
                     }`}
                 >
                   <div className="shrink-0 w-6 h-6 rounded-full border-[1.5px] border-[#E3755D] flex items-center justify-center transition-colors">
@@ -1195,8 +1202,8 @@ function SignupFlow() {
                 key={idx}
                 onClick={() => handleAnswerSelect(option)}
                 className={`relative flex items-center p-6 border rounded-[20px] transition-all duration-300 ${selectedAnswer === option
-                    ? 'border-[#E3755D] bg-[#FDFBF9] shadow-[0_10px_20px_rgba(227,117,93,0.1)]'
-                    : 'border-gray-200 bg-white hover:border-[#E3755D]/50 hover:shadow-sm'
+                  ? 'border-[#E3755D] bg-[#FDFBF9] shadow-[0_10px_20px_rgba(227,117,93,0.1)]'
+                  : 'border-gray-200 bg-white hover:border-[#E3755D]/50 hover:shadow-sm'
                   }`}
               >
                 <div className="shrink-0 w-6 h-6 rounded-full border-[1.5px] border-[#E3755D] flex items-center justify-center transition-colors">
@@ -1218,7 +1225,8 @@ function SignupFlow() {
   };
 
   return (
-    <main className="w-full min-h-screen bg-[#F5F4F1] pt-32 pb-24 px-4 md:px-8 lg:px-16 flex items-center justify-center">
+    <Elements stripe={stripePromise}>
+      <main className="w-full min-h-screen bg-[#F5F4F1] pt-32 pb-24 px-4 md:px-8 lg:px-16 flex items-center justify-center">
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500&display=swap');
         .font-body { font-family: 'Inter', sans-serif; }
@@ -1311,6 +1319,7 @@ function SignupFlow() {
         </div>
       )}
     </main>
+    </Elements>
   );
 }
 
