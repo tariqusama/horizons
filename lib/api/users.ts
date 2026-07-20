@@ -17,12 +17,12 @@ export interface User {
 }
 
 export const getUsers = async (): Promise<User[]> => {
-    const response = await api.get('/api/admin/users');
+    const response = await api.get('/admin/users');
     return response.data;
 };
 
 export const createUser = async (data: any): Promise<User> => {
-    const response = await api.post('/api/admin/users', data);
+    const response = await api.post('/admin/users', data);
     return response.data.user;
 };
 

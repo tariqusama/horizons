@@ -21,7 +21,7 @@ export default function AdminCasesPage() {
 
     const fetchCases = () => {
         setIsLoading(true);
-        api.get('/api/admin/applications')
+        api.get('/admin/applications')
             .then(res => setCases(res.data))
             .catch(err => console.error(err))
             .finally(() => setIsLoading(false));
@@ -33,7 +33,7 @@ export default function AdminCasesPage() {
 
     const updateStatus = async (id: number, newStatus: string) => {
         try {
-            await api.put(`/api/admin/applications/${id}`, { progress: newStatus });
+            await api.put(`/admin/applications/${id}`, { progress: newStatus });
             fetchCases();
         } catch (error) {
             console.error('Update failed', error);
@@ -76,7 +76,7 @@ export default function AdminCasesPage() {
                                     </td>
                                     <td className="px-6 py-4 text-sm font-medium text-gray-700">{c.title}</td>
                                     <td className="px-6 py-4">
-                                        <select 
+                                        <select
                                             value={c.progress}
                                             onChange={(e) => updateStatus(c.id, e.target.value)}
                                             className="text-xs font-bold bg-blue-50 text-blue-800 rounded-md p-1 border-0 focus:ring-0"

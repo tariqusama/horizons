@@ -21,9 +21,9 @@ export default function DashboardPage() {
             setIsLoading(true);
             try {
                 const [appsRes, docsRes, messagesRes] = await Promise.all([
-                    api.get('/api/applications'),
-                    api.get('/api/documents'),
-                    api.get('/api/messages'),
+                    api.get('/applications'),
+                    api.get('/documents'),
+                    api.get('/messages'),
                 ]);
 
                 setApplications(appsRes.data || []);

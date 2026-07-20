@@ -22,7 +22,7 @@ export default function Sidebar({ isOpen = false, onClose }: SidebarProps) {
 
     useEffect(() => {
         if (isGetStartedFlow) {
-            api.get('/api/applications').then((res) => {
+            api.get('/applications').then((res) => {
                 if (res.data && res.data.length > 0) {
                     setGoalTitle(res.data[0].title);
                 }

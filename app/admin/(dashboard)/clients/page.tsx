@@ -17,7 +17,7 @@ export default function AdminClientsPage() {
 
     useEffect(() => {
         setIsLoading(true);
-        api.get('/api/admin/clients')
+        api.get('/admin/clients')
             .then(res => setClients(res.data))
             .catch(err => console.error(err))
             .finally(() => setIsLoading(false));
@@ -52,7 +52,7 @@ export default function AdminClientsPage() {
                                     Active
                                 </span>
                             </div>
-                            
+
                             <h3 className="text-lg font-bold text-gray-900 group-hover:text-[#E3755D] transition-colors">{client.name}</h3>
                             <div className="mt-4 space-y-2 flex-1">
                                 <div className="flex items-center text-sm text-gray-600 font-medium">
@@ -63,7 +63,7 @@ export default function AdminClientsPage() {
                                     {client.email}
                                 </div>
                             </div>
-                            
+
                             <div className="mt-6 pt-4 border-t border-gray-100 flex justify-between items-center">
                                 <span className="text-xs font-bold text-gray-500 uppercase tracking-wide">{client.applications?.length || 0} Active {(client.applications?.length || 0) === 1 ? 'Case' : 'Cases'}</span>
                                 <span className="text-sm font-bold text-[#E3755D] hover:text-[#C8634D] transition-colors">View Profile</span>

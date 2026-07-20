@@ -17,6 +17,6 @@ export interface RevenueData {
 }
 
 export const getRevenueData = async (): Promise<RevenueData> => {
-    const response = await api.get('/api/admin/revenue');
+    const response = await api.get('/admin/revenue');
     return response.data;
 };

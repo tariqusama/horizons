@@ -12,17 +12,17 @@ export interface Profile {
 }
 
 export const getProfile = async (): Promise<Profile> => {
-    const response = await api.get('/api/profile');
+    const response = await api.get('/profile');
     return response.data;
 };
 
 export const updateProfile = async (data: any): Promise<any> => {
     if (data instanceof FormData) {
         data.append('_method', 'PUT');
-        const response = await api.post('/api/profile', data);
+        const response = await api.post('/profile', data);
         return response.data;
     }
 
-    const response = await api.put('/api/profile', data);
+    const response = await api.put('/profile', data);
     return response.data;
 };

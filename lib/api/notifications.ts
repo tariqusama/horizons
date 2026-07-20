@@ -19,10 +19,10 @@ export interface Notification {
 }
 
 export const getNotifications = async (): Promise<Notification[]> => {
-    const response = await api.get('/api/notifications');
+    const response = await api.get('/notifications');
     return response.data;
 };
 
 export const markAsRead = async (id?: string): Promise<void> => {
-    await api.put('/api/notifications/mark-read', { id });
+    await api.put('/notifications/mark-read', { id });
 };

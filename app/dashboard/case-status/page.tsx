@@ -7,7 +7,7 @@ export default function DashboardCaseStatusPage() {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        api.get('/api/applications')
+        api.get('/applications')
             .then(res => {
                 if (res.data && res.data.length > 0) {
                     setApplication(res.data[0]); // Just pick the first active one for now

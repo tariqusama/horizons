@@ -73,17 +73,17 @@ export interface DocumentPayload {
 }
 
 export const getCases = async (): Promise<Application[]> => {
-    const response = await api.get('/api/admin/cases');
+    const response = await api.get('/admin/cases');
     return response.data;
 };
 
 export const getManagerAssignedCases = async (): Promise<Application[]> => {
-    const response = await api.get('/api/manager/assigned-cases');
+    const response = await api.get('/manager/assigned-cases');
     return response.data;
 };
 
 export const assignCaseManager = async (id: number, managerId: number | null): Promise<Application> => {
-    const response = await api.put(`/api/admin/cases/${id}/assign`, { manager_id: managerId });
+    const response = await api.put(`/admin/cases/${id}/assign`, { manager_id: managerId });
     return response.data.application;
 };
 
@@ -96,22 +96,22 @@ export interface AssignmentRequestListResponse {
 }
 
 export const getAssignmentRequests = async (params: Record<string, any> = {}): Promise<AssignmentRequestListResponse> => {
-    const response = await api.get('/api/admin/assignment-requests', { params });
+    const response = await api.get('/admin/assignment-requests', { params });
     return response.data;
 };
 
 export const getAssignmentRequest = async (id: number): Promise<AssignmentRequest> => {
-    const response = await api.get(`/api/admin/assignment-requests/${id}`);
+    const response = await api.get(`/admin/assignment-requests/${id}`);
     return response.data;
 };
 
 export const updateAssignmentRequest = async (id: number, status: string): Promise<AssignmentRequest> => {
-    const response = await api.put(`/api/admin/assignment-requests/${id}`, { status });
+    const response = await api.put(`/admin/assignment-requests/${id}`, { status });
     return response.data.request;
 };
 
 export const updateCaseStatus = async (id: number, status: string): Promise<Application> => {
-    const response = await api.put(`/api/admin/applications/${id}`, { status });
+    const response = await api.put(`/admin/applications/${id}`, { status });
     return response.data;
 };
 
@@ -119,31 +119,31 @@ export const updateApplication = async (
     id: number,
     payload: Partial<Pick<Application, 'status' | 'progress' | 'next_step' | 'timeline'>>
 ): Promise<Application> => {
-    const response = await api.put(`/api/manager/applications/${id}`, payload);
+    const response = await api.put(`/manager/applications/${id}`, payload);
     return response.data;
 };
 
 export const getManagerMessages = async (applicationId: number): Promise<MessagePayload[]> => {
-    const response = await api.get(`/api/manager/applications/${applicationId}/messages`);
+    const response = await api.get(`/manager/applications/${applicationId}/messages`);
     return response.data;
 };
 
 export const sendManagerMessage = async (applicationId: number, message: string): Promise<MessagePayload> => {
-    const response = await api.post(`/api/manager/applications/${applicationId}/messages`, { message });
+    const response = await api.post(`/manager/applications/${applicationId}/messages`, { message });
     return response.data;
 };
 
 export const getManagerDocuments = async (applicationId: number): Promise<DocumentPayload[]> => {
-    const response = await api.get(`/api/manager/applications/${applicationId}/documents`);
+    const response = await api.get(`/manager/applications/${applicationId}/documents`);
     return response.data;
 };
 
 export const requestManagerDocuments = async (applicationId: number, documents: string, note: string): Promise<{ request: any; application: Application }> => {
-    const response = await api.post(`/api/manager/applications/${applicationId}/documents/requests`, { documents, note });
+    const response = await api.post(`/manager/applications/${applicationId}/documents/requests`, { documents, note });
     return response.data;
 };
 
 export const escalateApplication = async (applicationId: number, reason: string): Promise<any> => {
-    const response = await api.post(`/api/manager/applications/${applicationId}/escalate`, { reason });
+    const response = await api.post(`/manager/applications/${applicationId}/escalate`, { reason });
     return response.data;
 };

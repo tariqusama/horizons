@@ -17,7 +17,7 @@ export default function DashboardDocumentsPage() {
 
     const fetchDocuments = () => {
         setIsLoading(true);
-        api.get('/api/documents')
+        api.get('/documents')
             .then(res => setDocuments(res.data))
             .catch(err => console.error(err))
             .finally(() => setIsLoading(false));
@@ -63,11 +63,11 @@ export default function DashboardDocumentsPage() {
 
     return (
         <div className="space-y-10">
-            <input 
-                type="file" 
-                ref={fileInputRef} 
-                onChange={handleFileChange} 
-                className="hidden" 
+            <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleFileChange}
+                className="hidden"
             />
 
             <div className="rounded-[40px] bg-white p-10 shadow-[0_25px_70px_rgba(61,68,101,0.08)]">
@@ -98,11 +98,11 @@ export default function DashboardDocumentsPage() {
                                     </span>
                                 </div>
                                 <div className="col-span-2 text-right">
-                                    <button 
+                                    <button
                                         onClick={() => triggerUpload(item.id)}
                                         disabled={uploadingId === item.id}
-                                        className={item.status !== "Uploaded" 
-                                            ? "rounded-full bg-[#E3755D] px-4 py-2 text-xs font-bold uppercase text-white transition-colors hover:bg-[#C8634D] disabled:opacity-50" 
+                                        className={item.status !== "Uploaded"
+                                            ? "rounded-full bg-[#E3755D] px-4 py-2 text-xs font-bold uppercase text-white transition-colors hover:bg-[#C8634D] disabled:opacity-50"
                                             : "rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-[#1B3A64] hover:bg-slate-50 transition-colors disabled:opacity-50"}
                                     >
                                         {uploadingId === item.id ? '...' : (item.status !== "Uploaded" ? "Upload" : "Replace")}

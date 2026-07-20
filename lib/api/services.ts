@@ -11,20 +11,20 @@ export interface Service {
 }
 
 export const getServices = async (): Promise<Service[]> => {
-    const response = await api.get('/api/admin/services');
+    const response = await api.get('/admin/services');
     return response.data;
 };
 
 export const createService = async (data: Partial<Service>): Promise<Service> => {
-    const response = await api.post('/api/admin/services', data);
+    const response = await api.post('/admin/services', data);
     return response.data.service;
 };
 
 export const updateService = async (id: number, data: Partial<Service>): Promise<Service> => {
-    const response = await api.put(`/api/admin/services/${id}`, data);
+    const response = await api.put(`/admin/services/${id}`, data);
     return response.data.service;
 };
 
 export const deleteService = async (id: number): Promise<void> => {
-    await api.delete(`/api/admin/services/${id}`);
+    await api.delete(`/admin/services/${id}`);
 };
