@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import api, { setAuthToken, getStoredToken } from '@/lib/api';
+import api, { setAuthToken, initCsrf } from '@/lib/api';
 import { useRouter } from 'next/navigation';
 
 interface User {
@@ -34,11 +34,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const checkAuth = async () => {
         setIsLoading(true);
         try {
-            const token = getStoredToken();
-            if (!token) {
-                throw new Error('No auth token');
-            }
-            setAuthToken(token);
             const res = await api.get('/user');
             setUser(res.data);
         } catch (error) {
@@ -53,24 +48,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }, []);
 
     const login = async (data: any) => {
+        await initCsrf();
         const res = await api.post('/login', data);
-        const token = res.data.token ?? res.data.access_token ?? null;
-        if (!token) {
-            throw new Error('No auth token received');
-        }
-        setAuthToken(token);
         const user = res.data.user ?? res.data;
         setUser(user);
         redirectBasedOnRole(user.role);
     };
 
     const register = async (data: any, skipRedirect = false) => {
+        await initCsrf();
         const res = await api.post('/register', data);
-        const token = res.data.token ?? res.data.access_token ?? null;
-        if (!token) {
-            throw new Error('No auth token received');
-        }
-        setAuthToken(token);
         const user = res.data.user ?? res.data;
         setUser(user);
         if (!skipRedirect) {

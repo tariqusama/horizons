@@ -4,11 +4,24 @@ const BACKEND_URL = "https://horizon.co3.solutions";
 
 const api = axios.create({
     baseURL: `${BACKEND_URL}/api`,
+    withCredentials: true,
+    xsrfCookieName: 'XSRF-TOKEN',
+    xsrfHeaderName: 'X-XSRF-TOKEN',
     headers: {
         Accept: "application/json",
         "X-Requested-With": "XMLHttpRequest",
     },
 });
+
+export const initCsrf = async () => {
+    await axios.get(`${BACKEND_URL}/sanctum/csrf-cookie`, {
+        withCredentials: true,
+        headers: {
+            Accept: 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
+        },
+    });
+};
 
 let inMemoryToken: string | null = null;
 
