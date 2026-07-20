@@ -126,7 +126,9 @@ function SignupFlowContent() {
   const [firstName, setFirstName] = useState<string>('');
   const [lastName, setLastName] = useState<string>('');
   const [password, setPassword] = useState<string>('');
+  const [confirmPassword, setConfirmPassword] = useState<string>('');
   const [email, setEmail] = useState<string>('');
+  const [termsAccepted, setTermsAccepted] = useState(false);
   const [otp, setOtp] = useState<string[]>(Array(6).fill(''));
   const [error, setError] = useState('');
   const [isRegistering, setIsRegistering] = useState(false);
@@ -138,6 +140,17 @@ function SignupFlowContent() {
   const handleSendOtp = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     setError('');
+
+    if (!termsAccepted) {
+      setError('Please accept the terms and conditions to continue.');
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setError('Passwords do not match. Please confirm your password.');
+      return;
+    }
+
     setIsRegistering(true);
     try {
       await api.post('/api/auth/send-otp', { email });
@@ -881,444 +894,614 @@ function SignupFlowContent() {
                 {error}
               </div>
             )}
-            <form className="space-y-5" onSubmit={handleSendOtp}>
-              <div className="grid grid-cols-2 gap-5">
+            <form className="space-y-6" onSubmit={handleSendOtp}>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 <div className="space-y-2">
-                  <label className="text-[13px] font-bold text-[#101F38] uppercase tracking-wider">First Name</label>
-                  <input type="text" placeholder="John" required value={firstName} onChange={(e) => setFirstName(e.target.value)} className="w-full px-5 py-4 rounded-[16px] border border-gray-200 bg-white text-[#101F38] outline-none focus:border-[#E3755D] focus:ring-1 focus:ring-[#E3755D] font-medium transition-all" />
+                  <label className="text-sm font-semibold text-[#0F172A]">First Name</label>
+                  <input
+                    type="text"
+                    placeholder="John"
+                    required
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                    className="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-white text-[#0F172A] outline-none focus:border-[#F97316] focus:ring-1 focus:ring-[#F97316]/30 transition"
+                  />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[13px] font-bold text-[#101F38] uppercase tracking-wider">Last Name</label>
-                  <input type="text" placeholder="Doe" required value={lastName} onChange={(e) => setLastName(e.target.value)} className="w-full px-5 py-4 rounded-[16px] border border-gray-200 bg-white text-[#101F38] outline-none focus:border-[#E3755D] focus:ring-1 focus:ring-[#E3755D] font-medium transition-all" />
+                  <label className="text-sm font-semibold text-[#0F172A]">Last Name</label>
+                  <input
+                    type="text"
+                    placeholder="Doe"
+                    required
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                    className="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-white text-[#0F172A] outline-none focus:border-[#F97316] focus:ring-1 focus:ring-[#F97316]/30 transition"
+                  />
                 </div>
               </div>
+
               <div className="space-y-2">
-                <label className="text-[13px] font-bold text-[#101F38] uppercase tracking-wider">Email Address</label>
+                <label className="text-sm font-semibold text-[#0F172A]">Email Address</label>
+                <div className="relative">
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#9CA3AF]">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M4 4H20V20H4V4Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                      <path d="M4 7L12 13L20 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </span>
+                  <input
+                    type="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="you@example.com"
+                    className="w-full pl-12 pr-4 py-3 rounded-2xl border border-gray-200 bg-white text-[#0F172A] outline-none focus:border-[#F97316] focus:ring-1 focus:ring-[#F97316]/30 transition"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <div className="space-y-2">
+                  <label className="text-sm font-semibold text-[#0F172A]">Password</label>
+                  <div className="relative">
+                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#9CA3AF]">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 17C13.6569 17 15 15.6569 15 14C15 12.3431 13.6569 11 12 11C10.3431 11 9 12.3431 9 14C9 15.6569 10.3431 17 12 17Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                        <path d="M17 11V8C17 5.23858 14.7614 3 12 3C9.23858 3 7 5.23858 7 8V11" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                        <path d="M5 11H19C20.1046 11 21 11.8954 21 13V18C21 19.1046 20.1046 20 19 20H5C3.89543 20 3 19.1046 3 18V13C3 11.8954 3.89543 11 5 11Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </span>
+                    <input
+                      type="password"
+                      required
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="••••••••"
+                      className="w-full pl-12 pr-4 py-3 rounded-2xl border border-gray-200 bg-white text-[#0F172A] outline-none focus:border-[#F97316] focus:ring-1 focus:ring-[#F97316]/30 transition"
+                    />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-semibold text-[#0F172A]">Confirm Password</label>
+                  <div className="relative">
+                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#9CA3AF]">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 17C13.6569 17 15 15.6569 15 14C15 12.3431 13.6569 11 12 11C10.3431 11 9 12.3431 9 14C9 15.6569 10.3431 17 12 17Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                        <path d="M17 11V8C17 5.23858 14.7614 3 12 3C9.23858 3 7 5.23858 7 8V11" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                        <path d="M5 11H19C20.1046 11 21 11.8954 21 13V18C21 19.1046 20.1046 20 19 20H5C3.89543 20 3 19.1046 3 18V13C3 11.8954 3.89543 11 5 11Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </span>
+                    <input
+                      type="password"
+                      required
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      placeholder="••••••••"
+                      className="w-full pl-12 pr-4 py-3 rounded-2xl border border-gray-200 bg-white text-[#0F172A] outline-none focus:border-[#F97316] focus:ring-1 focus:ring-[#F97316]/30 transition"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <label className="flex items-start gap-3 text-sm text-[#475569]">
                 <input
-                  type="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="you@example.com"
-                  className="w-full px-5 py-4 rounded-[16px] border border-gray-200 bg-white text-[#101F38] outline-none focus:border-[#E3755D] focus:ring-1 focus:ring-[#E3755D] font-medium transition-all"
+                  type="checkbox"
+                  checked={termsAccepted}
+                  onChange={(e) => setTermsAccepted(e.target.checked)}
+                  className="mt-1 h-4 w-4 rounded border-gray-300 text-[#F97316] focus:ring-[#F97316]"
                 />
-              </div>
-              <div className="space-y-2">
-                <label className="text-[13px] font-bold text-[#101F38] uppercase tracking-wider">Password</label>
-                <input type="password" required value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" className="w-full px-5 py-4 rounded-[16px] border border-gray-200 bg-white text-[#101F38] outline-none focus:border-[#E3755D] focus:ring-1 focus:ring-[#E3755D] font-medium transition-all" />
-              </div>
-              <button type="submit" disabled={isRegistering} className="w-full bg-[#101F38] hover:bg-[#0A1526] text-white font-bold py-4 rounded-[16px] transition-all duration-300 shadow-[0_15px_30px_rgba(16,31,56,0.2)] hover:shadow-[0_20px_40px_rgba(16,31,56,0.3)] hover:-translate-y-1 mt-6 text-[16px] disabled:opacity-50">
-                {isRegistering ? 'Creating Account...' : 'Continue'}
+                <span>
+                  I agree to the <a href="/terms" className="text-[#F97316] font-semibold hover:underline">terms and conditions</a>.
+                </span>
+              </label>
+
+              <button
+                type="submit"
+                disabled={isRegistering}
+                className="w-full bg-[#0F172A] hover:bg-[#111827] text-white font-bold py-4 rounded-3xl transition duration-300 shadow-[0_20px_45px_rgba(15,23,42,0.15)] disabled:opacity-50"
+              >
+                {isRegistering ? 'Creating Account...' : 'Create Account'}
               </button>
             </form>
-          </div>
+          </form>
         </div>
+        </div >
       );
-    }
+}
 
-    if (currentStep === questions.length + 3) {
-      return (
-        <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-[480px] mx-auto">
-          <div className="bg-white border border-gray-200 rounded-[12px] p-8 md:p-10 shadow-sm text-center">
+if (currentStep === questions.length + 3) {
+  return (
+    <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-[480px] mx-auto">
+      <div className="bg-white border border-gray-200 rounded-[12px] p-8 md:p-10 shadow-sm text-center">
 
-            <div className="w-16 h-16 bg-[#FDF3E4] rounded-full flex items-center justify-center mx-auto mb-6">
-              <span className="material-icons text-[#E3755D] text-[28px]">mail_outline</span>
+        <div className="w-16 h-16 bg-[#FDF3E4] rounded-full flex items-center justify-center mx-auto mb-6">
+          <span className="material-icons text-[#E3755D] text-[28px]">mail_outline</span>
+        </div>
+
+        <h1 className="text-[24px] font-bold text-[#101F38] mb-3">Enter Verification Code</h1>
+        <p className="text-[#5B6472] font-medium text-[15px] mb-8">
+          We sent a 6-digit code to <span className="font-bold text-[#101F38]">{email || 'your email'}</span>
+        </p>
+
+        {error && (
+          <div className="mb-4 p-3 rounded-xl bg-red-50 border border-red-200 text-red-600 text-sm font-body">
+            {error}
+          </div>
+        )}
+
+        <div className="flex justify-between gap-2 mb-8">
+          {otp.map((digit, idx) => (
+            <input
+              key={idx}
+              id={`otp-${idx}`}
+              type="text"
+              maxLength={1}
+              value={digit}
+              onChange={(e) => handleOtpChange(idx, e.target.value)}
+              className="w-12 h-14 border border-gray-300 rounded-[8px] text-center text-[20px] font-bold text-[#101F38] outline-none focus:border-[#E3755D] focus:ring-1 focus:ring-[#E3755D] transition-all bg-white"
+            />
+          ))}
+        </div>
+
+        <p className="text-[#5B6472] text-[14px] mb-6">
+          Didn't get the code? Check your spam folder, or resend it below.
+        </p>
+
+        <button
+          onClick={handleVerifyOtp}
+          disabled={isRegistering}
+          className="w-full bg-[#101F38] hover:bg-[#0A1526] text-white font-bold py-3.5 rounded-[12px] transition-all duration-300 shadow-[0_10px_20px_rgba(16,31,56,0.2)] mb-4 disabled:opacity-50"
+        >
+          {isRegistering ? 'Verifying...' : 'Verify Code'}
+        </button>
+
+        <button
+          onClick={() => handleSendOtp()}
+          className="w-full bg-[#F8F9FA] hover:bg-gray-100 text-[#101F38] font-medium py-3.5 rounded-[8px] border border-gray-200 transition-all mb-4"
+        >
+          Resend verification code
+        </button>
+
+        <button
+          onClick={() => setCurrentStep(questions.length + 2)} // Go back to account details
+          className="text-[#E3755D] hover:text-[#C93500] text-[14px] font-medium transition-colors"
+        >
+          Use a different email address
+        </button>
+      </div>
+    </div>
+  );
+}
+
+if (currentStep === questions.length + 4) {
+  const addons = [
+    { id: 'translation', name: 'Document Translation (per page)', description: 'Professional translation of additional document pages', price: 25 },
+    { id: 'notary', name: 'Certified Copy & E-Notary', description: 'Certified copies of your documents, Electronic notary services', price: 15 },
+    { id: 'expedited', name: 'Expedited Form Preparation (48hrs)', description: 'Priority preparation of the full application packet', price: 100 }
+  ];
+
+  const baseAmount = parseFloat(selectedPlanPrice.replace('$', '')) || 0;
+  const addonsTotal = selectedAddons.reduce((sum, addonId) => sum + (addons.find(a => a.id === addonId)?.price || 0), 0);
+  const totalAmount = baseAmount + addonsTotal;
+
+  const toggleAddon = (id: string) => {
+    setSelectedAddons(prev => prev.includes(id) ? prev.filter(a => a !== id) : [...prev, id]);
+  };
+
+  const pricing = getPackagePricing(selectedGoal, answers);
+
+  return (
+    <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-[1000px] mx-auto">
+      <div className="text-center mb-10">
+        <h1 className="text-3xl font-black text-[#101F38] mb-3 tracking-tight">Your Order</h1>
+        <p className="text-[#5B6472] font-medium text-[16px]">
+          Review your selected plan and services
+        </p>
+      </div>
+
+      <div className="flex flex-col lg:flex-row gap-8">
+        {/* Left Column */}
+        <div className="flex-grow space-y-6">
+          {/* Account Information */}
+          <div className="bg-[#FDF3E4] border border-[#F3D9B8] rounded-[16px] p-6">
+            <h3 className="text-[#E3755D] text-[20px] font-bold mb-2">Account Information</h3>
+            <p className="text-[#5B6472] font-medium text-[15px]">{firstName} {lastName}</p>
+            <p className="text-[#5B6472] font-medium text-[15px]">{email}</p>
+          </div>
+
+          {/* Plan Details */}
+          <div className="bg-white border border-gray-200 rounded-[16px] p-6 shadow-sm">
+            <div className="flex justify-between items-start mb-4">
+              <div>
+                <h3 className="text-[#101F38] text-[18px] font-bold mb-2">{pricing.title}</h3>
+                <span className="bg-[#E3755D] text-white text-[11px] font-bold px-3 py-1 rounded-full">{selectedPlanName}</span>
+              </div>
+              <div className="text-[20px] font-black text-[#101F38]">{selectedPlanPrice}</div>
             </div>
 
-            <h1 className="text-[24px] font-bold text-[#101F38] mb-3">Enter Verification Code</h1>
-            <p className="text-[#5B6472] font-medium text-[15px] mb-8">
-              We sent a 6-digit code to <span className="font-bold text-[#101F38]">{email || 'your email'}</span>
-            </p>
+            <div className="mt-6">
+              <h4 className="text-[#101F38] font-bold text-[16px] mb-4">What's Included:</h4>
+              <ul className="space-y-3">
+                <li className="flex items-start text-[14px] text-[#5B6472] font-medium">
+                  <span className="material-icons text-[#E3755D] text-[18px] mr-2">check_circle_outline</span>
+                  Complete form preparation and review
+                </li>
+                <li className="flex items-start text-[14px] text-[#5B6472] font-medium">
+                  <span className="material-icons text-[#E3755D] text-[18px] mr-2">check_circle_outline</span>
+                  Dedicated case manager
+                </li>
+                {selectedPlanName.includes('Advanced') || selectedPlanName.includes('Premium') ? (
+                  <li className="flex items-start text-[14px] text-[#5B6472] font-medium">
+                    <span className="material-icons text-[#E3755D] text-[18px] mr-2">check_circle_outline</span>
+                    Legal review by an attorney
+                  </li>
+                ) : null}
+                {selectedPlanName.includes('Premium') ? (
+                  <li className="flex items-start text-[14px] text-[#5B6472] font-medium">
+                    <span className="material-icons text-[#E3755D] text-[18px] mr-2">check_circle_outline</span>
+                    30-minute 1-on-1 attorney consultation
+                  </li>
+                ) : null}
+              </ul>
+            </div>
+          </div>
 
-            {error && (
-              <div className="mb-4 p-3 rounded-xl bg-red-50 border border-red-200 text-red-600 text-sm font-body">
-                {error}
-              </div>
-            )}
-
-            <div className="flex justify-between gap-2 mb-8">
-              {otp.map((digit, idx) => (
-                <input
-                  key={idx}
-                  id={`otp-${idx}`}
-                  type="text"
-                  maxLength={1}
-                  value={digit}
-                  onChange={(e) => handleOtpChange(idx, e.target.value)}
-                  className="w-12 h-14 border border-gray-300 rounded-[8px] text-center text-[20px] font-bold text-[#101F38] outline-none focus:border-[#E3755D] focus:ring-1 focus:ring-[#E3755D] transition-all bg-white"
-                />
+          {/* Additional Services */}
+          <div className="bg-white border border-gray-200 rounded-[16px] p-6 shadow-sm">
+            <h3 className="text-[#101F38] text-[18px] font-bold mb-4">Additional Services</h3>
+            <div className="space-y-4">
+              {addons.map(addon => (
+                <div
+                  key={addon.id}
+                  className={`border rounded-[12px] p-4 flex items-center cursor-pointer transition-colors ${selectedAddons.includes(addon.id) ? 'border-[#E3755D] bg-[#FDF3E4]' : 'border-gray-200 bg-white hover:border-gray-300'}`}
+                  onClick={() => toggleAddon(addon.id)}
+                >
+                  <div className="mr-4 shrink-0">
+                    <div className={`w-5 h-5 rounded border flex items-center justify-center ${selectedAddons.includes(addon.id) ? 'border-[#E3755D] bg-[#E3755D]' : 'border-gray-300'}`}>
+                      {selectedAddons.includes(addon.id) && <span className="material-icons text-white text-[14px]">check</span>}
+                    </div>
+                  </div>
+                  <div className="flex-grow">
+                    <div className="text-[#101F38] font-bold text-[15px]">{addon.name}</div>
+                    <div className="text-[#5B6472] text-[13px]">{addon.description}</div>
+                  </div>
+                  <div className="text-[#101F38] font-bold text-[16px] shrink-0 ml-4">${addon.price}</div>
+                </div>
               ))}
             </div>
+          </div>
+        </div>
 
-            <p className="text-[#5B6472] text-[14px] mb-6">
-              Didn't get the code? Check your spam folder, or resend it below.
-            </p>
+        {/* Right Column - Order Summary */}
+        <div className="lg:w-[350px] shrink-0">
+          <div className="bg-white border border-gray-200 rounded-[16px] p-6 shadow-sm sticky top-6">
+            <h3 className="text-[#101F38] text-[18px] font-bold mb-6">Order Summary</h3>
 
+            <div className="space-y-4 mb-6">
+              <div className="flex justify-between items-start">
+                <div className="text-[#5B6472] font-medium text-[14px] pr-4">{pricing.title}</div>
+                <div className="text-[#101F38] font-bold text-[14px] shrink-0">{selectedPlanPrice}</div>
+              </div>
+              {selectedAddons.map(id => {
+                const addon = addons.find(a => a.id === id);
+                if (!addon) return null;
+                return (
+                  <div key={addon.id} className="flex justify-between items-start">
+                    <div className="text-[#5B6472] font-medium text-[14px] pr-4">{addon.name}</div>
+                    <div className="text-[#101F38] font-bold text-[14px] shrink-0">${addon.price}</div>
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="border-t border-gray-200 pt-4 mb-6 flex justify-between items-center">
+              <div className="text-[#101F38] font-bold text-[16px]">Total</div>
+              <div className="text-[24px] font-black text-[#101F38]">${totalAmount.toFixed(2)}</div>
+            </div>
+
+            {error && <div className="text-red-500 text-[14px] font-medium mb-4 text-center">{error}</div>}
             <button
-              onClick={handleVerifyOtp}
+              onClick={handleStripeCheckout}
               disabled={isRegistering}
-              className="w-full bg-[#101F38] hover:bg-[#0A1526] text-white font-bold py-3.5 rounded-[12px] transition-all duration-300 shadow-[0_10px_20px_rgba(16,31,56,0.2)] mb-4 disabled:opacity-50"
+              className="w-full bg-[#E3755D] hover:bg-[#C93500] text-white font-bold py-3.5 rounded-[12px] transition-colors shadow-sm disabled:opacity-50"
             >
-              {isRegistering ? 'Verifying...' : 'Verify Code'}
+              {isRegistering ? 'Processing...' : 'Continue Payment'}
             </button>
-
-            <button
-              onClick={() => handleSendOtp()}
-              className="w-full bg-[#F8F9FA] hover:bg-gray-100 text-[#101F38] font-medium py-3.5 rounded-[8px] border border-gray-200 transition-all mb-4"
-            >
-              Resend verification code
-            </button>
-
-            <button
-              onClick={() => setCurrentStep(questions.length + 2)} // Go back to account details
-              className="text-[#E3755D] hover:text-[#C93500] text-[14px] font-medium transition-colors"
-            >
-              Use a different email address
-            </button>
-          </div>
-        </div>
-      );
-    }
-
-    if (currentStep === questions.length + 4) {
-      const addons = [
-        { id: 'translation', name: 'Document Translation (per page)', description: 'Professional translation of additional document pages', price: 25 },
-        { id: 'notary', name: 'Certified Copy & E-Notary', description: 'Certified copies of your documents, Electronic notary services', price: 15 },
-        { id: 'expedited', name: 'Expedited Form Preparation (48hrs)', description: 'Priority preparation of the full application packet', price: 100 }
-      ];
-
-      const baseAmount = parseFloat(selectedPlanPrice.replace('$', '')) || 0;
-      const addonsTotal = selectedAddons.reduce((sum, addonId) => sum + (addons.find(a => a.id === addonId)?.price || 0), 0);
-      const totalAmount = baseAmount + addonsTotal;
-
-      const toggleAddon = (id: string) => {
-        setSelectedAddons(prev => prev.includes(id) ? prev.filter(a => a !== id) : [...prev, id]);
-      };
-
-      const pricing = getPackagePricing(selectedGoal, answers);
-
-      return (
-        <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-[1000px] mx-auto">
-          <div className="text-center mb-10">
-            <h1 className="text-3xl font-black text-[#101F38] mb-3 tracking-tight">Your Order</h1>
-            <p className="text-[#5B6472] font-medium text-[16px]">
-              Review your selected plan and services
-            </p>
-          </div>
-
-          <div className="flex flex-col lg:flex-row gap-8">
-            {/* Left Column */}
-            <div className="flex-grow space-y-6">
-              {/* Account Information */}
-              <div className="bg-[#FDF3E4] border border-[#F3D9B8] rounded-[16px] p-6">
-                <h3 className="text-[#E3755D] text-[20px] font-bold mb-2">Account Information</h3>
-                <p className="text-[#5B6472] font-medium text-[15px]">{firstName} {lastName}</p>
-                <p className="text-[#5B6472] font-medium text-[15px]">{email}</p>
-              </div>
-
-              {/* Plan Details */}
-              <div className="bg-white border border-gray-200 rounded-[16px] p-6 shadow-sm">
-                <div className="flex justify-between items-start mb-4">
-                  <div>
-                    <h3 className="text-[#101F38] text-[18px] font-bold mb-2">{pricing.title}</h3>
-                    <span className="bg-[#E3755D] text-white text-[11px] font-bold px-3 py-1 rounded-full">{selectedPlanName}</span>
-                  </div>
-                  <div className="text-[20px] font-black text-[#101F38]">{selectedPlanPrice}</div>
-                </div>
-
-                <div className="mt-6">
-                  <h4 className="text-[#101F38] font-bold text-[16px] mb-4">What's Included:</h4>
-                  <ul className="space-y-3">
-                    <li className="flex items-start text-[14px] text-[#5B6472] font-medium">
-                      <span className="material-icons text-[#E3755D] text-[18px] mr-2">check_circle_outline</span>
-                      Complete form preparation and review
-                    </li>
-                    <li className="flex items-start text-[14px] text-[#5B6472] font-medium">
-                      <span className="material-icons text-[#E3755D] text-[18px] mr-2">check_circle_outline</span>
-                      Dedicated case manager
-                    </li>
-                    {selectedPlanName.includes('Advanced') || selectedPlanName.includes('Premium') ? (
-                      <li className="flex items-start text-[14px] text-[#5B6472] font-medium">
-                        <span className="material-icons text-[#E3755D] text-[18px] mr-2">check_circle_outline</span>
-                        Legal review by an attorney
-                      </li>
-                    ) : null}
-                    {selectedPlanName.includes('Premium') ? (
-                      <li className="flex items-start text-[14px] text-[#5B6472] font-medium">
-                        <span className="material-icons text-[#E3755D] text-[18px] mr-2">check_circle_outline</span>
-                        30-minute 1-on-1 attorney consultation
-                      </li>
-                    ) : null}
-                  </ul>
-                </div>
-              </div>
-
-              {/* Additional Services */}
-              <div className="bg-white border border-gray-200 rounded-[16px] p-6 shadow-sm">
-                <h3 className="text-[#101F38] text-[18px] font-bold mb-4">Additional Services</h3>
-                <div className="space-y-4">
-                  {addons.map(addon => (
-                    <div
-                      key={addon.id}
-                      className={`border rounded-[12px] p-4 flex items-center cursor-pointer transition-colors ${selectedAddons.includes(addon.id) ? 'border-[#E3755D] bg-[#FDF3E4]' : 'border-gray-200 bg-white hover:border-gray-300'}`}
-                      onClick={() => toggleAddon(addon.id)}
-                    >
-                      <div className="mr-4 shrink-0">
-                        <div className={`w-5 h-5 rounded border flex items-center justify-center ${selectedAddons.includes(addon.id) ? 'border-[#E3755D] bg-[#E3755D]' : 'border-gray-300'}`}>
-                          {selectedAddons.includes(addon.id) && <span className="material-icons text-white text-[14px]">check</span>}
-                        </div>
-                      </div>
-                      <div className="flex-grow">
-                        <div className="text-[#101F38] font-bold text-[15px]">{addon.name}</div>
-                        <div className="text-[#5B6472] text-[13px]">{addon.description}</div>
-                      </div>
-                      <div className="text-[#101F38] font-bold text-[16px] shrink-0 ml-4">${addon.price}</div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Right Column - Order Summary */}
-            <div className="lg:w-[350px] shrink-0">
-              <div className="bg-white border border-gray-200 rounded-[16px] p-6 shadow-sm sticky top-6">
-                <h3 className="text-[#101F38] text-[18px] font-bold mb-6">Order Summary</h3>
-
-                <div className="space-y-4 mb-6">
-                  <div className="flex justify-between items-start">
-                    <div className="text-[#5B6472] font-medium text-[14px] pr-4">{pricing.title}</div>
-                    <div className="text-[#101F38] font-bold text-[14px] shrink-0">{selectedPlanPrice}</div>
-                  </div>
-                  {selectedAddons.map(id => {
-                    const addon = addons.find(a => a.id === id);
-                    if (!addon) return null;
-                    return (
-                      <div key={addon.id} className="flex justify-between items-start">
-                        <div className="text-[#5B6472] font-medium text-[14px] pr-4">{addon.name}</div>
-                        <div className="text-[#101F38] font-bold text-[14px] shrink-0">${addon.price}</div>
-                      </div>
-                    );
-                  })}
-                </div>
-
-                <div className="border-t border-gray-200 pt-4 mb-6 flex justify-between items-center">
-                  <div className="text-[#101F38] font-bold text-[16px]">Total</div>
-                  <div className="text-[24px] font-black text-[#101F38]">${totalAmount.toFixed(2)}</div>
-                </div>
-
-                {error && <div className="text-red-500 text-[14px] font-medium mb-4 text-center">{error}</div>}
-                <button
-                  onClick={handleStripeCheckout}
-                  disabled={isRegistering}
-                  className="w-full bg-[#E3755D] hover:bg-[#C93500] text-white font-bold py-3.5 rounded-[12px] transition-colors shadow-sm disabled:opacity-50"
-                >
-                  {isRegistering ? 'Processing...' : 'Continue Payment'}
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      );
-    }
-
-    if (currentStep === questions.length + 5) {
-      return (
-        <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-[500px] mx-auto">
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-black text-[#101F38] mb-3 tracking-tight">Complete Payment</h1>
-            <p className="text-[#5B6472] font-medium text-[16px]">
-              You're almost there! Enter your payment details below.
-            </p>
-          </div>
-
-          <div className="bg-white border border-gray-200 rounded-[20px] overflow-hidden shadow-[0_15px_30px_-10px_rgba(16,31,56,0.08)]">
-            <div className="bg-[#F8F9FA] p-6 border-b border-gray-100 flex justify-between items-center">
-              <div>
-                <h3 className="font-bold text-[#101F38] text-[16px]">{selectedPlanName}</h3>
-                <p className="text-[13px] text-[#5B6472] font-medium">{selectedGoal}</p>
-              </div>
-              <div className="text-[24px] font-black text-[#E3755D]">{selectedPlanPrice}</div>
-            </div>
-
-            <form className="p-8 space-y-5" onSubmit={handlePaymentAndRegister}>
-              {error && <div className="text-red-500 text-sm mb-4">{error}</div>}
-              <div className="space-y-2">
-                <label className="text-[13px] font-bold text-[#101F38] uppercase tracking-wider">Card Information</label>
-                <div className="border border-gray-200 rounded-[12px] overflow-hidden bg-white px-4 py-4">
-                  <CardElement options={{
-                    style: {
-                      base: {
-                        fontSize: '16px',
-                        color: '#101F38',
-                        '::placeholder': {
-                          color: '#aab7c4',
-                        },
-                      },
-                      invalid: {
-                        color: '#9e2146',
-                      },
-                    },
-                  }} />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-[13px] font-bold text-[#101F38] uppercase tracking-wider">Name on Card</label>
-                <input type="text" placeholder="John Doe" required className="w-full px-4 py-3 rounded-[12px] border border-gray-200 bg-white text-[#101F38] outline-none focus:border-[#E3755D] font-medium" />
-              </div>
-
-              <button type="submit" disabled={!stripe || isRegistering} className="w-full bg-[#101F38] hover:bg-[#0A1526] text-white font-bold py-4 rounded-[12px] transition-all duration-300 shadow-[0_10px_20px_rgba(16,31,56,0.2)] hover:-translate-y-0.5 mt-4 text-[16px] flex justify-center items-center space-x-2 disabled:opacity-50">
-                <span className="material-icons text-[18px]">lock</span>
-                <span>{isRegistering ? 'Processing...' : 'Pay & Create Account'}</span>
-              </button>
-            </form>
-          </div>
-
-          <div className="text-center mt-6">
-            <p className="text-[12px] text-gray-400 flex items-center justify-center font-medium">
-              <span className="material-icons text-[14px] mr-1">security</span>
-              Payments are secure and encrypted
-            </p>
-          </div>
-        </div>
-      );
-    }
-
-    const currentQuestion = questions[currentStep - 1];
-    const selectedAnswer = answers[currentStep];
-
-    return (
-      <div key={currentStep} className="animate-in fade-in slide-in-from-right-4 duration-500">
-        <div className="mb-10">
-          <h1 className="text-[44px] leading-tight font-black text-[#101F38] mb-2 tracking-tight">Question {currentStep}</h1>
-        </div>
-
-        <div className="mb-12">
-          <h2 className="text-[22px] font-bold text-[#101F38] mb-6 tracking-tight">{currentQuestion.question}</h2>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            {currentQuestion.options.map((option, idx) => (
-              <button
-                key={idx}
-                onClick={() => handleAnswerSelect(option)}
-                className={`relative flex items-center p-6 border rounded-[20px] transition-all duration-300 ${selectedAnswer === option
-                  ? 'border-[#E3755D] bg-[#FDFBF9] shadow-[0_10px_20px_rgba(227,117,93,0.1)]'
-                  : 'border-gray-200 bg-white hover:border-[#E3755D]/50 hover:shadow-sm'
-                  }`}
-              >
-                <div className="shrink-0 w-6 h-6 rounded-full border-[1.5px] border-[#E3755D] flex items-center justify-center transition-colors">
-                  {selectedAnswer === option && (
-                    <div className="w-3 h-3 rounded-full bg-[#E3755D]"></div>
-                  )}
-                </div>
-                <div className="flex-grow flex justify-center items-center px-4">
-                  <span className={`text-[15px] leading-snug font-bold text-center transition-colors ${selectedAnswer === option ? 'text-[#E3755D]' : 'text-[#101F38]'}`}>
-                    {option}
-                  </span>
-                </div>
-              </button>
-            ))}
           </div>
         </div>
       </div>
-    );
+    </div>
+  );
+}
+
+if (currentStep === questions.length + 5) {
+  return (
+    <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-[500px] mx-auto">
+      <div className="text-center mb-8">
+        <h1 className="text-3xl font-black text-[#101F38] mb-3 tracking-tight">Complete Payment</h1>
+        <p className="text-[#5B6472] font-medium text-[16px]">
+          You're almost there! Enter your payment details below.
+        </p>
+      </div>
+
+      <div className="bg-white border border-gray-200 rounded-[20px] overflow-hidden shadow-[0_15px_30px_-10px_rgba(16,31,56,0.08)]">
+        <div className="bg-[#F8F9FA] p-6 border-b border-gray-100 flex justify-between items-center">
+          <div>
+            <h3 className="font-bold text-[#101F38] text-[16px]">{selectedPlanName}</h3>
+            <p className="text-[13px] text-[#5B6472] font-medium">{selectedGoal}</p>
+          </div>
+          <div className="text-[24px] font-black text-[#E3755D]">{selectedPlanPrice}</div>
+        </div>
+
+        <form className="p-8 space-y-5" onSubmit={handlePaymentAndRegister}>
+          {error && <div className="text-red-500 text-sm mb-4">{error}</div>}
+          <div className="space-y-2">
+            <label className="text-[13px] font-bold text-[#101F38] uppercase tracking-wider">Card Information</label>
+            <div className="border border-gray-200 rounded-[12px] overflow-hidden bg-white px-4 py-4">
+              <CardElement options={{
+                style: {
+                  base: {
+                    fontSize: '16px',
+                    color: '#101F38',
+                    '::placeholder': {
+                      color: '#aab7c4',
+                    },
+                  },
+                  invalid: {
+                    color: '#9e2146',
+                  },
+                },
+              }} />
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-[13px] font-bold text-[#101F38] uppercase tracking-wider">Name on Card</label>
+            <input type="text" placeholder="John Doe" required className="w-full px-4 py-3 rounded-[12px] border border-gray-200 bg-white text-[#101F38] outline-none focus:border-[#E3755D] font-medium" />
+          </div>
+
+          <button type="submit" disabled={!stripe || isRegistering} className="w-full bg-[#101F38] hover:bg-[#0A1526] text-white font-bold py-4 rounded-[12px] transition-all duration-300 shadow-[0_10px_20px_rgba(16,31,56,0.2)] hover:-translate-y-0.5 mt-4 text-[16px] flex justify-center items-center space-x-2 disabled:opacity-50">
+            <span className="material-icons text-[18px]">lock</span>
+            <span>{isRegistering ? 'Processing...' : 'Pay & Create Account'}</span>
+          </button>
+        </form>
+      </div>
+
+      <div className="text-center mt-6">
+        <p className="text-[12px] text-gray-400 flex items-center justify-center font-medium">
+          <span className="material-icons text-[14px] mr-1">security</span>
+          Payments are secure and encrypted
+        </p>
+      </div>
+    </div>
+  );
+}
+
+const currentQuestion = questions[currentStep - 1];
+const selectedAnswer = answers[currentStep];
+
+return (
+  <div key={currentStep} className="animate-in fade-in slide-in-from-right-4 duration-500">
+    <div className="mb-10">
+      <h1 className="text-[44px] leading-tight font-black text-[#101F38] mb-2 tracking-tight">Question {currentStep}</h1>
+    </div>
+
+    <div className="mb-12">
+      <h2 className="text-[22px] font-bold text-[#101F38] mb-6 tracking-tight">{currentQuestion.question}</h2>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+        {currentQuestion.options.map((option, idx) => (
+          <button
+            key={idx}
+            onClick={() => handleAnswerSelect(option)}
+            className={`relative flex items-center p-6 border rounded-[20px] transition-all duration-300 ${selectedAnswer === option
+              ? 'border-[#E3755D] bg-[#FDFBF9] shadow-[0_10px_20px_rgba(227,117,93,0.1)]'
+              : 'border-gray-200 bg-white hover:border-[#E3755D]/50 hover:shadow-sm'
+              }`}
+          >
+            <div className="shrink-0 w-6 h-6 rounded-full border-[1.5px] border-[#E3755D] flex items-center justify-center transition-colors">
+              {selectedAnswer === option && (
+                <div className="w-3 h-3 rounded-full bg-[#E3755D]"></div>
+              )}
+            </div>
+            <div className="flex-grow flex justify-center items-center px-4">
+              <span className={`text-[15px] leading-snug font-bold text-center transition-colors ${selectedAnswer === option ? 'text-[#E3755D]' : 'text-[#101F38]'}`}>
+                {option}
+              </span>
+            </div>
+          </button>
+        ))}
+      </div>
+    </div>
+  </div>
+);
   };
 
-  return (
-    <main className="w-full min-h-screen bg-[#F5F4F1] pt-32 pb-24 px-4 md:px-8 lg:px-16 flex items-center justify-center">
-      <style>{`
+return (
+  <main className="w-full min-h-screen bg-[#F5F4F1] pt-32 pb-24 px-4 md:px-8 lg:px-16 flex items-center justify-center">
+    <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500&display=swap');
         .font-body { font-family: 'Inter', sans-serif; }
         .font-mono { font-family: 'IBM Plex Mono', monospace; }
         main, main * { font-family: 'Inter', sans-serif; }
       `}</style>
 
-      {isQuestionsDone ? (
-        // Post-Questionnaire Views (Plan Selection, Account, Verification, Payment)
-        <div className="w-full">
-          {renderContent()}
+    {isQuestionsDone ? (
+      // Post-Questionnaire Views (Plan Selection, Account, Verification, Payment)
+      <div className="w-full">
+        {renderContent()}
+      </div>
+    ) : (
+      // Questionnaire View - Card Layout
+      <div className="w-full max-w-[1200px] mx-auto bg-white rounded-[32px] shadow-[0_30px_80px_-35px_rgba(15,23,42,0.35)] border border-gray-100 overflow-hidden flex min-h-[680px] relative">
+
+        {/* Left Side - Gradient Panel */}
+        <div className="hidden lg:flex lg:w-[42%] relative items-center justify-center bg-gradient-to-br from-[#EC4899] via-[#F59E0B] to-[#4338CA] text-white overflow-hidden">
+          <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_top_left,_rgba(255,255,255,0.5),_transparent_35%)]"></div>
+          <div className="absolute inset-y-0 right-0 w-2/3 bg-white/10 blur-2xl"></div>
+          <div className="relative z-10 max-w-md px-12 py-14">
+            <div className="rounded-[28px] border border-white/15 bg-white/10 p-6 shadow-lg backdrop-blur-xl mb-10">
+              <p className="text-sm uppercase tracking-[0.24em] font-semibold text-white/90">Begin your U.S. immigration journey</p>
+            </div>
+            <h2 className="text-4xl font-black tracking-tight mb-6">Immigration support made simple.</h2>
+            <p className="text-base leading-7 text-white/85 max-w-xl">
+              Track your case progress, manage documents, and get expert guidance every step of the way. Join thousands of applicants who trust Horizon Pathways to simplify their legal process.
+            </p>
+          </div>
+          <div className="absolute bottom-8 left-10 right-10 rounded-[28px] border border-white/20 bg-white/10 p-6 shadow-2xl backdrop-blur-xl">
+            <p className="text-sm text-white/90">Get personalized immigration guidance with fast application support and payment plans designed for your needs.</p>
+          </div>
         </div>
-      ) : (
-        // Questionnaire View - Card Layout
-        <div className="w-full max-w-[1200px] mx-auto bg-white rounded-[24px] shadow-[0_20px_50px_-15px_rgba(16,31,56,0.12)] border border-gray-100 overflow-hidden flex min-h-[650px] relative">
 
-          {/* Left Side - Image/Illustration */}
-          <div className="hidden lg:flex lg:w-[40%] relative overflow-hidden">
-            <div
-              className="absolute inset-0 bg-cover bg-center"
-              style={{ backgroundImage: "url('https://images.unsplash.com/photo-1511884642898-4c92249e20b6?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80')" }}
-            ></div>
-            <div className="absolute inset-0 bg-gradient-to-t from-[#101F38]/90 via-[#101F38]/40 to-transparent"></div>
-
-            <div className="absolute bottom-0 left-0 right-0 p-12 text-white">
-              <div className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-md rounded-full px-5 py-2 mb-6 border border-white/20 shadow-sm">
-                <span className="text-white text-[11px] font-bold tracking-[0.1em] uppercase">Horizon Pathways</span>
+        {/* Right Side - Content */}
+        <div className="w-full lg:w-[58%] py-10 px-8 sm:px-12 lg:px-14 relative">
+          <div className="flex items-center gap-3 mb-10">
+            <button onClick={handleBack} className="inline-flex items-center justify-center rounded-full border border-slate-200 bg-white/80 p-2 text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-white">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M19 12H5"></path>
+                <path d="M12 19L5 12L12 5"></path>
+              </svg>
+            </button>
+            <div className="flex items-center gap-3">
+              <div className="w-11 h-11 rounded-2xl bg-[#0F172A] flex items-center justify-center text-white text-lg font-black">H</div>
+              <div>
+                <p className="text-sm font-semibold text-slate-500">Horizon</p>
+                <p className="text-xs uppercase tracking-[0.28em] text-[#F97316] font-bold">PATHWAYS</p>
               </div>
-              <p className="text-[16px] font-medium leading-relaxed max-w-md text-white/80">
-                Start your U.S. immigration journey with confidence. Answer a few quick questions and we'll guide you to the right path — with experienced attorneys by your side.
-              </p>
             </div>
           </div>
 
-          {/* Right Side - Content */}
-          <div className="w-full lg:w-[60%] flex flex-col p-8 sm:p-12 lg:p-16 relative">
-            <div className="w-full max-w-[600px] mx-auto flex-grow flex flex-col justify-center">
+          <div className="max-w-xl">
+            <h1 className="text-4xl sm:text-[44px] font-black text-slate-950 mb-3">Create Account</h1>
+            <p className="text-base text-slate-600 mb-10">Start your immigration journey with us.</p>
 
-              {!isQuestionsDone && !isDisqualified && (
-                <button onClick={handleBack} className="inline-flex items-center gap-2 text-sm font-semibold text-[#E3755D] hover:text-[#C93500] transition-colors self-start mb-6">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <line x1="19" y1="12" x2="5" y2="12"></line>
-                    <polyline points="12 19 5 12 12 5"></polyline>
-                  </svg>
-                  Back
+            <div className="rounded-[28px] border border-slate-200 bg-slate-50 p-8 shadow-sm">
+              {error && (
+                <div className="mb-5 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                  {error}
+                </div>
+              )}
+
+              <form className="space-y-6" onSubmit={handleSendOtp}>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label className="text-sm font-semibold text-slate-800">First Name</label>
+                    <input
+                      type="text"
+                      placeholder="John"
+                      required
+                      value={firstName}
+                      onChange={(e) => setFirstName(e.target.value)}
+                      className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-slate-900 outline-none transition focus:border-[#F97316] focus:ring-1 focus:ring-[#F97316]/30"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-semibold text-slate-800">Last Name</label>
+                    <input
+                      type="text"
+                      placeholder="Doe"
+                      required
+                      value={lastName}
+                      onChange={(e) => setLastName(e.target.value)}
+                      className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-slate-900 outline-none transition focus:border-[#F97316] focus:ring-1 focus:ring-[#F97316]/30"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-semibold text-slate-800">Email Address</label>
+                  <div className="relative">
+                    <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M4 4H20V20H4V4Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                        <path d="M4 7L12 13L20 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </span>
+                    <input
+                      type="email"
+                      required
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="you@example.com"
+                      className="w-full rounded-2xl border border-slate-200 bg-white px-12 py-3 text-slate-900 outline-none transition focus:border-[#F97316] focus:ring-1 focus:ring-[#F97316]/30"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label className="text-sm font-semibold text-slate-800">Password</label>
+                    <div className="relative">
+                      <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M12 17C13.6569 17 15 15.6569 15 14C15 12.3431 13.6569 11 12 11C10.3431 11 9 12.3431 9 14C9 15.6569 10.3431 17 12 17Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                          <path d="M17 11V8C17 5.23858 14.7614 3 12 3C9.23858 3 7 5.23858 7 8V11" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                          <path d="M5 11H19C20.1046 11 21 11.8954 21 13V18C21 19.1046 20.1046 20 19 20H5C3.89543 20 3 19.1046 3 18V13C3 11.8954 3.89543 11 5 11Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                      </span>
+                      <input
+                        type="password"
+                        required
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        placeholder="••••••••"
+                        className="w-full rounded-2xl border border-slate-200 bg-white px-12 py-3 text-slate-900 outline-none transition focus:border-[#F97316] focus:ring-1 focus:ring-[#F97316]/30"
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-semibold text-slate-800">Confirm Password</label>
+                    <div className="relative">
+                      <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M12 17C13.6569 17 15 15.6569 15 14C15 12.3431 13.6569 11 12 11C10.3431 11 9 12.3431 9 14C9 15.6569 10.3431 17 12 17Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                          <path d="M17 11V8C17 5.23858 14.7614 3 12 3C9.23858 3 7 5.23858 7 8V11" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                          <path d="M5 11H19C20.1046 11 21 11.8954 21 13V18C21 19.1046 20.1046 20 19 20H5C3.89543 20 3 19.1046 3 18V13C3 11.8954 3.89543 11 5 11Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                      </span>
+                      <input
+                        type="password"
+                        required
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        placeholder="••••••••"
+                        className="w-full rounded-2xl border border-slate-200 bg-white px-12 py-3 text-slate-900 outline-none transition focus:border-[#F97316] focus:ring-1 focus:ring-[#F97316]/30"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <label className="flex items-start gap-3 text-sm text-slate-600">
+                  <input
+                    type="checkbox"
+                    checked={termsAccepted}
+                    onChange={(e) => setTermsAccepted(e.target.checked)}
+                    className="mt-1 h-4 w-4 rounded border-slate-300 text-[#F97316] focus:ring-[#F97316]"
+                  />
+                  <span>
+                    I agree to the <a href="/terms" className="text-[#F97316] font-semibold hover:underline">terms and conditions</a>.
+                  </span>
+                </label>
+
+                <button
+                  type="submit"
+                  disabled={isRegistering}
+                  className="w-full rounded-3xl bg-[#0F172A] py-4 text-sm font-semibold uppercase tracking-[0.04em] text-white shadow-[0_18px_40px_rgba(15,23,42,0.18)] transition hover:bg-[#111827] disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {isRegistering ? 'Creating Account...' : 'Create Account'}
                 </button>
-              )}
+              </form>
+            </div>
 
-              {!isQuestionsDone && !isDisqualified && currentStep > 0 && (
-                <div className="text-[#E3755D] font-bold text-[15px] mb-3">
-                  Step {currentStep} of {totalSteps}
-                </div>
-              )}
-
-              {!isQuestionsDone && !isDisqualified && (
-                <div className="mb-10 w-full">
-                  <div className="flex justify-between font-mono text-[11px] text-[#8A8F98] mb-1.5">
-                    <span>{Math.round(progress)}%</span>
-                    <span>100%</span>
-                  </div>
-                  <div className="w-full h-2 bg-[#F0EEE8] rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-gradient-to-r from-[#5BAE8C] to-[#3F9A73] rounded-full transition-all duration-500 ease-out"
-                      style={{ width: `${progress}%` }}
-                    ></div>
-                  </div>
-                </div>
-              )}
-
-              <div className="flex-grow w-full flex flex-col justify-center">
-                {renderContent()}
-              </div>
-
-              {!isDisqualified && currentStep > 0 && (
-                <div className="flex justify-end items-center pb-2 mt-12 w-full pt-6 border-t border-gray-100">
-                  <button
-                    onClick={handleRestart}
-                    className="bg-[#E3755D] hover:bg-[#C93500] text-white font-bold py-3 px-6 rounded-xl shadow-sm transition-colors flex items-center space-x-2"
-                  >
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                      <polyline points="1 4 1 10 7 10"></polyline>
-                      <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
-                    </svg>
-                    <span>Restart</span>
-                  </button>
-                </div>
-              )}
+            <div className="mt-8 border-t border-slate-200 pt-6 text-center text-sm text-slate-500">
+              Already have an account? <Link href="/login" className="font-semibold text-[#F97316] hover:underline">Sign in here</Link>
             </div>
           </div>
         </div>
-      )}
-    </main>
-  );
+      </div>
+    )}
+  </main>
+);
 }
 
 function SignupFlow() {
