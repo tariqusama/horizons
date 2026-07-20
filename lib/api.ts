@@ -10,18 +10,47 @@ const api = axios.create({
     },
 });
 
-const getStoredToken = () => {
+let inMemoryToken: string | null = null;
+
+const safeGetStorageItem = (key: string) => {
     if (typeof window === 'undefined') return null;
-    return localStorage.getItem('authToken');
+    try {
+        return localStorage.getItem(key);
+    } catch {
+        return null;
+    }
+};
+
+const safeSetStorageItem = (key: string, value: string) => {
+    if (typeof window === 'undefined') return;
+    try {
+        localStorage.setItem(key, value);
+    } catch {
+        inMemoryToken = value;
+    }
+};
+
+const safeRemoveStorageItem = (key: string) => {
+    if (typeof window === 'undefined') return;
+    try {
+        localStorage.removeItem(key);
+    } catch {
+        inMemoryToken = null;
+    }
+};
+
+export const getStoredToken = () => {
+    if (inMemoryToken) return inMemoryToken;
+    return safeGetStorageItem('authToken');
 };
 
 export const setAuthToken = (token: string | null) => {
-    if (typeof window !== 'undefined') {
-        if (token) {
-            localStorage.setItem('authToken', token);
-        } else {
-            localStorage.removeItem('authToken');
-        }
+    if (token) {
+        safeSetStorageItem('authToken', token);
+        inMemoryToken = token;
+    } else {
+        safeRemoveStorageItem('authToken');
+        inMemoryToken = null;
     }
 
     if (token) {

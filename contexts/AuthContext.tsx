@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import api, { setAuthToken } from '@/lib/api';
+import api, { setAuthToken, getStoredToken } from '@/lib/api';
 import { useRouter } from 'next/navigation';
 
 interface User {
@@ -34,7 +34,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const checkAuth = async () => {
         setIsLoading(true);
         try {
-            const token = typeof window !== 'undefined' ? localStorage.getItem('authToken') : null;
+            const token = getStoredToken();
             if (!token) {
                 throw new Error('No auth token');
             }

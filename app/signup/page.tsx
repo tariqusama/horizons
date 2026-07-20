@@ -1418,6 +1418,22 @@ function SignupFlowContent() {
 }
 
 function SignupFlow() {
+  if (!stripeKey) {
+    return (
+      <main className="w-full min-h-screen bg-[#F5F4F1] pt-32 pb-24 px-4 md:px-8 lg:px-16 flex items-center justify-center">
+        <div className="w-full max-w-3xl mx-auto p-8 bg-white rounded-[24px] shadow-[0_20px_50px_-15px_rgba(16,31,56,0.12)] border border-gray-100">
+          <h1 className="text-3xl font-black text-[#101F38] mb-4">Stripe is not configured</h1>
+          <p className="text-[#5B6472] text-base leading-relaxed">
+            The signup and payment experience cannot be completed because the Stripe publishable key is missing.
+          </p>
+          <p className="mt-4 text-sm text-gray-500">
+            Please set <code className="text-sm rounded bg-gray-100 px-1 py-0.5">NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY</code> in your environment and redeploy.
+          </p>
+        </div>
+      </main>
+    );
+  }
+
   return (
     <Elements stripe={stripePromise}>
       <SignupFlowContent />
