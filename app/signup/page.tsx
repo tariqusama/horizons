@@ -112,7 +112,7 @@ const getPackagePricing = (selectedGoal: string | null, answers: Record<number, 
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || '');
 
-function SignupFlow() {
+function SignupFlowContent() {
   const { register } = useAuth();
   const [currentStep, setCurrentStep] = useState(0); // 0 = Goal selection, 1+ = questions, Final = account creation
   const [selectedGoal, setSelectedGoal] = useState<string | null>(null);
@@ -1225,8 +1225,7 @@ function SignupFlow() {
   };
 
   return (
-    <Elements stripe={stripePromise}>
-      <main className="w-full min-h-screen bg-[#F5F4F1] pt-32 pb-24 px-4 md:px-8 lg:px-16 flex items-center justify-center">
+    <main className="w-full min-h-screen bg-[#F5F4F1] pt-32 pb-24 px-4 md:px-8 lg:px-16 flex items-center justify-center">
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500&display=swap');
         .font-body { font-family: 'Inter', sans-serif; }
@@ -1319,6 +1318,13 @@ function SignupFlow() {
         </div>
       )}
     </main>
+  );
+}
+
+function SignupFlow() {
+  return (
+    <Elements stripe={stripePromise}>
+      <SignupFlowContent />
     </Elements>
   );
 }
