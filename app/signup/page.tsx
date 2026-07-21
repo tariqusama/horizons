@@ -1488,19 +1488,6 @@ function SignupFlow() {
   return (
     <>
       <Header />
-      {!hasStripeEnvKey && (
-        <div className="w-full min-h-screen bg-[#F5F4F1] pt-32 pb-24 px-4 md:px-8 lg:px-16 flex items-center justify-center">
-          <div className="w-full max-w-3xl mx-auto p-8 bg-white rounded-[24px] shadow-[0_20px_50px_-15px_rgba(16,31,56,0.12)] border border-gray-100 mb-8">
-            <h1 className="text-3xl font-black text-[#101F38] mb-4">Stripe fallback in use</h1>
-            <p className="text-[#5B6472] text-base leading-relaxed">
-              No environment publishable key was found, so the frontend is using a fallback Stripe test key.
-            </p>
-            <p className="mt-4 text-sm text-gray-500">
-              For production, set <code className="text-sm rounded bg-gray-100 px-1 py-0.5">NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY</code> in your environment and redeploy.
-            </p>
-          </div>
-        </div>
-      )}
       <Elements stripe={stripePromise}>
         <SignupFlowContent />
       </Elements>
