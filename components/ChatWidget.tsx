@@ -12,6 +12,14 @@ export default function ChatWidget() {
   const [messages, setMessages] = useState<Message[]>([
     { id: '1', sender: 'nancy', text: "Hi! I'm Nancy, your immigration assistant. How can I help you today?" }
   ]);
+  const [unreadCount, setUnreadCount] = useState<number>(() => {
+    try {
+      const v = localStorage.getItem('chat_unread_count');
+      return v ? parseInt(v, 10) : 0;
+    } catch (e) {
+      return 0;
+    }
+  });
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -24,6 +32,21 @@ export default function ChatWidget() {
     if (isOpen) {
       scrollToBottom();
     }
+  }, [messages, isOpen]);
+
+  // Track incoming messages while widget is closed and increment unread counter
+  const prevMessagesLen = useRef(messages.length);
+  useEffect(() => {
+    const prev = prevMessagesLen.current;
+    if (!isOpen && messages.length > prev) {
+      const diff = messages.length - prev;
+      setUnreadCount((c) => {
+        const next = c + diff;
+        try { localStorage.setItem('chat_unread_count', String(next)); } catch (e) { }
+        return next;
+      });
+    }
+    prevMessagesLen.current = messages.length;
   }, [messages, isOpen]);
 
   const handleSend = async (e: React.FormEvent) => {
@@ -41,7 +64,7 @@ export default function ChatWidget() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: userMessage })
       });
-      
+
       const data = await res.json();
       setMessages(prev => [...prev, { id: (Date.now() + 1).toString(), sender: 'nancy', text: data.reply }]);
     } catch (err) {
@@ -53,15 +76,20 @@ export default function ChatWidget() {
 
   if (!isOpen) {
     return (
-      <div 
-        onClick={() => setIsOpen(true)}
+      <div
+        onClick={() => { setIsOpen(true); setUnreadCount(0); try { localStorage.setItem('chat_unread_count', '0'); } catch (e) { } }}
         className="fixed bottom-6 right-6 z-50 flex items-center bg-white rounded-full shadow-[0_10px_40px_-10px_rgba(0,0,0,0.15)] pr-2 pl-5 py-2 space-x-3 cursor-pointer border border-gray-100 hover:-translate-y-1 transition-transform"
       >
         <span className="text-sm font-semibold text-[#101F38]">Need help? Chat Nancy</span>
-        <div className="w-10 h-10 bg-[#E3755D] rounded-full flex items-center justify-center text-white shadow-sm">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M20 2H4C2.9 2 2 2.9 2 4V22L6 18H20C21.1 18 22 17.1 22 16V4C22 2.9 21.1 2 20 2Z" />
-          </svg>
+        <div className="relative">
+          <div className="w-10 h-10 bg-[#E3755D] rounded-full flex items-center justify-center text-white shadow-sm">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M20 2H4C2.9 2 2 2.9 2 4V22L6 18H20C21.1 18 22 17.1 22 16V4C22 2.9 21.1 2 20 2Z" />
+            </svg>
+          </div>
+          {unreadCount > 0 && (
+            <div className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center">{unreadCount > 9 ? '9+' : unreadCount}</div>
+          )}
         </div>
       </div>
     );
@@ -119,8 +147,8 @@ export default function ChatWidget() {
             placeholder="Type your message..."
             className="flex-1 bg-[#F5F4F1] border-none outline-none px-4 py-2.5 rounded-full text-[14px] text-[#101F38] placeholder-gray-400"
           />
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             disabled={!input.trim() || isLoading}
             className="w-10 h-10 bg-[#E3755D] rounded-full flex items-center justify-center text-white shrink-0 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#C93500] transition-colors"
           >
