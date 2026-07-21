@@ -12,14 +12,7 @@ export default function ChatWidget() {
   const [messages, setMessages] = useState<Message[]>([
     { id: '1', sender: 'nancy', text: "Hi! I'm Nancy, your immigration assistant. How can I help you today?" }
   ]);
-  const [unreadCount, setUnreadCount] = useState<number>(() => {
-    try {
-      const v = localStorage.getItem('chat_unread_count');
-      return v ? parseInt(v, 10) : 0;
-    } catch (e) {
-      return 0;
-    }
-  });
+  const [unreadCount, setUnreadCount] = useState(0);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -33,6 +26,15 @@ export default function ChatWidget() {
       scrollToBottom();
     }
   }, [messages, isOpen]);
+
+  useEffect(() => {
+    try {
+      const storedCount = Number.parseInt(localStorage.getItem('chat_unread_count') || '0', 10);
+      setUnreadCount(Number.isNaN(storedCount) ? 0 : storedCount);
+    } catch {
+      setUnreadCount(0);
+    }
+  }, []);
 
   // Track incoming messages while widget is closed and increment unread counter
   const prevMessagesLen = useRef(messages.length);
