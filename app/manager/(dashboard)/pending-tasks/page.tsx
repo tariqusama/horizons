@@ -121,6 +121,7 @@ export default function ManagerPendingTasksPage() {
     const [activeFilter, setActiveFilter] = useState<'All' | 'Breached' | 'Critical'>('All');
     const [showAcknowledged, setShowAcknowledged] = useState(false);
     const [acknowledgedIds, setAcknowledgedIds] = useState<number[]>(() => {
+        if (typeof window === 'undefined') return [];
         try {
             const raw = localStorage.getItem('pendingTasksAck');
             return raw ? JSON.parse(raw) : [];
