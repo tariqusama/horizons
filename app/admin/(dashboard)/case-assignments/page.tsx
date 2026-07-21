@@ -85,7 +85,8 @@ export default function AdminCaseAssignmentsPage() {
         try {
             const [casesData, usersData] = await Promise.all([getCases(), getUsers()]);
             setCases(casesData);
-            setManagers(usersData.filter(u => u.role !== 'Client' && u.role !== 'Read-Only Viewer'));
+            // Only include users with the "Case Manager" role
+            setManagers(usersData.filter(u => ((u.role || '').toLowerCase().includes('case manager'))));
         } catch (error) {
             console.error('Failed to load data:', error);
         }
