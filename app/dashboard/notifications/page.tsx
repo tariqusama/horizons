@@ -13,6 +13,18 @@ function formatDate(dt: string) {
     }
 }
 
+function getNotificationData(data: Notification['data']) {
+    if (!data) return {};
+    if (typeof data !== 'string') return data;
+
+    try {
+        const parsed = JSON.parse(data);
+        return parsed && typeof parsed === 'object' ? parsed : {};
+    } catch {
+        return { text: data };
+    }
+}
+
 export default function ClientNotificationsPage() {
     const [notifications, setNotifications] = useState<Notification[]>([]);
     const [loading, setLoading] = useState(false);
@@ -129,7 +141,7 @@ export default function ClientNotificationsPage() {
                         </div>
                     )}
                     {!loading && notifications.map((notification) => {
-                        const parsed = typeof notification.data === 'string' ? JSON.parse(notification.data) : notification.data;
+                        const parsed = getNotificationData(notification.data);
                         const isUnread = !notification.read_at;
                         return (
                             <div key={notification.id} className={`${styles.notificationCard} ${isUnread ? styles.notificationUnread : ''}`}>
