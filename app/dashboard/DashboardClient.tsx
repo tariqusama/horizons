@@ -6,11 +6,31 @@ import { useRouter } from 'next/navigation';
 import Sidebar from "./Sidebar";
 import styles from "./dashboardLayout.module.css";
 import { useAuth } from '@/contexts/AuthContext';
+import { getNotifications, markAsRead, Notification } from '@/lib/api/notifications';
 
 export default function DashboardClient({ children }: { children: React.ReactNode }) {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const { user, isLoading } = useAuth();
     const router = useRouter();
+
+    const [notifications, setNotifications] = useState<Notification[]>([]);
+    const [unreadCount, setUnreadCount] = useState(0);
+    const [showNotifications, setShowNotifications] = useState(false);
+
+    useEffect(() => {
+        const fetchLayoutData = async () => {
+            try {
+                if (user) {
+                    const data = await getNotifications();
+                    setNotifications(data);
+                    setUnreadCount(data.filter(n => !n.read_at).length);
+                }
+            } catch (err) {
+                console.error('Failed to load notifications', err);
+            }
+        };
+        fetchLayoutData();
+    }, [user]);
 
     useEffect(() => {
         if (!isLoading) {
@@ -62,11 +82,56 @@ export default function DashboardClient({ children }: { children: React.ReactNod
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
                             </svg>
                         </button>
-                        <button className={`${styles.actionIconBtn} ${styles.blue}`}>
-                            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-                            </svg>
-                        </button>
+                        <div className="relative">
+                            <button 
+                                onClick={() => setShowNotifications(!showNotifications)} 
+                                className={`${styles.actionIconBtn} ${styles.blue} relative`}
+                            >
+                                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                                </svg>
+                                {unreadCount > 0 && (
+                                    <span className="absolute top-0 right-0 inline-flex items-center justify-center h-4 min-w-[1rem] rounded-full bg-red-500 text-[9px] text-white font-bold px-1 transform translate-x-1/4 -translate-y-1/4">
+                                        {unreadCount}
+                                    </span>
+                                )}
+                            </button>
+                            
+                            {showNotifications && (
+                                <div className="absolute right-0 mt-2 w-[320px] sm:w-[360px] bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden z-50">
+                                    <div className="px-5 py-3 border-b border-gray-100 flex justify-between items-center bg-[#F8F9FA]">
+                                        <h3 className="font-bold text-[#1B3A64] text-sm">Notifications</h3>
+                                        <button onClick={async () => { await markAsRead(); const data = await getNotifications(); setNotifications(data); setUnreadCount(data.filter(n => !n.read_at).length); }} className="text-xs text-[#5A6579] hover:text-[#E3755D] font-medium">Mark all as read</button>
+                                    </div>
+                                    <div className="max-h-[320px] overflow-y-auto">
+                                        {notifications.length === 0 && (
+                                            <div className="p-6 text-center text-sm text-[#5B6472]">No notifications</div>
+                                        )}
+                                        {notifications.map((n) => {
+                                            const parsedData = typeof n.data === 'string' ? JSON.parse(n.data) : n.data;
+                                            const isUnread = !n.read_at;
+                                            return (
+                                                <div key={n.id} className={`p-4 transition-colors flex gap-3 items-start border-b border-gray-50 ${isUnread ? 'bg-[#FDFCFB]' : 'bg-white hover:bg-[#F9F8F6]'}`}>
+                                                    <div className="w-2 h-2 mt-2 rounded-full shrink-0" style={{ background: isUnread ? '#E3755D' : 'transparent' }}></div>
+                                                    <div className="flex-1 min-w-0">
+                                                        <div className="flex justify-between items-start mb-1 gap-2">
+                                                            <p className={`text-sm ${isUnread ? 'font-black text-[#101F38]' : 'font-bold text-[#101F38]'}`}>{parsedData?.title || 'Notification'}</p>
+                                                            <span className="text-[10px] font-semibold text-[#8A8F98] whitespace-nowrap">{new Date(n.created_at).toLocaleString()}</span>
+                                                        </div>
+                                                        <p className={`text-sm ${isUnread ? 'text-[#101F38] font-medium' : 'text-[#5B6472]'}`}>{parsedData?.text}</p>
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                    <div className="px-5 py-3 border-t border-gray-100 text-center bg-[#F8F9FA]">
+                                        <Link href="/dashboard/notifications" onClick={() => setShowNotifications(false)} className="text-xs font-bold text-[#E3755D] hover:text-[#C8634D]">
+                                            View all notifications
+                                        </Link>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
                         <Link href="/dashboard/profile" className={styles.userProfile}>
                             <div className={styles.userAvatar}>
                                 {user?.profile_picture_url ? (
