@@ -147,6 +147,142 @@ const managerMenu: MenuGroup[] = [
     }
 ];
 
+/* ---------- Shared sidebar nav content ---------- */
+function ManagerSidebarContent({
+    pathname,
+    logout,
+    openGroups,
+    toggleGroup,
+    isActivePath,
+    onLinkClick,
+    user,
+}: {
+    pathname: string | null;
+    logout: () => void;
+    openGroups: Record<string, boolean>;
+    toggleGroup: (title: string) => void;
+    isActivePath: (href: string) => boolean;
+    onLinkClick?: () => void;
+    user: any;
+}) {
+    return (
+        <>
+            <div className="flex items-center justify-center mb-8 px-2">
+                <div className="w-full max-w-[150px]">
+                    <Image src="/horizonlogo.png" alt="Horizon Pathways" width={150} height={40} className="object-contain" />
+                </div>
+            </div>
+
+            <div className="text-[11px] font-mono uppercase tracking-wider text-[#B7B4AA] px-2 mb-3">Main</div>
+
+            <nav className="flex-1 min-h-0 space-y-1.5 overflow-y-auto pr-1 sidebar-scrollbar">
+                <div className="space-y-6 px-2">
+                    {managerMenu.map((group) => {
+                        const isOpen = group.collapsible ? openGroups[group.title] : true;
+                        return (
+                            <div key={group.title} className="space-y-3">
+                                {group.title !== 'Main' && (
+                                    <div className="flex items-center justify-between">
+                                        <div className="text-[11px] uppercase tracking-widest text-[#9CA3AF] font-bold">{group.title}</div>
+                                        {group.collapsible && (
+                                            <button
+                                                type="button"
+                                                onClick={() => toggleGroup(group.title)}
+                                                className="text-[#6B7280] hover:text-[#111827] transition"
+                                            >
+                                                <span className={`inline-flex items-center justify-center w-7 h-7 rounded-full border border-[#E5E7EB] ${isOpen ? 'rotate-180' : ''} transition-transform`}>
+                                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                        <polyline points="6 9 12 15 18 9" />
+                                                    </svg>
+                                                </span>
+                                            </button>
+                                        )}
+                                    </div>
+                                )}
+                                {(!group.collapsible || isOpen) && (
+                                    <div className="space-y-1.5">
+                                        {group.items.map((item) => {
+                                            const isActive = isActivePath(item.href);
+                                            const isExternal = item.href.startsWith('http');
+                                            if (group.collapsible) {
+                                                return isExternal ? (
+                                                    <a
+                                                        key={item.label}
+                                                        href={item.href}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="block rounded-2xl px-4 py-2 text-sm text-[#475569] hover:bg-[#F8FAFB] transition"
+                                                    >
+                                                        {item.label}
+                                                    </a>
+                                                ) : (
+                                                    <Link
+                                                        key={item.label}
+                                                        href={item.href}
+                                                        onClick={onLinkClick}
+                                                        className="block rounded-2xl px-4 py-2 text-sm text-[#475569] hover:bg-[#F8FAFB] transition"
+                                                    >
+                                                        {item.label}
+                                                    </Link>
+                                                );
+                                            }
+                                            const linkClasses = isActive
+                                                ? 'flex items-center gap-3 px-3 py-3 rounded-[24px] text-sm font-semibold bg-[#101F38] text-white shadow-[0_10px_30px_rgba(16,31,56,0.12)] transition'
+                                                : 'flex items-center gap-3 px-3 py-3 rounded-[24px] text-sm font-semibold text-[#1F2937] bg-white hover:bg-[#F8FAFB] transition';
+                                            const iconStyle = {
+                                                backgroundColor: isActive ? '#E3755D' : item.iconBg || '#DCEBFB',
+                                                color: isActive ? '#FFFFFF' : item.iconFg || '#2F6FB3',
+                                            };
+                                            return isExternal ? (
+                                                <a
+                                                    key={item.label}
+                                                    href={item.href}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className={linkClasses}
+                                                >
+                                                    <span className="w-10 h-10 rounded-full flex items-center justify-center shrink-0" style={iconStyle}>
+                                                        {item.icon || <span className="text-xs">•</span>}
+                                                    </span>
+                                                    <span className="truncate">{item.label}</span>
+                                                </a>
+                                            ) : (
+                                                <Link
+                                                    key={item.label}
+                                                    href={item.href}
+                                                    onClick={onLinkClick}
+                                                    className={linkClasses}
+                                                >
+                                                    <span className="w-10 h-10 rounded-full flex items-center justify-center shrink-0" style={iconStyle}>
+                                                        {item.icon || <span className="text-xs">•</span>}
+                                                    </span>
+                                                    <span className="truncate">{item.label}</span>
+                                                </Link>
+                                            );
+                                        })}
+                                    </div>
+                                )}
+                            </div>
+                        );
+                    })}
+                </div>
+            </nav>
+
+            <div className="mt-6 px-3 pb-2">
+                <button
+                    onClick={() => logout()}
+                    className="w-full flex items-center justify-center gap-2 rounded-full bg-[#E3755D] text-white py-3.5 text-sm font-bold transition hover:bg-[#C93500] shadow-sm"
+                >
+                    <span className="h-8 w-8 rounded-full bg-white flex items-center justify-center text-xs font-bold text-[#101F38]">
+                        {user?.name?.charAt(0) || 'M'}
+                    </span>
+                    Signout
+                </button>
+            </div>
+        </>
+    );
+}
+
 export default function ManagerLayoutClient({ children }: { children: React.ReactNode }) {
     const router = useRouter();
     const pathname = usePathname();
@@ -156,6 +292,7 @@ export default function ManagerLayoutClient({ children }: { children: React.Reac
     const [notifications, setNotifications] = useState<Notification[]>([]);
     const [loadingNotifications, setLoadingNotifications] = useState(false);
     const [unreadCount, setUnreadCount] = useState(0);
+    const [sidebarOpen, setSidebarOpen] = useState(false);
     const [openGroups, setOpenGroups] = useState(() =>
         Object.fromEntries(
             managerMenu
@@ -218,6 +355,12 @@ export default function ManagerLayoutClient({ children }: { children: React.Reac
         }
     }, [user, isLoading, router]);
 
+    // Close sidebar & notifications on route change
+    useEffect(() => {
+        setSidebarOpen(false);
+        setShowNotifications(false);
+    }, [pathname]);
+
     if (isLoading) {
         return (
             <div className="w-full min-h-screen flex items-center justify-center bg-gray-50">
@@ -247,135 +390,85 @@ export default function ManagerLayoutClient({ children }: { children: React.Reac
     }
 
     return (
-        <div className="min-h-screen bg-[#F5F4F1] flex font-body p-4 gap-4">
+        <div className="min-h-screen bg-[#F5F4F1] flex font-body p-2 sm:p-4 gap-2 sm:gap-4">
             <style>{`
+                @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+                .font-body, .font-body * { font-family: 'Inter', sans-serif; }
                 .sidebar-scrollbar::-webkit-scrollbar { width: 6px; }
                 .sidebar-scrollbar::-webkit-scrollbar-thumb { background: rgba(151, 151, 151, 0.45); border-radius: 9999px; }
                 .sidebar-scrollbar::-webkit-scrollbar-track { background: transparent; }
             `}</style>
-            <aside className="hidden lg:flex lg:flex-col w-64 shrink-0 bg-white rounded-[24px] shadow-sm px-4 py-6 h-[calc(100vh-32px)] overflow-hidden">
-                <div className="flex items-center justify-center mb-8 px-2">
-                    <div className="w-full max-w-[150px]">
-                        <Image src="/horizonlogo.png" alt="Horizon Pathways" width={150} height={40} className="object-contain" />
-                    </div>
-                </div>
 
-                <div className="text-[11px] font-mono uppercase tracking-wider text-[#B7B4AA] px-2 mb-3">Main</div>
+            {/* Mobile Overlay */}
+            {sidebarOpen && (
+                <div
+                    className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+                    onClick={() => setSidebarOpen(false)}
+                />
+            )}
 
-                <nav className="flex-1 min-h-0 space-y-1.5 overflow-y-auto pr-1 sidebar-scrollbar">
-                    <div className="space-y-6 px-2">
-                        {managerMenu.map((group) => {
-                            const isOpen = group.collapsible ? openGroups[group.title] : true;
-                            return (
-                                <div key={group.title} className="space-y-3">
-                                    {group.title !== 'Main' && (
-                                        <div className="flex items-center justify-between">
-                                            <div className="text-[11px] uppercase tracking-widest text-[#9CA3AF] font-bold">{group.title}</div>
-                                            {group.collapsible && (
-                                                <button
-                                                    type="button"
-                                                    onClick={() => toggleGroup(group.title)}
-                                                    className="text-[#6B7280] hover:text-[#111827] transition"
-                                                >
-                                                    <span className={`inline-flex items-center justify-center w-7 h-7 rounded-full border border-[#E5E7EB] ${isOpen ? 'rotate-180' : ''} transition-transform`}>
-                                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                                            <polyline points="6 9 12 15 18 9" />
-                                                        </svg>
-                                                    </span>
-                                                </button>
-                                            )}
-                                        </div>
-                                    )}
-                                    {(!group.collapsible || isOpen) && (
-                                        <div className="space-y-1.5">
-                                            {group.items.map((item) => {
-                                                const isActive = isActivePath(item.href);
-                                                const isExternal = item.href.startsWith('http');
-                                                if (group.collapsible) {
-                                                    return isExternal ? (
-                                                        <a
-                                                            key={item.label}
-                                                            href={item.href}
-                                                            target="_blank"
-                                                            rel="noopener noreferrer"
-                                                            className="block rounded-2xl px-4 py-2 text-sm text-[#475569] hover:bg-[#F8FAFB] transition"
-                                                        >
-                                                            {item.label}
-                                                        </a>
-                                                    ) : (
-                                                        <Link
-                                                            key={item.label}
-                                                            href={item.href}
-                                                            className="block rounded-2xl px-4 py-2 text-sm text-[#475569] hover:bg-[#F8FAFB] transition"
-                                                        >
-                                                            {item.label}
-                                                        </Link>
-                                                    );
-                                                }
-                                                const linkClasses = isActive
-                                                    ? 'flex items-center gap-3 px-3 py-3 rounded-[24px] text-sm font-semibold bg-[#101F38] text-white shadow-[0_10px_30px_rgba(16,31,56,0.12)] transition'
-                                                    : 'flex items-center gap-3 px-3 py-3 rounded-[24px] text-sm font-semibold text-[#1F2937] bg-white hover:bg-[#F8FAFB] transition';
-                                                const iconStyle = {
-                                                    backgroundColor: isActive ? '#E3755D' : item.iconBg || '#DCEBFB',
-                                                    color: isActive ? '#FFFFFF' : item.iconFg || '#2F6FB3',
-                                                };
-                                                return isExternal ? (
-                                                    <a
-                                                        key={item.label}
-                                                        href={item.href}
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
-                                                        className={linkClasses}
-                                                    >
-                                                        <span className="w-10 h-10 rounded-full flex items-center justify-center shrink-0" style={iconStyle}>
-                                                            {item.icon || <span className="text-xs">•</span>}
-                                                        </span>
-                                                        <span className="truncate">{item.label}</span>
-                                                    </a>
-                                                ) : (
-                                                    <Link
-                                                        key={item.label}
-                                                        href={item.href}
-                                                        className={linkClasses}
-                                                    >
-                                                        <span className="w-10 h-10 rounded-full flex items-center justify-center shrink-0" style={iconStyle}>
-                                                            {item.icon || <span className="text-xs">•</span>}
-                                                        </span>
-                                                        <span className="truncate">{item.label}</span>
-                                                    </Link>
-                                                );
-                                            })}
-                                        </div>
-                                    )}
-                                </div>
-                            );
-                        })}
-                    </div>
-                </nav>
+            {/* Mobile Sidebar Drawer */}
+            <div className={`fixed top-0 left-0 h-full w-72 bg-white z-50 flex flex-col px-4 py-6 shadow-2xl transition-transform duration-300 lg:hidden overflow-y-auto ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+                <button
+                    onClick={() => setSidebarOpen(false)}
+                    className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-[#F5F4F1] text-[#5B6472] hover:text-[#101F38] transition-colors"
+                    aria-label="Close menu"
+                >
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="16" height="16">
+                        <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                </button>
+                <ManagerSidebarContent
+                    pathname={pathname}
+                    logout={logout}
+                    openGroups={openGroups}
+                    toggleGroup={toggleGroup}
+                    isActivePath={isActivePath}
+                    onLinkClick={() => setSidebarOpen(false)}
+                    user={user}
+                />
+            </div>
 
-                <div className="mt-6 px-3 pb-2">
-                    <button
-                        onClick={() => logout()}
-                        className="w-full flex items-center justify-center gap-2 rounded-full bg-[#E3755D] text-white py-3.5 text-sm font-bold transition hover:bg-[#C93500] shadow-sm"
-                    >
-                        <span className="h-8 w-8 rounded-full bg-white flex items-center justify-center text-xs font-bold text-[#101F38]">N</span>
-                        Signout
-                    </button>
-                </div>
+            {/* Desktop Sidebar */}
+            <aside className="hidden lg:flex lg:flex-col w-64 shrink-0 bg-white rounded-[24px] shadow-sm px-4 py-6 h-[calc(100vh-32px)] overflow-hidden sticky top-4">
+                <ManagerSidebarContent
+                    pathname={pathname}
+                    logout={logout}
+                    openGroups={openGroups}
+                    toggleGroup={toggleGroup}
+                    isActivePath={isActivePath}
+                    user={user}
+                />
             </aside>
 
             <div className="flex-1 min-w-0 flex flex-col">
-                <header className="flex items-center gap-4 px-6 lg:px-8 py-4 mb-2 bg-white border-b border-gray-200 shadow-sm">
-                    <div className="flex-1 relative">
+                {/* Header */}
+                <header className="flex items-center gap-2 sm:gap-4 px-3 sm:px-6 lg:px-8 py-3 sm:py-4 mb-2 bg-white rounded-2xl shadow-sm">
+                    {/* Hamburger – mobile only */}
+                    <button
+                        onClick={() => setSidebarOpen(true)}
+                        className="lg:hidden w-10 h-10 rounded-full bg-[#F5F4F1] flex items-center justify-center text-[#5B6472] hover:text-[#101F38] transition-colors shrink-0"
+                        aria-label="Open menu"
+                    >
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="18" height="18">
+                            <line x1="3" y1="6" x2="21" y2="6" /><line x1="3" y1="12" x2="21" y2="12" /><line x1="3" y1="18" x2="21" y2="18" />
+                        </svg>
+                    </button>
+
+                    <div className="flex-1 relative min-w-0">
                         <input
                             type="text"
                             placeholder="Search cases, clients, updates..."
                             className="w-full pl-4 pr-4 py-3 rounded-full border border-[#ECE9E2] bg-[#F8F9FA] text-sm text-[#1F2937] placeholder:text-[#9CA3AF] outline-none focus:border-[#E3755D] focus:bg-white transition"
                         />
                     </div>
-                    <div className="relative">
+
+                    <div className="relative shrink-0">
                         <button onClick={toggleNotifications} className="w-10 h-10 rounded-full bg-white border border-[#ECE9E2] flex items-center justify-center text-[#5B6472] hover:text-[#1B3A64] transition-colors shadow-sm">
-                            <span className="material-icons">notifications</span>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="18" height="18">
+                                <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
+                                <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                            </svg>
                             {unreadCount > 0 && (
                                 <span className="absolute -top-1 -right-1 inline-flex items-center justify-center h-5 min-w-[1.25rem] rounded-full bg-[#E3755D] text-[10px] text-white font-bold px-1.5">
                                     {unreadCount}
@@ -383,7 +476,7 @@ export default function ManagerLayoutClient({ children }: { children: React.Reac
                             )}
                         </button>
                         {showNotifications && (
-                            <div className="absolute right-0 mt-2 w-[320px] bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden z-50">
+                            <div className="absolute right-0 mt-2 w-[calc(100vw-2rem)] sm:w-[320px] bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden z-50">
                                 <div className="px-4 py-3 border-b border-gray-100 bg-[#F8F9FA]">
                                     <div className="flex items-center justify-between gap-3">
                                         <p className="text-sm font-bold text-[#1B3A64]">Notifications</p>
@@ -418,22 +511,23 @@ export default function ManagerLayoutClient({ children }: { children: React.Reac
                             </div>
                         )}
                     </div>
-                    <Link href="/manager/profile" className="flex items-center gap-3 pl-4 border-l border-gray-200 hover:bg-gray-50 rounded-full transition-colors">
+
+                    <Link href="/manager/profile" className="flex items-center gap-2 sm:gap-3 sm:pl-4 sm:border-l sm:border-gray-200 hover:bg-gray-50 rounded-full px-2 py-1 transition-colors shrink-0">
                         <div className="text-right hidden sm:flex flex-col">
                             <span className="text-sm font-semibold text-[#111827]">{user?.name || 'Manager'}</span>
                             <span className="text-xs uppercase tracking-widest text-[#E3755D]">Manager</span>
                         </div>
-                        <div className="h-10 w-10 rounded-full overflow-hidden bg-[#1B3A64] text-white font-bold flex items-center justify-center">
+                        <div className="h-9 w-9 rounded-full overflow-hidden bg-[#1B3A64] text-white font-bold flex items-center justify-center shrink-0">
                             {user?.profile_picture_url ? (
                                 <img src={user.profile_picture_url} alt={user?.name || 'Manager avatar'} className="h-full w-full object-cover" />
                             ) : (
-                                user?.name?.split(' ').map(n => n[0]).join('').slice(0, 2) || 'MG'
+                                user?.name?.split(' ').map((n: string) => n[0]).join('').slice(0, 2) || 'MG'
                             )}
                         </div>
                     </Link>
                 </header>
 
-                <main className="flex-1 overflow-y-auto px-6 lg:px-8 pb-8">
+                <main className="flex-1 overflow-y-auto px-3 sm:px-6 lg:px-8 pb-8">
                     {children}
                 </main>
             </div>

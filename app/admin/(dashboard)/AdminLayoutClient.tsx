@@ -29,6 +29,8 @@ const Icon = {
     grid: (p: any) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7" rx="1" /><rect x="14" y="3" width="7" height="7" rx="1" /><rect x="3" y="14" width="7" height="7" rx="1" /><rect x="14" y="14" width="7" height="7" rx="1" /></svg>,
     chevron: (p: any) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9" /></svg>,
     signout: (p: any) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /><polyline points="16 17 21 12 16 7" /><line x1="21" y1="12" x2="9" y2="12" /></svg>,
+    menu: (p: any) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="3" y1="6" x2="21" y2="6" /><line x1="3" y1="12" x2="21" y2="12" /><line x1="3" y1="18" x2="21" y2="18" /></svg>,
+    close: (p: any) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>,
 };
 
 const navItems = [
@@ -50,6 +52,52 @@ const navItems = [
     { label: 'Audit Logs', icon: Icon.audit, href: '/admin/audit-logs', bg: '#D7F1EE', fg: '#279E92' },
 ];
 
+/* ---------- Sidebar content shared between desktop & mobile drawer ---------- */
+function SidebarContent({ pathname, logout, onLinkClick }: { pathname: string | null; logout: () => void; onLinkClick?: () => void }) {
+    return (
+        <>
+            <div className="flex items-center justify-center px-2 mb-8">
+                <div className="w-full max-w-[150px]">
+                    <Image src="/horizonlogo.png" alt="Horizon Pathways" width={150} height={40} className="object-contain" />
+                </div>
+            </div>
+
+            <div className="text-[11px] font-mono uppercase tracking-wider text-[#B7B4AA] px-2 mb-3">Main</div>
+
+            <div className="flex flex-col flex-1 min-h-0">
+                <nav className="flex-1 min-h-0 space-y-1.5 overflow-y-auto pr-1 sidebar-scrollbar">
+                    {navItems.map((item) => {
+                        const isActive = item.href === '/admin' ? pathname === '/admin' : pathname?.startsWith(item.href);
+                        return (
+                            <Link
+                                key={item.label}
+                                href={item.href}
+                                onClick={onLinkClick}
+                                className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-colors ${isActive ? 'bg-[#101F38] text-white' : 'text-[#5B6472] hover:bg-[#F5F4F1] hover:text-[#101F38]'}`}
+                            >
+                                <span
+                                    className="w-8 h-8 rounded-full flex items-center justify-center shrink-0"
+                                    style={{ backgroundColor: item.bg, color: item.fg }}
+                                >
+                                    <item.icon width={15} height={15} />
+                                </span>
+                                <span className="truncate">{item.label}</span>
+                            </Link>
+                        );
+                    })}
+                </nav>
+
+                <div className="mt-4">
+                    <button onClick={logout} className="w-full flex items-center justify-center gap-2 bg-[#E3755D] hover:bg-[#C93500] text-white font-bold text-sm py-3.5 rounded-full transition-colors shadow-sm">
+                        <Icon.signout width={16} height={16} />
+                        Signout
+                    </button>
+                </div>
+            </div>
+        </>
+    );
+}
+
 export default function AdminLayoutClient({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
     const router = useRouter();
@@ -59,6 +107,7 @@ export default function AdminLayoutClient({ children }: { children: React.ReactN
     const [notifications, setNotifications] = useState<Notification[]>([]);
     const [showNotifications, setShowNotifications] = useState(false);
     const [authorized, setAuthorized] = useState(false);
+    const [sidebarOpen, setSidebarOpen] = useState(false);
 
     // Check authorization
     useEffect(() => {
@@ -94,8 +143,13 @@ export default function AdminLayoutClient({ children }: { children: React.ReactN
         fetchLayoutData();
     }, [pathname]);
 
+    // Close sidebar on route change
+    useEffect(() => {
+        setSidebarOpen(false);
+    }, [pathname]);
+
     return (
-        <div className="min-h-screen bg-[#F5F4F1] flex font-body p-4 gap-4">
+        <div className="min-h-screen bg-[#F5F4F1] flex font-body p-2 sm:p-4 gap-2 sm:gap-4">
             <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500&display=swap');
         .font-body, .font-body * { font-family: 'Inter', sans-serif; }
@@ -104,53 +158,44 @@ export default function AdminLayoutClient({ children }: { children: React.ReactN
         .sidebar-scrollbar::-webkit-scrollbar-track { background: transparent; }
       `}</style>
 
-            {/* Sidebar */}
-            <aside className="hidden lg:flex lg:flex-col w-64 shrink-0 bg-white rounded-[24px] shadow-sm px-4 py-6 h-[calc(100vh-32px)] overflow-hidden">
-                <div className="flex items-center justify-center px-2 mb-8">
-                    <div className="w-full max-w-[150px]">
-                        <Image src="/horizonlogo.png" alt="Horizon Pathways" width={150} height={40} className="object-contain" />
-                    </div>
-                </div>
+            {/* Mobile Sidebar Overlay */}
+            {sidebarOpen && (
+                <div
+                    className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+                    onClick={() => setSidebarOpen(false)}
+                />
+            )}
 
-                <div className="text-[11px] font-mono uppercase tracking-wider text-[#B7B4AA] px-2 mb-3">Main</div>
+            {/* Mobile Sidebar Drawer */}
+            <div className={`fixed top-0 left-0 h-full w-72 bg-white z-50 flex flex-col px-4 py-6 shadow-2xl transition-transform duration-300 lg:hidden ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+                <button
+                    onClick={() => setSidebarOpen(false)}
+                    className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-[#F5F4F1] text-[#5B6472] hover:text-[#101F38] transition-colors"
+                >
+                    <Icon.close width={16} height={16} />
+                </button>
+                <SidebarContent pathname={pathname} logout={logout} onLinkClick={() => setSidebarOpen(false)} />
+            </div>
 
-                <div className="flex flex-col flex-1 min-h-0">
-                    <nav className="flex-1 min-h-0 space-y-1.5 overflow-y-auto pr-1 sidebar-scrollbar">
-                        {navItems.map((item) => {
-                            const isActive = item.href === '/admin' ? pathname === '/admin' : pathname?.startsWith(item.href);
-                            return (
-                                <Link
-                                    key={item.label}
-                                    href={item.href}
-                                    className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-colors ${isActive ? 'bg-[#101F38] text-white' : 'text-[#5B6472] hover:bg-[#F5F4F1] hover:text-[#101F38]'
-                                        }`}
-                                >
-                                    <span
-                                        className="w-8 h-8 rounded-full flex items-center justify-center shrink-0"
-                                        style={{ backgroundColor: item.bg, color: item.fg }}
-                                    >
-                                        <item.icon width={15} height={15} />
-                                    </span>
-                                    <span className="truncate">{item.label}</span>
-                                </Link>
-                            );
-                        })}
-                    </nav>
-
-                    <div className="mt-4">
-                        <button onClick={logout} className="w-full flex items-center justify-center gap-2 bg-[#E3755D] hover:bg-[#C93500] text-white font-bold text-sm py-3.5 rounded-full transition-colors shadow-sm">
-                            <Icon.signout width={16} height={16} />
-                            Signout
-                        </button>
-                    </div>
-                </div>
+            {/* Desktop Sidebar */}
+            <aside className="hidden lg:flex lg:flex-col w-64 shrink-0 bg-white rounded-[24px] shadow-sm px-4 py-6 h-[calc(100vh-32px)] overflow-hidden sticky top-4">
+                <SidebarContent pathname={pathname} logout={logout} />
             </aside>
 
             {/* Main column */}
             <div className="flex-1 min-w-0 flex flex-col">
                 {/* Topbar */}
-                <header className="flex items-center gap-4 px-6 lg:px-8 py-4 mb-2">
-                    <div className="flex-1 relative">
+                <header className="flex items-center gap-2 sm:gap-4 px-3 sm:px-6 lg:px-8 py-3 sm:py-4 mb-2">
+                    {/* Hamburger – mobile only */}
+                    <button
+                        onClick={() => setSidebarOpen(true)}
+                        className="lg:hidden w-10 h-10 rounded-full bg-white border border-[#ECE9E2] flex items-center justify-center text-[#5B6472] hover:text-[#101F38] transition-colors shrink-0"
+                        aria-label="Open menu"
+                    >
+                        <Icon.menu width={18} height={18} />
+                    </button>
+
+                    <div className="flex-1 relative min-w-0">
                         <Icon.search width={16} height={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-[#B7B4AA]" />
                         <input
                             type="text"
@@ -158,10 +203,12 @@ export default function AdminLayoutClient({ children }: { children: React.ReactN
                             className="w-full pl-11 pr-4 py-2.5 rounded-full border border-[#ECE9E2] bg-white text-sm text-[#101F38] placeholder-[#B7B4AA] outline-none focus:border-[#E3755D] transition-colors"
                         />
                     </div>
-                    <button className="w-10 h-10 rounded-full bg-white border border-[#ECE9E2] flex items-center justify-center text-[#5B6472] hover:text-[#101F38] transition-colors">
+
+                    <button className="w-10 h-10 rounded-full bg-white border border-[#ECE9E2] flex items-center justify-center text-[#5B6472] hover:text-[#101F38] transition-colors shrink-0 hidden sm:flex">
                         <Icon.grid width={17} height={17} />
                     </button>
-                    <div className="relative">
+
+                    <div className="relative shrink-0">
                         <button onClick={() => setShowNotifications(!showNotifications)} className="relative w-10 h-10 rounded-full bg-white border border-[#ECE9E2] flex items-center justify-center text-[#5B6472] hover:text-[#101F38] transition-colors">
                             <Icon.bell width={17} height={17} />
                             {unreadCount > 0 && (
@@ -172,7 +219,7 @@ export default function AdminLayoutClient({ children }: { children: React.ReactN
                         </button>
 
                         {showNotifications && (
-                            <div className="absolute right-0 mt-2 w-[360px] bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden z-50">
+                            <div className="absolute right-0 mt-2 w-[calc(100vw-2rem)] sm:w-[360px] bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden z-50">
                                 <div className="px-5 py-3 border-b border-gray-100 flex justify-between items-center bg-[#F8F9FA]">
                                     <h3 className="font-bold text-[#1B3A64] text-sm">Notifications</h3>
                                     <div className="flex items-center gap-3">
@@ -208,7 +255,8 @@ export default function AdminLayoutClient({ children }: { children: React.ReactN
                             </div>
                         )}
                     </div>
-                    <Link href="/admin/profile" className="flex items-center gap-2 pl-1 pr-3 py-1 rounded-full bg-white border border-[#ECE9E2] hover:border-[#E3755D]/50 transition-colors">
+
+                    <Link href="/admin/profile" className="flex items-center gap-2 pl-1 pr-2 sm:pr-3 py-1 rounded-full bg-white border border-[#ECE9E2] hover:border-[#E3755D]/50 transition-colors shrink-0">
                         <div className="w-8 h-8 rounded-full overflow-hidden bg-gradient-to-br from-[#F2A65A] to-[#5B3B8C] flex items-center justify-center text-white font-bold text-xs uppercase">
                             {profile?.profile_picture_url ? (
                                 <img src={profile.profile_picture_url} alt={profile?.name || 'Profile'} className="h-full w-full object-cover object-center block rounded-full" />
@@ -216,13 +264,13 @@ export default function AdminLayoutClient({ children }: { children: React.ReactN
                                 profile?.name?.substring(0, 2) || 'AD'
                             )}
                         </div>
-                        <span className="text-sm font-semibold text-[#101F38]">{profile?.name || 'Loading...'}</span>
-                        <Icon.chevron width={14} height={14} className="text-[#8A8F98]" />
+                        <span className="text-sm font-semibold text-[#101F38] hidden sm:inline">{profile?.name || 'Loading...'}</span>
+                        <Icon.chevron width={14} height={14} className="text-[#8A8F98] hidden sm:block" />
                     </Link>
                 </header>
 
                 {/* Content */}
-                <main className="flex-1 overflow-y-auto px-6 lg:px-8 pb-8">
+                <main className="flex-1 overflow-y-auto px-3 sm:px-6 lg:px-8 pb-8">
                     {children}
                 </main>
             </div>
