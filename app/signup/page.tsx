@@ -1,10 +1,13 @@
 'use client';
 import React, { useState } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { Elements, useStripe, useElements, CardElement } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 import { useAuth } from '@/contexts/AuthContext';
 import api from '@/lib/api';
+import Header from '@/components/Header';
+import Footer from '@/components/Footer';
 
 type Question = {
   question: string;
@@ -943,12 +946,11 @@ function SignupFlowContent() {
           <div className="bg-white border border-slate-200 rounded-[30px] shadow-[0_20px_60px_-30px_rgba(15,23,42,0.3)] overflow-hidden">
             <div className="bg-[#0F172A] px-8 py-8 text-white">
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-12 h-12 rounded-3xl bg-[#F97316] grid place-items-center text-xl font-black">H</div>
-                <div>
-                  <p className="text-xs uppercase tracking-[0.28em] text-[#FBBF24] font-semibold">Horizon Pathways</p>
-                  <h2 className="text-3xl font-black tracking-tight">Create Account</h2>
+                <div className="w-[140px]">
+                  <Image src="/horizonlogo.png" alt="Horizon Pathways" width={140} height={36} className="object-contain" />
                 </div>
               </div>
+              <h2 className="text-3xl font-black tracking-tight">Create Account</h2>
               <p className="text-slate-200 max-w-xl">Start your immigration journey with confidence. Create your account and lock in your selected plan.</p>
             </div>
 
@@ -1408,8 +1410,10 @@ function SignupFlowContent() {
             <div className="absolute inset-0 bg-gradient-to-t from-[#101F38]/90 via-[#101F38]/40 to-transparent"></div>
 
             <div className="absolute bottom-0 left-0 right-0 p-12 text-white">
-              <div className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-md rounded-full px-5 py-2 mb-6 border border-white/20 shadow-sm">
-                <span className="text-white text-[11px] font-bold tracking-[0.1em] uppercase">Horizon Pathways</span>
+              <div className="inline-flex items-center bg-white/10 backdrop-blur-md rounded-full px-4 py-2 mb-6 border border-white/20 shadow-sm">
+                <div className="w-[140px]">
+                  <Image src="/horizonlogo.png" alt="Horizon Pathways" width={140} height={32} className="object-contain" />
+                </div>
               </div>
               <p className="text-[16px] font-medium leading-relaxed max-w-md text-white/80">
                 Start your U.S. immigration journey with confidence. Answer a few quick questions and we'll guide you to the right path — with experienced attorneys by your side.
@@ -1481,24 +1485,32 @@ function SignupFlowContent() {
 function SignupFlow() {
   if (!stripeKey) {
     return (
-      <main className="w-full min-h-screen bg-[#F5F4F1] pt-32 pb-24 px-4 md:px-8 lg:px-16 flex items-center justify-center">
-        <div className="w-full max-w-3xl mx-auto p-8 bg-white rounded-[24px] shadow-[0_20px_50px_-15px_rgba(16,31,56,0.12)] border border-gray-100">
-          <h1 className="text-3xl font-black text-[#101F38] mb-4">Stripe is not configured</h1>
-          <p className="text-[#5B6472] text-base leading-relaxed">
-            The signup and payment experience cannot be completed because the Stripe publishable key is missing.
-          </p>
-          <p className="mt-4 text-sm text-gray-500">
-            Please set <code className="text-sm rounded bg-gray-100 px-1 py-0.5">NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY</code> in your environment and redeploy.
-          </p>
-        </div>
-      </main>
+      <>
+        <Header />
+        <main className="w-full min-h-screen bg-[#F5F4F1] pt-32 pb-24 px-4 md:px-8 lg:px-16 flex items-center justify-center">
+          <div className="w-full max-w-3xl mx-auto p-8 bg-white rounded-[24px] shadow-[0_20px_50px_-15px_rgba(16,31,56,0.12)] border border-gray-100">
+            <h1 className="text-3xl font-black text-[#101F38] mb-4">Stripe is not configured</h1>
+            <p className="text-[#5B6472] text-base leading-relaxed">
+              The signup and payment experience cannot be completed because the Stripe publishable key is missing.
+            </p>
+            <p className="mt-4 text-sm text-gray-500">
+              Please set <code className="text-sm rounded bg-gray-100 px-1 py-0.5">NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY</code> in your environment and redeploy.
+            </p>
+          </div>
+        </main>
+        <Footer />
+      </>
     );
   }
 
   return (
-    <Elements stripe={stripePromise}>
-      <SignupFlowContent />
-    </Elements>
+    <>
+      <Header />
+      <Elements stripe={stripePromise}>
+        <SignupFlowContent />
+      </Elements>
+      <Footer />
+    </>
   );
 }
 

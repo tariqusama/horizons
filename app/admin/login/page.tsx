@@ -1,5 +1,6 @@
 'use client';
 import React, { useState } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
@@ -70,13 +71,8 @@ export default function AdminLoginPage() {
 
             {/* Logo */}
             <div className="flex items-center gap-2.5 mb-8">
-              <svg width="30" height="30" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M4 19C7 19 7 14 10 14C13 14 13 8 16 8" stroke="#101F38" strokeWidth="2" strokeLinecap="round" />
-                <circle cx="16" cy="8" r="2.4" fill="#E3755D" />
-              </svg>
-              <div className="leading-tight">
-                <div className="text-[#101F38] font-bold text-lg tracking-tight">Horizon</div>
-                <div className="text-[#E3755D] font-bold text-xs tracking-widest -mt-1">PATHWAYS</div>
+              <div className="w-[160px]">
+                <Image src="/horizonlogo.png" alt="Horizon Pathways" width={160} height={42} className="object-contain" />
               </div>
             </div>
 
