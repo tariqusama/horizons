@@ -150,13 +150,6 @@ export default function AdminLayoutClient({ children }: { children: React.ReactN
 
     return (
         <div className="min-h-screen bg-[#F5F4F1] flex font-body p-2 sm:p-4 gap-2 sm:gap-4">
-            <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500&display=swap');
-        .font-body, .font-body * { font-family: 'Inter', sans-serif; }
-        .sidebar-scrollbar::-webkit-scrollbar { width: 6px; }
-        .sidebar-scrollbar::-webkit-scrollbar-thumb { background: rgba(151, 151, 151, 0.45); border-radius: 9999px; }
-        .sidebar-scrollbar::-webkit-scrollbar-track { background: transparent; }
-      `}</style>
 
             {/* Mobile Sidebar Overlay */}
             {sidebarOpen && (
