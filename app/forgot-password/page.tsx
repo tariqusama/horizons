@@ -22,7 +22,11 @@ export default function ForgotPasswordPage() {
             setMessage(response.data.message || 'Password reset link sent to your email.');
             setEmail('');
         } catch (err: any) {
-            setError(err.response?.data?.message || 'Unable to send reset link. Please try again.');
+            const serverMessage =
+                err.response?.data?.errors?.email?.[0] ||
+                err.response?.data?.message ||
+                'Unable to send reset link. Please try again.';
+            setError(serverMessage);
         } finally {
             setIsSubmitting(false);
         }
