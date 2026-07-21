@@ -1,5 +1,5 @@
 .container {
-    max-width: 800px;
+    max-width: 1000px;
     margin: 0 auto;
     height: 80vh;
     display: flex;
@@ -12,7 +12,7 @@
 }
 
 .header {
-    padding: 24px 32px;
+    padding: 28px 36px;
     border-bottom: 1px solid #e2e8f0;
     display: flex;
     align-items: center;
@@ -20,21 +20,21 @@
 }
 
 .headerTitle {
-    font-size: 20px;
+    font-size: 26px;
     font-weight: 800;
     color: #1B3A64;
     margin: 0;
 }
 
 .headerSubtitle {
-    font-size: 14px;
+    font-size: 15px;
     color: #5A6579;
-    margin: 4px 0 0;
+    margin: 6px 0 0;
 }
 
 .chatWindow {
     flex: 1;
-    padding: 32px;
+    padding: 24px 32px;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
@@ -56,11 +56,11 @@
 }
 
 .messageBubble {
-    max-width: 70%;
-    padding: 16px 20px;
+    max-width: 85%;
+    padding: 18px 22px;
     border-radius: 20px;
-    font-size: 15px;
-    line-height: 1.5;
+    font-size: 16px;
+    line-height: 1.6;
     position: relative;
     word-break: break-word;
 }
@@ -76,7 +76,7 @@
     color: #1B3A64;
     border: 1px solid #e2e8f0;
     border-bottom-left-radius: 4px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
 }
 
 .messageTime {
@@ -99,6 +99,7 @@
     display: flex;
     gap: 16px;
     align-items: center;
+    flex-wrap: wrap;
 }
 
 .inputField {
