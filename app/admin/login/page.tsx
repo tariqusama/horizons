@@ -123,9 +123,9 @@ export default function AdminLoginPage() {
                   <label htmlFor="password" className="block text-sm font-medium text-[#101F38]">
                     Password<span className="text-[#E3755D]">*</span>
                   </label>
-                  <a href="#" className="text-sm font-semibold text-[#E3755D] hover:text-[#C93500] transition-colors">
+                  <Link href="/forgot-password" className="text-sm font-semibold text-[#E3755D] hover:text-[#C93500] transition-colors">
                     Forgot password?
-                  </a>
+                  </Link>
                 </div>
                 <div className="mt-1.5 relative">
                   <span className="absolute inset-y-0 left-3 flex items-center text-[#8A8F98]">
