@@ -9,8 +9,13 @@ import { getNotifications, markAsRead, Notification } from '../lib/api/notificat
 export default function Header({ isDashboard = false }: { isDashboard?: boolean }) {
   const [showNotifications, setShowNotifications] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
   const unreadCount = notifications.filter((n) => !n.read_at).length;
+
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+  }, [pathname]);
 
   useEffect(() => {
     if (!isDashboard) return;
@@ -35,9 +40,9 @@ export default function Header({ isDashboard = false }: { isDashboard?: boolean 
     }
   };
 
-  const navLinkClass = (path: string) => {
+  const navLinkClass = (path: string, mobile = false) => {
     const isActive = pathname === path;
-    return `pb-1 border-b-[3px] transition-colors font-bold ${isActive
+    return `${mobile ? 'text-base font-semibold' : 'pb-1 border-b-[3px] text-[15px] font-bold'} transition-colors ${isActive
       ? 'text-[#E3755D] border-[#E3755D]'
       : 'text-[#5A6579] border-transparent hover:text-[#1B3A64]'
       }`;
@@ -45,17 +50,31 @@ export default function Header({ isDashboard = false }: { isDashboard?: boolean 
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 w-full bg-white/90 backdrop-blur-md border-b border-gray-100 shadow-sm">
-      <div className="max-w-[1400px] mx-auto px-4 md:px-8 h-[88px] flex items-center justify-between w-full">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 h-[88px] flex items-center justify-between w-full gap-3 relative">
         {/* Logo */}
-        <Link href={isDashboard ? "/dashboard" : "/"} className="flex items-center space-x-3 transition-opacity hover:opacity-80">
-          <Image
-            src="/horizonlogo.png"
-            alt="Horizon Pathways Logo"
-            width={200}
-            height={60}
-            className="h-[50px] w-auto object-contain"
-          />
-        </Link>
+        <div className="flex items-center gap-3 min-w-0">
+          {!isDashboard && (
+            <button
+              type="button"
+              onClick={() => setIsMobileMenuOpen((prev) => !prev)}
+              className="lg:hidden inline-flex h-11 w-11 items-center justify-center rounded-xl border border-gray-200 text-[#1B3A64] shadow-sm"
+              aria-label="Toggle navigation"
+            >
+              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
+          )}
+          <Link href={isDashboard ? "/dashboard" : "/"} className="flex items-center space-x-3 transition-opacity hover:opacity-80 min-w-0">
+            <Image
+              src="/horizonlogo.png"
+              alt="Horizon Pathways Logo"
+              width={200}
+              height={60}
+              className="h-[42px] sm:h-[50px] w-auto object-contain"
+            />
+          </Link>
+        </div>
 
         {!isDashboard ? (
           <>
@@ -79,7 +98,7 @@ export default function Header({ isDashboard = false }: { isDashboard?: boolean 
           </>
         ) : (
           /* Dashboard Right Section */
-          <div className="flex items-center space-x-5 relative">
+          <div className="flex items-center gap-2 sm:gap-4 relative">
             <button
               onClick={() => setShowNotifications(!showNotifications)}
               className="relative p-2 text-[#5A6579] hover:text-[#1B3A64] transition-colors focus:outline-none"
@@ -94,7 +113,7 @@ export default function Header({ isDashboard = false }: { isDashboard?: boolean 
 
             {/* Notifications Dropdown */}
             {showNotifications && (
-              <div className="absolute top-14 right-16 w-[360px] bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden z-50">
+              <div className="absolute top-14 left-1/2 -translate-x-1/2 w-[min(22rem,calc(100vw-2rem))] bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden z-50 md:left-auto md:right-0 md:translate-x-0 md:w-[360px]">
                 <div className="px-5 py-3 border-b border-gray-100 flex justify-between items-center bg-[#F8F9FA]">
                   <h3 className="font-bold text-[#1B3A64] text-sm">Notifications</h3>
                   <div className="flex items-center gap-3">
@@ -131,8 +150,8 @@ export default function Header({ isDashboard = false }: { isDashboard?: boolean 
               </div>
             )}
 
-            <div className="flex items-center space-x-3 pl-5 border-l border-gray-200">
-              <div className="flex flex-col text-right hidden sm:flex">
+            <div className="flex items-center gap-2 sm:gap-3 pl-0 sm:pl-5 sm:border-l sm:border-gray-200">
+              <div className="hidden sm:flex flex-col text-right">
                 <span className="text-sm font-bold text-[#1B3A64]">Alex Johnson</span>
                 <span className="text-xs font-bold uppercase tracking-wider text-[#E3755D]">Client</span>
               </div>
@@ -143,6 +162,25 @@ export default function Header({ isDashboard = false }: { isDashboard?: boolean 
           </div>
         )}
       </div>
+
+      {!isDashboard && isMobileMenuOpen && (
+        <div className="border-t border-gray-100 bg-white/95 backdrop-blur-md lg:hidden shadow-lg">
+          <div className="max-w-[1400px] mx-auto px-4 py-4 flex flex-col gap-3">
+            <Link href="/" onClick={() => setIsMobileMenuOpen(false)} className={navLinkClass("/", true)}>Home</Link>
+            <Link href="/about" onClick={() => setIsMobileMenuOpen(false)} className={navLinkClass("/about", true)}>About Us</Link>
+            <Link href="/how-it-works" onClick={() => setIsMobileMenuOpen(false)} className={navLinkClass("/how-it-works", true)}>How It Works</Link>
+            <Link href="/services" onClick={() => setIsMobileMenuOpen(false)} className={navLinkClass("/services", true)}>Services</Link>
+            <Link href="/resources" onClick={() => setIsMobileMenuOpen(false)} className={navLinkClass("/resources", true)}>Resources</Link>
+            <Link href="/free-tools" onClick={() => setIsMobileMenuOpen(false)} className={navLinkClass("/free-tools", true)}>Free Tools</Link>
+            <div className="flex flex-col gap-2 pt-2 border-t border-gray-100">
+              <Link href="/login" onClick={() => setIsMobileMenuOpen(false)} className="font-bold text-[#1B3A64]">Login</Link>
+              <Link href="/signup" onClick={() => setIsMobileMenuOpen(false)} className="bg-[#E3755D] hover:bg-[#C8634D] text-white px-4 py-3 rounded-[12px] font-bold text-center">
+                Start Assessment
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
     </header>
   );
 }

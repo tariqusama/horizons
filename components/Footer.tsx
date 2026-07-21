@@ -91,9 +91,9 @@ export default function Footer() {
   };
 
   return (
-    <footer className="bg-[#102A54] text-white pt-20 pb-8 px-6 w-full font-sans">
+    <footer className="bg-[#102A54] text-white pt-12 sm:pt-16 lg:pt-20 pb-8 px-4 sm:px-6 w-full font-sans">
       <div className="max-w-[1200px] mx-auto">
-        <div className="flex flex-col lg:flex-row justify-between items-start gap-12 mb-16">
+        <div className="flex flex-col lg:flex-row justify-between items-start gap-8 sm:gap-10 lg:gap-12 mb-12 sm:mb-16">
           <div className="w-full lg:w-[450px]">
             <div className="bg-white rounded-2xl p-4 inline-flex mb-6 shadow-lg">
               <Image
@@ -104,7 +104,7 @@ export default function Footer() {
                 className="h-10 w-auto"
               />
             </div>
-            <p className="text-gray-300 text-sm mb-6 leading-relaxed pr-8">
+            <p className="text-gray-300 text-sm mb-6 leading-relaxed sm:pr-8">
               {footerBrand.description}
             </p>
             <div className="flex gap-3">
@@ -121,7 +121,7 @@ export default function Footer() {
             </div>
           </div>
 
-          <div className="w-full lg:w-[500px] bg-white/5 border border-white/10 rounded-2xl p-8 shadow-xl">
+          <div className="w-full lg:w-[500px] bg-white/5 border border-white/10 rounded-2xl p-5 sm:p-8 shadow-xl">
             <h3 className="text-xl font-bold text-white flex items-center gap-2 mb-2">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E3755D" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3l1.9 5.8 1.9-5.8a2 2 0 0 1 1.3-1.3l5.8-1.9-5.8-1.9a2 2 0 0 1-1.3-1.3z"></path>
@@ -163,9 +163,9 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="w-full h-px bg-white/10 mb-12"></div>
+        <div className="w-full h-px bg-white/10 mb-10 sm:mb-12"></div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 mb-10 sm:mb-12">
           {footerSections.map((section) => (
             <div key={section.title}>
               <h4 className="text-lg font-bold mb-6 flex items-center text-white">
@@ -207,9 +207,9 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="w-full h-px bg-white/10 mb-8"></div>
+        <div className="w-full h-px bg-white/10 mb-6 sm:mb-8"></div>
 
-        <div className="flex flex-col md:flex-row justify-between items-center text-xs text-gray-400 gap-4">
+        <div className="flex flex-col md:flex-row justify-between items-center text-xs text-gray-400 gap-4 text-center md:text-left">
           <p>{footerBottom.copyright}</p>
           <div className="flex items-center gap-2">
             <div className="w-1.5 h-1.5 rounded-full bg-red-500"></div>
