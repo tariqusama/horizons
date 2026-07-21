@@ -6,8 +6,6 @@ import { Elements, useStripe, useElements, CardElement } from '@stripe/react-str
 import { loadStripe } from '@stripe/stripe-js';
 import { useAuth } from '@/contexts/AuthContext';
 import api from '@/lib/api';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
 
 type Question = {
   question: string;
@@ -1486,13 +1484,9 @@ function SignupFlowContent() {
 
 function SignupFlow() {
   return (
-    <>
-      <Header />
-      <Elements stripe={stripePromise}>
-        <SignupFlowContent />
-      </Elements>
-      <Footer />
-    </>
+    <Elements stripe={stripePromise}>
+      <SignupFlowContent />
+    </Elements>
   );
 }
 
