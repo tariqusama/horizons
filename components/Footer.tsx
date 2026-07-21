@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, ReactNode } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import api, { initCsrf } from '@/lib/api';
@@ -12,7 +12,7 @@ import {
   FooterSocialLink,
 } from './footerData';
 
-const socialIcons: Record<string, JSX.Element> = {
+const socialIcons: Record<string, ReactNode> = {
   facebook: (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
@@ -38,7 +38,7 @@ const socialIcons: Record<string, JSX.Element> = {
   ),
 };
 
-const contactIcons: Record<FooterContactItem['type'], JSX.Element> = {
+const contactIcons: Record<FooterContactItem['type'], ReactNode> = {
   address: (
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
