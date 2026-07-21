@@ -201,12 +201,35 @@ function SignupFlowContent() {
   const stripe = useStripe();
   const elements = useElements();
 
+  const passwordRequirements = [
+    { label: 'At least 8 characters', test: (value: string) => value.length >= 8 },
+    { label: 'One uppercase letter', test: (value: string) => /[A-Z]/.test(value) },
+    { label: 'One lowercase letter', test: (value: string) => /[a-z]/.test(value) },
+    { label: 'One number', test: (value: string) => /\d/.test(value) },
+    { label: 'One special character', test: (value: string) => /[^A-Za-z0-9]/.test(value) },
+  ];
+
+  const getPasswordValidation = (value: string) => {
+    return passwordRequirements.map((requirement) => ({
+      ...requirement,
+      passed: requirement.test(value),
+    }));
+  };
+
+  const passwordValidation = getPasswordValidation(password);
+
   const handleSendOtp = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     setError('');
 
     if (!termsAccepted) {
       setError('Please accept the terms and conditions to continue.');
+      return;
+    }
+
+    const passwordErrors = passwordValidation.filter((item) => !item.passed);
+    if (passwordErrors.length > 0) {
+      setError('Password must include at least 8 characters, an uppercase letter, a lowercase letter, a number, and a special character.');
       return;
     }
 
@@ -1026,6 +1049,19 @@ function SignupFlowContent() {
                         placeholder="••••••••"
                         className="w-full rounded-3xl border border-slate-200 bg-white px-12 py-3 text-slate-900 outline-none transition focus:border-[#F97316] focus:ring-1 focus:ring-[#F97316]/25"
                       />
+                    </div>
+                    <div className="mt-3 rounded-2xl border border-slate-200 bg-slate-50 p-3">
+                      <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Password requirements</p>
+                      <ul className="space-y-1 text-sm text-slate-600">
+                        {passwordValidation.map((item) => (
+                          <li key={item.label} className={`flex items-center gap-2 ${item.passed ? 'text-emerald-600' : 'text-slate-600'}`}>
+                            <span className={`inline-flex h-4 w-4 items-center justify-center rounded-full text-[11px] font-bold ${item.passed ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-200 text-slate-600'}`}>
+                              {item.passed ? '✓' : '•'}
+                            </span>
+                            {item.label}
+                          </li>
+                        ))}
+                      </ul>
                     </div>
                   </label>
                   <label className="block">
