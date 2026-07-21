@@ -79,6 +79,9 @@ api.interceptors.response.use(
     (response) => response,
     async (error) => {
         if (error.response) {
+            const requestUrl = error.config?.url || '';
+            const isAuthCheckRequest = requestUrl.includes('/user');
+
             // Handle CSRF token mismatch
             if (error.response.status === 419) {
                 // We could refresh CSRF and retry, but reloading or redirecting is safest
@@ -94,7 +97,7 @@ api.interceptors.response.use(
             }
 
             // Handle Unauthorized
-            if (error.response.status === 401) {
+            if (error.response.status === 401 && !isAuthCheckRequest) {
                 if (
                     typeof window !== 'undefined' &&
                     window.location.pathname !== '/login' &&
