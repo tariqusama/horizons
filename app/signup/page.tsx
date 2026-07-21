@@ -57,6 +57,66 @@ const pathways: Pathways = {
 
 const goals = Object.keys(pathways);
 
+const goalImages: Record<string, string> = {
+  "Replace or fix a Green Card": "url('https://images.unsplash.com/photo-1521791136064-7986c2920216?auto=format&fit=crop&w=1200&q=80')",
+  "Bring a fiancé(e) or spouse/relative to the U.S.": "url('https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=1200&q=80')",
+  "Adjust status to permanent resident / get a Green Card while in US": "url('https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80')",
+  "Remove conditions on residence (marriage-based conditional LPR)": "url('https://images.unsplash.com/photo-1494496545165-4f0be2d4bd51?auto=format&fit=crop&w=1200&q=80')",
+  "DACA (Deferred Action) — Renewal": "url('https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=1200&q=80')",
+  "Apply for U.S. Citizenship (Naturalization)": "url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1200&q=80')",
+};
+
+const stepImages: { [key: string]: string } = {
+  default: "url('https://images.unsplash.com/photo-1511884642898-4c92249e20b6?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80')",
+  goalSelection: "url('https://images.unsplash.com/photo-1519452575417-564c1401ecc0?auto=format&fit=crop&w=1200&q=80')",
+  statusQuestion: "url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1200&q=80')",
+  familyQuestion: "url('https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=1200&q=80')",
+  citizenshipQuestion: "url('https://images.unsplash.com/photo-1494496545165-4f0be2d4bd51?auto=format&fit=crop&w=1200&q=80')",
+  dacaQuestion: "url('https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=1200&q=80')",
+  adjustmentQuestion: "url('https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80')",
+};
+
+const getQuestionBackgroundImage = (question?: string) => {
+  if (!question) return undefined;
+  const text = question.toLowerCase();
+  if (text.includes('green card') || text.includes('permanent resident') || text.includes('replace') || text.includes('status')) {
+    return stepImages.statusQuestion;
+  }
+  if (text.includes('fiancé') || text.includes('spouse') || text.includes('child') || text.includes('relative') || text.includes('petitioner')) {
+    return stepImages.familyQuestion;
+  }
+  if (text.includes('citizenship') || text.includes('naturalization') || text.includes('parents') || text.includes('lawful permanent resident') || text.includes('present in the united states')) {
+    return stepImages.citizenshipQuestion;
+  }
+  if (text.includes('daca') || text.includes('continuous residence') || text.includes('convicted') || text.includes('national security') || text.includes('public safety')) {
+    return stepImages.dacaQuestion;
+  }
+  if (text.includes('conditional') || text.includes('marriage') || text.includes('waiver') || text.includes('file jointly')) {
+    return stepImages.citizenshipQuestion;
+  }
+  if (text.includes('inspection') || text.includes('immigration status') || text.includes('lawful permanent resident')) {
+    return stepImages.adjustmentQuestion;
+  }
+  return undefined;
+};
+
+const getSignupBackgroundImage = (selectedGoal: string | null, currentStep: number, question?: string) => {
+  if (currentStep === 0) {
+    return stepImages.goalSelection;
+  }
+
+  const questionImage = getQuestionBackgroundImage(question);
+  if (questionImage) {
+    return questionImage;
+  }
+
+  if (selectedGoal) {
+    return goalImages[selectedGoal] ?? stepImages.default;
+  }
+
+  return stepImages.default;
+};
+
 const getPackagePricing = (selectedGoal: string | null, answers: Record<number, string>) => {
   const defaultPricing = {
     title: "Choose Your Plan",
@@ -613,6 +673,7 @@ function SignupFlowContent() {
   };
 
   const questions = getQuestions();
+  const currentQuestion = questions[currentStep - 1];
   const totalSteps = questions.length;
   const isQuestionsDone = selectedGoal && currentStep > totalSteps;
 
@@ -1342,7 +1403,7 @@ function SignupFlowContent() {
           <div className="hidden lg:flex lg:w-[40%] relative overflow-hidden">
             <div
               className="absolute inset-0 bg-cover bg-center"
-              style={{ backgroundImage: "url('https://images.unsplash.com/photo-1511884642898-4c92249e20b6?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80')" }}
+              style={{ backgroundImage: getSignupBackgroundImage(selectedGoal, currentStep, currentQuestion?.question) }}
             ></div>
             <div className="absolute inset-0 bg-gradient-to-t from-[#101F38]/90 via-[#101F38]/40 to-transparent"></div>
 
