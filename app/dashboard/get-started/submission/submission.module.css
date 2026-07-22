@@ -121,3 +121,79 @@
     transform: translateY(-1px);
     box-shadow: 0 8px 20px rgba(15, 23, 42, 0.2);
 }
+
+/* --- Review Section Styles --- */
+.reviewContainer {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    margin-bottom: 2.5rem;
+}
+
+@media (min-width: 768px) {
+    .reviewContainer {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+.reviewBlock {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+}
+
+.reviewHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.reviewTitle {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0;
+}
+
+.btnEdit {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #f97316;
+    text-decoration: none;
+    background: #fff;
+    border: 1px solid #ffedd5;
+    padding: 0.25rem 0.75rem;
+    border-radius: 99px;
+    transition: all 0.2s;
+}
+
+.btnEdit:hover {
+    background: #fff7ed;
+    border-color: #fdba74;
+}
+
+.reviewStatus {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    color: #334155;
+    margin: 0;
+    font-weight: 500;
+}
+
+.statusDot {
+    width: 8px;
+    height: 8px;
+    background-color: #22c55e;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.divider {
+    border: none;
+    border-top: 1px solid #e2e8f0;
+    margin: 0 0 2.5rem 0;
+}

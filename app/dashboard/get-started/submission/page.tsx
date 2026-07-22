@@ -9,6 +9,37 @@ export default function SubmissionPage() {
             <p className={styles.pageSubtitle}>Congratulations! You have completed your application and uploaded all required supporting documents.</p>
 
             <div className={styles.formSection}>
+                {/* --- Review Section --- */}
+                <h2 className={styles.sectionHeading}>Review Your Application</h2>
+                <p className={styles.sectionDesc}>
+                    Please review your provided information and uploaded documents before finalizing your submission.
+                </p>
+                
+                <div className={styles.reviewContainer}>
+                    <div className={styles.reviewBlock}>
+                        <div className={styles.reviewHeader}>
+                            <h3 className={styles.reviewTitle}>Forms & Questionnaires</h3>
+                            <Link href="/dashboard/get-started/forms" className={styles.btnEdit}>Edit</Link>
+                        </div>
+                        <p className={styles.reviewStatus}>
+                            <span className={styles.statusDot}></span> Complete
+                        </p>
+                    </div>
+
+                    <div className={styles.reviewBlock}>
+                        <div className={styles.reviewHeader}>
+                            <h3 className={styles.reviewTitle}>Uploaded Documents</h3>
+                            <Link href="/dashboard/get-started/document-upload" className={styles.btnEdit}>Edit</Link>
+                        </div>
+                        <p className={styles.reviewStatus}>
+                            <span className={styles.statusDot}></span> Complete
+                        </p>
+                    </div>
+                </div>
+
+                <hr className={styles.divider} />
+
+                {/* --- Acknowledgments --- */}
                 <h2 className={styles.sectionHeading}>Before submitting, please review and acknowledge the following:</h2>
                 <p className={styles.sectionDesc}>
                     Horizon Pathways offers professional document translation services for USCIS-required documents. If your documents are not in English, you may purchase our translation service or upload a certified English translation with your original document.

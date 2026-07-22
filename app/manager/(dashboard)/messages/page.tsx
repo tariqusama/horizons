@@ -266,8 +266,15 @@ export default function ManagerMessagesPage() {
                             ) : (
                                 messages.map((message) => (
                                     <div key={message.id} className="rounded-3xl border border-[#ECE9E2] bg-[#F7F5F0] p-4">
+                                        <div className="mb-3 flex flex-wrap items-center gap-2">
+                                            <span className={`rounded-full px-2 py-1 text-[10px] font-semibold ${message.is_admin ? 'bg-[#DBEAFE] text-[#1D4ED8]' : 'bg-[#FEF3C7] text-[#B45309]'}`}>
+                                                {message.is_admin ? 'Manager' : 'Client'}
+                                            </span>
+                                            <span className="text-[10px] text-[#8A8F98]">
+                                                {new Date(message.created_at).toLocaleString()}
+                                            </span>
+                                        </div>
                                         <p className="text-sm text-[#101F38]">{message.message}</p>
-                                        <p className="text-[10px] text-[#8A8F98] mt-2">{new Date(message.created_at).toLocaleString()}</p>
                                     </div>
                                 ))
                             )}

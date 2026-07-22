@@ -493,10 +493,29 @@ export default function ManagerLayoutClient({ children }: { children: React.Reac
                                         const data = typeof notification.data === 'string' ? JSON.parse(notification.data) : notification.data;
                                         const isUnread = !notification.read_at;
                                         return (
-                                            <div key={notification.id} className={`p-4 border-b border-gray-100 ${isUnread ? 'bg-[#FDFCFB]' : 'bg-white'} text-sm`}>
-                                                <div className="font-semibold text-[#111827]">{data?.title || 'New notification'}</div>
-                                                <div className="text-[#6B7280] mt-1">{data?.text || ''}</div>
-                                                <div className="text-[11px] text-[#9CA3AF] mt-2">{new Date(notification.created_at).toLocaleString()}</div>
+                                            <div key={notification.id} className={`p-4 transition-colors flex gap-3 items-start border-b border-gray-100 ${isUnread ? 'bg-[#FDFCFB]' : 'bg-white hover:bg-[#F9F8F6]'} text-sm`}>
+                                                <div className="mt-1 shrink-0">
+                                                    {data?.type === 'message' && (
+                                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={isUnread ? "#E3755D" : "#8A8F98"} strokeWidth="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                                                    )}
+                                                    {data?.type === 'alert' && (
+                                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={isUnread ? "#E3755D" : "#8A8F98"} strokeWidth="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                                                    )}
+                                                    {data?.type === 'system' && (
+                                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={isUnread ? "#101F38" : "#8A8F98"} strokeWidth="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+                                                    )}
+                                                    {data?.type === 'status' && (
+                                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={isUnread ? "#2F8A5F" : "#8A8F98"} strokeWidth="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                                                    )}
+                                                    {!data?.type && (
+                                                        <div className="w-2 h-2 mt-1 rounded-full shrink-0" style={{ background: isUnread ? '#E3755D' : 'transparent' }}></div>
+                                                    )}
+                                                </div>
+                                                <div className="flex-1 min-w-0">
+                                                    <div className="font-semibold text-[#111827]">{data?.title || 'New notification'}</div>
+                                                    <div className="text-[#6B7280] mt-1">{data?.text || ''}</div>
+                                                    <div className="text-[11px] text-[#9CA3AF] mt-2">{new Date(notification.created_at).toLocaleString()}</div>
+                                                </div>
                                             </div>
                                         );
                                     })}
