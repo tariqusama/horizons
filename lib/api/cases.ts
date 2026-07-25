@@ -24,6 +24,12 @@ export interface Application {
         text: string;
         created_at: string;
     }>;
+    internal_notes?: Array<{
+        id: string;
+        author: string;
+        text: string;
+        created_at: string;
+    }>;
     user?: {
         id: number;
         name: string;
