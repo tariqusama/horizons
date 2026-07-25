@@ -90,7 +90,7 @@ export default function I765WSFormPage() {
             <div className={styles.pageHeader}>
                 <div className="flex justify-between items-start">
                     <div>
-                        <h1 className={styles.pageTitleText}>I-765 Worksheet</h1>
+                        <h1 className={styles.pageTitleText}>I-765 Financial Worksheet for {applicantName}</h1>
                 <p className={styles.pageSubtitleText}>Provide information about your financial situation.</p>
                     </div>
                     {applicantName !== 'the Applicant' && (

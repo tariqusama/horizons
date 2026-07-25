@@ -89,7 +89,7 @@ export default function I765FormPage() {
             <div className={styles.pageHeader}>
                 <div className="flex justify-between items-start">
                     <div>
-                        <h1 className={styles.pageTitleText}>Application for Employment Authorization</h1>
+                        <h1 className={styles.pageTitleText}>Employment Authorization for {applicantName}</h1>
                 <p className={styles.pageSubtitleText}>Select the reason you are applying for employment authorization.</p>
                     </div>
                     {applicantName !== 'the Applicant' && (
@@ -107,7 +107,7 @@ export default function I765FormPage() {
                             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                         </svg>
                     </div>
-                    <h2 className={styles.questionText}>Reason for Applying<span style={{color: '#f97316'}}>*</span></h2>
+                    <h2 className={styles.questionText}>Reason for Applying for {applicantName}<span style={{color: '#f97316'}}>*</span></h2>
                 </div>
                 <p className={styles.questionSubtext}>I am applying for:</p>
                 

@@ -94,7 +94,7 @@ export default function N400FormPage() {
             <div className={styles.pageHeader}>
                 <div className="flex justify-between items-start">
                     <div>
-                        <h1 className={styles.pageTitleText}>Application for Naturalization</h1>
+                        <h1 className={styles.pageTitleText}>Naturalization Application for {applicantName}</h1>
                 <p className={styles.pageSubtitleText}>Provide information about your eligibility and identity.</p>
                     </div>
                     {applicantName !== 'the Applicant' && (

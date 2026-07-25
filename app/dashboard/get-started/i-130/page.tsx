@@ -93,7 +93,7 @@ export default function I130FormPage() {
             <div className={styles.pageHeader}>
                 <div className="flex justify-between items-start">
                     <div>
-                        <h1 className={styles.pageTitleText}>Petitioner Information</h1>
+                        <h1 className={styles.pageTitleText}>Petitioner Information for {applicantName}</h1>
                 <p className={styles.pageSubtitleText}>Basic information about the person filing this petition.</p>
                     </div>
                     {applicantName !== 'the Applicant' && (
@@ -111,7 +111,7 @@ export default function I130FormPage() {
                             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                         </svg>
                     </div>
-                    <h2 className={styles.questionText}>Who are you filing this petition for?<span style={{color: '#f97316'}}>*</span></h2>
+                    <h2 className={styles.questionText}>Who is {applicantName} filing this petition for?<span style={{color: '#f97316'}}>*</span></h2>
                 </div>
                 <p className={styles.questionSubtext}>Please select the relationship to the relative you are petitioning for.</p>
                 

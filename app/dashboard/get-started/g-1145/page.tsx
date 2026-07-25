@@ -92,7 +92,7 @@ export default function G1145FormPage() {
             <div className={styles.pageHeader}>
                 <div className="flex justify-between items-start">
                     <div>
-                        <h1 className={styles.pageTitleText}>e-Notification of Application/Petition Acceptance</h1>
+                        <h1 className={styles.pageTitleText}>e-Notification for {applicantName}</h1>
                 <p className={styles.pageSubtitleText}>Provide the applicant/petitioner's contact details.</p>
                     </div>
                     {applicantName !== 'the Applicant' && (

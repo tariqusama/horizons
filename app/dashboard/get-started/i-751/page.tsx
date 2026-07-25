@@ -89,7 +89,7 @@ export default function I751FormPage() {
             <div className={styles.pageHeader}>
                 <div className="flex justify-between items-start">
                     <div>
-                        <h1 className={styles.pageTitleText}>Petition to Remove Conditions on Residence</h1>
+                        <h1 className={styles.pageTitleText}>Removal of Conditions for {applicantName}</h1>
                 <p className={styles.pageSubtitleText}>Provide information about yourself.</p>
                     </div>
                     {applicantName !== 'the Applicant' && (

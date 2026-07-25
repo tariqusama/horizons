@@ -89,7 +89,7 @@ export default function I864FormPage() {
             <div className={styles.pageHeader}>
                 <div className="flex justify-between items-start">
                     <div>
-                        <h1 className={styles.pageTitleText}>Affidavit of Support</h1>
+                        <h1 className={styles.pageTitleText}>Affidavit of Support for {applicantName}</h1>
                 <p className={styles.pageSubtitleText}>Provide information about your basis for filing this affidavit.</p>
                     </div>
                     {applicantName !== 'the Applicant' && (

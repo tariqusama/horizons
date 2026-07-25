@@ -89,7 +89,7 @@ export default function I130AFormPage() {
             <div className={styles.pageHeader}>
                 <div className="flex justify-between items-start">
                     <div>
-                        <h1 className={styles.pageTitleText}>Supplemental Information for Spouse Beneficiary</h1>
+                        <h1 className={styles.pageTitleText}>Spouse Beneficiary Information for {applicantName}</h1>
                 <p className={styles.pageSubtitleText}>Provide information about yourself (the spouse beneficiary).</p>
                     </div>
                     {applicantName !== 'the Applicant' && (
