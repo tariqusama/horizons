@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import styles from '../form.module.css';
 import api from '@/lib/api';
+import ApplicationPreviewModal from '@/app/components/ApplicationPreviewModal';
 
 export default function SubmissionPage() {
     const router = useRouter();
@@ -67,7 +68,15 @@ export default function SubmissionPage() {
                     <div className={styles.reviewBlock}>
                         <div className={styles.reviewHeader}>
                             <h3 className={styles.reviewTitle}>Forms & Questionnaires</h3>
-                            <Link href="/dashboard/get-started/forms" className={styles.btnEdit}>Edit</Link>
+                            <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                <button 
+                                    onClick={(e) => { e.preventDefault(); setIsModalOpen(true); }}
+                                    className="bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs px-3 py-1.5 rounded-full transition-colors shadow-sm"
+                                >
+                                    Preview Data
+                                </button>
+                                <Link href="/dashboard/get-started/preview" className={styles.btnEdit}>Edit</Link>
+                            </div>
                         </div>
                         <p className={styles.reviewStatus}>
                             <span className={styles.statusDot}></span> Complete
@@ -84,6 +93,12 @@ export default function SubmissionPage() {
                         </p>
                     </div>
                 </div>
+
+                <ApplicationPreviewModal 
+                    isOpen={isModalOpen} 
+                    onClose={() => setIsModalOpen(false)} 
+                    applicationId={appData?.id} 
+                />
 
                 <hr className={styles.divider} />
 

@@ -88,11 +88,10 @@ export default function I90FormPage() {
 
     if (isLoading) return <div className={styles.pageWrapper}><div className="p-8 text-center text-gray-500">Loading form data...</div></div>;
 
-
-
     const totalFields = Object.keys(formData).length;
     const filledFields = Object.values(formData).filter(val => typeof val === 'string' && val.trim() !== '').length;
     const percentage = totalFields > 0 ? Math.round((filledFields / totalFields) * 100) : 0;
+    const applicantName = [formData.firstName, formData.lastName].filter(Boolean).join(' ') || 'the Applicant';
 
     return (
         <div className={styles.pageWrapper}>
@@ -101,11 +100,20 @@ export default function I90FormPage() {
                 <span>{percentage}%</span>
             </div>
             <div className={styles.progressBarContainer}>
-                <div className={styles.progressBar} style={{ width: `%` }}></div>
+                <div className={styles.progressBar} style={{ width: `${percentage}%` }}></div>
             </div>
             <div className={styles.pageHeader}>
-                <h1 className={styles.pageTitleText}>Immigrant Information</h1>
-                <p className={styles.pageSubtitleText}>Basic information about the Green Card applicant</p>
+                <div className="flex justify-between items-start">
+                    <div>
+                        <h1 className={styles.pageTitleText}>Immigrant Information</h1>
+                        <p className={styles.pageSubtitleText}>Basic information about the Green Card applicant</p>
+                    </div>
+                    {applicantName !== 'the Applicant' && (
+                        <div className="bg-amber-50 border border-amber-200 text-amber-800 text-xs font-bold px-3 py-1.5 rounded-full shadow-sm">
+                            Applicant: {applicantName}
+                        </div>
+                    )}
+                </div>
             </div>
 
             <div className={styles.formQuestion}>
@@ -115,7 +123,7 @@ export default function I90FormPage() {
                             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                         </svg>
                     </div>
-                    <h2 className={styles.questionText}>What is the full legal name of the green card Applicant (the intending immigrant)?<span style={{color: '#f97316'}}>*</span></h2>
+                    <h2 className={styles.questionText}>What is the full legal name of the green card Applicant?<span style={{color: '#f97316'}}>*</span></h2>
                 </div>
                 <p className={styles.questionSubtext}>This is the Applicant's CURRENT full legal name, including first, middle, and last names.</p>
                 
@@ -144,9 +152,9 @@ export default function I90FormPage() {
                             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                         </svg>
                     </div>
-                    <h2 className={styles.questionText}>What is the sex of the Applicant?<span style={{color: '#f97316'}}>*</span></h2>
+                    <h2 className={styles.questionText}>What is the sex of {applicantName}?<span style={{color: '#f97316'}}>*</span></h2>
                 </div>
-                <p className={styles.questionSubtext}>USCIS allows individuals to self-identify their gender marker. The selected gender will not be required to match the gender marker from their supporting documentation.</p>
+                <p className={styles.questionSubtext}>USCIS allows individuals to self-identify their gender marker.</p>
                 
                 <div className={styles.iconRadioRow}>
                     <label className={styles.iconRadioCircle}>
@@ -174,7 +182,7 @@ export default function I90FormPage() {
                             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                         </svg>
                     </div>
-                    <h2 className={styles.questionText}>Has the Applicant used other name(s)?<span style={{color: '#f97316'}}>*</span></h2>
+                    <h2 className={styles.questionText}>Has {applicantName} used other name(s)?<span style={{color: '#f97316'}}>*</span></h2>
                 </div>
                 <p className={styles.questionSubtext}>This includes names such as maiden names, nicknames, and aliases.</p>
                 
@@ -200,7 +208,7 @@ export default function I90FormPage() {
                             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                         </svg>
                     </div>
-                    <h2 className={styles.questionText}>What are the Applicant's identification numbers?</h2>
+                    <h2 className={styles.questionText}>What are {applicantName}'s identification numbers?</h2>
                 </div>
                 <p className={styles.questionSubtext}>Provide the Alien Registration Number and USCIS Online Account Number if you have them.</p>
                 
@@ -229,7 +237,7 @@ export default function I90FormPage() {
                             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                         </svg>
                     </div>
-                    <h2 className={styles.questionText}>Applicant's Birth Information<span style={{color: '#f97316'}}>*</span></h2>
+                    <h2 className={styles.questionText}>{applicantName}'s Birth Information<span style={{color: '#f97316'}}>*</span></h2>
                 </div>
                 <p className={styles.questionSubtext}>Provide details regarding the date and location of birth.</p>
                 
@@ -259,7 +267,7 @@ export default function I90FormPage() {
                             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                         </svg>
                     </div>
-                    <h2 className={styles.questionText}>Parents' Information</h2>
+                    <h2 className={styles.questionText}>{applicantName}'s Parents' Information</h2>
                 </div>
                 <p className={styles.questionSubtext}>Please provide the first names of the Applicant's parents.</p>
                 

@@ -27,7 +27,7 @@ const getApplicationStatusMeta = (status?: string) => {
     }
 
     if (['submitted', 'completed', 'review', 'in review', 'under review'].includes(normalized)) {
-        return { label: 'In Review', tone: 'info', route: '/dashboard/get-started/submission', buttonLabel: 'View Application' };
+        return { label: 'In Review', tone: 'info', route: '/dashboard/get-started/preview', buttonLabel: 'View Application' };
     }
 
     if (['pending', 'in progress', 'active', 'processing'].includes(normalized)) {

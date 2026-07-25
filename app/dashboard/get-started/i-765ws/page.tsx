@@ -76,6 +76,7 @@ export default function I765WSFormPage() {
     const totalFields = Object.keys(formData).length;
     const filledFields = Object.values(formData).filter(val => typeof val === 'string' && val.trim() !== '').length;
     const percentage = totalFields > 0 ? Math.round((filledFields / totalFields) * 100) : 0;
+    const applicantName = [formData.firstName, formData.lastName].filter(Boolean).join(' ') || 'the Applicant';
 
     return (
         <div className={styles.pageWrapper}>
@@ -84,11 +85,20 @@ export default function I765WSFormPage() {
                 <span>{percentage}%</span>
             </div>
             <div className={styles.progressBarContainer}>
-                <div className={styles.progressBar} style={{ width: `%` }}></div>
+                <div className={styles.progressBar} style={{ width: `${percentage}%` }}></div>
             </div>
             <div className={styles.pageHeader}>
-                <h1 className={styles.pageTitleText}>I-765 Worksheet</h1>
+                <div className="flex justify-between items-start">
+                    <div>
+                        <h1 className={styles.pageTitleText}>I-765 Worksheet</h1>
                 <p className={styles.pageSubtitleText}>Provide information about your financial situation.</p>
+                    </div>
+                    {applicantName !== 'the Applicant' && (
+                        <div className="bg-amber-50 border border-amber-200 text-amber-800 text-xs font-bold px-3 py-1.5 rounded-full shadow-sm">
+                            Applicant: {applicantName}
+                        </div>
+                    )}
+                </div>
             </div>
 
             <div className={styles.formQuestion}>
