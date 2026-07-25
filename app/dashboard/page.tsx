@@ -48,6 +48,68 @@ const getPlanPrice = (title: string, subtitle: string) => {
     return '$349.99';
 };
 
+const getApplicationStatusMeta = (status?: string) => {
+    const normalized = (status || '').toString().trim().toLowerCase();
+
+    if (['approved', 'approved by admin', 'approved by uscis'].includes(normalized)) {
+        return {
+            label: 'Approved',
+            tone: 'success',
+            isDecision: true,
+            isSubmittedLike: true,
+            route: '/dashboard/case-status',
+            actionLabel: 'View Status',
+            helperText: 'Your application has been approved.'
+        };
+    }
+
+    if (['denied', 'rejected', 'declined'].includes(normalized)) {
+        return {
+            label: 'Denied',
+            tone: 'danger',
+            isDecision: true,
+            isSubmittedLike: true,
+            route: '/dashboard/case-status',
+            actionLabel: 'View Status',
+            helperText: 'Your application decision is available.'
+        };
+    }
+
+    if (['submitted', 'completed', 'review', 'in review', 'under review'].includes(normalized)) {
+        return {
+            label: 'In Review',
+            tone: 'info',
+            isDecision: false,
+            isSubmittedLike: true,
+            route: '/dashboard/get-started/submission',
+            actionLabel: 'View Application',
+            helperText: 'Your application is being reviewed.'
+        };
+    }
+
+    if (['pending', 'in progress', 'active', 'processing'].includes(normalized)) {
+        return {
+            label: 'In Progress',
+            tone: 'warning',
+            isDecision: false,
+            isSubmittedLike: false,
+            route: '/dashboard/get-started',
+            actionLabel: 'Continue Application',
+            helperText: 'You are still working on this application.'
+        };
+    }
+
+    return {
+        label: status || 'Pending',
+        tone: 'default',
+        isDecision: false,
+        isSubmittedLike: false,
+        route: '/dashboard/get-started',
+        actionLabel: 'Continue Application',
+        helperText: 'Your application is being prepared.'
+    };
+};
+
 export default function DashboardPage() {
     const router = useRouter();
     const { user } = useAuth();
@@ -119,11 +181,8 @@ export default function DashboardPage() {
             return;
         }
 
-        if (['submitted', 'completed', 'review'].includes(latestApplication.status?.toLowerCase())) {
-            router.push('/dashboard/get-started/submission');
-        } else {
-            router.push('/dashboard/get-started');
-        }
+        const statusMeta = getApplicationStatusMeta(latestApplication.status);
+        router.push(statusMeta.route);
     };
 
     const handlePayBalance = async () => {
@@ -152,6 +211,7 @@ export default function DashboardPage() {
     const activeCount = applications.length;
     const pendingDocuments = documents.filter((doc) => doc.status !== 'Uploaded').length;
     const unreadMessages = messages.length;
+    const latestStatusMeta = getApplicationStatusMeta(latestApplication?.status);
 
     return (
         <main className="flex-1 px-4 sm:px-6 pb-8 pt-2">
@@ -267,16 +327,12 @@ export default function DashboardPage() {
                                 </span>
                                 <div>
                                     <p className="font-semibold text-slate-900">
-                                        {latestApplication 
-                                            ? (['submitted', 'completed', 'review'].includes(latestApplication.status?.toLowerCase()) 
-                                                ? `View Application — ${latestApplication.title}` 
-                                                : `Continue Application — ${latestApplication.title}`) 
+                                        {latestApplication
+                                            ? `${latestStatusMeta.actionLabel} — ${latestApplication.title}`
                                             : 'Start Application'}
                                     </p>
                                     <p className="text-sm text-slate-500">
-                                        {latestApplication && ['submitted', 'completed', 'review'].includes(latestApplication.status?.toLowerCase())
-                                            ? 'Review your submitted application'
-                                            : 'Continue with your purchased package'}
+                                        {latestApplication ? latestStatusMeta.helperText : 'Continue with your purchased package'}
                                     </p>
                                 </div>
                             </button>
@@ -346,8 +402,15 @@ export default function DashboardPage() {
 
                         <div className="rounded-3xl bg-white border border-slate-200/70 p-6 sm:p-8 shadow-[0_4px_20px_rgb(0,0,0,0.03)]">
                             <div className="pb-4 border-b border-slate-100">
-                                <h3 className="text-lg font-bold text-slate-900">Application Status</h3>
-                                <p className="text-sm font-medium text-slate-500 mt-1">{latestApplication?.title || 'Loading...'}</p>
+                                <div className="flex items-center justify-between gap-3">
+                                    <div>
+                                        <h3 className="text-lg font-bold text-slate-900">Application Status</h3>
+                                        <p className="text-sm font-medium text-slate-500 mt-1">{latestApplication?.title || 'Loading...'}</p>
+                                    </div>
+                                    <span className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold ${latestStatusMeta.tone === 'success' ? 'bg-emerald-100 text-emerald-700' : latestStatusMeta.tone === 'danger' ? 'bg-rose-100 text-rose-700' : latestStatusMeta.tone === 'info' ? 'bg-sky-100 text-sky-700' : latestStatusMeta.tone === 'warning' ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-600'}`}>
+                                        {latestStatusMeta.label}
+                                    </span>
+                                </div>
                             </div>
                             <ol className="mt-6 relative">
                                 <li className="relative pl-14 pb-6 last:pb-0">
@@ -389,19 +452,43 @@ export default function DashboardPage() {
                                     </div>
                                 </li>
                                 <li className="relative pl-14 pb-6 last:pb-0">
-                                    <span className={`absolute left-0 top-0 w-10 h-10 rounded-full flex items-center justify-center border-2 ${['submitted', 'completed', 'review'].includes(latestApplication?.status?.toLowerCase()) ? 'bg-sky-500 border-sky-500 text-white shadow-md shadow-sky-500/30' : 'bg-white border-slate-200 text-slate-400'}`}>
+                                    <span className={`absolute left-0 top-0 w-10 h-10 rounded-full flex items-center justify-center border-2 ${['submitted', 'completed', 'review', 'in review', 'under review', 'approved', 'denied', 'rejected'].includes((latestApplication?.status || '').toString().trim().toLowerCase()) ? 'bg-sky-500 border-sky-500 text-white shadow-md shadow-sky-500/30' : 'bg-white border-slate-200 text-slate-400'}`}>
                                         <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                                             <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14" />
                                             <path strokeLinecap="round" strokeLinejoin="round" d="M12 5l7 7-7 7" />
                                         </svg>
                                     </span>
-                                    <div className={`rounded-2xl px-4 py-3 flex items-start justify-between gap-3 ${['submitted', 'completed', 'review'].includes(latestApplication?.status?.toLowerCase()) ? 'bg-sky-50' : ''}`}>
+                                    <div className={`rounded-2xl px-4 py-3 flex items-start justify-between gap-3 ${['submitted', 'completed', 'review', 'in review', 'under review', 'approved', 'denied', 'rejected'].includes((latestApplication?.status || '').toString().trim().toLowerCase()) ? 'bg-sky-50' : ''}`}>
                                         <div className="min-w-0">
                                             <p className="font-semibold text-slate-900">Submitted</p>
                                             <p className="text-sm text-slate-500 mt-0.5">Your application is submitted for review</p>
                                         </div>
-                                        <span className={`shrink-0 px-3 py-1 rounded-full text-xs font-semibold ${['submitted', 'completed', 'review'].includes(latestApplication?.status?.toLowerCase()) ? 'bg-sky-200 text-sky-800' : 'bg-slate-100 text-slate-500'}`}>
-                                            {['submitted', 'completed', 'review'].includes(latestApplication?.status?.toLowerCase()) ? 'Current' : 'Upcoming'}
+                                        <span className={`shrink-0 px-3 py-1 rounded-full text-xs font-semibold ${['submitted', 'completed', 'review', 'in review', 'under review', 'approved', 'denied', 'rejected'].includes((latestApplication?.status || '').toString().trim().toLowerCase()) ? 'bg-sky-200 text-sky-800' : 'bg-slate-100 text-slate-500'}`}>
+                                            {['submitted', 'completed', 'review', 'in review', 'under review', 'approved', 'denied', 'rejected'].includes((latestApplication?.status || '').toString().trim().toLowerCase()) ? 'Done' : 'Upcoming'}
+                                        </span>
+                                    </div>
+                                </li>
+                                <li className="relative pl-14 pb-6 last:pb-0">
+                                    <span className={`absolute left-[19px] top-10 bottom-0 w-0.5 ${latestStatusMeta.isDecision ? 'bg-emerald-500' : 'bg-slate-200'}`} />
+                                    <span className={`absolute left-0 top-0 w-10 h-10 rounded-full flex items-center justify-center border-2 ${latestStatusMeta.isDecision ? 'bg-white border-emerald-500 text-emerald-600' : 'bg-white border-slate-200 text-slate-400'}`}>
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14" />
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 5l7 7-7 7" />
+                                        </svg>
+                                    </span>
+                                    <div className={`rounded-2xl px-4 py-3 flex items-start justify-between gap-3 ${latestStatusMeta.isDecision ? 'bg-emerald-50' : ''}`}>
+                                        <div className="min-w-0">
+                                            <p className="font-semibold text-slate-900">Decision</p>
+                                            <p className="text-sm text-slate-500 mt-0.5">
+                                                {latestStatusMeta.label === 'Approved'
+                                                    ? 'Your application has been approved.'
+                                                    : latestStatusMeta.label === 'Denied'
+                                                        ? 'Your application was not approved.'
+                                                        : 'Your final decision will appear here once the review is complete.'}
+                                            </p>
+                                        </div>
+                                        <span className={`shrink-0 px-3 py-1 rounded-full text-xs font-semibold ${latestStatusMeta.label === 'Approved' ? 'bg-emerald-100 text-emerald-700' : latestStatusMeta.label === 'Denied' ? 'bg-rose-100 text-rose-700' : 'bg-slate-100 text-slate-500'}`}>
+                                            {latestStatusMeta.isDecision ? latestStatusMeta.label : 'Upcoming'}
                                         </span>
                                     </div>
                                 </li>

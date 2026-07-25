@@ -15,6 +15,28 @@ interface Application {
     created_at: string;
 }
 
+const getApplicationStatusMeta = (status?: string) => {
+    const normalized = (status || '').toString().trim().toLowerCase();
+
+    if (['approved', 'approved by admin', 'approved by uscis'].includes(normalized)) {
+        return { label: 'Approved', tone: 'success', route: '/dashboard/case-status', buttonLabel: 'View Status' };
+    }
+
+    if (['denied', 'rejected', 'declined'].includes(normalized)) {
+        return { label: 'Denied', tone: 'danger', route: '/dashboard/case-status', buttonLabel: 'View Status' };
+    }
+
+    if (['submitted', 'completed', 'review', 'in review', 'under review'].includes(normalized)) {
+        return { label: 'In Review', tone: 'info', route: '/dashboard/get-started/submission', buttonLabel: 'View Application' };
+    }
+
+    if (['pending', 'in progress', 'active', 'processing'].includes(normalized)) {
+        return { label: 'In Progress', tone: 'warning', route: '/dashboard/get-started', buttonLabel: 'Continue Application' };
+    }
+
+    return { label: status || 'Pending', tone: 'default', route: '/dashboard/get-started', buttonLabel: 'Continue Application' };
+};
+
 export default function DashboardApplicationsPage() {
     const [applications, setApplications] = useState<Application[]>([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -32,11 +54,8 @@ export default function DashboardApplicationsPage() {
     }, []);
 
     const handleStartApplication = (app: any) => {
-        if (['submitted', 'completed', 'review'].includes(app.status?.toLowerCase())) {
-            router.push('/dashboard/get-started/submission');
-        } else {
-            router.push('/dashboard/get-started');
-        }
+        const statusMeta = getApplicationStatusMeta(app.status);
+        router.push(statusMeta.route);
     };
 
     const getPlanDetails = (goal: string, subtitle: string) => {
@@ -102,6 +121,7 @@ export default function DashboardApplicationsPage() {
                 ) : applications.map((app) => {
                     const { price, bullets } = getPlanDetails(app.title, app.subtitle);
                     const planName = app.subtitle.replace('Plan: ', '') + ' Plan';
+                    const statusMeta = getApplicationStatusMeta(app.status);
 
                     return (
                         <div key={app.id} className="bg-white rounded-[12px] border border-gray-200 shadow-sm overflow-hidden">
@@ -122,9 +142,12 @@ export default function DashboardApplicationsPage() {
                                         <p className="text-[13px] text-[#5A6579] mt-1">Purchased on {formatDate(app.created_at)}</p>
                                     </div>
                                 </div>
-                                <div className="flex space-x-2 mt-4 sm:mt-0">
+                                <div className="flex flex-wrap gap-2 mt-4 sm:mt-0">
                                     <span className="bg-[#FFF0E6] text-[#FA6514] text-[12px] font-bold px-3 py-1 rounded-full">
                                         {planName}
+                                    </span>
+                                    <span className={`text-[12px] font-bold px-3 py-1 rounded-full ${statusMeta.tone === 'success' ? 'bg-emerald-100 text-emerald-700' : statusMeta.tone === 'danger' ? 'bg-rose-100 text-rose-700' : statusMeta.tone === 'info' ? 'bg-sky-100 text-sky-700' : statusMeta.tone === 'warning' ? 'bg-amber-100 text-amber-700' : 'bg-[#E6F0FF] text-[#1D4ED8]'}`}>
+                                        {statusMeta.label}
                                     </span>
                                     <span className="bg-[#E6F0FF] text-[#1D4ED8] text-[12px] font-bold px-3 py-1 rounded-full">
                                         paid
@@ -152,8 +175,8 @@ export default function DashboardApplicationsPage() {
                                         </svg>
                                     </div>
                                     <div>
-                                        <h3 className="text-[16px] font-bold text-[#1B3A64]">{app.progress || 'Application Ready'}</h3>
-                                        <p className="text-[14px] text-[#5A6579] mt-1">{app.next_step || 'Your plan is ready for processing. Our team will contact you soon.'}</p>
+                                        <h3 className="text-[16px] font-bold text-[#1B3A64]">{statusMeta.label === 'Approved' ? 'Approved' : app.progress || 'Application Ready'}</h3>
+                                        <p className="text-[14px] text-[#5A6579] mt-1">{statusMeta.label === 'Approved' ? 'Your application has been approved and the decision is now available.' : app.next_step || 'Your plan is ready for processing. Our team will contact you soon.'}</p>
                                     </div>
                                 </div>
                             </div>
@@ -182,9 +205,7 @@ export default function DashboardApplicationsPage() {
                                         className="bg-[#1B3A64] hover:bg-[#152e52] text-white font-semibold py-2.5 px-6 rounded-lg transition-colors flex items-center space-x-2 shadow-sm"
                                     >
                                         <span>
-                                            {['submitted', 'completed', 'review'].includes(app.status?.toLowerCase()) 
-                                                ? 'View Application' 
-                                                : 'Continue Application'}
+                                            {statusMeta.buttonLabel}
                                         </span>
                                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                             <path d="M5 12h14"></path>

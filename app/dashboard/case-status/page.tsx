@@ -2,6 +2,28 @@
 import React, { useEffect, useState } from "react";
 import api from "@/lib/api";
 
+const getApplicationStatusBadge = (status?: string) => {
+    const normalized = (status || '').toString().trim().toLowerCase();
+
+    if (['approved', 'approved by admin', 'approved by uscis'].includes(normalized)) {
+        return { label: 'Approved', classes: 'bg-emerald-100 text-emerald-700' };
+    }
+
+    if (['denied', 'rejected', 'declined'].includes(normalized)) {
+        return { label: 'Denied', classes: 'bg-rose-100 text-rose-700' };
+    }
+
+    if (['submitted', 'completed', 'review', 'in review', 'under review'].includes(normalized)) {
+        return { label: 'In Review', classes: 'bg-sky-100 text-sky-700' };
+    }
+
+    if (['pending', 'in progress', 'active', 'processing'].includes(normalized)) {
+        return { label: 'In Progress', classes: 'bg-amber-100 text-amber-700' };
+    }
+
+    return { label: status || 'Pending', classes: 'bg-slate-100 text-slate-600' };
+};
+
 export default function DashboardCaseStatusPage() {
     const [application, setApplication] = useState<any>(null);
     const [isLoading, setIsLoading] = useState(true);
@@ -26,12 +48,18 @@ export default function DashboardCaseStatusPage() {
     }
 
     const statusSteps = application.timeline || [];
+    const statusBadge = getApplicationStatusBadge(application.status);
 
     return (
         <div className="space-y-10">
             <div className="rounded-[40px] bg-white p-10 shadow-[0_25px_70px_rgba(61,68,101,0.08)]">
                 <p className="text-sm uppercase tracking-[0.28em] text-orange-500">Case status</p>
-                <h1 className="mt-4 text-4xl font-black text-[#1B3A64]">Where your application stands</h1>
+                <div className="mt-4 flex flex-wrap items-center gap-3">
+                    <h1 className="text-4xl font-black text-[#1B3A64]">Where your application stands</h1>
+                    <span className={`inline-flex items-center rounded-full px-3 py-1 text-sm font-semibold ${statusBadge.classes}`}>
+                        {statusBadge.label}
+                    </span>
+                </div>
                 <p className="mt-4 max-w-2xl text-base leading-7 text-[#5A6579]">
                     See the latest progress on your immigration case, review upcoming milestones, and prepare the next documents USCIS will ask for.
                 </p>
@@ -43,7 +71,7 @@ export default function DashboardCaseStatusPage() {
                     </div>
                     <div className="rounded-[28px] border border-slate-200 bg-[#F8F6F3] p-6">
                         <p className="text-sm font-semibold text-[#5A6579]">Current stage</p>
-                        <p className="mt-3 text-2xl font-black text-[#1B3A64]">{application.progress}</p>
+                        <p className="mt-3 text-2xl font-black text-[#1B3A64]">{application.status || application.progress}</p>
                     </div>
                 </div>
             </div>
