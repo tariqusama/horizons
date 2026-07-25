@@ -11,7 +11,7 @@ export interface Service {
 }
 
 export const getServices = async (): Promise<Service[]> => {
-    const response = await api.get('/admin/services');
+    const response = await api.get('/services');
     return response.data;
 };
 

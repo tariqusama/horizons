@@ -116,7 +116,7 @@ export default function ManageUserRolesModal({ onClose, userId }: { onClose?: ()
                                     <select
                                         value={selectedUserId}
                                         onChange={(e) => setSelectedUserId(Number(e.target.value) || '')}
-                                        className="appearance-none w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E3755D]/20 focus:border-[#E3755D] bg-white font-medium text-gray-900 cursor-pointer"
+                                        className="appearance-none w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 bg-white font-medium text-gray-900 cursor-pointer"
                                     >
                                         <option value="" disabled>Select a user</option>
                                         {users.map((u) => <option key={u.id} value={u.id}>{u.name} ({u.email})</option>)}
@@ -134,7 +134,7 @@ export default function ManageUserRolesModal({ onClose, userId }: { onClose?: ()
                                     <select
                                         value={role}
                                         onChange={(e) => setRole(e.target.value)}
-                                        className="appearance-none w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E3755D]/20 focus:border-[#E3755D] bg-white font-medium text-gray-900 cursor-pointer"
+                                        className="appearance-none w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 bg-white font-medium text-gray-900 cursor-pointer"
                                     >
                                         <option value="" disabled>Select a role to assign</option>
                                         {ROLE_OPTIONS.map((r) => <option key={r.value} value={r.value}>{r.label}</option>)}
@@ -149,48 +149,48 @@ export default function ManageUserRolesModal({ onClose, userId }: { onClose?: ()
                         <>
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
-                                    <label className="block text-sm font-bold text-gray-900 mb-2">First Name <span className="text-[#E3755D]">*</span></label>
+                                    <label className="block text-sm font-bold text-gray-900 mb-2">First Name <span className="text-orange-500">*</span></label>
                                     <input
                                         type="text"
                                         required
                                         value={firstName}
                                         onChange={(e) => setFirstName(e.target.value)}
-                                        className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E3755D]/20 focus:border-[#E3755D] bg-white font-medium text-gray-900"
+                                        className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 bg-white font-medium text-gray-900"
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-bold text-gray-900 mb-2">Last Name <span className="text-[#E3755D]">*</span></label>
+                                    <label className="block text-sm font-bold text-gray-900 mb-2">Last Name <span className="text-orange-500">*</span></label>
                                     <input
                                         type="text"
                                         required
                                         value={lastName}
                                         onChange={(e) => setLastName(e.target.value)}
-                                        className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E3755D]/20 focus:border-[#E3755D] bg-white font-medium text-gray-900"
+                                        className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 bg-white font-medium text-gray-900"
                                     />
                                 </div>
                             </div>
 
                             <div>
-                                <label className="block text-sm font-bold text-gray-900 mb-2">Email Address <span className="text-[#E3755D]">*</span></label>
+                                <label className="block text-sm font-bold text-gray-900 mb-2">Email Address <span className="text-orange-500">*</span></label>
                                 <input
                                     type="email"
                                     required
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     placeholder="admin@horizonpathways.com"
-                                    className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E3755D]/20 focus:border-[#E3755D] bg-white font-medium text-gray-900 placeholder:text-gray-400"
+                                    className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 bg-white font-medium text-gray-900 placeholder:text-gray-400"
                                 />
                             </div>
 
                             <div>
-                                <label className="block text-sm font-bold text-gray-900 mb-2">Password <span className="text-[#E3755D]">*</span></label>
+                                <label className="block text-sm font-bold text-gray-900 mb-2">Password <span className="text-orange-500">*</span></label>
                                 <div className="relative">
                                     <input
                                         type={showPassword ? "text" : "password"}
                                         required
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
-                                        className="w-full px-4 py-3 pr-11 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E3755D]/20 focus:border-[#E3755D] bg-white font-medium text-gray-900"
+                                        className="w-full px-4 py-3 pr-11 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 bg-white font-medium text-gray-900"
                                     />
                                     <button
                                         type="button"
@@ -209,7 +209,7 @@ export default function ManageUserRolesModal({ onClose, userId }: { onClose?: ()
                                     <select
                                         value={role}
                                         onChange={(e) => setRole(e.target.value)}
-                                        className="appearance-none w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E3755D]/20 focus:border-[#E3755D] bg-white font-medium text-gray-900 cursor-pointer"
+                                        className="appearance-none w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 bg-white font-medium text-gray-900 cursor-pointer"
                                     >
                                         <option value="" disabled>Select a role for the new user</option>
                                         {ROLE_OPTIONS.map((r) => <option key={r.value} value={r.value}>{r.label}</option>)}
@@ -232,12 +232,12 @@ export default function ManageUserRolesModal({ onClose, userId }: { onClose?: ()
                         Cancel
                     </button>
                     {tab === "existing" ? (
-                        <button onClick={handleAssign} className="flex-1 flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-[#E3755D] text-white font-bold text-sm hover:bg-[#C8634D] transition-colors shadow-sm">
+                        <button onClick={handleAssign} className="flex-1 flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-b from-orange-500 to-orange-600 text-white font-bold text-sm hover:from-orange-600 hover:to-orange-700 transition-colors shadow-sm">
                             <Icon.shield width={15} height={15} />
                             Assign Role
                         </button>
                     ) : (
-                        <button onClick={handleCreate} className="flex-1 flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-[#E3755D] text-white font-bold text-sm hover:bg-[#C8634D] transition-colors shadow-sm">
+                        <button onClick={handleCreate} className="flex-1 flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-b from-orange-500 to-orange-600 text-white font-bold text-sm hover:from-orange-600 hover:to-orange-700 transition-colors shadow-sm">
                             <Icon.userPlus width={15} height={15} />
                             Create & Assign Role
                         </button>

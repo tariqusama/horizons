@@ -26,3 +26,7 @@ export const getNotifications = async (): Promise<Notification[]> => {
 export const markAsRead = async (id?: string): Promise<void> => {
     await api.put('/notifications/mark-read', { id });
 };
+
+export const clearAllNotifications = async (): Promise<void> => {
+    await api.delete('/notifications/clear');
+};

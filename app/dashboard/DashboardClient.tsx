@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import Sidebar from "./Sidebar";
 import styles from "./dashboardLayout.module.css";
 import { useAuth } from '@/contexts/AuthContext';
-import { getNotifications, markAsRead, Notification } from '@/lib/api/notifications';
+import { getNotifications, markAsRead, clearAllNotifications, Notification } from '@/lib/api/notifications';
 
 export default function DashboardClient({ children }: { children: React.ReactNode }) {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -17,19 +17,29 @@ export default function DashboardClient({ children }: { children: React.ReactNod
     const [unreadCount, setUnreadCount] = useState(0);
     const [showNotifications, setShowNotifications] = useState(false);
 
+    const loadNotifications = async () => {
+        try {
+            const data = await getNotifications();
+            setNotifications(data);
+            setUnreadCount(data.filter(n => !n.read_at).length);
+        } catch (err) {
+            console.error('Failed to load notifications', err);
+        }
+    };
+
+    const toggleNotifications = async () => {
+        if (!showNotifications) {
+            await loadNotifications();
+        }
+        setShowNotifications(!showNotifications);
+    };
+
     useEffect(() => {
-        const fetchLayoutData = async () => {
-            try {
-                if (user) {
-                    const data = await getNotifications();
-                    setNotifications(data);
-                    setUnreadCount(data.filter(n => !n.read_at).length);
-                }
-            } catch (err) {
-                console.error('Failed to load notifications', err);
-            }
-        };
-        fetchLayoutData();
+        if (user) {
+            loadNotifications();
+            const interval = setInterval(loadNotifications, 30000);
+            return () => clearInterval(interval);
+        }
     }, [user]);
 
     useEffect(() => {
@@ -84,7 +94,7 @@ export default function DashboardClient({ children }: { children: React.ReactNod
                         </button>
                         <div className="relative">
                             <button 
-                                onClick={() => setShowNotifications(!showNotifications)} 
+                                onClick={toggleNotifications} 
                                 className={`${styles.actionIconBtn} ${styles.blue} relative`}
                             >
                                 <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
@@ -101,7 +111,7 @@ export default function DashboardClient({ children }: { children: React.ReactNod
                                 <div className="absolute right-0 mt-2 w-[320px] sm:w-[360px] bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden z-50">
                                     <div className="px-5 py-3 border-b border-gray-100 flex justify-between items-center bg-[#F8F9FA]">
                                         <h3 className="font-bold text-[#1B3A64] text-sm">Notifications</h3>
-                                        <button onClick={async () => { await markAsRead(); const data = await getNotifications(); setNotifications(data); setUnreadCount(data.filter(n => !n.read_at).length); }} className="text-xs text-[#5A6579] hover:text-[#E3755D] font-medium">Mark all as read</button>
+                                        <button onClick={async () => { await markAsRead(); const data = await getNotifications(); setNotifications(data); setUnreadCount(data.filter(n => !n.read_at).length); }} className="text-xs text-[#5A6579] hover:text-orange-500 font-medium">Mark all as read</button>
                                     </div>
                                     <div className="max-h-[320px] overflow-y-auto">
                                         {notifications.length === 0 && (
@@ -114,10 +124,10 @@ export default function DashboardClient({ children }: { children: React.ReactNod
                                                 <div key={n.id} className={`p-4 transition-colors flex gap-3 items-start border-b border-gray-50 ${isUnread ? 'bg-[#FDFCFB]' : 'bg-white hover:bg-[#F9F8F6]'}`}>
                                                     <div className="mt-1 shrink-0">
                                                         {parsedData?.type === 'message' && (
-                                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={isUnread ? "#E3755D" : "#8A8F98"} strokeWidth="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={isUnread ? "#ea580c" : "#8A8F98"} strokeWidth="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
                                                         )}
                                                         {parsedData?.type === 'alert' && (
-                                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={isUnread ? "#E3755D" : "#8A8F98"} strokeWidth="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={isUnread ? "#ea580c" : "#8A8F98"} strokeWidth="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
                                                         )}
                                                         {parsedData?.type === 'system' && (
                                                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={isUnread ? "#101F38" : "#8A8F98"} strokeWidth="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
@@ -126,7 +136,7 @@ export default function DashboardClient({ children }: { children: React.ReactNod
                                                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={isUnread ? "#2F8A5F" : "#8A8F98"} strokeWidth="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
                                                         )}
                                                         {!parsedData?.type && (
-                                                            <div className="w-2 h-2 mt-1 rounded-full shrink-0" style={{ background: isUnread ? '#E3755D' : 'transparent' }}></div>
+                                                            <div className="w-2 h-2 mt-1 rounded-full shrink-0" style={{ background: isUnread ? '#f97316' : 'transparent' }}></div>
                                                         )}
                                                     </div>
                                                     <div className="flex-1 min-w-0">
@@ -141,9 +151,9 @@ export default function DashboardClient({ children }: { children: React.ReactNod
                                         })}
                                     </div>
                                     <div className="px-5 py-3 border-t border-gray-100 text-center bg-[#F8F9FA]">
-                                        <Link href="/dashboard/notifications" onClick={() => setShowNotifications(false)} className="text-xs font-bold text-[#E3755D] hover:text-[#C8634D]">
-                                            View all notifications
-                                        </Link>
+                                        <button onClick={async () => { await clearAllNotifications(); await loadNotifications(); setShowNotifications(false); }} className="text-xs font-bold text-orange-500 hover:text-orange-600">
+                                            Clear notifications
+                                        </button>
                                     </div>
                                 </div>
                             )}

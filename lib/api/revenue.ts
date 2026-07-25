@@ -14,9 +14,29 @@ export interface RevenueData {
         tier: string;
         revenue: number;
     }[];
+    monthly_revenue: {
+        month: string;
+        value: number;
+    }[];
+    recent_transactions: {
+        id: string;
+        title: string;
+        plan: string;
+        date: string;
+        amount: string;
+        status: 'Completed' | 'Pending' | 'Failed';
+    }[];
+    funnel_stats: {
+        applications_created: number;
+        payments_completed: number;
+        pending_payments: number;
+        conversion_rate: number;
+    };
 }
 
 export const getRevenueData = async (): Promise<RevenueData> => {
-    const response = await api.get('/admin/revenue');
+    const response = await api.get('/admin/revenue', {
+        params: { _t: new Date().getTime() }
+    });
     return response.data;
 };

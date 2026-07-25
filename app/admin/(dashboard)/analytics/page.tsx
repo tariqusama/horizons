@@ -79,7 +79,7 @@ export default function AdminAnalyticsPage() {
                                 <h2 className="font-bold text-gray-900 text-lg">Revenue Overview</h2>
                                 <p className="text-sm text-gray-500">Monthly revenue for the past year.</p>
                             </div>
-                            <button className="text-sm font-bold text-[#E3755D] hover:text-[#C8634D] flex items-center">
+                            <button className="text-sm font-bold text-orange-500 hover:text-orange-600 flex items-center">
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="mr-1.5">
                                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                                     <polyline points="7 10 12 15 17 10"></polyline>
@@ -102,7 +102,7 @@ export default function AdminAnalyticsPage() {
                                     return (
                                         <div key={idx} className="w-[6%] relative group">
                                             <div
-                                                className="w-full rounded-t-sm bg-[#1B3A64] transition-all duration-300 group-hover:bg-[#E3755D]"
+                                                className="w-full rounded-t-sm bg-[#1B3A64] transition-all duration-300 group-hover:bg-gradient-to-b from-orange-500 to-orange-600"
                                                 style={{ height: `${height}%` }}
                                             />
                                             <div className="absolute -bottom-6 w-full text-center text-xs font-bold text-gray-500">

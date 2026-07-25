@@ -12,6 +12,9 @@ interface User {
     phone?: string;
     profile_picture?: string | null;
     profile_picture_url?: string | null;
+    email_notifications?: boolean;
+    sms_alerts?: boolean;
+    marketing_emails?: boolean;
     created_at?: string;
 }
 
@@ -22,6 +25,9 @@ interface AuthContextType {
     register: (data: any, skipRedirect?: boolean) => Promise<void>;
     logout: () => Promise<void>;
     checkAuth: () => Promise<void>;
+    isIdle: boolean;
+    idleTime: number;
+    resetIdleTimer: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -29,7 +35,54 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: ReactNode }) {
     const [user, setUser] = useState<User | null>(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [isIdle, setIsIdle] = useState(false);
+    const [idleTime, setIdleTime] = useState(60);
     const router = useRouter();
+
+    const resetIdleTimer = () => {
+        setIsIdle(false);
+        setIdleTime(60);
+    };
+
+    // Activity tracker
+    useEffect(() => {
+        if (!user || isIdle) return; // Don't track if already idle or not logged in
+
+        let timeoutId: NodeJS.Timeout;
+
+        const handleActivity = () => {
+            clearTimeout(timeoutId);
+            timeoutId = setTimeout(() => setIsIdle(true), 15 * 60 * 1000);
+        };
+
+        handleActivity(); // Set initial timeout
+
+        const events = ['mousemove', 'mousedown', 'keydown', 'touchstart', 'scroll'];
+        events.forEach(event => window.addEventListener(event, handleActivity));
+
+        return () => {
+            clearTimeout(timeoutId);
+            events.forEach(event => window.removeEventListener(event, handleActivity));
+        };
+    }, [user, isIdle]);
+
+    // Countdown timer
+    useEffect(() => {
+        if (!isIdle) return;
+
+        const intervalId = setInterval(() => {
+            setIdleTime((prev) => {
+                if (prev <= 1) {
+                    clearInterval(intervalId);
+                    logout();
+                    return 0;
+                }
+                return prev - 1;
+            });
+        }, 1000);
+
+        return () => clearInterval(intervalId);
+    }, [isIdle]);
 
     const checkAuth = async () => {
         setIsLoading(true);
@@ -51,6 +104,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         await initCsrf();
         const res = await api.post('/login', data);
         const user = res.data.user ?? res.data;
+        if (res.data.token) {
+            setAuthToken(res.data.token);
+        }
         setUser(user);
         redirectBasedOnRole(user.role);
     };
@@ -59,6 +115,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         await initCsrf();
         const res = await api.post('/register', data);
         const user = res.data.user ?? res.data;
+        if (res.data.token) {
+            setAuthToken(res.data.token);
+        }
         setUser(user);
         if (!skipRedirect) {
             redirectBasedOnRole(user.role);
@@ -85,7 +144,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
 
     return (
-        <AuthContext.Provider value={{ user, isLoading, login, register, logout, checkAuth }}>
+        <AuthContext.Provider value={{ user, isLoading, login, register, logout, checkAuth, isIdle, idleTime, resetIdleTimer }}>
             {children}
         </AuthContext.Provider>
     );

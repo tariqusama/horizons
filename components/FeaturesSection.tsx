@@ -41,7 +41,7 @@ export default function FeaturesSection() {
         {features.map((feature, idx) => (
           <div key={idx} className="bg-white rounded-[40px] p-10 shadow-[0_20px_40px_-15px_rgba(27,58,100,0.08)] flex flex-col items-center text-center border border-gray-100 hover:-translate-y-3 hover:shadow-[0_40px_60px_-15px_rgba(27,58,100,0.12)] transition-all duration-500 group">
             <div className="w-20 h-20 rounded-[24px] bg-[#F8F9FA] flex items-center justify-center mb-8 shadow-sm border border-gray-100 group-hover:bg-[#EAF1F8] transition-colors duration-300">
-              <span className="material-icons text-[#E3755D] text-[36px]">{feature.icon}</span>
+              <span className="material-icons text-orange-500 text-[36px]">{feature.icon}</span>
             </div>
             <h3 className="text-[#1B3A64] font-bold text-[20px] mb-4 leading-snug">{feature.title}</h3>
             <p className="text-[#5A6579] font-medium text-[16px] leading-relaxed">

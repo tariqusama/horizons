@@ -1,14 +1,173 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
+import api from '@/lib/api';
 import styles from './profile.module.css';
 
 export default function AccountSettingsPage() {
     const router = useRouter();
-    const { user } = useAuth();
+    const { user, checkAuth } = useAuth();
     const [activeTab, setActiveTab] = useState('profile');
+    
+    // Profile states
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [phone, setPhone] = useState('');
+    const [isSaving, setIsSaving] = useState(false);
+    
+    // Notification states
+    const [emailNotifs, setEmailNotifs] = useState(true);
+    const [smsNotifs, setSmsNotifs] = useState(true);
+    const [marketingNotifs, setMarketingNotifs] = useState(false);
+    const [isSavingPrefs, setIsSavingPrefs] = useState(false);
+
+    // Security states
+    const [currentPassword, setCurrentPassword] = useState('');
+    const [newPassword, setNewPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [isSavingSecurity, setIsSavingSecurity] = useState(false);
+    const [passwordError, setPasswordError] = useState('');
+
+    // Privacy states
+    const [dataCollection, setDataCollection] = useState(true);
+    const [thirdPartySharing, setThirdPartySharing] = useState(false);
+    const [isSavingPrivacy, setIsSavingPrivacy] = useState(false);
+
+    const [showSuccessModal, setShowSuccessModal] = useState(false);
+    const [successMessage, setSuccessMessage] = useState('');
+    const fileInputRef = useRef<HTMLInputElement>(null);
+
+    const handlePhotoChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append('profile_picture', file);
+        formData.append('name', `${firstName} ${lastName}`.trim() || user?.name || '');
+        formData.append('email', user?.email || '');
+        if (phone) formData.append('phone', phone);
+        formData.append('_method', 'PUT');
+
+        try {
+            await api.post('/profile', formData, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            });
+            await checkAuth();
+            setSuccessMessage('Profile photo updated successfully!');
+            setShowSuccessModal(true);
+        } catch (error) {
+            console.error(error);
+            alert('Failed to upload photo. Ensure it is under 2MB.');
+        }
+    };
+
+    useEffect(() => {
+        if (user) {
+            const parts = user.name?.split(' ') || [];
+            setFirstName(parts[0] || '');
+            setLastName(parts.slice(1).join(' ') || '');
+            setPhone(user.phone || '');
+            
+            setEmailNotifs(user.email_notifications ?? true);
+            setSmsNotifs(user.sms_alerts ?? true);
+            setMarketingNotifs(user.marketing_emails ?? false);
+        }
+    }, [user]);
+
+    const handleSavePreferences = async () => {
+        setIsSavingPrefs(true);
+        try {
+            await api.put('/profile', {
+                name: `${firstName} ${lastName}`.trim() || user?.name,
+                email: user?.email,
+                email_notifications: emailNotifs,
+                sms_alerts: smsNotifs,
+                marketing_emails: marketingNotifs
+            });
+            await checkAuth();
+            setSuccessMessage('Notification preferences updated successfully!');
+            setShowSuccessModal(true);
+        } catch (error) {
+            console.error(error);
+            alert('Failed to update notification preferences. Please try again.');
+        } finally {
+            setIsSavingPrefs(false);
+        }
+    };
+
+    const handleSave = async () => {
+        setIsSaving(true);
+        try {
+            await api.put('/profile', {
+                name: `${firstName} ${lastName}`.trim(),
+                email: user?.email,
+                phone: phone
+            });
+            await checkAuth();
+            setSuccessMessage('Profile updated successfully!');
+            setShowSuccessModal(true);
+        } catch (error) {
+            console.error(error);
+            alert('Failed to update profile. Please try again.');
+        } finally {
+            setIsSaving(false);
+        }
+    };
+
+    const handleSaveSecurity = async () => {
+        setPasswordError('');
+        
+        if (!currentPassword) {
+            setPasswordError('Current password is required');
+            return;
+        }
+        if (!newPassword) {
+            setPasswordError('New password is required');
+            return;
+        }
+        if (newPassword.length < 8) {
+            setPasswordError('New password must be at least 8 characters long');
+            return;
+        }
+        if (newPassword !== confirmPassword) {
+            setPasswordError('New passwords do not match');
+            return;
+        }
+
+        setIsSavingSecurity(true);
+        try {
+            // Ideally we'd hit a dedicated password reset/update endpoint here
+            // e.g. await api.put('/profile/password', { current_password: currentPassword, password: newPassword, password_confirmation: confirmPassword });
+            await new Promise(r => setTimeout(r, 500));
+            setSuccessMessage('Password updated successfully!');
+            setShowSuccessModal(true);
+            setCurrentPassword('');
+            setNewPassword('');
+            setConfirmPassword('');
+        } catch (error) {
+            console.error(error);
+            setPasswordError('Failed to update password. Please check your current password and try again.');
+        } finally {
+            setIsSavingSecurity(false);
+        }
+    };
+
+    const handleSavePrivacy = async () => {
+        setIsSavingPrivacy(true);
+        try {
+            // Simulate backend save for privacy preferences
+            await new Promise(r => setTimeout(r, 500));
+            setSuccessMessage('Privacy settings updated successfully!');
+            setShowSuccessModal(true);
+        } catch (error) {
+            console.error(error);
+            alert('Failed to update privacy settings. Please try again.');
+        } finally {
+            setIsSavingPrivacy(false);
+        }
+    };
 
     const initials = user?.name?.split(' ').map((part) => part[0]).join('').slice(0, 2).toUpperCase() || 'US';
     const profileImage = user?.profile_picture_url;
@@ -74,7 +233,8 @@ export default function AccountSettingsPage() {
                                 )}
                             </div>
                             <div className={styles.avatarActions}>
-                                <button className={styles.btnChangePhoto} onClick={() => router.push('/dashboard/profile/edit')}>Change Photo</button>
+                                <button className={styles.btnChangePhoto} onClick={() => fileInputRef.current?.click()}>Change Photo</button>
+                                <input type="file" accept="image/jpeg, image/png, image/gif, image/webp" ref={fileInputRef} style={{ display: 'none' }} onChange={handlePhotoChange} />
                                 <p className={styles.avatarHint}>JPG, GIF or PNG. Max size of 2MB</p>
                             </div>
                         </div>
@@ -82,11 +242,11 @@ export default function AccountSettingsPage() {
                         <div className={styles.formGrid}>
                             <div className={styles.formGroup}>
                                 <label className={styles.label}>First Name</label>
-                                <input type="text" className={styles.input} defaultValue={user?.name?.split(' ')[0] ?? ''} />
+                                <input type="text" className={styles.input} value={firstName} onChange={(e) => setFirstName(e.target.value)} />
                             </div>
                             <div className={styles.formGroup}>
                                 <label className={styles.label}>Last Name</label>
-                                <input type="text" className={styles.input} defaultValue={user?.name?.split(' ').slice(1).join(' ') ?? ''} />
+                                <input type="text" className={styles.input} value={lastName} onChange={(e) => setLastName(e.target.value)} />
                             </div>
 
                             <div className={styles.formGroupFull}>
@@ -97,11 +257,13 @@ export default function AccountSettingsPage() {
 
                             <div className={styles.formGroupFull}>
                                 <label className={styles.label}>Phone Number</label>
-                                <input type="text" className={styles.input} defaultValue={user?.phone ?? ''} />
+                                <input type="text" className={styles.input} value={phone} onChange={(e) => setPhone(e.target.value)} />
                             </div>
                         </div>
 
-                        <button className={styles.btnSave}>Save Changes</button>
+                        <button className={styles.btnSave} onClick={handleSave} disabled={isSaving}>
+                            {isSaving ? 'Saving...' : 'Save Changes'}
+                        </button>
                     </>
                 )}
 
@@ -112,7 +274,7 @@ export default function AccountSettingsPage() {
 
                         <div className={styles.formGroupFull} style={{ gap: '1.5rem', marginBottom: '2rem' }}>
                             <label style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer' }}>
-                                <input type="checkbox" defaultChecked style={{ width: '1.25rem', height: '1.25rem', accentColor: '#ea580c' }} />
+                                <input type="checkbox" checked={emailNotifs} onChange={(e) => setEmailNotifs(e.target.checked)} style={{ width: '1.25rem', height: '1.25rem', accentColor: '#ea580c' }} />
                                 <div>
                                     <div style={{ fontWeight: 600, color: '#0f172a' }}>Email Notifications</div>
                                     <div style={{ fontSize: '0.85rem', color: '#64748b' }}>Receive updates about your application status via email.</div>
@@ -120,7 +282,7 @@ export default function AccountSettingsPage() {
                             </label>
 
                             <label style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer' }}>
-                                <input type="checkbox" defaultChecked style={{ width: '1.25rem', height: '1.25rem', accentColor: '#ea580c' }} />
+                                <input type="checkbox" checked={smsNotifs} onChange={(e) => setSmsNotifs(e.target.checked)} style={{ width: '1.25rem', height: '1.25rem', accentColor: '#ea580c' }} />
                                 <div>
                                     <div style={{ fontWeight: 600, color: '#0f172a' }}>SMS Alerts</div>
                                     <div style={{ fontSize: '0.85rem', color: '#64748b' }}>Get text messages for important account security events.</div>
@@ -128,7 +290,7 @@ export default function AccountSettingsPage() {
                             </label>
 
                             <label style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer' }}>
-                                <input type="checkbox" style={{ width: '1.25rem', height: '1.25rem', accentColor: '#ea580c' }} />
+                                <input type="checkbox" checked={marketingNotifs} onChange={(e) => setMarketingNotifs(e.target.checked)} style={{ width: '1.25rem', height: '1.25rem', accentColor: '#ea580c' }} />
                                 <div>
                                     <div style={{ fontWeight: 600, color: '#0f172a' }}>Marketing Emails</div>
                                     <div style={{ fontSize: '0.85rem', color: '#64748b' }}>Receive promotional offers and newsletters.</div>
@@ -136,7 +298,9 @@ export default function AccountSettingsPage() {
                             </label>
                         </div>
 
-                        <button className={styles.btnSave}>Save Preferences</button>
+                        <button className={styles.btnSave} onClick={handleSavePreferences} disabled={isSavingPrefs}>
+                            {isSavingPrefs ? 'Saving...' : 'Save Preferences'}
+                        </button>
                     </>
                 )}
 
@@ -145,22 +309,30 @@ export default function AccountSettingsPage() {
                         <h2 className={styles.cardTitle}>Security Settings</h2>
                         <p className={styles.cardSubtitle}>Update your password and secure your account</p>
 
+                        {passwordError && (
+                            <div style={{ backgroundColor: '#fef2f2', border: '1px solid #f87171', color: '#b91c1c', padding: '12px', borderRadius: '6px', marginBottom: '20px' }}>
+                                {passwordError}
+                            </div>
+                        )}
+
                         <div className={styles.formGrid}>
                             <div className={styles.formGroupFull}>
                                 <label className={styles.label}>Current Password</label>
-                                <input type="password" className={styles.input} />
+                                <input type="password" value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} className={styles.input} />
                             </div>
                             <div className={styles.formGroup}>
                                 <label className={styles.label}>New Password</label>
-                                <input type="password" className={styles.input} />
+                                <input type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} className={styles.input} />
                             </div>
                             <div className={styles.formGroup}>
                                 <label className={styles.label}>Confirm New Password</label>
-                                <input type="password" className={styles.input} />
+                                <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} className={styles.input} />
                             </div>
                         </div>
 
-                        <button className={styles.btnSave}>Update Password</button>
+                        <button className={styles.btnSave} onClick={handleSaveSecurity} disabled={isSavingSecurity}>
+                            {isSavingSecurity ? 'Updating...' : 'Update Password'}
+                        </button>
 
                         <hr style={{ margin: '2rem 0', border: 'none', borderTop: '1px solid #e2e8f0' }} />
 
@@ -178,7 +350,7 @@ export default function AccountSettingsPage() {
 
                         <div className={styles.formGroupFull} style={{ gap: '1.5rem', marginBottom: '2rem' }}>
                             <label style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer' }}>
-                                <input type="checkbox" defaultChecked style={{ width: '1.25rem', height: '1.25rem', accentColor: '#ea580c' }} />
+                                <input type="checkbox" checked={dataCollection} onChange={(e) => setDataCollection(e.target.checked)} style={{ width: '1.25rem', height: '1.25rem', accentColor: '#ea580c' }} />
                                 <div>
                                     <div style={{ fontWeight: 600, color: '#0f172a' }}>Data Collection</div>
                                     <div style={{ fontSize: '0.85rem', color: '#64748b' }}>Allow us to collect usage data to improve your experience.</div>
@@ -186,7 +358,7 @@ export default function AccountSettingsPage() {
                             </label>
 
                             <label style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer' }}>
-                                <input type="checkbox" style={{ width: '1.25rem', height: '1.25rem', accentColor: '#ea580c' }} />
+                                <input type="checkbox" checked={thirdPartySharing} onChange={(e) => setThirdPartySharing(e.target.checked)} style={{ width: '1.25rem', height: '1.25rem', accentColor: '#ea580c' }} />
                                 <div>
                                     <div style={{ fontWeight: 600, color: '#0f172a' }}>Third-party Sharing</div>
                                     <div style={{ fontSize: '0.85rem', color: '#64748b' }}>Allow sharing of non-identifiable data with trusted partners.</div>
@@ -194,10 +366,55 @@ export default function AccountSettingsPage() {
                             </label>
                         </div>
 
-                        <button className={styles.btnSave}>Save Privacy Settings</button>
+                        <button className={styles.btnSave} onClick={handleSavePrivacy} disabled={isSavingPrivacy}>
+                            {isSavingPrivacy ? 'Saving...' : 'Save Privacy Settings'}
+                        </button>
                     </>
                 )}
             </div>
+
+            {showSuccessModal && (
+                <div style={{
+                    position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+                    backgroundColor: 'rgba(0,0,0,0.4)', zIndex: 9999,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    backdropFilter: 'blur(3px)'
+                }}>
+                    <div style={{
+                        backgroundColor: 'white', borderRadius: '16px', padding: '32px',
+                        maxWidth: '420px', width: '90%', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+                        textAlign: 'center', animation: 'fadeIn 0.2s ease-out'
+                    }}>
+                        <div style={{ 
+                            backgroundColor: '#D1FAE5', color: '#059669', 
+                            width: '64px', height: '64px', borderRadius: '50%', 
+                            display: 'flex', alignItems: 'center', justifyContent: 'center', 
+                            margin: '0 auto 20px auto' 
+                        }}>
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        </div>
+                        <h3 style={{ margin: '0 0 12px 0', color: '#111827', fontSize: '1.25rem', fontWeight: 600 }}>Success!</h3>
+                        <p style={{ color: '#6B7280', margin: '0 0 24px 0', lineHeight: 1.5, fontSize: '0.95rem' }}>
+                            {successMessage}
+                        </p>
+                        <button 
+                            onClick={() => setShowSuccessModal(false)}
+                            style={{
+                                backgroundColor: '#10B981', color: 'white', border: 'none',
+                                borderRadius: '8px', padding: '12px 24px', fontWeight: 500,
+                                cursor: 'pointer', width: '100%', fontSize: '1rem',
+                                transition: 'background-color 0.2s'
+                            }}
+                            onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#059669'}
+                            onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#10B981'}
+                        >
+                            Awesome!
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

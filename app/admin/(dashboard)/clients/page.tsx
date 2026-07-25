@@ -53,7 +53,7 @@ export default function AdminClientsPage() {
                                 </span>
                             </div>
 
-                            <h3 className="text-lg font-bold text-gray-900 group-hover:text-[#E3755D] transition-colors">{client.name}</h3>
+                            <h3 className="text-lg font-bold text-gray-900 group-hover:text-orange-500 transition-colors">{client.name}</h3>
                             <div className="mt-4 space-y-2 flex-1">
                                 <div className="flex items-center text-sm text-gray-600 font-medium">
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2 text-gray-400">
@@ -66,7 +66,7 @@ export default function AdminClientsPage() {
 
                             <div className="mt-6 pt-4 border-t border-gray-100 flex justify-between items-center">
                                 <span className="text-xs font-bold text-gray-500 uppercase tracking-wide">{client.applications?.length || 0} Active {(client.applications?.length || 0) === 1 ? 'Case' : 'Cases'}</span>
-                                <span className="text-sm font-bold text-[#E3755D] hover:text-[#C8634D] transition-colors">View Profile</span>
+                                <span className="text-sm font-bold text-orange-500 hover:text-orange-600 transition-colors">View Profile</span>
                             </div>
                         </div>
                     ))}

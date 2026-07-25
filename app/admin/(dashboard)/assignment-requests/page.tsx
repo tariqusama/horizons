@@ -106,203 +106,206 @@ export default function AssignmentRequestsPage() {
     };
 
     return (
-        <div className="max-w-[1400px] mx-auto w-full pb-12">
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+        <main className="flex-1 px-4 sm:px-6 pb-8 pt-2">
+            <div className="mb-6 px-1">
+                <h1 className="text-2xl font-bold text-slate-900">Assignment Requests</h1>
+                <p className="text-sm text-slate-600 mt-1">Review and manage case assignment requests</p>
+            </div>
+
+            <div className="space-y-6">
+                {/* Section Title */}
                 <div>
-                    <h1 className="text-2xl md:text-[28px] font-black text-[#101F38] tracking-tight mb-2">Assignment Requests</h1>
-                    <p className="text-[#5B6472] font-medium text-sm">Review and manage case assignment requests</p>
+                    <h2 className="text-3xl font-bold tracking-tight text-slate-900">Assignment Requests</h2>
+                    <p className="text-slate-600">Review and manage case assignment requests</p>
                 </div>
-            </div>
 
-            {/* Stat cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                <div className="rounded-3xl border border-[#ECE9E2] bg-white p-6 shadow-sm">
-                    <div className="flex items-start justify-between mb-4">
-                        <p className="font-semibold text-[#101F38] text-sm">Pending</p>
-                        <div className="w-8 h-8 rounded-full bg-[#FAEEDA] text-[#854F0B] flex items-center justify-center shrink-0">
-                            <Icon.clock width={15} height={15} />
+                {/* Stat Cards with Gradients */}
+                <div className="grid gap-4 md:grid-cols-4">
+                    {/* Pending Card */}
+                    <div className="rounded-lg bg-card text-card-foreground relative overflow-hidden border-0 bg-gradient-to-br from-yellow-500/10 via-background to-background shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_12px_40px_rgb(0,0,0,0.08)] transition-all duration-300 hover:scale-[1.02]">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-yellow-500/20 to-orange-500/20 rounded-full blur-3xl opacity-20 -translate-y-1/2 translate-x-1/2"></div>
+                        <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tl from-yellow-500/20 to-orange-500/20 rounded-full blur-2xl opacity-10 translate-y-1/2 -translate-x-1/2"></div>
+                        <div className="p-6 flex flex-row items-center justify-between space-y-0 pb-2 relative z-10">
+                            <h3 className="tracking-tight text-sm font-medium text-slate-700">Pending</h3>
+                            <div className="p-2 rounded-lg bg-gradient-to-br from-yellow-500/20 to-orange-500/20 backdrop-blur-sm">
+                                <Icon.clock className="h-4 w-4 text-yellow-500" />
+                            </div>
+                        </div>
+                        <div className="p-6 pt-0 relative z-10">
+                            <div className="text-3xl font-bold bg-gradient-to-br from-yellow-600 to-orange-600 bg-clip-text text-transparent">{counts.pending}</div>
+                            <p className="text-xs text-slate-600 mt-1">Awaiting review</p>
                         </div>
                     </div>
-                    <p className="text-3xl font-black text-[#854F0B] tracking-tight mb-1">{counts.pending}</p>
-                    <p className="text-xs font-medium text-[#5B6472]">Awaiting review</p>
-                </div>
 
-                <div className="rounded-3xl border border-[#ECE9E2] bg-white p-6 shadow-sm">
-                    <div className="flex items-start justify-between mb-4">
-                        <p className="font-semibold text-[#101F38] text-sm">Approved</p>
-                        <div className="w-8 h-8 rounded-full bg-[#EAF3DE] text-[#3B6D11] flex items-center justify-center shrink-0">
-                            <Icon.checkCircle width={15} height={15} />
+                    {/* Approved Card */}
+                    <div className="rounded-lg bg-card text-card-foreground relative overflow-hidden border-0 bg-gradient-to-br from-green-500/10 via-background to-background shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_12px_40px_rgb(0,0,0,0.08)] transition-all duration-300 hover:scale-[1.02]">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-green-500/20 to-emerald-500/20 rounded-full blur-3xl opacity-20 -translate-y-1/2 translate-x-1/2"></div>
+                        <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tl from-green-500/20 to-emerald-500/20 rounded-full blur-2xl opacity-10 translate-y-1/2 -translate-x-1/2"></div>
+                        <div className="p-6 flex flex-row items-center justify-between space-y-0 pb-2 relative z-10">
+                            <h3 className="tracking-tight text-sm font-medium text-slate-700">Approved</h3>
+                            <div className="p-2 rounded-lg bg-gradient-to-br from-green-500/20 to-emerald-500/20 backdrop-blur-sm">
+                                <Icon.checkCircle className="h-4 w-4 text-green-500" />
+                            </div>
+                        </div>
+                        <div className="p-6 pt-0 relative z-10">
+                            <div className="text-3xl font-bold bg-gradient-to-br from-green-600 to-emerald-600 bg-clip-text text-transparent">{counts.approved}</div>
+                            <p className="text-xs text-slate-600 mt-1">Assignments approved</p>
                         </div>
                     </div>
-                    <p className="text-3xl font-black text-[#3B6D11] tracking-tight mb-1">{counts.approved}</p>
-                    <p className="text-xs font-medium text-[#5B6472]">Assignments approved</p>
-                </div>
 
-                <div className="rounded-3xl border border-[#ECE9E2] bg-white p-6 shadow-sm">
-                    <div className="flex items-start justify-between mb-4">
-                        <p className="font-semibold text-[#101F38] text-sm">Rejected</p>
-                        <div className="w-8 h-8 rounded-full bg-[#FCEBEB] text-[#A32D2D] flex items-center justify-center shrink-0">
-                            <Icon.xCircle width={15} height={15} />
+                    {/* Rejected Card */}
+                    <div className="rounded-lg bg-card text-card-foreground relative overflow-hidden border-0 bg-gradient-to-br from-red-500/10 via-background to-background shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_12px_40px_rgb(0,0,0,0.08)] transition-all duration-300 hover:scale-[1.02]">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-red-500/20 to-pink-500/20 rounded-full blur-3xl opacity-20 -translate-y-1/2 translate-x-1/2"></div>
+                        <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tl from-red-500/20 to-pink-500/20 rounded-full blur-2xl opacity-10 translate-y-1/2 -translate-x-1/2"></div>
+                        <div className="p-6 flex flex-row items-center justify-between space-y-0 pb-2 relative z-10">
+                            <h3 className="tracking-tight text-sm font-medium text-slate-700">Rejected</h3>
+                            <div className="p-2 rounded-lg bg-gradient-to-br from-red-500/20 to-pink-500/20 backdrop-blur-sm">
+                                <Icon.xCircle className="h-4 w-4 text-red-500" />
+                            </div>
+                        </div>
+                        <div className="p-6 pt-0 relative z-10">
+                            <div className="text-3xl font-bold bg-gradient-to-br from-red-600 to-pink-600 bg-clip-text text-transparent">{counts.denied}</div>
+                            <p className="text-xs text-slate-600 mt-1">Requests declined</p>
                         </div>
                     </div>
-                    <p className="text-3xl font-black text-[#A32D2D] tracking-tight mb-1">{counts.denied}</p>
-                    <p className="text-xs font-medium text-[#5B6472]">Requests declined</p>
-                </div>
 
-                <div className="rounded-3xl border border-[#ECE9E2] bg-white p-6 shadow-sm">
-                    <div className="flex items-start justify-between mb-4">
-                        <p className="font-semibold text-[#101F38] text-sm">Total</p>
-                        <div className="w-8 h-8 rounded-full bg-[#FBEAE4] text-[#E3755D] flex items-center justify-center shrink-0">
-                            <Icon.file width={15} height={15} />
+                    {/* Total Card */}
+                    <div className="rounded-lg bg-card text-card-foreground relative overflow-hidden border-0 bg-gradient-to-br from-blue-500/10 via-background to-background shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_12px_40px_rgb(0,0,0,0.08)] transition-all duration-300 hover:scale-[1.02]">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-full blur-3xl opacity-20 -translate-y-1/2 translate-x-1/2"></div>
+                        <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tl from-blue-500/20 to-cyan-500/20 rounded-full blur-2xl opacity-10 translate-y-1/2 -translate-x-1/2"></div>
+                        <div className="p-6 flex flex-row items-center justify-between space-y-0 pb-2 relative z-10">
+                            <h3 className="tracking-tight text-sm font-medium text-slate-700">Total</h3>
+                            <div className="p-2 rounded-lg bg-gradient-to-br from-blue-500/20 to-cyan-500/20 backdrop-blur-sm">
+                                <Icon.file className="h-4 w-4 text-blue-500" />
+                            </div>
+                        </div>
+                        <div className="p-6 pt-0 relative z-10">
+                            <div className="text-3xl font-bold bg-gradient-to-br from-blue-600 to-cyan-600 bg-clip-text text-transparent">{counts.total}</div>
+                            <p className="text-xs text-slate-600 mt-1">All requests</p>
                         </div>
                     </div>
-                    <p className="text-3xl font-black text-[#E3755D] tracking-tight mb-1">{counts.total}</p>
-                    <p className="text-xs font-medium text-[#5B6472]">All requests</p>
                 </div>
-            </div>
 
-            {/* Panel */}
-            <div className="bg-white rounded-3xl border border-[#ECE9E2] shadow-sm overflow-hidden">
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 px-6 py-6 border-b border-[#ECE9E2]">
-                    <div>
-                        <h2 className="text-lg font-bold text-[#101F38]">Assignment Requests</h2>
-                        <p className="text-[#5B6472] text-xs font-medium mt-1">Review and respond to case assignment requests</p>
-                    </div>
-                    <div className="flex items-center gap-3">
-                        <div className="relative">
+                {/* Requests Table Section */}
+                <div className="rounded-lg border border-slate-200 bg-white shadow-sm">
+                    <div className="flex flex-col space-y-1.5 p-6 border-b border-slate-200">
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <h3 className="text-2xl font-semibold leading-none tracking-tight text-slate-900">Assignment Requests</h3>
+                                <p className="text-sm text-slate-600 mt-1">Review and respond to case assignment requests</p>
+                            </div>
                             <select
                                 value={filter}
                                 onChange={(e) => setFilter(e.target.value)}
-                                className="appearance-none bg-white border border-[#ECE9E2] rounded-full pl-4 pr-10 py-2.5 text-sm font-semibold text-[#101F38] focus:outline-none focus:ring-2 focus:ring-[#E3755D]/30 cursor-pointer"
+                                className="flex h-10 items-center justify-between rounded-md border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 w-[180px] cursor-pointer"
                             >
                                 {FILTERS.map((f, i) => <option key={i}>{f}</option>)}
                             </select>
-                            <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-[#5B6472]">
-                                <Icon.chevronDown width={15} height={15} />
+                        </div>
+                    </div>
+
+                    <div className="p-6 pt-0">
+                        <div className="rounded-md border border-slate-200 overflow-hidden">
+                            <div className="relative w-full overflow-auto">
+                                <table className="w-full caption-bottom text-sm">
+                                    <thead className="border-b border-slate-200 bg-slate-50">
+                                        <tr>
+                                            <th className="h-12 px-6 py-3 text-left align-middle font-semibold text-slate-700 flex-1">Case ID</th>
+                                            <th className="h-12 px-4 py-3 text-left align-middle font-semibold text-slate-700 w-32">Requested By</th>
+                                            <th className="h-12 px-4 py-3 text-center align-middle font-semibold text-slate-700 w-24">Role</th>
+                                            <th className="h-12 px-4 py-3 text-center align-middle font-semibold text-slate-700 w-24">Priority</th>
+                                            <th className="h-12 px-4 py-3 text-center align-middle font-semibold text-slate-700 w-24">Status</th>
+                                            <th className="h-12 px-4 py-3 text-center align-middle font-semibold text-slate-700 w-28">Created</th>
+                                            <th className="h-12 px-6 py-3 text-right align-middle font-semibold text-slate-700 w-auto">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-slate-200">
+                                        {filtered.map((req) => (
+                                            <tr key={req.id} className="hover:bg-slate-50 transition-colors">
+                                                <td className="px-6 py-4 align-middle flex-1">
+                                                    <p className="text-sm font-semibold text-slate-900">{req.application?.receipt_number || `APP-${req.application_id}`}</p>
+                                                    <p className="text-xs text-slate-600 mt-0.5">{req.application?.user?.name} • {req.application?.title}</p>
+                                                </td>
+                                                <td className="px-4 py-4 align-middle text-sm font-medium text-slate-700 w-32 truncate">{req.manager?.name}</td>
+                                                <td className="px-4 py-4 align-middle text-center w-24">
+                                                    <span className="inline-flex items-center rounded-full border border-slate-300 px-2.5 py-1 text-xs font-semibold text-slate-700 bg-white whitespace-nowrap">
+                                                        Medium
+                                                    </span>
+                                                </td>
+                                                <td className="px-4 py-4 align-middle text-center w-24">
+                                                    <span className="inline-flex items-center rounded-full border border-slate-300 px-2.5 py-1 text-xs font-semibold text-slate-700 bg-white whitespace-nowrap">
+                                                        Low
+                                                    </span>
+                                                </td>
+                                                <td className="px-4 py-4 align-middle text-center w-24">
+                                                    <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold whitespace-nowrap ${STATUS_META[req.status]}`}>
+                                                        {req.status}
+                                                    </span>
+                                                </td>
+                                                <td className="px-4 py-4 align-middle text-center text-sm text-slate-700 w-28 whitespace-nowrap">{new Date(req.created_at).toLocaleDateString()}</td>
+                                                <td className="px-6 py-4 align-middle text-right w-auto">
+                                                    <div className="flex items-center justify-end gap-2">
+                                                        <Link href={`/admin/assignment-requests/${req.id}`} className="text-xs font-semibold text-slate-700 border border-slate-300 rounded-md px-2.5 py-1.5 hover:bg-slate-50 transition-colors whitespace-nowrap">View</Link>
+                                                        <button onClick={() => setModalRequest(req)} className="text-xs font-semibold text-slate-700 border border-slate-300 rounded-md px-2.5 py-1.5 hover:bg-slate-50 transition-colors whitespace-nowrap">Manage</button>
+                                                        {req.status === "Pending" ? (
+                                                            <>
+                                                                <button onClick={() => handleAction(req.id, 'Denied')} className="w-8 h-8 rounded-lg border border-red-200 text-red-600 hover:bg-red-50 flex items-center justify-center transition-colors flex-shrink-0">
+                                                                    <Icon.x width={16} height={16} />
+                                                                </button>
+                                                                <button onClick={() => handleAction(req.id, 'Approved')} className="w-8 h-8 rounded-lg bg-gradient-to-br from-green-500 to-emerald-600 text-white hover:shadow-lg flex items-center justify-center transition-all flex-shrink-0">
+                                                                    <Icon.check width={16} height={16} />
+                                                                </button>
+                                                            </>
+                                                        ) : (
+                                                            <span className="text-xs font-semibold text-slate-600 whitespace-nowrap">Done</span>
+                                                        )}
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        ))}
+
+                                        {(!loading && filtered.length === 0) && (
+                                            <tr>
+                                                <td colSpan={7} className="px-6 py-4 align-middle text-center py-12">
+                                                    <div className="flex flex-col items-center gap-2 text-slate-600">
+                                                        <Icon.alert className="h-8 w-8 text-slate-400" />
+                                                        <p className="text-sm font-medium">No assignment requests found</p>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        )}
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
-
-                        <div className="relative">
-                            <select value={managerFilter} onChange={(e) => setManagerFilter(e.target.value)} className="appearance-none bg-white border border-[#ECE9E2] rounded-full pl-4 pr-10 py-2.5 text-sm text-[#101F38]">
-                                <option value="all">All managers</option>
-                                {managers.map(m => <option key={m.id} value={m.id}>{m.name}</option>)}
-                            </select>
-                        </div>
-
-                        <input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} className="bg-white border border-[#ECE9E2] rounded-full px-3 py-2 text-sm" />
-                        <input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} className="bg-white border border-[#ECE9E2] rounded-full px-3 py-2 text-sm" />
-
-                        <button onClick={() => {
-                            setFilter('All Requests');
-                            setManagerFilter('all');
-                            setDateFrom('');
-                            setDateTo('');
-                            loadRequests(1);
-                        }} className="rounded-full border border-[#ECE9E2] text-[#101F38] px-4 py-2 text-sm">Reset</button>
-                    </div>
-                </div>
-
-                <div className="overflow-x-auto">
-                    <table className="w-full text-left border-collapse">
-                        <thead>
-                            <tr className="border-b border-[#ECE9E2] bg-[#F7F5F0]">
-                                <th className="px-6 py-4 text-[11px] font-semibold text-[#5B6472] uppercase tracking-wider">Case ID</th>
-                                <th className="px-4 py-4 text-[11px] font-semibold text-[#5B6472] uppercase tracking-wider">Requested By</th>
-                                <th className="px-4 py-4 text-[11px] font-semibold text-[#5B6472] uppercase tracking-wider">Role</th>
-                                <th className="px-4 py-4 text-[11px] font-semibold text-[#5B6472] uppercase tracking-wider">Priority</th>
-                                <th className="px-4 py-4 text-[11px] font-semibold text-[#5B6472] uppercase tracking-wider">Status</th>
-                                <th className="px-4 py-4 text-[11px] font-semibold text-[#5B6472] uppercase tracking-wider">Created</th>
-                                <th className="px-6 py-4 text-[11px] font-semibold text-[#5B6472] uppercase tracking-wider text-right">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-[#ECE9E2]">
-                            {filtered.map((req, i) => (
-                                <tr key={req.id} className="hover:bg-[#F7F5F0] transition-colors">
-                                    <td className="px-6 py-4">
-                                        <p className="text-sm font-bold text-[#101F38]">{req.application?.receipt_number || `APP-${req.application_id}`}</p>
-                                        <p className="text-xs font-medium text-[#5B6472] mt-0.5">{req.application?.user?.name} &bull; {req.application?.title}</p>
-                                    </td>
-                                    <td className="px-4 py-4 text-sm font-semibold text-[#5B6472] whitespace-nowrap">{req.manager?.name}</td>
-                                    <td className="px-4 py-4">
-                                        <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-[#FAEEDA] text-[#854F0B]`}>
-                                            Medium
-                                        </span>
-                                    </td>
-                                    <td className="px-4 py-4">
-                                        <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${STATUS_META[req.status]}`}>
-                                            {req.status}
-                                        </span>
-                                    </td>
-                                    <td className="px-4 py-4 text-sm font-medium text-[#5B6472] whitespace-nowrap">{new Date(req.created_at).toLocaleDateString()}</td>
-                                    <td className="px-6 py-4 text-right">
-                                        <div className="flex items-center justify-end gap-2">
-                                            <Link href={`/admin/assignment-requests/${req.id}`} className="text-xs font-semibold text-[#101F38] border border-[#ECE9E2] rounded-full px-3.5 py-2 hover:bg-[#F7F5F0] transition-colors">View</Link>
-                                            <button onClick={() => setModalRequest(req)} className="text-xs font-semibold text-[#101F38] border border-[#ECE9E2] rounded-full px-3.5 py-2 hover:bg-[#F7F5F0] transition-colors">Manage</button>
-                                            {req.status === "Pending" ? (
-                                                <>
-                                                    <button onClick={() => handleAction(req.id, 'Denied')} className="w-9 h-9 rounded-full border border-[#ECE9E2] text-[#A32D2D] hover:border-[#A32D2D] hover:bg-[#FCEBEB] flex items-center justify-center transition-colors bg-white">
-                                                        <Icon.x width={15} height={15} />
-                                                    </button>
-                                                    <button onClick={() => handleAction(req.id, 'Approved')} className="w-9 h-9 rounded-full bg-[#E3755D] text-white hover:bg-[#D1644C] shadow-sm flex items-center justify-center transition-colors">
-                                                        <Icon.check width={15} height={15} />
-                                                    </button>
-                                                </>
-                                            ) : (
-                                                <span className="text-xs font-semibold text-[#5B6472]">Action taken</span>
-                                            )}
-                                        </div>
-                                    </td>
-                                </tr>
-                            ))}
-
-                            {(!loading && filtered.length === 0) && (
-                                <tr>
-                                    <td colSpan={7} className="px-6 py-16">
-                                        <div className="flex flex-col items-center justify-center text-center gap-3">
-                                            <div className="w-11 h-11 rounded-full border border-[#ECE9E2] text-[#5B6472] flex items-center justify-center">
-                                                <Icon.alert width={20} height={20} />
-                                            </div>
-                                            <p className="text-sm font-semibold text-[#5B6472]">No assignment requests found</p>
-                                        </div>
-                                    </td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
-                </div>
-                <div className="px-6 py-4 bg-white border-t border-[#ECE9E2] flex items-center justify-between">
-                    <div className="text-sm text-[#5B6472]">Showing {Math.min((page - 1) * perPage + 1, total)}–{Math.min(page * perPage, total)} of {total}</div>
-                    <div className="flex items-center gap-2">
-                        <button onClick={() => loadRequests(Math.max(1, page - 1))} disabled={page === 1} className="px-3 py-1 rounded-md border border-[#ECE9E2] text-sm">Prev</button>
-                        <span className="text-sm text-[#5B6472]">{page} / {lastPage}</span>
-                        <button onClick={() => loadRequests(Math.min(lastPage, page + 1))} disabled={page === lastPage} className="px-3 py-1 rounded-md border border-[#ECE9E2] text-sm">Next</button>
                     </div>
                 </div>
             </div>
+
             {/* Modal */}
             {modalRequest && (
                 <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/40">
-                    <div className="w-full max-w-lg bg-white rounded-2xl p-6">
+                    <div className="w-full max-w-lg bg-white rounded-lg p-6 border border-slate-200 shadow-lg">
                         <div className="flex items-start justify-between mb-4">
                             <div>
-                                <h3 className="text-lg font-bold text-[#101F38]">Manage Request #{modalRequest.id}</h3>
-                                <p className="text-xs text-[#5B6472]">Application {modalRequest.application?.receipt_number}</p>
+                                <h3 className="text-lg font-bold text-slate-900">Manage Request #{modalRequest.id}</h3>
+                                <p className="text-xs text-slate-600 mt-1">Application {modalRequest.application?.receipt_number}</p>
                             </div>
-                            <button onClick={() => setModalRequest(null)} className="text-sm text-[#5B6472]">Close</button>
+                            <button onClick={() => setModalRequest(null)} className="text-sm text-slate-600 hover:text-slate-900">Close</button>
                         </div>
 
-                        <div className="mb-4">
-                            <p className="text-sm text-[#5B6472]">Requested by: <span className="font-semibold text-[#101F38]">{modalRequest.manager?.name}</span></p>
-                            <p className="text-sm text-[#5B6472] mt-2">Notes: <span className="text-[#5B6472]">{modalRequest.notes || '—'}</span></p>
+                        <div className="mb-6 py-4 border-y border-slate-200">
+                            <p className="text-sm text-slate-700">Requested by: <span className="font-semibold text-slate-900">{modalRequest.manager?.name}</span></p>
+                            <p className="text-sm text-slate-700 mt-2">Notes: <span className="text-slate-600">{modalRequest.notes || '—'}</span></p>
                         </div>
 
                         <div className="flex items-center justify-end gap-3">
-                            <button onClick={() => { handleAction(modalRequest.id, 'Denied'); setModalRequest(null); }} className="px-4 py-2 rounded-md border border-[#ECE9E2] text-[#A32D2D]">Deny</button>
-                            <button onClick={() => { handleAction(modalRequest.id, 'Approved'); setModalRequest(null); }} className="px-4 py-2 rounded-md bg-[#E3755D] text-white">Approve</button>
+                            <button onClick={() => { handleAction(modalRequest.id, 'Denied'); setModalRequest(null); }} className="px-4 py-2 rounded-lg border border-red-200 text-red-600 hover:bg-red-50 font-medium text-sm transition-colors">Deny</button>
+                            <button onClick={() => { handleAction(modalRequest.id, 'Approved'); setModalRequest(null); }} className="px-4 py-2 rounded-lg bg-gradient-to-br from-green-500 to-emerald-600 text-white hover:shadow-lg font-medium text-sm transition-all">Approve</button>
                         </div>
                     </div>
                 </div>
             )}
-        </div>
+        </main>
     );
 }

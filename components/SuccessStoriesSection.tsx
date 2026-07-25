@@ -100,7 +100,7 @@ export default function SuccessStoriesSection() {
       </div>
 
       <div className="mt-12 text-center relative z-30">
-        <a href="#" className="text-[#E3755D] font-bold text-[17px] hover:text-[#C8634D] inline-flex items-center transition-colors">
+        <a href="#" className="text-orange-500 font-bold text-[17px] hover:text-orange-600 inline-flex items-center transition-colors">
           See all reviews on Trustpilot
           <span className="material-icons text-[20px] ml-2">arrow_forward</span>
         </a>

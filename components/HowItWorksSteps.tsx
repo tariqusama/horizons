@@ -13,7 +13,7 @@ export default function HowItWorksSteps() {
         "Multi-factor authentication available",
         "Access from any device, anytime"
       ],
-      iconBg: "bg-gradient-to-br from-[#E3755D] to-[#1B3A64]",
+      iconBg: "bg-gradient-to-br from-orange-500 to-[#1B3A64]",
       icon: (
         <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
@@ -56,7 +56,7 @@ export default function HowItWorksSteps() {
         "Automatic file organization",
         "Real-time upload verification"
       ],
-      iconBg: "bg-gradient-to-br from-[#E3755D] to-[#1B3A64]",
+      iconBg: "bg-gradient-to-br from-orange-500 to-[#1B3A64]",
       icon: (
         <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
@@ -94,7 +94,7 @@ export default function HowItWorksSteps() {
         "Professional formatting",
         "Final approval notification"
       ],
-      iconBg: "bg-gradient-to-br from-[#E3755D] to-[#1B3A64]",
+      iconBg: "bg-gradient-to-br from-orange-500 to-[#1B3A64]",
       icon: (
         <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
@@ -114,7 +114,7 @@ export default function HowItWorksSteps() {
         "USPS tracking included",
         "Delivery confirmation"
       ],
-      iconBg: "bg-gradient-to-br from-[#E3755D] to-[#1B3A64]",
+      iconBg: "bg-gradient-to-br from-orange-500 to-[#1B3A64]",
       icon: (
         <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <rect x="1" y="3" width="15" height="13"></rect>
@@ -157,7 +157,7 @@ export default function HowItWorksSteps() {
                 <div className="absolute -top-12 -right-12 w-48 h-48 bg-gradient-to-br from-orange-50 to-blue-50 rounded-full opacity-60 blur-2xl group-hover:scale-110 transition-transform"></div>
 
                 {/* Big Number */}
-                <div className="absolute top-6 right-8 text-5xl font-black text-[#E3755D] opacity-90 drop-shadow-sm">
+                <div className="absolute top-6 right-8 text-5xl font-black text-orange-500 opacity-90 drop-shadow-sm">
                   {step.number}
                 </div>
 
@@ -168,7 +168,7 @@ export default function HowItWorksSteps() {
 
                   <div className="flex-1 pt-1">
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-3 gap-3">
-                      <h3 className="text-2xl font-bold text-[#E3755D]">{step.title}</h3>
+                      <h3 className="text-2xl font-bold text-orange-500">{step.title}</h3>
                       <div className="inline-flex items-center space-x-1.5 bg-gray-50 border border-gray-200 rounded-full px-3 py-1 text-xs font-bold text-gray-500 w-fit">
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                           <circle cx="12" cy="12" r="10"></circle>
@@ -185,7 +185,7 @@ export default function HowItWorksSteps() {
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       {step.features.map((feature, fIdx) => (
                         <div key={fIdx} className="flex items-center space-x-3">
-                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E3755D" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ea580c" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
                             <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
                             <polyline points="22 4 12 14.01 9 11.01"></polyline>
                           </svg>

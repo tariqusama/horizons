@@ -3,6 +3,7 @@ import api from '../api';
 export interface Ticket {
     id: number;
     ticket_id: string;
+    application_id?: number | null;
     subject: string;
     message: string;
     status: string;
@@ -12,6 +13,13 @@ export interface Ticket {
     created_at: string;
     user?: { id: number; name: string; email: string };
     assignee?: { id: number; name: string; email: string };
+    application?: {
+        id: number;
+        title: string;
+        amount: number;
+        paid_amount: number;
+        is_escalated: boolean;
+    };
 }
 
 export const getTickets = async (): Promise<Ticket[]> => {
@@ -26,6 +34,11 @@ export const assignTicket = async (id: number, managerId: number): Promise<Ticke
 
 export const updateTicketStatus = async (id: number, status: string): Promise<Ticket> => {
     const response = await api.put(`/admin/tickets/${id}/status`, { status });
+    return response.data.ticket;
+};
+
+export const updateTicketPackage = async (id: number, title: string, amount: number): Promise<Ticket> => {
+    const response = await api.put(`/admin/tickets/${id}/update-package`, { title, amount });
     return response.data.ticket;
 };
 

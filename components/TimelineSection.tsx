@@ -6,7 +6,7 @@ export default function TimelineSection() {
     <section className="w-full py-32 px-4 md:px-8 lg:px-16 bg-gradient-to-br from-[#0A192F] via-[#122846] to-[#1B3A64] text-center relative overflow-hidden">
       
       {/* Decorative Blur */}
-      <div className="absolute bottom-0 right-0 w-[800px] h-[800px] bg-[#E3755D]/10 rounded-full blur-[150px] translate-y-1/3 translate-x-1/3 pointer-events-none"></div>
+      <div className="absolute bottom-0 right-0 w-[800px] h-[800px] bg-orange-500/10 rounded-full blur-[150px] translate-y-1/3 translate-x-1/3 pointer-events-none"></div>
 
       <div className="max-w-[1400px] mx-auto relative z-10">
         <div className="inline-flex items-center bg-white/10 backdrop-blur-md rounded-full px-6 py-2 mb-8 border border-white/20 shadow-lg">
@@ -29,7 +29,7 @@ export default function TimelineSection() {
           </label>
 
           <div className="relative mb-10 z-10">
-            <select defaultValue="" className="w-full appearance-none bg-white/10 backdrop-blur-md border border-white/20 text-white font-bold text-[18px] rounded-[24px] px-8 py-6 pr-14 focus:outline-none focus:ring-2 focus:ring-[#E3755D]/50 focus:border-[#E3755D] transition-all cursor-pointer shadow-inner">
+            <select defaultValue="" className="w-full appearance-none bg-white/10 backdrop-blur-md border border-white/20 text-white font-bold text-[18px] rounded-[24px] px-8 py-6 pr-14 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all cursor-pointer shadow-inner">
               <option value="" disabled className="text-black">Choose from 40+ immigration case types...</option>
               <option value="marriage" className="text-black">Marriage Green Card</option>
               <option value="fiance" className="text-black">K-1 Fiance Visa</option>
@@ -40,14 +40,14 @@ export default function TimelineSection() {
             </div>
           </div>
 
-          <Link href="/signup" className="relative z-10 w-full bg-gradient-to-r from-[#E3755D] to-[#C8634D] hover:from-[#C8634D] hover:to-[#B65640] text-white font-bold text-[18px] rounded-[20px] py-6 flex items-center justify-center transition-all duration-300 shadow-[0_15px_30px_rgba(227,117,93,0.3)] hover:shadow-[0_20px_40px_rgba(227,117,93,0.4)] hover:-translate-y-1">
+          <Link href="/signup" className="relative z-10 w-full bg-gradient-to-b from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-bold text-[18px] rounded-[20px] py-6 flex items-center justify-center transition-all duration-300 shadow-[0_15px_30px_rgba(227,117,93,0.3)] hover:shadow-[0_20px_40px_rgba(227,117,93,0.4)] hover:-translate-y-1">
             <span>Calculate Timeline</span>
             <span className="material-icons ml-3">calculate</span>
           </Link>
         </div>
 
         <p className="text-[#A3B8CC] text-[14px] leading-relaxed max-w-3xl mx-auto">
-          * Processing times are based on current USCIS data and are updated regularly. Actual timelines may vary by service center and case complexity. Data source: <a href="#" className="text-white hover:text-[#E3755D] underline transition-colors">USCIS Processing Times</a>
+          * Processing times are based on current USCIS data and are updated regularly. Actual timelines may vary by service center and case complexity. Data source: <a href="#" className="text-white hover:text-orange-500 underline transition-colors">USCIS Processing Times</a>
         </p>
       </div>
     </section>

@@ -112,7 +112,7 @@ export default function Footer() {
                 <a
                   key={social.label}
                   href={social.href}
-                  className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center hover:bg-[#E3755D] hover:border-[#E3755D] transition-all text-gray-400 hover:text-white"
+                  className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center hover:bg-gradient-to-b from-orange-500 to-orange-600 hover:border-orange-500 transition-all text-gray-400 hover:text-white"
                   aria-label={social.label}
                 >
                   {socialIcons[social.icon]}
@@ -123,7 +123,7 @@ export default function Footer() {
 
           <div className="w-full lg:w-[500px] bg-white/5 border border-white/10 rounded-2xl p-5 sm:p-8 shadow-xl">
             <h3 className="text-xl font-bold text-white flex items-center gap-2 mb-2">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E3755D" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ea580c" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3l1.9 5.8 1.9-5.8a2 2 0 0 1 1.3-1.3l5.8-1.9-5.8-1.9a2 2 0 0 1-1.3-1.3z"></path>
               </svg>
               {footerNewsletter.title}
@@ -144,14 +144,14 @@ export default function Footer() {
                 type="email"
                 value={newsletterEmail}
                 onChange={(e) => setNewsletterEmail(e.target.value)}
-                className="flex-1 bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#E3755D] text-white placeholder-gray-400 transition-colors"
+                className="flex-1 bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-orange-500 text-white placeholder-gray-400 transition-colors"
                 placeholder={footerNewsletter.placeholder}
                 required
               />
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="bg-[#E3755D] hover:bg-[#C8634D] disabled:opacity-60 disabled:cursor-not-allowed text-white font-bold py-3 px-6 rounded-xl flex justify-center items-center gap-2 transition-transform hover:-translate-y-0.5"
+                className="bg-gradient-to-b from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 disabled:opacity-60 disabled:cursor-not-allowed text-white font-bold py-3 px-6 rounded-xl flex justify-center items-center gap-2 transition-transform hover:-translate-y-0.5"
               >
                 {isSubmitting ? 'Submitting...' : footerNewsletter.buttonText}
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -170,13 +170,13 @@ export default function Footer() {
             <div key={section.title}>
               <h4 className="text-lg font-bold mb-6 flex items-center text-white">
                 {section.title}
-                <div className="ml-3 h-px w-8 bg-[#E3755D]"></div>
+                <div className="ml-3 h-px w-8 bg-gradient-to-b from-orange-500 to-orange-600"></div>
               </h4>
               <ul className="space-y-4">
                 {section.items.map((link) => (
                   <li key={link.href}>
                     <Link href={link.href} className="group flex items-center text-gray-300 text-sm hover:text-white transition-colors">
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#E3755D" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="mr-3">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#ea580c" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="mr-3">
                         <polyline points="9 18 15 12 9 6"></polyline>
                       </svg>
                       {link.label}
@@ -190,7 +190,7 @@ export default function Footer() {
           <div>
             <h4 className="text-lg font-bold mb-6 flex items-center text-white">
               Contact
-              <div className="ml-3 h-px w-8 bg-[#E3755D]"></div>
+              <div className="ml-3 h-px w-8 bg-gradient-to-b from-orange-500 to-orange-600"></div>
             </h4>
             <ul className="space-y-4">
               {footerContactItems.map((item) => (

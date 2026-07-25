@@ -20,7 +20,7 @@ export default function ContactForm() {
                 <input 
                   type="text" 
                   placeholder="John"
-                  className="w-full px-5 py-4 rounded-xl border border-gray-200 bg-gray-50 text-[#1B3A64] outline-none focus:bg-white focus:border-[#E3755D] focus:ring-1 focus:ring-[#E3755D] transition-all placeholder:text-gray-400 font-medium"
+                  className="w-full px-5 py-4 rounded-xl border border-gray-200 bg-gray-50 text-[#1B3A64] outline-none focus:bg-white focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-all placeholder:text-gray-400 font-medium"
                 />
               </div>
               <div className="space-y-2">
@@ -28,7 +28,7 @@ export default function ContactForm() {
                 <input 
                   type="text" 
                   placeholder="Doe"
-                  className="w-full px-5 py-4 rounded-xl border border-gray-200 bg-gray-50 text-[#1B3A64] outline-none focus:bg-white focus:border-[#E3755D] focus:ring-1 focus:ring-[#E3755D] transition-all placeholder:text-gray-400 font-medium"
+                  className="w-full px-5 py-4 rounded-xl border border-gray-200 bg-gray-50 text-[#1B3A64] outline-none focus:bg-white focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-all placeholder:text-gray-400 font-medium"
                 />
               </div>
             </div>
@@ -39,7 +39,7 @@ export default function ContactForm() {
                 <input 
                   type="email" 
                   placeholder="you@example.com"
-                  className="w-full px-5 py-4 rounded-xl border border-gray-200 bg-gray-50 text-[#1B3A64] outline-none focus:bg-white focus:border-[#E3755D] focus:ring-1 focus:ring-[#E3755D] transition-all placeholder:text-gray-400 font-medium"
+                  className="w-full px-5 py-4 rounded-xl border border-gray-200 bg-gray-50 text-[#1B3A64] outline-none focus:bg-white focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-all placeholder:text-gray-400 font-medium"
                 />
               </div>
               <div className="space-y-2">
@@ -47,14 +47,14 @@ export default function ContactForm() {
                 <input 
                   type="tel" 
                   placeholder="(555) 000-0000"
-                  className="w-full px-5 py-4 rounded-xl border border-gray-200 bg-gray-50 text-[#1B3A64] outline-none focus:bg-white focus:border-[#E3755D] focus:ring-1 focus:ring-[#E3755D] transition-all placeholder:text-gray-400 font-medium"
+                  className="w-full px-5 py-4 rounded-xl border border-gray-200 bg-gray-50 text-[#1B3A64] outline-none focus:bg-white focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-all placeholder:text-gray-400 font-medium"
                 />
               </div>
             </div>
 
             <div className="space-y-2">
               <label className="text-sm font-bold text-[#1B3A64]">Inquiry Type</label>
-              <select className="w-full px-5 py-4 rounded-xl border border-gray-200 bg-gray-50 text-[#1B3A64] outline-none focus:bg-white focus:border-[#E3755D] focus:ring-1 focus:ring-[#E3755D] transition-all font-medium">
+              <select className="w-full px-5 py-4 rounded-xl border border-gray-200 bg-gray-50 text-[#1B3A64] outline-none focus:bg-white focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-all font-medium">
                 <option value="general">General Inquiry</option>
                 <option value="family">Family-Based Immigration</option>
                 <option value="work">Employment-Based Immigration</option>
@@ -68,11 +68,11 @@ export default function ContactForm() {
               <textarea 
                 rows={5}
                 placeholder="How can we help you?"
-                className="w-full px-5 py-4 rounded-xl border border-gray-200 bg-gray-50 text-[#1B3A64] outline-none focus:bg-white focus:border-[#E3755D] focus:ring-1 focus:ring-[#E3755D] transition-all placeholder:text-gray-400 font-medium resize-none"
+                className="w-full px-5 py-4 rounded-xl border border-gray-200 bg-gray-50 text-[#1B3A64] outline-none focus:bg-white focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-all placeholder:text-gray-400 font-medium resize-none"
               ></textarea>
             </div>
 
-            <button type="submit" className="w-full bg-[#E3755D] hover:bg-[#C8634D] text-white font-bold py-4 rounded-xl transition-colors shadow-lg flex items-center justify-center space-x-2">
+            <button type="submit" className="w-full bg-gradient-to-b from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-bold py-4 rounded-xl transition-colors shadow-lg flex items-center justify-center space-x-2">
               <span>Send Message</span>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <line x1="22" y1="2" x2="11" y2="13"></line>

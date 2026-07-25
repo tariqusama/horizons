@@ -86,10 +86,10 @@ export default function ManagerNotificationsPage() {
                     <p className="text-gray-500 mt-2">All your system and case notifications in one place.</p>
                 </div>
                 <div className="flex flex-wrap gap-3">
-                    <button onClick={fetchNotifications} className="rounded-full border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:border-[#E3755D] hover:text-[#E3755D] transition">
+                    <button onClick={fetchNotifications} className="rounded-full border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:border-orange-500 hover:text-orange-500 transition">
                         Refresh
                     </button>
-                    <button onClick={handleMarkAllRead} disabled={markingAll || unreadCount === 0} className="rounded-full bg-[#E3755D] px-4 py-2 text-sm font-semibold text-white hover:bg-[#c05143] disabled:opacity-60 transition">
+                    <button onClick={handleMarkAllRead} disabled={markingAll || unreadCount === 0} className="rounded-full bg-gradient-to-b from-orange-500 to-orange-600 px-4 py-2 text-sm font-semibold text-white hover:bg-[#c05143] disabled:opacity-60 transition">
                         {markingAll ? 'Marking...' : 'Mark all as read'}
                     </button>
                 </div>
@@ -128,12 +128,12 @@ export default function ManagerNotificationsPage() {
                                         </div>
                                         <div className="text-right">
                                             <p className="text-xs uppercase tracking-[0.2em] text-gray-400">{formatDate(notification.created_at)}</p>
-                                            {isUnread && <span className="mt-2 inline-flex rounded-full bg-[#E3755D] px-2 py-1 text-[11px] font-semibold text-white">Unread</span>}
+                                            {isUnread && <span className="mt-2 inline-flex rounded-full bg-gradient-to-b from-orange-500 to-orange-600 px-2 py-1 text-[11px] font-semibold text-white">Unread</span>}
                                         </div>
                                     </div>
                                     <div className="mt-4 flex flex-wrap gap-3 items-center">
                                         {data?.case_id && (
-                                            <button onClick={() => handleViewNotification(notification)} className="rounded-full border border-[#E3755D] px-4 py-2 text-sm font-semibold text-[#E3755D] hover:bg-[#FEF2F1] transition">
+                                            <button onClick={() => handleViewNotification(notification)} className="rounded-full border border-orange-500 px-4 py-2 text-sm font-semibold text-orange-500 hover:bg-[#FEF2F1] transition">
                                                 View case
                                             </button>
                                         )}

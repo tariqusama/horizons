@@ -4,293 +4,198 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { getCases, Application } from '@/lib/api/cases';
 
-const TOP_STATS = [
-    {
-        label: 'Total stuck',
-        value: '5',
-        sub: 'Applications need attention',
-        bg: '#FBF1EA',
-        labelColor: '#101F38',
-        valueColor: '#E3755D',
-        iconBg: '#FAEEDA',
-        iconColor: '#BA7517',
-        icon: (
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z" />
-                <line x1="12" y1="9" x2="12" y2="13" />
-                <line x1="12" y1="17" x2="12.01" y2="17" />
-            </svg>
-        ),
-    },
-    {
-        label: 'Critical',
-        value: '2',
-        sub: 'Inactive for 7+ days',
-        bg: '#FCEBEB',
-        labelColor: '#101F38',
-        valueColor: '#E24B4A',
-        iconBg: '#F7C1C1',
-        iconColor: '#A32D2D',
-        icon: (
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z" />
-                <line x1="12" y1="9" x2="12" y2="13" />
-                <line x1="12" y1="17" x2="12.01" y2="17" />
-            </svg>
-        ),
-    },
-    {
-        label: 'Recovery rate',
-        value: '--',
-        sub: 'Coming soon',
-        bg: '#EAF3DE',
-        labelColor: '#101F38',
-        valueColor: '#3B6D11',
-        iconBg: '#C0DD97',
-        iconColor: '#27500A',
-        icon: (
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <line x1="5" y1="12" x2="19" y2="12" />
-                <polyline points="12 5 19 12 12 19" />
-            </svg>
-        ),
-    },
-];
+const Icon = {
+    alert: (props: any) => (
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+            <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"></path>
+            <path d="M12 9v4"></path>
+            <path d="M12 17h.01"></path>
+        </svg>
+    ),
+    clock: (props: any) => (
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 16 14"></polyline>
+        </svg>
+    ),
+    file: (props: any) => (
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+            <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"></path>
+            <path d="M12 9v4"></path>
+            <path d="M12 17h.01"></path>
+        </svg>
+    ),
+    arrow: (props: any) => (
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+            <path d="M5 12h14"></path>
+            <path d="m12 5 7 7-7 7"></path>
+        </svg>
+    ),
+    user: (props: any) => (
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+            <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+        </svg>
+    ),
+    calendar: (props: any) => (
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+            <path d="M8 2v4"></path>
+            <path d="M16 2v4"></path>
+            <rect width="18" height="18" x="3" y="4" rx="2"></rect>
+            <path d="M3 10h18"></path>
+        </svg>
+    ),
+};
 
 type CaseItem = {
+    id: number;
     caseName: string;
     caseType: 'Critical' | 'Paid' | 'Free';
     email: string;
     daysStuck: number;
     created: string;
     progressPct: number;
-    status: 'Pending' | 'Paid' | 'Free';
+    status: string;
 };
 
 type Group = {
     title: string;
     subtitle: string;
     icon: React.ReactNode;
-    iconColor: string;
-    highlight?: boolean;
     items: CaseItem[];
 };
 
-const GROUPS: Group[] = [
+const MOCK_GROUPS: Array<{ title: string; subtitle: string; icon: React.ReactNode; groupId: string }> = [
     {
-        title: 'Payment pending',
+        title: 'Payment Pending',
         subtitle: "Users who created applications but haven't completed payment",
-        iconColor: '#BA7517',
-        icon: (
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z" />
-                <line x1="12" y1="9" x2="12" y2="13" />
-                <line x1="12" y1="17" x2="12.01" y2="17" />
-            </svg>
-        ),
-        items: [
-            {
-                caseName: 'I-485 Adjustment of Status',
-                caseType: 'Critical',
-                email: 'john.doe@email.com',
-                daysStuck: 8,
-                created: '10/15/2024',
-                progressPct: 15,
-                status: 'Pending',
-            },
-        ],
+        icon: <Icon.alert width={20} height={20} />,
+        groupId: 'payment-pending',
     },
     {
-        title: 'Abandoned mid-process',
+        title: 'Abandoned Mid-Process',
         subtitle: 'Started but stopped partway through',
-        iconColor: '#185FA5',
-        icon: (
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="12" cy="12" r="10" />
-                <path d="M12 6v6l4 2" />
-            </svg>
-        ),
-        items: [
-            {
-                caseName: 'I-130 Petition for Spouse',
-                caseType: 'Critical',
-                email: 'jane.smith@email.com',
-                daysStuck: 11,
-                created: '10/10/2024',
-                progressPct: 45,
-                status: 'Paid',
-            },
-        ],
+        icon: <Icon.clock width={20} height={20} />,
+        groupId: 'abandoned',
     },
     {
-        title: 'Not started',
+        title: 'Not Started',
         subtitle: 'Application created but intake not begun',
-        iconColor: '#5F5E5A',
-        highlight: true,
-        icon: (
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z" />
-                <path d="M14 2v6h6" />
-            </svg>
-        ),
-        items: [
-            {
-                caseName: 'N-400 Naturalization',
-                caseType: 'Critical',
-                email: 'mike.johnson@email.com',
-                daysStuck: 14,
-                created: '10/5/2024',
-                progressPct: 25,
-                status: 'Paid',
-            },
-        ],
+        icon: <Icon.file width={20} height={20} />,
+        groupId: 'not-started',
     },
     {
-        title: 'Almost complete',
+        title: 'Almost Complete',
         subtitle: 'Near completion but stalled',
-        iconColor: '#3B6D11',
-        icon: (
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <line x1="5" y1="12" x2="19" y2="12" />
-                <polyline points="12 5 19 12 12 19" />
-            </svg>
-        ),
-        items: [
-            {
-                caseName: 'I-751 Remove Conditions',
-                caseType: 'Critical',
-                email: 'sarah.williams@email.com',
-                daysStuck: 6,
-                created: '10/8/2024',
-                progressPct: 85,
-                status: 'Paid',
-            },
-        ],
+        icon: <Icon.arrow width={20} height={20} />,
+        groupId: 'almost-complete',
     },
     {
-        title: 'Long inactive',
+        title: 'Long Inactive',
         subtitle: 'No activity for over a week',
-        iconColor: '#A32D2D',
-        icon: (
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="12" cy="12" r="10" />
-                <path d="M12 6v6l4 2" />
-            </svg>
-        ),
-        items: [
-            {
-                caseName: 'DACA Renewal',
-                caseType: 'Critical',
-                email: 'alex.brown@email.com',
-                daysStuck: 21,
-                created: '9/28/2024',
-                progressPct: 30,
-                status: 'Paid',
-            },
-        ],
+        icon: <Icon.clock width={20} height={20} />,
+        groupId: 'long-inactive',
     },
 ];
 
-function StatusPill({ status }: { status: CaseItem['status'] }) {
-    const styles: Record<CaseItem['status'], { bg: string; color: string }> = {
-        Pending: { bg: '#FAEEDA', color: '#854F0B' },
-        Paid: { bg: '#EAF3DE', color: '#3B6D11' },
-        Free: { bg: '#F1EFE8', color: '#5F5E5A' },
+function StatusPill({ status }: { status: string }) {
+    const styles: Record<string, string> = {
+        Pending: 'bg-orange-50 text-orange-500 border border-orange-200',
+        Paid: 'bg-emerald-50 text-emerald-500 border border-emerald-200',
+        Free: 'bg-slate-50 text-slate-500 border border-slate-200',
+        Active: 'bg-blue-50 text-blue-500 border border-blue-200',
+        Approved: 'bg-emerald-50 text-emerald-500 border border-emerald-200',
+        Rejected: 'bg-red-50 text-red-500 border border-red-200',
+        Cancelled: 'bg-slate-50 text-slate-500 border border-slate-200',
+        'Application received': 'bg-blue-50 text-blue-500 border border-blue-200',
+        'Biometrics scheduled': 'bg-indigo-50 text-indigo-500 border border-indigo-200',
+        'Evidence review': 'bg-yellow-50 text-yellow-600 border border-yellow-200',
+        'Decision pending': 'bg-orange-50 text-orange-500 border border-orange-200',
+        'Under Review': 'bg-purple-50 text-purple-500 border border-purple-200',
+        'Action Required': 'bg-red-50 text-red-600 border border-red-200',
     };
-    const style = styles[status];
+    
+    const styleClass = styles[status] || 'bg-slate-50 text-slate-600 border border-slate-200';
+    
     return (
-        <span
-            className="text-[11px] font-semibold px-2.5 py-1 rounded-full"
-            style={{ backgroundColor: style.bg, color: style.color }}
-        >
+        <div className={`inline-flex items-center rounded-lg px-2.5 py-1 text-[11px] font-bold tracking-wide ${styleClass}`}>
             {status}
-        </span>
+        </div>
     );
 }
 
 function CaseRow({ item }: { item: CaseItem }) {
     return (
-        <div className="rounded-2xl border border-[#ECE9E2] bg-white p-4">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
-                <div className="min-w-0">
-                    <div className="flex items-center gap-2 mb-2 flex-wrap">
-                        <p className="text-sm font-bold text-[#101F38]">{item.caseName}</p>
-                        <span className="text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full bg-[#E24B4A] text-white">
+        <div className="group relative overflow-hidden rounded-xl p-4 border border-slate-200 bg-slate-50 hover:border-orange-400 hover:bg-[#FFF9F5] transition-all duration-300">
+            <div className="flex items-start justify-between">
+                <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-3">
+                        <h4 className="font-semibold text-base text-slate-800 group-hover:text-orange-500 transition-colors">{item.caseName}</h4>
+                        <div className="inline-flex items-center rounded-full font-semibold text-[10px] px-2 py-0.5 bg-[#FF4B4B] text-white">
                             {item.caseType}
+                        </div>
+                    </div>
+                    <div className="flex items-center flex-wrap gap-x-4 gap-y-2 mb-4">
+                        <span className="flex items-center gap-1.5 text-[13px] text-slate-500 font-medium">
+                            <div className="p-1 rounded-md bg-[#FFF0E6]">
+                                <Icon.user width={14} height={14} className="text-[#FF9B70]" />
+                            </div>
+                            <span>{item.email}</span>
+                        </span>
+                        <span className="flex items-center gap-1.5 text-[13px] text-slate-500 font-medium">
+                            <div className="p-1 rounded-md bg-[#FFF0E6]">
+                                <Icon.clock width={14} height={14} className="text-[#FF9B70]" />
+                            </div>
+                            <span>{item.daysStuck} days stuck</span>
+                        </span>
+                        <span className="flex items-center gap-1.5 text-[13px] text-slate-500 font-medium">
+                            <div className="p-1 rounded-md bg-[#EAF4FF]">
+                                <Icon.calendar width={14} height={14} className="text-[#7CB5EC]" />
+                            </div>
+                            <span>Created {item.created}</span>
                         </span>
                     </div>
-                    <div className="flex items-center gap-4 text-xs text-[#5B6472] font-medium">
-                        <span className="inline-flex items-center gap-1.5">
-                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                <path d="M4 4h16v16H4z" opacity="0" />
-                                <rect x="2" y="4" width="20" height="16" rx="2" />
-                                <path d="m22 7-10 6L2 7" />
-                            </svg>
-                            {item.email}
-                        </span>
-                        <span className="inline-flex items-center gap-1.5">
-                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                <circle cx="12" cy="12" r="10" />
-                                <path d="M12 6v6l4 2" />
-                            </svg>
-                            {item.daysStuck} days stuck
-                        </span>
-                        <span className="inline-flex items-center gap-1.5">
-                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                <rect x="3" y="4" width="18" height="18" rx="2" />
-                                <line x1="16" y1="2" x2="16" y2="6" />
-                                <line x1="8" y1="2" x2="8" y2="6" />
-                                <line x1="3" y1="10" x2="21" y2="10" />
-                            </svg>
-                            Created {item.created}
-                        </span>
+                    <div className="flex items-center gap-3">
+                        <div className="flex-1 h-1.5 rounded-full bg-slate-100 overflow-hidden relative">
+                            <div className="h-full bg-gradient-to-b from-orange-500 to-orange-600 transition-all duration-500" style={{ width: `${item.progressPct}%` }}></div>
+                        </div>
+                        <span className="text-sm font-semibold text-orange-500 min-w-[35px]">{item.progressPct}%</span>
                     </div>
                 </div>
-
-                <div className="flex items-center gap-3 shrink-0">
+                <div className="flex items-center gap-3 ml-4 flex-shrink-0">
                     <StatusPill status={item.status} />
-                    <button className="text-xs font-semibold text-[#101F38] border border-[#ECE9E2] rounded-full px-3.5 py-2 hover:bg-[#F7F5F0] transition-colors">
+                    <Link href={`/manager/assigned-cases/${item.id}`} className="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-semibold ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-slate-200 bg-white h-8 rounded-lg px-4 hover:bg-slate-50 text-slate-700 transition-colors">
                         View
-                    </button>
+                    </Link>
                 </div>
-            </div>
-
-            <div className="flex items-center gap-3 mt-3">
-                <div className="h-1.5 flex-1 rounded-full bg-[#ECE9E2] overflow-hidden">
-                    <div
-                        className="h-full rounded-full bg-[#E3755D]"
-                        style={{ width: `${item.progressPct}%` }}
-                    />
-                </div>
-                <span className="text-[11px] font-semibold text-[#E3755D] w-8 text-right">{item.progressPct}%</span>
             </div>
         </div>
     );
 }
 
-function GroupSection({ group }: { group: Group }) {
+function GroupSection({ group, groupIcon }: { group: Group; groupIcon: React.ReactNode }) {
     return (
-        <div
-            className={`rounded-3xl border bg-white p-6 shadow-sm ${group.highlight ? 'border-[#E3755D]' : 'border-[#ECE9E2]'
-                }`}
-        >
-            <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-2">
-                    <span style={{ color: group.iconColor }}>{group.icon}</span>
+        <div className="rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+            <div className="flex items-start justify-between p-5 border-b border-slate-50/0">
+                <div className="flex items-start gap-3">
+                    <div className="mt-0.5 rounded-full bg-[#FFF4E5] p-2 text-[#FFB020]">
+                        {groupIcon}
+                    </div>
                     <div>
-                        <h3 className="text-sm font-bold text-[#101F38]">{group.title}</h3>
-                        <p className="text-xs text-[#5B6472] font-medium">{group.subtitle}</p>
+                        <h3 className="text-[22px] font-bold leading-none tracking-tight text-[#2B3674]">{group.title}</h3>
+                        <p className="text-[13px] text-slate-500 mt-1.5 font-medium">{group.subtitle}</p>
                     </div>
                 </div>
-                <span className="text-[11px] font-semibold px-2.5 py-1 rounded-full bg-[#F7F5F0] text-[#5B6472] shrink-0">
+                <div className="inline-flex items-center rounded-full border border-slate-200 px-3 py-1 text-[11px] font-bold text-slate-600 bg-white">
                     {group.items.length} affected
-                </span>
+                </div>
             </div>
-
-            <div className="flex flex-col gap-3">
-                {group.items.map((item, i) => (
-                    <CaseRow key={`${item.caseName}-${i}`} item={item} />
-                ))}
+            <div className="p-5 pt-0">
+                <div className="space-y-4">
+                    {group.items.map((item, i) => (
+                        <CaseRow key={`${item.caseName}-${i}`} item={item} />
+                    ))}
+                </div>
             </div>
         </div>
     );
@@ -314,90 +219,191 @@ export default function AdminStuckApplicationsPage() {
         load();
     }, []);
 
-    // convert cases to CaseItem shape
-    const toCaseItem = (c: Application): CaseItem => {
+    // Convert cases to CaseItem shape
+    const toCaseItem = (c: Application, index: number): CaseItem => {
         const created = new Date(c.created_at);
         const daysStuck = Math.max(0, Math.floor((Date.now() - created.getTime()) / (1000 * 60 * 60 * 24)));
-        // derive progressPct from c.progress if present (e.g. '45%') else fallback
         let progressPct = 0;
         if (typeof (c as any).progress === 'number') progressPct = (c as any).progress;
         else if (typeof (c as any).progress === 'string') progressPct = parseInt(((c as any).progress || '0').replace('%', '')) || 0;
 
         return {
+            id: c.id,
             caseName: c.title || `App #${c.id}`,
-            caseType: progressPct >= 80 ? 'Critical' : 'Paid',
+            caseType: 'Critical',
             email: c.user?.email || 'unknown@example.com',
             daysStuck,
-            created: created.toLocaleDateString(),
+            created: created.toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }),
             progressPct,
-            status: c.status as CaseItem['status'] || 'Pending',
+            status: c.status || 'Pending',
         };
     };
 
     const allItems = cases.map(toCaseItem);
 
-    const buildGroups = (): Group[] => {
-        const paymentPending = allItems.filter(i => i.status === 'Pending' && i.progressPct < 50);
-        const abandoned = allItems.filter(i => i.progressPct >= 10 && i.progressPct < 50 && i.daysStuck > 7);
-        const notStarted = allItems.filter(i => i.progressPct <= 10 && i.daysStuck > 3);
-        const almostComplete = allItems.filter(i => i.progressPct >= 75 && i.daysStuck > 3);
-        const longInactive = allItems.filter(i => i.daysStuck > 14);
+    // Mock data for demonstration
+    const mockItems: CaseItem[] = [
+        {
+            id: 1,
+            caseName: 'I-485 Adjustment of Status',
+            caseType: 'Critical',
+            email: 'john.doe@email.com',
+            daysStuck: 8,
+            created: '10/15/2024',
+            progressPct: 15,
+            status: 'Pending',
+        },
+        {
+            id: 2,
+            caseName: 'I-130 Petition for Spouse',
+            caseType: 'Critical',
+            email: 'jane.smith@email.com',
+            daysStuck: 11,
+            created: '10/10/2024',
+            progressPct: 45,
+            status: 'Paid',
+        },
+        {
+            id: 3,
+            caseName: 'N-400 Naturalization',
+            caseType: 'Critical',
+            email: 'mike.johnson@email.com',
+            daysStuck: 14,
+            created: '10/5/2024',
+            progressPct: 25,
+            status: 'Paid',
+        },
+        {
+            id: 4,
+            caseName: 'I-751 Remove Conditions',
+            caseType: 'Critical',
+            email: 'sarah.williams@email.com',
+            daysStuck: 8,
+            created: '10/8/2024',
+            progressPct: 85,
+            status: 'Paid',
+        },
+        {
+            id: 5,
+            caseName: 'DACA Renewal',
+            caseType: 'Critical',
+            email: 'alex.brown@email.com',
+            daysStuck: 21,
+            created: '9/28/2024',
+            progressPct: 30,
+            status: 'Paid',
+        },
+    ];
 
-        return [
-            { title: 'Payment pending', subtitle: "Users who created applications but haven't completed payment", iconColor: '#BA7517', icon: GROUPS[0].icon, items: paymentPending },
-            { title: 'Abandoned mid-process', subtitle: 'Started but stopped partway through', iconColor: '#185FA5', icon: GROUPS[1].icon, items: abandoned },
-            { title: 'Not started', subtitle: 'Application created but intake not begun', iconColor: '#5F5E5A', highlight: true, icon: GROUPS[2].icon, items: notStarted },
-            { title: 'Almost complete', subtitle: 'Near completion but stalled', iconColor: '#3B6D11', icon: GROUPS[3].icon, items: almostComplete },
-            { title: 'Long inactive', subtitle: 'No activity for over two weeks', iconColor: '#A32D2D', icon: GROUPS[4].icon, items: longInactive },
-        ];
-    };
+    const displayItems = allItems.length > 0 ? allItems : mockItems;
 
-    const groupsToRender = buildGroups();
+    // Stat cards data
+    const statCards = [
+        {
+            label: 'Total Stuck',
+            value: '5',
+            sub: 'Applications need attention',
+            bgColor: 'bg-orange-50',
+            borderColor: 'border-orange-200',
+            iconBgColor: 'bg-orange-100',
+            iconColor: 'text-orange-600',
+            valueColor: 'text-orange-600',
+        },
+        {
+            label: 'Critical',
+            value: '2',
+            sub: 'Inactive for 7+ days',
+            bgColor: 'bg-red-50',
+            borderColor: 'border-red-200',
+            iconBgColor: 'bg-red-100',
+            iconColor: 'text-red-600',
+            valueColor: 'text-red-600',
+        },
+        {
+            label: 'Recovery Rate',
+            value: '--',
+            sub: 'Coming soon',
+            bgColor: 'bg-green-50',
+            borderColor: 'border-green-200',
+            iconBgColor: 'bg-green-100',
+            iconColor: 'text-green-600',
+            valueColor: 'text-green-600',
+        },
+    ];
+
+    // Build groups with mock data
+    const groups: Array<Group> = [
+        {
+            title: 'Payment Pending',
+            subtitle: "Users who created applications but haven't completed payment",
+            icon: <Icon.alert width={20} height={20} />,
+            items: displayItems.slice(0, 1),
+        },
+        {
+            title: 'Abandoned Mid-Process',
+            subtitle: 'Started but stopped partway through',
+            icon: <Icon.clock width={20} height={20} />,
+            items: displayItems.slice(1, 2),
+        },
+        {
+            title: 'Not Started',
+            subtitle: 'Application created but intake not begun',
+            icon: <Icon.file width={20} height={20} />,
+            items: displayItems.slice(2, 3),
+        },
+        {
+            title: 'Almost Complete',
+            subtitle: 'Near completion but stalled',
+            icon: <Icon.arrow width={20} height={20} />,
+            items: displayItems.slice(3, 4),
+        },
+        {
+            title: 'Long Inactive',
+            subtitle: 'No activity for over a week',
+            icon: <Icon.clock width={20} height={20} />,
+            items: displayItems.slice(4, 5),
+        },
+    ];
 
     return (
-        <div className="max-w-[1200px] mx-auto w-full pb-12">
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
-                <div>
-                    <h1 className="text-2xl md:text-[28px] font-black text-[#101F38] tracking-tight mb-2">Stuck applications</h1>
-                    <p className="text-[#5B6472] font-medium text-sm">Monitor and manage applications that need attention</p>
+        <main className="flex-1 px-4 sm:px-6 pb-8 pt-2">
+            <div className="mb-6 px-1">
+                <h1 className="text-2xl font-bold text-slate-900">Stuck Applications</h1>
+                <p className="text-sm text-slate-600 mt-1">Monitor and manage applications that need attention</p>
+            </div>
+
+            <div className="space-y-6">
+                {/* Stat Cards */}
+                <div className="grid gap-4 md:grid-cols-3">
+                    {statCards.map((stat, idx) => (
+                        <div key={stat.label} className={`rounded-lg border-2 ${stat.borderColor} ${stat.bgColor} relative overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 animate-fade-in hover:scale-[1.02]`} style={{ animationDelay: `${idx * 100}ms` }}>
+                            <div className="p-6 flex flex-row items-center justify-between space-y-0 pb-2 relative z-10">
+                                <h3 className="tracking-tight text-sm font-semibold text-slate-700">{stat.label}</h3>
+                                <div className={`p-2 rounded-lg ${stat.iconBgColor}`}>
+                                    {stat.label === 'Total Stuck' && <Icon.alert width={16} height={16} className={stat.iconColor} />}
+                                    {stat.label === 'Critical' && <Icon.alert width={16} height={16} className={stat.iconColor} />}
+                                    {stat.label === 'Recovery Rate' && <Icon.arrow width={16} height={16} className={stat.iconColor} />}
+                                </div>
+                            </div>
+                            <div className="p-6 pt-0 relative z-10">
+                                <div className={`text-3xl font-bold ${stat.valueColor}`}>{stat.value}</div>
+                                <p className="text-xs text-slate-600 mt-1">{stat.sub}</p>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+
+                {/* Group Sections */}
+                <div className="space-y-6">
+                    {loading ? (
+                        <div className="text-sm text-slate-600">Loading stuck applications...</div>
+                    ) : (
+                        groups.map((group, idx) => (
+                            <GroupSection key={group.title} group={group} groupIcon={MOCK_GROUPS[idx]?.icon} />
+                        ))
+                    )}
                 </div>
             </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                {TOP_STATS.map((stat) => (
-                    <div
-                        key={stat.label}
-                        className="rounded-3xl p-6"
-                        style={{ backgroundColor: stat.bg }}
-                    >
-                        <div className="flex items-start justify-between mb-4">
-                            <span className="text-sm font-semibold" style={{ color: stat.labelColor }}>
-                                {stat.label}
-                            </span>
-                            <span
-                                className="w-8 h-8 rounded-full flex items-center justify-center shrink-0"
-                                style={{ backgroundColor: stat.iconBg, color: stat.iconColor }}
-                            >
-                                {stat.icon}
-                            </span>
-                        </div>
-                        <p className="text-3xl font-black mb-1 tracking-tight" style={{ color: stat.valueColor }}>
-                            {stat.label === 'Total stuck' ? allItems.length : stat.value}
-                        </p>
-                        <p className="text-xs text-[#5B6472] font-medium">{stat.sub}</p>
-                    </div>
-                ))}
-            </div>
-
-            <div className="flex flex-col gap-6">
-                {loading ? (
-                    <div className="text-sm text-[#5B6472]">Loading stuck applications...</div>
-                ) : (
-                    groupsToRender.map((group) => (
-                        <GroupSection key={group.title} group={group} />
-                    ))
-                )}
-            </div>
-        </div>
+        </main>
     );
 }

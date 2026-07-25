@@ -309,7 +309,7 @@ function CapacitySection() {
 function LeaderboardRow({ entry }: { entry: LeaderboardEntry }) {
     return (
         <div className="flex items-center gap-4">
-            <span className="w-9 h-9 rounded-full bg-[#FBEAE4] text-[#E3755D] font-black text-sm flex items-center justify-center shrink-0">
+            <span className="w-9 h-9 rounded-full bg-[#FBEAE4] text-orange-500 font-black text-sm flex items-center justify-center shrink-0">
                 {entry.rank}
             </span>
 
@@ -346,11 +346,11 @@ function LeaderboardRow({ entry }: { entry: LeaderboardEntry }) {
                 <div className="flex items-center gap-3">
                     <div className="h-1.5 flex-1 rounded-full bg-[#ECE9E2] overflow-hidden">
                         <div
-                            className="h-full rounded-full bg-[#E3755D]"
+                            className="h-full rounded-full bg-gradient-to-b from-orange-500 to-orange-600"
                             style={{ width: `${Math.min(entry.pct, 100)}%` }}
                         />
                     </div>
-                    <span className="text-[11px] font-semibold text-[#E3755D] w-9 text-right">{entry.pct}%</span>
+                    <span className="text-[11px] font-semibold text-orange-500 w-9 text-right">{entry.pct}%</span>
                 </div>
             </div>
         </div>

@@ -86,7 +86,7 @@ export default function GlobalSearchPage() {
                                     <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded" style={{ backgroundColor: result.bg, color: result.color }}>{result.type}</span>
                                     <span className="text-xs font-semibold text-[#8A8F98]">{result.meta}</span>
                                 </div>
-                                <h3 className="font-bold text-[#101F38] text-lg mb-1 group-hover:text-[#E3755D] transition-colors truncate">{result.title}</h3>
+                                <h3 className="font-bold text-[#101F38] text-lg mb-1 group-hover:text-orange-500 transition-colors truncate">{result.title}</h3>
                                 <p className="text-[#5B6472] text-sm truncate">{result.subtitle}</p>
                             </div>
                             <div className="shrink-0 text-right self-center">

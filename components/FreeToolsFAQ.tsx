@@ -56,8 +56,8 @@ export default function FreeToolsFAQ() {
                   className={`w-full flex items-center justify-between p-8 text-left transition-colors`}
                   onClick={() => setOpenIndex(isOpen ? null : index)}
                 >
-                  <span className={`font-bold text-[18px] transition-colors ${isOpen ? 'text-[#E3755D]' : 'text-[#1B3A64] group-hover:text-[#E3755D]'}`}>{faq.question}</span>
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ml-4 transition-colors ${isOpen ? 'bg-[#E3755D]/10 text-[#E3755D]' : 'bg-[#EAF1F8] text-[#1B3A64] group-hover:bg-[#E3755D]/10 group-hover:text-[#E3755D]'}`}>
+                  <span className={`font-bold text-[18px] transition-colors ${isOpen ? 'text-orange-500' : 'text-[#1B3A64] group-hover:text-orange-500'}`}>{faq.question}</span>
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ml-4 transition-colors ${isOpen ? 'bg-orange-500/10 text-orange-500' : 'bg-[#EAF1F8] text-[#1B3A64] group-hover:bg-orange-500/10 group-hover:text-orange-500'}`}>
                     <span className={`material-icons transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}>
                       expand_more
                     </span>

@@ -19,6 +19,7 @@ export default function DashboardApplicationsPage() {
     const [applications, setApplications] = useState<Application[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [showChatError, setShowChatError] = useState(false);
     const router = useRouter();
 
     useEffect(() => {
@@ -29,6 +30,14 @@ export default function DashboardApplicationsPage() {
             .catch(err => console.error(err))
             .finally(() => setIsLoading(false));
     }, []);
+
+    const handleStartApplication = (app: any) => {
+        if (['submitted', 'completed', 'review'].includes(app.status?.toLowerCase())) {
+            router.push('/dashboard/get-started/submission');
+        } else {
+            router.push('/dashboard/get-started');
+        }
+    };
 
     const getPlanDetails = (goal: string, subtitle: string) => {
         const isAdvanced = subtitle.toLowerCase().includes('advanced');
@@ -70,7 +79,7 @@ export default function DashboardApplicationsPage() {
     }
 
     return (
-        <div className="w-full max-w-5xl">
+        <div className="w-full">
             {/* Header Area */}
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
                 <div>
@@ -78,7 +87,7 @@ export default function DashboardApplicationsPage() {
                     <p className="text-[15px] text-[#5A6579] mt-1">Track all your immigration applications</p>
                 </div>
                 <div className="mt-4 sm:mt-0">
-                    <button onClick={() => setIsModalOpen(true)} className="inline-flex items-center space-x-2 bg-[#FA6514] hover:bg-[#E3755D] text-white font-bold py-2.5 px-5 rounded-lg transition-colors">
+                    <button onClick={() => setIsModalOpen(true)} className="inline-flex items-center space-x-2 bg-[#FA6514] hover:bg-gradient-to-b from-orange-500 to-orange-600 text-white font-bold py-2.5 px-5 rounded-lg transition-colors">
                         <span className="text-lg leading-none">+</span>
                         <span>New Application</span>
                     </button>
@@ -143,8 +152,8 @@ export default function DashboardApplicationsPage() {
                                         </svg>
                                     </div>
                                     <div>
-                                        <h3 className="text-[16px] font-bold text-[#1B3A64]">Application Ready</h3>
-                                        <p className="text-[14px] text-[#5A6579] mt-1">Your plan is ready for processing. Our team will contact you soon.</p>
+                                        <h3 className="text-[16px] font-bold text-[#1B3A64]">{app.progress || 'Application Ready'}</h3>
+                                        <p className="text-[14px] text-[#5A6579] mt-1">{app.next_step || 'Your plan is ready for processing. Our team will contact you soon.'}</p>
                                     </div>
                                 </div>
                             </div>
@@ -166,6 +175,23 @@ export default function DashboardApplicationsPage() {
                                         </li>
                                     ))}
                                 </ul>
+                                
+                                <div className="mt-6 pt-4 border-t border-gray-200/60 flex justify-end">
+                                    <button 
+                                        onClick={() => handleStartApplication(app)}
+                                        className="bg-[#1B3A64] hover:bg-[#152e52] text-white font-semibold py-2.5 px-6 rounded-lg transition-colors flex items-center space-x-2 shadow-sm"
+                                    >
+                                        <span>
+                                            {['submitted', 'completed', 'review'].includes(app.status?.toLowerCase()) 
+                                                ? 'View Application' 
+                                                : 'Continue Application'}
+                                        </span>
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                            <path d="M5 12h14"></path>
+                                            <path d="M12 5l7 7-7 7"></path>
+                                        </svg>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     );
@@ -173,6 +199,51 @@ export default function DashboardApplicationsPage() {
             </div>
 
             <ApplicationSelectionModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+
+            {showChatError && (
+                <div style={{
+                    position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+                    backgroundColor: 'rgba(0,0,0,0.4)', zIndex: 9999,
+                    display: 'flex', alignItems: 'center', justifyItems: 'center', justifyContent: 'center',
+                    backdropFilter: 'blur(3px)'
+                }}>
+                    <div style={{
+                        backgroundColor: 'white', borderRadius: '16px', padding: '32px',
+                        maxWidth: '420px', width: '90%', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+                        textAlign: 'center', animation: 'fadeIn 0.2s ease-out'
+                    }}>
+                        <div style={{
+                            backgroundColor: '#FEF3C7', color: '#D97706',
+                            width: '64px', height: '64px', borderRadius: '50%',
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            margin: '0 auto 20px auto'
+                        }}>
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <circle cx="12" cy="12" r="10" />
+                                <line x1="12" y1="8" x2="12" y2="12" />
+                                <line x1="12" y1="16" x2="12.01" y2="16" />
+                            </svg>
+                        </div>
+                        <h3 style={{ margin: '0 0 12px 0', color: '#111827', fontSize: '1.25rem', fontWeight: 600 }}>Case Manager Pending</h3>
+                        <p style={{ color: '#6B7280', margin: '0 0 24px 0', lineHeight: 1.5, fontSize: '0.95rem' }}>
+                            You cannot proceed yet because a case manager has not been assigned to this specific application. We are reviewing your application and will assign a manager shortly!
+                        </p>
+                        <button
+                            onClick={() => setShowChatError(false)}
+                            style={{
+                                backgroundColor: '#1E40AF', color: 'white', border: 'none',
+                                borderRadius: '8px', padding: '12px 24px', fontWeight: 500,
+                                cursor: 'pointer', width: '100%', fontSize: '1rem',
+                                transition: 'background-color 0.2s'
+                            }}
+                            onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#1e3a8a'}
+                            onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#1E40AF'}
+                        >
+                            Got it, thanks!
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

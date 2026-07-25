@@ -32,7 +32,7 @@ export default function ServicesCategory({ title, subtitle, pillText, cards }: S
         </div>
         <h2 className="text-4xl md:text-[48px] font-bold text-[#1B3A64] mb-6 leading-tight">{title}</h2>
         <p className="text-[#5A6579] font-medium text-[19px] max-w-3xl mx-auto leading-relaxed">{subtitle}</p>
-        <div className="w-20 h-[4px] bg-gradient-to-r from-[#E3755D] to-[#C8634D] mx-auto mt-8 rounded-full shadow-sm"></div>
+        <div className="w-20 h-[4px] bg-gradient-to-b from-orange-500 to-orange-600 mx-auto mt-8 rounded-full shadow-sm"></div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -40,7 +40,7 @@ export default function ServicesCategory({ title, subtitle, pillText, cards }: S
           <div key={idx} className={`bg-white rounded-[48px] p-10 shadow-[0_20px_40px_-15px_rgba(27,58,100,0.08)] border border-gray-100 relative flex flex-col hover:-translate-y-3 hover:shadow-[0_40px_60px_-15px_rgba(27,58,100,0.12)] transition-all duration-500`}>
             
             {card.isPopular && (
-              <div className="absolute -top-5 right-8 bg-gradient-to-r from-[#E3755D] to-[#C8634D] text-white text-[12px] font-bold px-5 py-2.5 rounded-full flex items-center shadow-[0_10px_20px_rgba(227,117,93,0.3)] uppercase tracking-wider z-10">
+              <div className="absolute -top-5 right-8 bg-gradient-to-b from-orange-500 to-orange-600 text-white text-[12px] font-bold px-5 py-2.5 rounded-full flex items-center shadow-[0_10px_20px_rgba(227,117,93,0.3)] uppercase tracking-wider z-10">
                 <span className="material-icons text-[16px] mr-1.5">star</span>
                 Most Popular
               </div>
@@ -48,7 +48,7 @@ export default function ServicesCategory({ title, subtitle, pillText, cards }: S
 
             <div className="flex items-start mb-6">
               <div className="w-14 h-14 bg-gradient-to-br from-[#EAF1F8] to-[#D5E4F2] border border-white rounded-[20px] flex items-center justify-center shadow-inner mr-5 shrink-0">
-                <span className="material-icons text-[#E3755D] text-[28px]">task</span>
+                <span className="material-icons text-orange-500 text-[28px]">task</span>
               </div>
               <h3 className="font-bold text-[#1B3A64] text-[22px] leading-snug mt-1">{card.title}</h3>
             </div>
@@ -89,7 +89,7 @@ export default function ServicesCategory({ title, subtitle, pillText, cards }: S
               <ul className="space-y-3">
                 {card.requirements.map((req, rIdx) => (
                   <li key={rIdx} className="flex items-start text-[15px] text-[#5A6579] font-medium leading-relaxed">
-                    <span className="material-icons text-[#E3755D] text-[20px] mr-3 shrink-0 mt-0.5">check_circle</span>
+                    <span className="material-icons text-orange-500 text-[20px] mr-3 shrink-0 mt-0.5">check_circle</span>
                     <span>{req}</span>
                   </li>
                 ))}

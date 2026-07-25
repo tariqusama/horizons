@@ -51,7 +51,7 @@ export default function AboutTeam() {
         {/* Right Column: Trusted & Certified */}
         <div className="bg-gradient-to-br from-[#0A192F] to-[#1B3A64] rounded-[48px] p-12 md:p-16 text-white shadow-[0_30px_60px_-15px_rgba(27,58,100,0.3)] border border-[#122b4f] h-fit sticky top-32 relative overflow-hidden">
           
-          <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-[#E3755D]/20 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
+          <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-orange-500/20 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
 
           <div className="relative z-10">
             <div className="inline-flex items-center bg-white/10 backdrop-blur-md rounded-full px-6 py-2 mb-8 border border-white/20 shadow-sm">
@@ -65,7 +65,7 @@ export default function AboutTeam() {
             <div className="space-y-10">
               <div className="flex items-start space-x-6">
                 <div className="w-16 h-16 rounded-[24px] bg-white/10 backdrop-blur-xl flex items-center justify-center border border-white/20 shrink-0 shadow-inner">
-                  <span className="material-icons text-[#E3755D] text-[32px]">gavel</span>
+                  <span className="material-icons text-orange-500 text-[32px]">gavel</span>
                 </div>
                 <div>
                   <h4 className="text-[20px] font-bold mb-2">Experienced Immigration Attorneys</h4>
@@ -75,7 +75,7 @@ export default function AboutTeam() {
 
               <div className="flex items-start space-x-6">
                 <div className="w-16 h-16 rounded-[24px] bg-white/10 backdrop-blur-xl flex items-center justify-center border border-white/20 shrink-0 shadow-inner">
-                  <span className="material-icons text-[#E3755D] text-[32px]">fact_check</span>
+                  <span className="material-icons text-orange-500 text-[32px]">fact_check</span>
                 </div>
                 <div>
                   <h4 className="text-[20px] font-bold mb-2">USCIS-Compliant Translations</h4>
@@ -85,7 +85,7 @@ export default function AboutTeam() {
 
               <div className="flex items-start space-x-6">
                 <div className="w-16 h-16 rounded-[24px] bg-white/10 backdrop-blur-xl flex items-center justify-center border border-white/20 shrink-0 shadow-inner">
-                  <span className="material-icons text-[#E3755D] text-[32px]">verified_user</span>
+                  <span className="material-icons text-orange-500 text-[32px]">verified_user</span>
                 </div>
                 <div>
                   <h4 className="text-[20px] font-bold mb-2">Client-Trusted Service</h4>

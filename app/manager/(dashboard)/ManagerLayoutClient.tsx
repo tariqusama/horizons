@@ -4,7 +4,7 @@ import Image from 'next/image';
 import React, { useEffect, useState } from "react";
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
-import { getNotifications, markAsRead, Notification } from '@/lib/api/notifications';
+import { getNotifications, markAsRead, clearAllNotifications, Notification } from '@/lib/api/notifications';
 
 type MenuItem = { href: string; label: string; icon?: React.ReactNode; iconBg?: string; iconFg?: string };
 type MenuGroup = { title: string; collapsible?: boolean; defaultOpen?: boolean; items: MenuItem[] };
@@ -25,7 +25,7 @@ const managerMenu: MenuGroup[] = [
                     </svg>
                 ),
                 iconBg: '#FDECE2',
-                iconFg: '#E3755D'
+                iconFg: '#f97316'
             },
             {
                 href: "/manager/notifications",
@@ -52,6 +52,18 @@ const managerMenu: MenuGroup[] = [
                 iconFg: '#2563EB'
             },
             {
+                href: "/manager/available-cases",
+                label: "Available Cases",
+                icon: (
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <rect x="2" y="4" width="20" height="16" rx="2" ry="2"></rect>
+                        <path d="M10 12l2 2 4-4"></path>
+                    </svg>
+                ),
+                iconBg: '#F3E8FF',
+                iconFg: '#9333EA'
+            },
+            {
                 href: "/manager/assigned-cases?filter=urgent",
                 label: "Urgent Cases",
                 icon: (
@@ -73,7 +85,7 @@ const managerMenu: MenuGroup[] = [
                     </svg>
                 ),
                 iconBg: '#FDEDE2',
-                iconFg: '#E3755D'
+                iconFg: '#f97316'
             },
             {
                 href: "/manager/pending-tasks",
@@ -229,9 +241,10 @@ function ManagerSidebarContent({
                                             const linkClasses = isActive
                                                 ? 'flex items-center gap-3 px-3 py-3 rounded-[24px] text-sm font-semibold bg-[#101F38] text-white shadow-[0_10px_30px_rgba(16,31,56,0.12)] transition'
                                                 : 'flex items-center gap-3 px-3 py-3 rounded-[24px] text-sm font-semibold text-[#1F2937] bg-white hover:bg-[#F8FAFB] transition';
-                                            const iconStyle = {
-                                                backgroundColor: isActive ? '#E3755D' : item.iconBg || '#DCEBFB',
-                                                color: isActive ? '#FFFFFF' : item.iconFg || '#2F6FB3',
+                                            const iconClasses = isActive ? "w-10 h-10 rounded-full flex items-center justify-center shrink-0 bg-gradient-to-b from-orange-500 to-orange-600 text-white" : "w-10 h-10 rounded-full flex items-center justify-center shrink-0";
+                                            const iconStyle = isActive ? {} : {
+                                                backgroundColor: item.iconBg || '#DCEBFB',
+                                                color: item.iconFg || '#2F6FB3',
                                             };
                                             return isExternal ? (
                                                 <a
@@ -241,7 +254,7 @@ function ManagerSidebarContent({
                                                     rel="noopener noreferrer"
                                                     className={linkClasses}
                                                 >
-                                                    <span className="w-10 h-10 rounded-full flex items-center justify-center shrink-0" style={iconStyle}>
+                                                    <span className={iconClasses} style={iconStyle}>
                                                         {item.icon || <span className="text-xs">•</span>}
                                                     </span>
                                                     <span className="truncate">{item.label}</span>
@@ -253,7 +266,7 @@ function ManagerSidebarContent({
                                                     onClick={onLinkClick}
                                                     className={linkClasses}
                                                 >
-                                                    <span className="w-10 h-10 rounded-full flex items-center justify-center shrink-0" style={iconStyle}>
+                                                    <span className={iconClasses} style={iconStyle}>
                                                         {item.icon || <span className="text-xs">•</span>}
                                                     </span>
                                                     <span className="truncate">{item.label}</span>
@@ -271,7 +284,7 @@ function ManagerSidebarContent({
             <div className="mt-6 px-3 pb-2">
                 <button
                     onClick={() => logout()}
-                    className="w-full flex items-center justify-center gap-2 rounded-full bg-[#E3755D] text-white py-3.5 text-sm font-bold transition hover:bg-[#C93500] shadow-sm"
+                    className="w-full flex items-center justify-center gap-2 rounded-full bg-gradient-to-b from-orange-500 to-orange-600 text-white py-3.5 text-sm font-bold transition hover:bg-[#C93500] shadow-sm"
                 >
                     <span className="h-8 w-8 rounded-full bg-white flex items-center justify-center text-xs font-bold text-[#101F38]">
                         {user?.name?.charAt(0) || 'M'}
@@ -351,6 +364,9 @@ export default function ManagerLayoutClient({ children }: { children: React.Reac
                 router.push('/dashboard');
             } else {
                 setAuthorized(true);
+                loadNotifications();
+                const interval = setInterval(loadNotifications, 30000);
+                return () => clearInterval(interval);
             }
         }
     }, [user, isLoading, router]);
@@ -365,7 +381,7 @@ export default function ManagerLayoutClient({ children }: { children: React.Reac
         return (
             <div className="w-full min-h-screen flex items-center justify-center bg-gray-50">
                 <div className="text-center">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#E3755D] mx-auto mb-4"></div>
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mx-auto mb-4"></div>
                     <p className="text-gray-600 font-medium">Loading...</p>
                 </div>
             </div>
@@ -380,7 +396,7 @@ export default function ManagerLayoutClient({ children }: { children: React.Reac
                     <p className="text-gray-600 mb-6">You don't have permission to access the manager portal.</p>
                     <button
                         onClick={() => router.push('/dashboard')}
-                        className="px-6 py-2.5 bg-[#E3755D] text-white rounded-lg font-semibold hover:bg-[#D3654D] transition-colors"
+                        className="px-6 py-2.5 bg-gradient-to-b from-orange-500 to-orange-600 text-white rounded-lg font-semibold hover:from-orange-600 hover:to-orange-700 transition-colors"
                     >
                         Go to Dashboard
                     </button>
@@ -452,18 +468,18 @@ export default function ManagerLayoutClient({ children }: { children: React.Reac
                         <input
                             type="text"
                             placeholder="Search cases, clients, updates..."
-                            className="w-full pl-4 pr-4 py-3 rounded-full border border-[#ECE9E2] bg-[#F8F9FA] text-sm text-[#1F2937] placeholder:text-[#9CA3AF] outline-none focus:border-[#E3755D] focus:bg-white transition"
+                            className="w-full pl-4 pr-4 py-3 rounded-full border border-[#ECE9E2] bg-[#F8F9FA] text-sm text-[#1F2937] placeholder:text-[#9CA3AF] outline-none focus:border-orange-500 focus:bg-white transition"
                         />
                     </div>
 
                     <div className="relative shrink-0">
-                        <button onClick={toggleNotifications} className="w-10 h-10 rounded-full bg-white border border-[#ECE9E2] flex items-center justify-center text-[#5B6472] hover:text-[#1B3A64] transition-colors shadow-sm">
+                        <button onClick={toggleNotifications} className="relative w-10 h-10 rounded-full bg-white border border-[#ECE9E2] flex items-center justify-center text-[#5B6472] hover:text-[#1B3A64] transition-colors shadow-sm">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="18" height="18">
                                 <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
                                 <path d="M13.73 21a2 2 0 0 1-3.46 0" />
                             </svg>
                             {unreadCount > 0 && (
-                                <span className="absolute -top-1 -right-1 inline-flex items-center justify-center h-5 min-w-[1.25rem] rounded-full bg-[#E3755D] text-[10px] text-white font-bold px-1.5">
+                                <span className="absolute -top-1 -right-1 inline-flex items-center justify-center h-5 min-w-[1.25rem] rounded-full bg-gradient-to-b from-orange-500 to-orange-600 text-[10px] text-white font-bold px-1.5">
                                     {unreadCount}
                                 </span>
                             )}
@@ -474,13 +490,13 @@ export default function ManagerLayoutClient({ children }: { children: React.Reac
                                     <div className="flex items-center justify-between gap-3">
                                         <p className="text-sm font-bold text-[#1B3A64]">Notifications</p>
                                         <div className="flex items-center gap-2">
-                                            <button onClick={loadNotifications} className="text-xs text-[#5A6579] hover:text-[#E3755D] font-medium">Refresh</button>
-                                            <button onClick={async () => { await markAsRead(); await loadNotifications(); }} className="text-xs text-[#5A6579] hover:text-[#E3755D] font-medium">Mark all as read</button>
+                                            <button onClick={loadNotifications} className="text-xs text-[#5A6579] hover:text-orange-500 font-medium">Refresh</button>
+                                            <button onClick={async () => { await markAsRead(); await loadNotifications(); }} className="text-xs text-[#5A6579] hover:text-orange-500 font-medium">Mark all as read</button>
                                         </div>
                                     </div>
                                 </div>
                                 <div className="px-4 py-3 border-b border-gray-100 bg-white">
-                                    <Link href="/manager/notifications" className="text-xs text-[#5A6579] hover:text-[#E3755D] font-medium">View all notifications</Link>
+                                    <button onClick={async () => { await clearAllNotifications(); await loadNotifications(); setShowNotifications(false); }} className="text-xs text-[#5A6579] hover:text-orange-500 font-medium">Clear notifications</button>
                                 </div>
                                 <div className="max-h-[320px] overflow-y-auto">
                                     {loadingNotifications && (
@@ -496,10 +512,10 @@ export default function ManagerLayoutClient({ children }: { children: React.Reac
                                             <div key={notification.id} className={`p-4 transition-colors flex gap-3 items-start border-b border-gray-100 ${isUnread ? 'bg-[#FDFCFB]' : 'bg-white hover:bg-[#F9F8F6]'} text-sm`}>
                                                 <div className="mt-1 shrink-0">
                                                     {data?.type === 'message' && (
-                                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={isUnread ? "#E3755D" : "#8A8F98"} strokeWidth="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={isUnread ? "#ea580c" : "#8A8F98"} strokeWidth="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
                                                     )}
                                                     {data?.type === 'alert' && (
-                                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={isUnread ? "#E3755D" : "#8A8F98"} strokeWidth="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={isUnread ? "#ea580c" : "#8A8F98"} strokeWidth="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
                                                     )}
                                                     {data?.type === 'system' && (
                                                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={isUnread ? "#101F38" : "#8A8F98"} strokeWidth="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
@@ -508,7 +524,7 @@ export default function ManagerLayoutClient({ children }: { children: React.Reac
                                                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={isUnread ? "#2F8A5F" : "#8A8F98"} strokeWidth="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
                                                     )}
                                                     {!data?.type && (
-                                                        <div className="w-2 h-2 mt-1 rounded-full shrink-0" style={{ background: isUnread ? '#E3755D' : 'transparent' }}></div>
+                                                        <div className="w-2 h-2 mt-1 rounded-full shrink-0" style={{ background: isUnread ? '#f97316' : 'transparent' }}></div>
                                                     )}
                                                 </div>
                                                 <div className="flex-1 min-w-0">
@@ -527,7 +543,7 @@ export default function ManagerLayoutClient({ children }: { children: React.Reac
                     <Link href="/manager/profile" className="flex items-center gap-2 sm:gap-3 sm:pl-4 sm:border-l sm:border-gray-200 hover:bg-gray-50 rounded-full px-2 py-1 transition-colors shrink-0">
                         <div className="text-right hidden sm:flex flex-col">
                             <span className="text-sm font-semibold text-[#111827]">{user?.name || 'Manager'}</span>
-                            <span className="text-xs uppercase tracking-widest text-[#E3755D]">Manager</span>
+                            <span className="text-xs uppercase tracking-widest text-orange-500">{user?.role || 'Manager'}</span>
                         </div>
                         <div className="h-9 w-9 rounded-full overflow-hidden bg-[#1B3A64] text-white font-bold flex items-center justify-center shrink-0">
                             {user?.profile_picture_url ? (

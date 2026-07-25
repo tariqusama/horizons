@@ -115,7 +115,7 @@ export default function FAQAccordion() {
           </div>
           
           <div className="relative z-10">
-            <a href="/contact" className="inline-block bg-[#E3755D] hover:bg-[#C8634D] text-white px-8 py-3.5 rounded-xl font-bold transition-colors">
+            <a href="/contact" className="inline-block bg-gradient-to-b from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-8 py-3.5 rounded-xl font-bold transition-colors">
               Contact Us
             </a>
           </div>

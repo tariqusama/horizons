@@ -171,7 +171,7 @@ const getPackagePricing = (selectedGoal: string | null, answers: Record<number, 
   return defaultPricing;
 };
 
-const defaultStripeKey = 'pk_test_12345678901234567890123456';
+const defaultStripeKey = 'pk_test_51QQ24fAJEL5Up1VaSpBRWbAfKrBCobEsVPtv2yo8eFSRJYKHs3GtB78nuyteFvcU0Q1RW5MtKQ5TMNk6R9vxbd8u00cwahnxJ9';
 const stripeKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || defaultStripeKey;
 const stripePromise = loadStripe(stripeKey);
 const hasStripeEnvKey = Boolean(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
@@ -191,12 +191,15 @@ function SignupFlowContent() {
   const [lastName, setLastName] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [confirmPassword, setConfirmPassword] = useState<string>('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [email, setEmail] = useState<string>('');
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [otp, setOtp] = useState<string[]>(Array(6).fill(''));
   const [error, setError] = useState('');
   const [isRegistering, setIsRegistering] = useState(false);
   const [selectedAddons, setSelectedAddons] = useState<string[]>([]);
+  const [addonQuantities, setAddonQuantities] = useState<Record<string, number>>({});
 
   const stripe = useStripe();
   const elements = useElements();
@@ -217,6 +220,21 @@ function SignupFlowContent() {
   };
 
   const passwordValidation = getPasswordValidation(password);
+  const passwordScore = passwordValidation.filter((item) => item.passed).length;
+  const passwordStrength = password.length === 0
+    ? 'Enter a password'
+    : passwordScore <= 2
+      ? 'Weak'
+      : passwordScore <= 4
+        ? 'Fair'
+        : 'Strong';
+  const passwordProgressClass = password.length === 0
+    ? 'bg-gray-200'
+    : passwordScore <= 2
+      ? 'bg-gradient-to-r from-red-500 to-red-400'
+      : passwordScore <= 4
+        ? 'bg-gradient-to-r from-amber-500 to-amber-400'
+        : 'bg-gradient-to-r from-emerald-500 to-emerald-400';
 
   const handleSendOtp = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
@@ -268,21 +286,53 @@ function SignupFlowContent() {
     }
   };
 
+  const handleResendOtp = async () => {
+    setError('');
+    setIsRegistering(true);
+    try {
+      await api.post('/auth/send-otp', { email });
+      setError('Verification code resent — check your inbox.');
+    } catch (err: any) {
+      setError(err.response?.data?.message || 'Failed to resend verification code');
+    } finally {
+      setIsRegistering(false);
+    }
+  };
+
   const handleStripeCheckout = async () => {
     setIsRegistering(true);
     setError('');
     try {
       // 1. Register the user so their account exists when they return from Stripe
+      // Prepare payment sum
+      const baseAmount = parseFloat(selectedPlanPrice.replace('$', '')) || 0;
+      const addonsList = [
+        { id: 'translation', name: 'Document Translation (per page)', price: 25 },
+        { id: 'notary', name: 'Certified Copy & E-Notary', price: 15 },
+        { id: 'expedited', name: 'Expedited Form Preparation (48hrs)', price: 100 }
+      ];
+      const addonsTotal = selectedAddons.reduce((sum, addonId) => sum + ((addonsList.find(a => a.id === addonId)?.price || 0) * (addonQuantities[addonId] || 1)), 0);
+      const amount = baseAmount + addonsTotal;
+
+      // 1. Register the user so their account exists when they return from Stripe
       try {
+        const addonsData = selectedAddons.map(id => ({
+          id,
+          name: addonsList.find(a => a.id === id)?.name || id,
+          quantity: addonQuantities[id] || 1
+        }));
+
         await register({
-          name: `${firstName} ${lastName}`,
           first_name: firstName,
           last_name: lastName,
+          name: `${firstName} ${lastName}`,
           email,
           password,
-          password_confirmation: password,
+          password_confirmation: confirmPassword,
           goal: selectedGoal || '',
-          plan: selectedPlanName
+          plan: selectedPlanName,
+          amount: amount,
+          addons: addonsData
         }, true);
       } catch (err: any) {
         // If they already registered (e.g. they clicked back), we can just proceed.
@@ -290,16 +340,7 @@ function SignupFlowContent() {
         console.log("Registration info:", err);
       }
 
-      // 2. Prepare payment sum and description
-      const baseAmount = parseFloat(selectedPlanPrice.replace('$', '')) || 0;
-      const addonsList = [
-        { id: 'translation', name: 'Document Translation', price: 25 },
-        { id: 'notary', name: 'Certified Copy & E-Notary', price: 15 },
-        { id: 'expedited', name: 'Expedited Form Preparation', price: 100 }
-      ];
-      const addonsTotal = selectedAddons.reduce((sum, addonId) => sum + (addonsList.find(a => a.id === addonId)?.price || 0), 0);
-      const amount = baseAmount + addonsTotal;
-
+      // 2. Prepare description
       let planDescription = "";
       if (selectedPlanName.includes("Basic")) {
         planDescription = "Complete form preparation and review, Dedicated case manager, Step-by-step guidance, 100% satisfaction guarantee";
@@ -310,7 +351,12 @@ function SignupFlowContent() {
       }
 
       if (selectedAddons.length > 0) {
-        const addonNames = selectedAddons.map(id => addonsList.find(a => a.id === id)?.name).filter(Boolean);
+        const addonNames = selectedAddons.map(id => {
+          const a = addonsList.find(a => a.id === id);
+          if (!a) return null;
+          const qty = addonQuantities[id] || 1;
+          return qty > 1 ? `${a.name} (x${qty})` : a.name;
+        }).filter(Boolean);
         planDescription += " | Additional: " + addonNames.join(", ");
       }
 
@@ -366,11 +412,11 @@ function SignupFlowContent() {
       // Extract raw amount (e.g., "$349.99" -> 349.99)
       const baseAmount = parseFloat(selectedPlanPrice.replace('$', '')) || 0;
       const addonsList = [
-        { id: 'translation', price: 25 },
-        { id: 'notary', price: 15 },
-        { id: 'expedited', price: 100 }
+        { id: 'translation', name: 'Document Translation (per page)', price: 25 },
+        { id: 'notary', name: 'Certified Copy & E-Notary', price: 15 },
+        { id: 'expedited', name: 'Expedited Form Preparation (48hrs)', price: 100 }
       ];
-      const addonsTotal = selectedAddons.reduce((sum, addonId) => sum + (addonsList.find(a => a.id === addonId)?.price || 0), 0);
+      const addonsTotal = selectedAddons.reduce((sum, addonId) => sum + ((addonsList.find(a => a.id === addonId)?.price || 0) * (addonQuantities[addonId] || 1)), 0);
       const amount = baseAmount + addonsTotal;
 
       // Process payment with backend
@@ -380,13 +426,24 @@ function SignupFlowContent() {
         email: email
       });
 
+      const addonsData = selectedAddons.map(id => ({
+        id,
+        name: addonsList.find(a => a.id === id)?.name || id,
+        quantity: addonQuantities[id] || 1
+      }));
+
       // Once payment is successful, register the user account
       await register({
+        first_name: firstName,
+        last_name: lastName,
         name: `${firstName} ${lastName}`,
         email,
         password,
+        password_confirmation: confirmPassword,
         goal: selectedGoal,
-        plan: selectedPlanName
+        plan: selectedPlanName,
+        amount: amount,
+        addons: addonsData
       });
       // Context will redirect to /dashboard
     } catch (err: any) {
@@ -738,7 +795,7 @@ function SignupFlowContent() {
 
           <div className="bg-[#FDF3E4] border border-[#F3D9B8] rounded-[16px] p-8 shadow-sm text-left mb-10">
             <h3 className="flex items-center text-[17px] font-bold text-[#101F38] mb-4">
-              <span className="material-icons text-[#E3755D] mr-2">auto_awesome</span>
+              <span className="material-icons text-orange-500 mr-2">auto_awesome</span>
               Based on your current circumstances
             </h3>
             <p className="text-[#5B6472] font-medium text-[15px] mb-4 leading-relaxed">
@@ -752,7 +809,7 @@ function SignupFlowContent() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <button
               onClick={handleRestart}
-              className="w-full bg-[#E3755D] hover:bg-[#C93500] text-white font-bold py-4 rounded-xl shadow-md transition-all flex items-center justify-center"
+              className="w-full bg-gradient-to-b from-orange-500 to-orange-600 hover:bg-[#C93500] text-white font-bold py-4 rounded-xl shadow-md transition-all flex items-center justify-center"
             >
               <span className="material-icons mr-2 text-[20px]">refresh</span>
               Retake Assessment
@@ -769,7 +826,7 @@ function SignupFlowContent() {
           <hr className="my-8 border-gray-200" />
 
           <div className="text-[14px] text-gray-500 font-medium">
-            Have questions? <a href="/contact" className="text-[#E3755D] font-bold hover:underline">Contact our team</a> for personalized guidance.
+            Have questions? <a href="/contact" className="text-orange-500 font-bold hover:underline">Contact our team</a> for personalized guidance.
           </div>
         </div>
       );
@@ -794,17 +851,17 @@ function SignupFlowContent() {
                   key={idx}
                   onClick={() => handleGoalSelect(goal)}
                   className={`relative flex items-center p-6 border rounded-[20px] transition-all duration-300 ${selectedGoal === goal
-                    ? 'border-[#E3755D] bg-[#FDFBF9] shadow-[0_10px_20px_rgba(227,117,93,0.1)]'
-                    : 'border-gray-200 bg-white hover:border-[#E3755D]/50 hover:shadow-sm'
+                    ? 'border-orange-500 bg-[#FDFBF9] shadow-[0_10px_20px_rgba(227,117,93,0.1)]'
+                    : 'border-gray-200 bg-white hover:border-orange-500/50 hover:shadow-sm'
                     }`}
                 >
-                  <div className="shrink-0 w-6 h-6 rounded-full border-[1.5px] border-[#E3755D] flex items-center justify-center transition-colors">
+                  <div className="shrink-0 w-6 h-6 rounded-full border-[1.5px] border-orange-500 flex items-center justify-center transition-colors">
                     {selectedGoal === goal && (
-                      <div className="w-3 h-3 rounded-full bg-[#E3755D]"></div>
+                      <div className="w-3 h-3 rounded-full bg-gradient-to-b from-orange-500 to-orange-600"></div>
                     )}
                   </div>
                   <div className="flex-grow flex justify-center items-center px-4">
-                    <span className={`text-[15px] leading-snug font-bold text-center transition-colors ${selectedGoal === goal ? 'text-[#E3755D]' : 'text-[#101F38]'}`}>
+                    <span className={`text-[15px] leading-snug font-bold text-center transition-colors ${selectedGoal === goal ? 'text-orange-500' : 'text-[#101F38]'}`}>
                       {goal}
                     </span>
                   </div>
@@ -842,23 +899,23 @@ function SignupFlowContent() {
               <h3 className="text-[20px] font-bold text-[#101F38] text-center mb-2">Basic Plan</h3>
               <p className="text-[#5B6472] text-center text-[13px] font-medium mb-6">Essential services for your application</p>
               <div className="text-center mb-8">
-                <span className="text-[32px] font-black text-[#E3755D]">{pricing.basic}</span>
+                <span className="text-[32px] font-black text-orange-500">{pricing.basic}</span>
               </div>
               <ul className="space-y-4 mb-8 flex-grow">
                 <li className="flex items-start text-[13px] text-[#5B6472] font-medium">
-                  <span className="material-icons text-[#E3755D] text-[18px] mr-2">check</span>
+                  <span className="material-icons text-orange-500 text-[18px] mr-2">check</span>
                   Complete form preparation and review
                 </li>
                 <li className="flex items-start text-[13px] text-[#5B6472] font-medium">
-                  <span className="material-icons text-[#E3755D] text-[18px] mr-2">check</span>
+                  <span className="material-icons text-orange-500 text-[18px] mr-2">check</span>
                   Dedicated case manager
                 </li>
                 <li className="flex items-start text-[13px] text-[#5B6472] font-medium">
-                  <span className="material-icons text-[#E3755D] text-[18px] mr-2">check</span>
+                  <span className="material-icons text-orange-500 text-[18px] mr-2">check</span>
                   Step-by-step guidance
                 </li>
                 <li className="flex items-start text-[13px] text-[#5B6472] font-medium">
-                  <span className="material-icons text-[#E3755D] text-[18px] mr-2">check</span>
+                  <span className="material-icons text-orange-500 text-[18px] mr-2">check</span>
                   100% satisfaction guarantee
                 </li>
               </ul>
@@ -868,41 +925,41 @@ function SignupFlowContent() {
                   setSelectedPlanPrice(pricing.basic);
                   setCurrentStep(prev => prev + 1);
                 }}
-                className="w-full bg-[#E3755D] hover:bg-[#C93500] text-white font-bold py-3.5 rounded-[16px] transition-colors shadow-sm"
+                className="w-full bg-gradient-to-b from-orange-500 to-orange-600 hover:bg-[#C93500] text-white font-bold py-3.5 rounded-[16px] transition-colors shadow-sm"
               >
                 Get Started
               </button>
             </div>
 
             {/* Advanced Plan */}
-            <div className="bg-white rounded-[32px] p-8 border-2 border-[#E3755D] shadow-[0_15px_30px_rgba(227,117,93,0.15)] flex flex-col hover:-translate-y-2 transition-transform duration-300 relative">
-              <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-[#E3755D] text-white text-[11px] font-bold px-4 py-1 rounded-full uppercase tracking-wider">
+            <div className="bg-white rounded-[32px] p-8 border-2 border-orange-500 shadow-[0_15px_30px_rgba(227,117,93,0.15)] flex flex-col hover:-translate-y-2 transition-transform duration-300 relative">
+              <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-b from-orange-500 to-orange-600 text-white text-[11px] font-bold px-4 py-1 rounded-full uppercase tracking-wider">
                 Most Popular
               </div>
               <h3 className="text-[20px] font-bold text-[#101F38] text-center mb-2">Advanced Plan</h3>
               <p className="text-[#5B6472] text-center text-[13px] font-medium mb-6">Comprehensive services with review</p>
               <div className="text-center mb-8">
-                <span className="text-[32px] font-black text-[#E3755D]">{pricing.advanced}</span>
+                <span className="text-[32px] font-black text-orange-500">{pricing.advanced}</span>
               </div>
               <ul className="space-y-4 mb-8 flex-grow">
                 <li className="flex items-start text-[13px] text-[#5B6472] font-medium">
-                  <span className="material-icons text-[#E3755D] text-[18px] mr-2">check</span>
+                  <span className="material-icons text-orange-500 text-[18px] mr-2">check</span>
                   Everything in Basic Plan
                 </li>
                 <li className="flex items-start text-[13px] text-[#5B6472] font-medium">
-                  <span className="material-icons text-[#E3755D] text-[18px] mr-2">check</span>
+                  <span className="material-icons text-orange-500 text-[18px] mr-2">check</span>
                   Certified translation services
                 </li>
                 <li className="flex items-start text-[13px] text-[#5B6472] font-medium">
-                  <span className="material-icons text-[#E3755D] text-[18px] mr-2">check</span>
+                  <span className="material-icons text-orange-500 text-[18px] mr-2">check</span>
                   Legal review by an attorney
                 </li>
                 <li className="flex items-start text-[13px] text-[#5B6472] font-medium">
-                  <span className="material-icons text-[#E3755D] text-[18px] mr-2">check</span>
+                  <span className="material-icons text-orange-500 text-[18px] mr-2">check</span>
                   Priority 24-hour support
                 </li>
                 <li className="flex items-start text-[13px] text-[#5B6472] font-medium">
-                  <span className="material-icons text-[#E3755D] text-[18px] mr-2">check</span>
+                  <span className="material-icons text-orange-500 text-[18px] mr-2">check</span>
                   Phone support for real-time assistance
                 </li>
               </ul>
@@ -912,7 +969,7 @@ function SignupFlowContent() {
                   setSelectedPlanPrice(pricing.advanced);
                   setCurrentStep(prev => prev + 1);
                 }}
-                className="w-full bg-[#E3755D] hover:bg-[#C93500] text-white font-bold py-3.5 rounded-[16px] transition-colors shadow-sm"
+                className="w-full bg-gradient-to-b from-orange-500 to-orange-600 hover:bg-[#C93500] text-white font-bold py-3.5 rounded-[16px] transition-colors shadow-sm"
               >
                 Get Started
               </button>
@@ -923,27 +980,27 @@ function SignupFlowContent() {
               <h3 className="text-[20px] font-bold text-[#101F38] text-center mb-2">Premium Plan</h3>
               <p className="text-[#5B6472] text-center text-[13px] font-medium mb-6">Full-service support with consultation</p>
               <div className="text-center mb-8">
-                <span className="text-[32px] font-black text-[#E3755D]">{pricing.premium}</span>
+                <span className="text-[32px] font-black text-orange-500">{pricing.premium}</span>
               </div>
               <ul className="space-y-4 mb-8 flex-grow">
                 <li className="flex items-start text-[13px] text-[#5B6472] font-medium">
-                  <span className="material-icons text-[#E3755D] text-[18px] mr-2">check</span>
+                  <span className="material-icons text-orange-500 text-[18px] mr-2">check</span>
                   All Advanced Benefits
                 </li>
                 <li className="flex items-start text-[13px] text-[#5B6472] font-medium">
-                  <span className="material-icons text-[#E3755D] text-[18px] mr-2">check</span>
+                  <span className="material-icons text-orange-500 text-[18px] mr-2">check</span>
                   30-minute 1-on-1 attorney consultation
                 </li>
                 <li className="flex items-start text-[13px] text-[#5B6472] font-medium">
-                  <span className="material-icons text-[#E3755D] text-[18px] mr-2">check</span>
+                  <span className="material-icons text-orange-500 text-[18px] mr-2">check</span>
                   USCIS Interview preparation kit
                 </li>
                 <li className="flex items-start text-[13px] text-[#5B6472] font-medium">
-                  <span className="material-icons text-[#E3755D] text-[18px] mr-2">check</span>
+                  <span className="material-icons text-orange-500 text-[18px] mr-2">check</span>
                   Priority email support (6 hour response)
                 </li>
                 <li className="flex items-start text-[13px] text-[#5B6472] font-medium">
-                  <span className="material-icons text-[#E3755D] text-[18px] mr-2">check</span>
+                  <span className="material-icons text-orange-500 text-[18px] mr-2">check</span>
                   Direct WhatsApp/Text support
                 </li>
               </ul>
@@ -953,7 +1010,7 @@ function SignupFlowContent() {
                   setSelectedPlanPrice(pricing.premium);
                   setCurrentStep(prev => prev + 1);
                 }}
-                className="w-full bg-[#E3755D] hover:bg-[#C93500] text-white font-bold py-3.5 rounded-[16px] transition-colors shadow-sm"
+                className="w-full bg-gradient-to-b from-orange-500 to-orange-600 hover:bg-[#C93500] text-white font-bold py-3.5 rounded-[16px] transition-colors shadow-sm"
               >
                 Get Started
               </button>
@@ -965,147 +1022,251 @@ function SignupFlowContent() {
 
     if (currentStep === questions.length + 2) {
       return (
-        <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-[520px] mx-auto">
-          <div className="bg-white border border-slate-200 rounded-[30px] shadow-[0_20px_60px_-30px_rgba(15,23,42,0.3)] overflow-hidden">
-            <div className="bg-[#0F172A] px-8 py-8 text-white">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-[140px]">
-                  <Image src="/horizonlogo.png" alt="Horizon Pathways" width={140} height={36} className="object-contain" />
-                </div>
+        <div className="min-h-screen bg-[#F5F5F5] flex items-center justify-center p-3 sm:p-6 lg:p-0">
+          <div className="w-full min-h-[760px] max-w-[1440px] bg-[#F5F5F5] lg:rounded-[40px] overflow-hidden grid grid-cols-1 lg:grid-cols-2 shadow-[0_25px_80px_-20px_rgba(0,0,0,0.12)]">
+            <div className="relative hidden lg:block overflow-hidden rounded-[32px] m-4">
+              <div
+                className="absolute inset-0"
+                style={{
+                  background:
+                    'radial-gradient(circle at 25% 35%, rgb(255, 122, 69) 0%, rgb(233, 69, 96) 25%, rgb(139, 42, 107) 50%, rgb(59, 42, 122) 70%, rgb(30, 58, 138) 90%, rgb(30, 64, 175) 100%)',
+                }}
+              />
+              <div className="absolute left-6 right-6 bottom-6 rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 p-6">
+                <p className="text-white/95 text-base leading-relaxed">
+                  Begin your U.S. immigration journey with confidence. Track your case progress, manage documents, and get expert guidance every step of the way.
+                </p>
               </div>
-              <h2 className="text-3xl font-black tracking-tight">Create Account</h2>
-              <p className="text-slate-200 max-w-xl">Start your immigration journey with confidence. Create your account and lock in your selected plan.</p>
             </div>
 
-            <div className="p-8 sm:p-10 space-y-6">
+            <div className="flex flex-col justify-center px-6 sm:px-10 lg:px-16 xl:px-20 py-6 lg:py-8 lg:overflow-y-auto">
+              <Link
+                href="/"
+                className="inline-flex items-center text-[#1e3a8a] font-medium mb-6 hover:opacity-80 transition-opacity w-fit"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2 h-5 w-5">
+                  <path d="m12 19-7-7 7-7"></path>
+                  <path d="M19 12H5"></path>
+                </svg>
+                Back
+              </Link>
+
+              <Link href="/" className="inline-block mb-6 w-fit">
+                <Image src="/horizonlogo.png" alt="Horizon Pathways" width={160} height={42} className="h-14 w-auto object-contain" />
+              </Link>
+
+              <h1 className="text-4xl font-bold text-[#0f1b3d] tracking-tight">Create Account</h1>
+              <p className="text-slate-500 mt-2 mb-6">Start your immigration journey with us</p>
+
               {error && (
                 <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
                   {error}
                 </div>
               )}
 
-              <form className="space-y-5" onSubmit={handleSendOtp}>
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <label className="block">
-                    <span className="text-sm font-semibold text-slate-700">First Name</span>
+              <form className="space-y-4" onSubmit={handleSendOtp}>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label htmlFor="firstName" className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">First Name</label>
                     <input
+                      id="firstName"
+                      name="firstName"
                       type="text"
                       placeholder="John"
                       required
                       value={firstName}
                       onChange={(e) => setFirstName(e.target.value)}
-                      className="mt-2 w-full rounded-3xl border border-slate-200 bg-white px-4 py-3 text-slate-900 outline-none transition focus:border-[#F97316] focus:ring-1 focus:ring-[#F97316]/25"
+                      className="flex h-12 w-full rounded-xl border border-gray-200 bg-slate-50/50 px-4 py-2 text-base text-slate-900 shadow-[0_2px_10px_rgba(0,0,0,0.02)] outline-none transition-all duration-300 focus:bg-white focus:border-[#F97316] focus:ring-4 focus:ring-[#F97316]/10"
                     />
-                  </label>
-                  <label className="block">
-                    <span className="text-sm font-semibold text-slate-700">Last Name</span>
+                  </div>
+                  <div className="space-y-2">
+                    <label htmlFor="lastName" className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Last Name</label>
                     <input
+                      id="lastName"
+                      name="lastName"
                       type="text"
                       placeholder="Doe"
                       required
                       value={lastName}
                       onChange={(e) => setLastName(e.target.value)}
-                      className="mt-2 w-full rounded-3xl border border-slate-200 bg-white px-4 py-3 text-slate-900 outline-none transition focus:border-[#F97316] focus:ring-1 focus:ring-[#F97316]/25"
+                      className="flex h-12 w-full rounded-xl border border-gray-200 bg-slate-50/50 px-4 py-2 text-base text-slate-900 shadow-[0_2px_10px_rgba(0,0,0,0.02)] outline-none transition-all duration-300 focus:bg-white focus:border-[#F97316] focus:ring-4 focus:ring-[#F97316]/10"
                     />
-                  </label>
+                  </div>
                 </div>
 
-                <label className="block">
-                  <span className="text-sm font-semibold text-slate-700">Email Address</span>
-                  <div className="relative mt-2">
-                    <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M4 4H20V20H4V4Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                        <path d="M4 7L12 13L20 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                      </svg>
-                    </span>
+                <div className="space-y-2">
+                  <label htmlFor="email" className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                    Email Address<span className="text-orange-500 ml-1">*</span>
+                  </label>
+                  <div className="relative">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 transition-colors peer-focus:text-orange-500">
+                      <rect width="20" height="16" x="2" y="4" rx="2"></rect>
+                      <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
+                    </svg>
                     <input
+                      id="email"
+                      name="email"
                       type="email"
+                      autoComplete="email"
+                      placeholder="example@gmail.com"
                       required
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      placeholder="you@example.com"
-                      className="w-full rounded-3xl border border-slate-200 bg-white px-12 py-3 text-slate-900 outline-none transition focus:border-[#F97316] focus:ring-1 focus:ring-[#F97316]/25"
+                      className="peer flex h-12 w-full rounded-xl border border-gray-200 bg-slate-50/50 pl-11 pr-4 py-2 text-base text-slate-900 shadow-[0_2px_10px_rgba(0,0,0,0.02)] outline-none transition-all duration-300 focus:bg-white focus:border-[#F97316] focus:ring-4 focus:ring-[#F97316]/10"
                     />
                   </div>
-                </label>
+                </div>
 
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <label className="block">
-                    <span className="text-sm font-semibold text-slate-700">Password</span>
-                    <div className="relative mt-2">
-                      <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M12 17C13.6569 17 15 15.6569 15 14C15 12.3431 13.6569 11 12 11C10.3431 11 9 12.3431 9 14C9 15.6569 10.3431 17 12 17Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                          <path d="M17 11V8C17 5.23858 14.7614 3 12 3C9.23858 3 7 5.23858 7 8V11" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                          <path d="M5 11H19C20.1046 11 21 11.8954 21 13V18C21 19.1046 20.1046 20 19 20H5C3.89543 20 3 19.1046 3 18V13C3 11.8954 3.89543 11 5 11Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                        </svg>
-                      </span>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label htmlFor="password" className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Password</label>
+                    <div className="relative">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 peer-focus:text-orange-500 transition-colors">
+                        <rect width="18" height="11" x="3" y="11" rx="2" ry="2"></rect>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                      </svg>
                       <input
-                        type="password"
+                        id="password"
+                        name="password"
+                        type={showPassword ? 'text' : 'password'}
+                        autoComplete="new-password"
+                        placeholder="••••••••"
                         required
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        placeholder="••••••••"
-                        className="w-full rounded-3xl border border-slate-200 bg-white px-12 py-3 text-slate-900 outline-none transition focus:border-[#F97316] focus:ring-1 focus:ring-[#F97316]/25"
+                        className="peer flex h-12 w-full rounded-xl border border-gray-200 bg-slate-50/50 pl-11 pr-11 py-2 text-base text-slate-900 shadow-[0_2px_10px_rgba(0,0,0,0.02)] outline-none transition-all duration-300 focus:bg-white focus:border-[#F97316] focus:ring-4 focus:ring-[#F97316]/10"
                       />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword((v) => !v)}
+                        aria-label={showPassword ? 'Hide password' : 'Show password'}
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 transition-colors hover:text-slate-700"
+                      >
+                        {showPassword ? (
+                          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-8-11-8a19.6 19.6 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a19.7 19.7 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
+                            <line x1="1" y1="1" x2="23" y2="23" />
+                          </svg>
+                        ) : (
+                          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8Z" />
+                            <circle cx="12" cy="12" r="3" />
+                          </svg>
+                        )}
+                      </button>
                     </div>
-                    <div className="mt-3 rounded-2xl border border-slate-200 bg-slate-50 p-3">
-                      <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Password requirements</p>
-                      <ul className="space-y-1 text-sm text-slate-600">
+
+                    <div className="mt-4 overflow-hidden rounded-2xl bg-gradient-to-br from-white to-slate-50/80 backdrop-blur-xl border border-white/60 p-5 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+                      <div className="mb-4 flex items-center justify-between">
+                        <p className="text-[11px] font-bold tracking-widest uppercase text-slate-500">Password strength</p>
+                        <span className={`inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider transition-colors duration-300 ${password.length === 0 ? 'bg-slate-100 text-slate-500' : passwordScore <= 2 ? 'bg-red-50 text-red-600' : passwordScore <= 4 ? 'bg-amber-50 text-amber-600' : 'bg-emerald-50 text-emerald-600'}`}>
+                          <span className={`h-1.5 w-1.5 rounded-full transition-colors duration-300 ${password.length === 0 ? 'bg-slate-300' : passwordScore <= 2 ? 'bg-red-500 animate-pulse' : passwordScore <= 4 ? 'bg-amber-500 animate-pulse' : 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]'}`} />
+                          {passwordStrength}
+                        </span>
+                      </div>
+
+                      <div className="w-full h-1.5 rounded-full bg-slate-100/80 overflow-hidden mb-5">
+                        <div className={`h-full rounded-full transition-all duration-500 ease-out ${password.length === 0 ? 'bg-transparent' : passwordScore <= 2 ? 'bg-gradient-to-r from-red-500 to-orange-400' : passwordScore <= 4 ? 'bg-gradient-to-r from-amber-400 to-yellow-400' : 'bg-gradient-to-r from-emerald-400 to-teal-400'}`} style={{ width: password.length === 0 ? '0%' : passwordScore <= 2 ? '30%' : passwordScore <= 4 ? '66%' : '100%' }} />
+                      </div>
+
+                      <div className="grid gap-2 sm:grid-cols-2">
                         {passwordValidation.map((item) => (
-                          <li key={item.label} className={`flex items-center gap-2 ${item.passed ? 'text-emerald-600' : 'text-slate-600'}`}>
-                            <span className={`inline-flex h-4 w-4 items-center justify-center rounded-full text-[11px] font-bold ${item.passed ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-200 text-slate-600'}`}>
-                              {item.passed ? '✓' : '•'}
-                            </span>
-                            {item.label}
-                          </li>
+                          <div key={item.label} className="flex items-center gap-2.5 py-1 transition-all duration-300 group">
+                            <div className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-full transition-all duration-300 ${item.passed ? 'bg-emerald-500 text-white shadow-[0_0_8px_rgba(16,185,129,0.3)] scale-110' : 'bg-slate-200 text-transparent'}`}>
+                              <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" className={item.passed ? 'opacity-100' : 'opacity-0'}>
+                                <path d="M20 6L9 17l-5-5" />
+                              </svg>
+                            </div>
+                            <div className={`text-xs font-medium transition-colors duration-300 ${item.passed ? 'text-slate-800' : 'text-slate-400'}`}>{item.label}</div>
+                          </div>
                         ))}
-                      </ul>
+                      </div>
                     </div>
-                  </label>
-                  <label className="block">
-                    <span className="text-sm font-semibold text-slate-700">Confirm Password</span>
-                    <div className="relative mt-2">
-                      <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M12 17C13.6569 17 15 15.6569 15 14C15 12.3431 13.6569 11 12 11C10.3431 11 9 12.3431 9 14C9 15.6569 10.3431 17 12 17Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                          <path d="M17 11V8C17 5.23858 14.7614 3 12 3C9.23858 3 7 5.23858 7 8V11" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                          <path d="M5 11H19C20.1046 11 21 11.8954 21 13V18C21 19.1046 20.1046 20 19 20H5C3.89543 20 3 19.1046 3 18V13C3 11.8954 3.89543 11 5 11Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                        </svg>
-                      </span>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label htmlFor="confirmPassword" className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Confirm Password</label>
+                    <div className="relative">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 transition-colors peer-focus:text-orange-500">
+                        <rect width="18" height="11" x="3" y="11" rx="2" ry="2"></rect>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                      </svg>
                       <input
-                        type="password"
+                        id="confirmPassword"
+                        name="confirmPassword"
+                        type={showConfirmPassword ? 'text' : 'password'}
+                        autoComplete="new-password"
+                        placeholder="••••••••"
                         required
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
-                        placeholder="••••••••"
-                        className="w-full rounded-3xl border border-slate-200 bg-white px-12 py-3 text-slate-900 outline-none transition focus:border-[#F97316] focus:ring-1 focus:ring-[#F97316]/25"
+                        className="peer flex h-12 w-full rounded-xl border border-gray-200 bg-slate-50/50 pl-11 pr-11 py-2 text-base text-slate-900 shadow-[0_2px_10px_rgba(0,0,0,0.02)] outline-none transition-all duration-300 focus:bg-white focus:border-[#F97316] focus:ring-4 focus:ring-[#F97316]/10"
                       />
+                      <button
+                        type="button"
+                        onClick={() => setShowConfirmPassword((v) => !v)}
+                        aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 transition-colors hover:text-slate-700"
+                      >
+                        {showConfirmPassword ? (
+                          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-8-11-8a19.6 19.6 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a19.7 19.7 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
+                            <line x1="1" y1="1" x2="23" y2="23" />
+                          </svg>
+                        ) : (
+                          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8Z" />
+                            <circle cx="12" cy="12" r="3" />
+                          </svg>
+                        )}
+                      </button>
                     </div>
-                  </label>
+                  </div>
                 </div>
 
-                <label className="flex items-start gap-3 rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600">
+                <div className="flex items-center gap-3 pt-2">
                   <input
+                    id="agreeToTerms"
+                    name="agreeToTerms"
                     type="checkbox"
                     checked={termsAccepted}
                     onChange={(e) => setTermsAccepted(e.target.checked)}
-                    className="mt-1 h-4 w-4 rounded border-slate-300 text-[#F97316] focus:ring-[#F97316]"
+                    className="h-5 w-5 rounded-full border-2 border-orange-500 text-orange-500 focus:ring-orange-500"
                   />
-                  <span>
-                    I agree to the <a href="/terms" className="text-[#F97316] font-semibold hover:underline">terms and conditions</a>.
-                  </span>
-                </label>
+                  <label htmlFor="agreeToTerms" className="cursor-pointer text-sm text-slate-600">
+                    I agree to the{' '}
+                    <a href="/terms" className="font-medium text-orange-500 hover:underline">
+                      terms and conditions
+                    </a>
+                  </label>
+                </div>
 
                 <button
                   type="submit"
                   disabled={isRegistering}
-                  className="w-full rounded-3xl bg-[#0F172A] py-4 text-sm font-semibold uppercase tracking-[0.04em] text-white shadow-[0_18px_40px_rgba(15,23,42,0.18)] transition hover:bg-[#111827] disabled:cursor-not-allowed disabled:opacity-60"
+                  className="mt-2 flex h-14 w-full items-center justify-center rounded-xl bg-[#0f1b3d] px-4 py-2 text-base font-semibold text-white shadow-md transition-all hover:bg-[#16265a] active:scale-95 active:brightness-110 disabled:pointer-events-none disabled:opacity-60"
                 >
                   {isRegistering ? 'Creating Account...' : 'Create Account'}
                 </button>
               </form>
+
+              <div className="relative my-6">
+                <div className="absolute inset-0 flex items-center">
+                  <span className="w-full border-t border-gray-200"></span>
+                </div>
+                <div className="relative flex justify-center text-xs tracking-widest">
+                  <span className="bg-[#f3f4f6] px-4 text-slate-500 uppercase">Already a member?</span>
+                </div>
+              </div>
+
+              <div className="text-center">
+                <p className="text-sm text-slate-500">
+                  Already have an account?{' '}
+                  <Link href="/login" className="font-medium text-orange-500 hover:underline">
+                    Sign in here
+                  </Link>
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -1118,7 +1279,7 @@ function SignupFlowContent() {
           <div className="bg-white border border-gray-200 rounded-[12px] p-8 md:p-10 shadow-sm text-center">
 
             <div className="w-16 h-16 bg-[#FDF3E4] rounded-full flex items-center justify-center mx-auto mb-6">
-              <span className="material-icons text-[#E3755D] text-[28px]">mail_outline</span>
+              <span className="material-icons text-orange-500 text-[28px]">mail_outline</span>
             </div>
 
             <h1 className="text-[24px] font-bold text-[#101F38] mb-3">Enter Verification Code</h1>
@@ -1141,7 +1302,7 @@ function SignupFlowContent() {
                   maxLength={1}
                   value={digit}
                   onChange={(e) => handleOtpChange(idx, e.target.value)}
-                  className="w-12 h-14 border border-gray-300 rounded-[8px] text-center text-[20px] font-bold text-[#101F38] outline-none focus:border-[#E3755D] focus:ring-1 focus:ring-[#E3755D] transition-all bg-white"
+                  className="w-12 h-14 border border-gray-300 rounded-[8px] text-center text-[20px] font-bold text-[#101F38] outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-all bg-white"
                 />
               ))}
             </div>
@@ -1159,15 +1320,16 @@ function SignupFlowContent() {
             </button>
 
             <button
-              onClick={() => handleSendOtp()}
-              className="w-full bg-[#F8F9FA] hover:bg-gray-100 text-[#101F38] font-medium py-3.5 rounded-[8px] border border-gray-200 transition-all mb-4"
+              onClick={handleResendOtp}
+              disabled={isRegistering}
+              className="w-full bg-[#F8F9FA] hover:bg-gray-100 text-[#101F38] font-medium py-3.5 rounded-[8px] border border-gray-200 transition-all mb-4 disabled:opacity-50"
             >
               Resend verification code
             </button>
 
             <button
               onClick={() => setCurrentStep(questions.length + 2)} // Go back to account details
-              className="text-[#E3755D] hover:text-[#C93500] text-[14px] font-medium transition-colors"
+              className="text-orange-500 hover:text-[#C93500] text-[14px] font-medium transition-colors"
             >
               Use a different email address
             </button>
@@ -1184,91 +1346,108 @@ function SignupFlowContent() {
       ];
 
       const baseAmount = parseFloat(selectedPlanPrice.replace('$', '')) || 0;
-      const addonsTotal = selectedAddons.reduce((sum, addonId) => sum + (addons.find(a => a.id === addonId)?.price || 0), 0);
+      const addonsTotal = selectedAddons.reduce((sum, addonId) => sum + ((addons.find(a => a.id === addonId)?.price || 0) * (addonQuantities[addonId] || 1)), 0);
       const totalAmount = baseAmount + addonsTotal;
 
       const toggleAddon = (id: string) => {
-        setSelectedAddons(prev => prev.includes(id) ? prev.filter(a => a !== id) : [...prev, id]);
+        setSelectedAddons(prev => {
+          if (prev.includes(id)) {
+            return prev.filter(a => a !== id);
+          } else {
+            setAddonQuantities(q => ({ ...q, [id]: 1 }));
+            return [...prev, id];
+          }
+        });
+      };
+
+      const updateAddonQty = (e: React.MouseEvent, id: string, delta: number) => {
+        e.stopPropagation();
+        setAddonQuantities(q => {
+          const newQty = Math.max(1, (q[id] || 1) + delta);
+          return { ...q, [id]: newQty };
+        });
       };
 
       const pricing = getPackagePricing(selectedGoal, answers);
 
       return (
-        <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-[1000px] mx-auto">
-          <div className="text-center mb-10">
-            <h1 className="text-3xl font-black text-[#101F38] mb-3 tracking-tight">Your Order</h1>
-            <p className="text-[#5B6472] font-medium text-[16px]">
-              Review your selected plan and services
-            </p>
-          </div>
-
-          <div className="flex flex-col lg:flex-row gap-8">
+        <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 w-full max-w-7xl mx-auto px-6 pt-16 pb-8">
+          <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
             {/* Left Column */}
-            <div className="flex-grow space-y-6">
-              {/* Account Information */}
-              <div className="bg-[#FDF3E4] border border-[#F3D9B8] rounded-[16px] p-6">
-                <h3 className="text-[#E3755D] text-[20px] font-bold mb-2">Account Information</h3>
-                <p className="text-[#5B6472] font-medium text-[15px]">{firstName} {lastName}</p>
-                <p className="text-[#5B6472] font-medium text-[15px]">{email}</p>
-              </div>
-
-              {/* Plan Details */}
-              <div className="bg-white border border-gray-200 rounded-[16px] p-6 shadow-sm">
-                <div className="flex justify-between items-start mb-4">
-                  <div>
-                    <h3 className="text-[#101F38] text-[18px] font-bold mb-2">{pricing.title}</h3>
-                    <span className="bg-[#E3755D] text-white text-[11px] font-bold px-3 py-1 rounded-full">{selectedPlanName}</span>
+            <div className="lg:col-span-2 space-y-6">
+              <div className="rounded-[20px] border border-gray-200 bg-white shadow-sm text-card-foreground p-6">
+                <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+                  <div className="min-w-0">
+                    <h3 className="text-xl font-semibold text-gray-900 leading-tight">{pricing.title}</h3>
+                    <div className="mt-3 inline-flex items-center rounded-full bg-orange-500 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-white">
+                      {selectedPlanName}
+                    </div>
                   </div>
-                  <div className="text-[20px] font-black text-[#101F38]">{selectedPlanPrice}</div>
+                  <div className="text-right">
+                    <div className="text-2xl font-bold text-gray-900">{selectedPlanPrice}</div>
+                  </div>
                 </div>
 
-                <div className="mt-6">
-                  <h4 className="text-[#101F38] font-bold text-[16px] mb-4">What's Included:</h4>
+                <div className="space-y-4">
+                  <h4 className="font-semibold text-gray-900">What&apos;s Included:</h4>
                   <ul className="space-y-3">
-                    <li className="flex items-start text-[14px] text-[#5B6472] font-medium">
-                      <span className="material-icons text-[#E3755D] text-[18px] mr-2">check_circle_outline</span>
-                      Complete form preparation and review
+                    <li className="flex items-start text-sm text-gray-700">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-3 mt-0.5 h-4 w-4 flex-shrink-0 text-orange-500">
+                        <path d="M21.801 10A10 10 0 1 1 17 3.335" />
+                        <path d="m9 11 3 3L22 4" />
+                      </svg>
+                      Everything in Basic Plan
                     </li>
-                    <li className="flex items-start text-[14px] text-[#5B6472] font-medium">
-                      <span className="material-icons text-[#E3755D] text-[18px] mr-2">check_circle_outline</span>
-                      Dedicated case manager
+                    <li className="flex items-start text-sm text-gray-700">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-3 mt-0.5 h-4 w-4 flex-shrink-0 text-orange-500">
+                        <path d="M21.801 10A10 10 0 1 1 17 3.335" />
+                        <path d="m9 11 3 3L22 4" />
+                      </svg>
+                      Certified translation services
                     </li>
-                    {selectedPlanName.includes('Advanced') || selectedPlanName.includes('Premium') ? (
-                      <li className="flex items-start text-[14px] text-[#5B6472] font-medium">
-                        <span className="material-icons text-[#E3755D] text-[18px] mr-2">check_circle_outline</span>
-                        Legal review by an attorney
-                      </li>
-                    ) : null}
-                    {selectedPlanName.includes('Premium') ? (
-                      <li className="flex items-start text-[14px] text-[#5B6472] font-medium">
-                        <span className="material-icons text-[#E3755D] text-[18px] mr-2">check_circle_outline</span>
-                        30-minute 1-on-1 attorney consultation
-                      </li>
-                    ) : null}
+                    <li className="flex items-start text-sm text-gray-700">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-3 mt-0.5 h-4 w-4 flex-shrink-0 text-orange-500">
+                        <path d="M21.801 10A10 10 0 1 1 17 3.335" />
+                        <path d="m9 11 3 3L22 4" />
+                      </svg>
+                      Legal review by an immigration attorney
+                    </li>
+                    <li className="flex items-start text-sm text-gray-700">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-3 mt-0.5 h-4 w-4 flex-shrink-0 text-orange-500">
+                        <path d="M21.801 10A10 10 0 1 1 17 3.335" />
+                        <path d="m9 11 3 3L22 4" />
+                      </svg>
+                      Priority support with 24-hour response time
+                    </li>
+                    <li className="flex items-start text-sm text-gray-700">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-3 mt-0.5 h-4 w-4 flex-shrink-0 text-orange-500">
+                        <path d="M21.801 10A10 10 0 1 1 17 3.335" />
+                        <path d="m9 11 3 3L22 4" />
+                      </svg>
+                      Phone support for real-time assistance
+                    </li>
                   </ul>
                 </div>
               </div>
 
-              {/* Additional Services */}
-              <div className="bg-white border border-gray-200 rounded-[16px] p-6 shadow-sm">
-                <h3 className="text-[#101F38] text-[18px] font-bold mb-4">Additional Services</h3>
-                <div className="space-y-4">
+              <div className="rounded-lg border border-gray-200 bg-white p-6">
+                <h3 className="mb-4 text-lg font-semibold text-gray-900">Additional Services</h3>
+                <div className="space-y-3">
                   {addons.map(addon => (
                     <div
                       key={addon.id}
-                      className={`border rounded-[12px] p-4 flex items-center cursor-pointer transition-colors ${selectedAddons.includes(addon.id) ? 'border-[#E3755D] bg-[#FDF3E4]' : 'border-gray-200 bg-white hover:border-gray-300'}`}
-                      onClick={() => toggleAddon(addon.id)}
+                      className="flex items-center justify-between rounded-lg border border-gray-200 p-4 transition-all duration-200 hover:bg-gray-50 cursor-pointer"
                     >
-                      <div className="mr-4 shrink-0">
-                        <div className={`w-5 h-5 rounded border flex items-center justify-center ${selectedAddons.includes(addon.id) ? 'border-[#E3755D] bg-[#E3755D]' : 'border-gray-300'}`}>
-                          {selectedAddons.includes(addon.id) && <span className="material-icons text-white text-[14px]">check</span>}
+                      <div className="flex flex-1 items-start space-x-3">
+                        <div className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded border-2 border-gray-300 mt-0.5" />
+                        <div className="flex-1">
+                          <div className="text-sm font-medium text-gray-900">{addon.name}</div>
+                          <div className="mt-1 text-xs text-gray-600">{addon.description}</div>
                         </div>
                       </div>
-                      <div className="flex-grow">
-                        <div className="text-[#101F38] font-bold text-[15px]">{addon.name}</div>
-                        <div className="text-[#5B6472] text-[13px]">{addon.description}</div>
+                      <div className="flex-shrink-0 text-right">
+                        <div className="font-semibold text-gray-900">${addon.price * (addonQuantities[addon.id] || 1)}</div>
                       </div>
-                      <div className="text-[#101F38] font-bold text-[16px] shrink-0 ml-4">${addon.price}</div>
                     </div>
                   ))}
                 </div>
@@ -1276,9 +1455,9 @@ function SignupFlowContent() {
             </div>
 
             {/* Right Column - Order Summary */}
-            <div className="lg:w-[350px] shrink-0">
-              <div className="bg-white border border-gray-200 rounded-[16px] p-6 shadow-sm sticky top-6">
-                <h3 className="text-[#101F38] text-[18px] font-bold mb-6">Order Summary</h3>
+            <div className="lg:col-span-1">
+              <div className="border border-gray-200 rounded-lg bg-white p-6 sticky top-6">
+                <h3 className="mb-4 text-lg font-semibold text-gray-900">Order Summary</h3>
 
                 <div className="space-y-4 mb-6">
                   <div className="flex justify-between items-start">
@@ -1288,10 +1467,13 @@ function SignupFlowContent() {
                   {selectedAddons.map(id => {
                     const addon = addons.find(a => a.id === id);
                     if (!addon) return null;
+                    const qty = addonQuantities[id] || 1;
                     return (
                       <div key={addon.id} className="flex justify-between items-start">
-                        <div className="text-[#5B6472] font-medium text-[14px] pr-4">{addon.name}</div>
-                        <div className="text-[#101F38] font-bold text-[14px] shrink-0">${addon.price}</div>
+                        <div className="text-[#5B6472] font-medium text-[14px] pr-4">
+                          {addon.name} {qty > 1 ? `(x${qty})` : ''}
+                        </div>
+                        <div className="text-[#101F38] font-bold text-[14px] shrink-0">${addon.price * qty}</div>
                       </div>
                     );
                   })}
@@ -1306,7 +1488,7 @@ function SignupFlowContent() {
                 <button
                   onClick={handleStripeCheckout}
                   disabled={isRegistering}
-                  className="w-full bg-[#E3755D] hover:bg-[#C93500] text-white font-bold py-3.5 rounded-[12px] transition-colors shadow-sm disabled:opacity-50"
+                  className="inline-flex w-full items-center justify-center gap-2 whitespace-nowrap rounded-md bg-orange-500 px-4 py-3 text-lg font-semibold text-white transition-all duration-200 hover:bg-orange-600 active:scale-95 active:brightness-110 disabled:opacity-50"
                 >
                   {isRegistering ? 'Processing...' : 'Continue Payment'}
                 </button>
@@ -1328,46 +1510,85 @@ function SignupFlowContent() {
           </div>
 
           <div className="bg-white border border-gray-200 rounded-[20px] overflow-hidden shadow-[0_15px_30px_-10px_rgba(16,31,56,0.08)]">
-            <div className="bg-[#F8F9FA] p-6 border-b border-gray-100 flex justify-between items-center">
-              <div>
-                <h3 className="font-bold text-[#101F38] text-[16px]">{selectedPlanName}</h3>
-                <p className="text-[13px] text-[#5B6472] font-medium">{selectedGoal}</p>
+            <div className="p-6 border-b border-gray-100">
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-center">
+                <button type="button" className="inline-flex min-w-[160px] items-center justify-center gap-2 rounded-[16px] bg-black px-5 py-4 text-sm font-semibold text-white transition hover:bg-gray-900">
+                  <span className="text-[18px]"></span>
+                  Apple Pay
+                </button>
+                <button type="button" className="inline-flex min-w-[160px] items-center justify-center gap-2 rounded-[16px] bg-emerald-500 px-5 py-4 text-sm font-semibold text-white transition hover:bg-emerald-600">
+                  <span className="text-[18px]">link</span>
+                  Link
+                </button>
               </div>
-              <div className="text-[24px] font-black text-[#E3755D]">{selectedPlanPrice}</div>
             </div>
 
-            <form className="p-8 space-y-5" onSubmit={handlePaymentAndRegister}>
-              {error && <div className="text-red-500 text-sm mb-4">{error}</div>}
-              <div className="space-y-2">
-                <label className="text-[13px] font-bold text-[#101F38] uppercase tracking-wider">Card Information</label>
-                <div className="border border-gray-200 rounded-[12px] overflow-hidden bg-white px-4 py-4">
-                  <CardElement options={{
-                    style: {
-                      base: {
-                        fontSize: '16px',
-                        color: '#101F38',
-                        '::placeholder': {
-                          color: '#aab7c4',
-                        },
-                      },
-                      invalid: {
-                        color: '#9e2146',
-                      },
-                    },
-                  }} />
+            <div className="px-6 py-5 border-b border-gray-100 flex items-center justify-center">
+              <span className="text-xs font-semibold uppercase tracking-[0.3em] text-gray-500">or</span>
+            </div>
+
+            <div className="p-6 space-y-6">
+              <div className="rounded-[20px] border border-gray-200 bg-gray-50 p-4">
+                <div className="text-xs font-semibold uppercase tracking-[0.3em] text-gray-500">Contact information</div>
+                <div className="mt-3 rounded-[16px] border border-gray-200 bg-white px-4 py-4 text-sm text-gray-700">
+                  {email}
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <label className="text-[13px] font-bold text-[#101F38] uppercase tracking-wider">Name on Card</label>
-                <input type="text" placeholder="John Doe" required className="w-full px-4 py-3 rounded-[12px] border border-gray-200 bg-white text-[#101F38] outline-none focus:border-[#E3755D] font-medium" />
+              <div className="rounded-[20px] border border-gray-200 bg-white p-5 shadow-sm">
+                <div className="flex items-center justify-between text-sm font-semibold text-gray-900">
+                  <div className="inline-flex items-center gap-2">
+                    <span className="inline-flex h-8 w-8 items-center justify-center rounded-xl bg-gray-100 text-gray-700">💳</span>
+                    Card
+                  </div>
+                </div>
+
+                <div className="mt-5 space-y-4">
+                  <div className="rounded-[16px] border border-gray-200 bg-[#F8F9FA] px-4 py-4">
+                    <CardElement options={{
+                      style: {
+                        base: {
+                          fontSize: '16px',
+                          color: '#101F38',
+                          '::placeholder': {
+                            color: '#9CA3AF',
+                          },
+                        },
+                        invalid: {
+                          color: '#b91c1c',
+                        },
+                      },
+                    }} />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-[13px] font-bold uppercase tracking-[0.18em] text-gray-500">Cardholder name</label>
+                    <input type="text" placeholder="Full name on card" required className="w-full rounded-[12px] border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 outline-none transition focus:border-orange-500" />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-[13px] font-bold uppercase tracking-[0.18em] text-gray-500">Country or region</label>
+                    <select className="w-full rounded-[12px] border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 outline-none transition focus:border-orange-500">
+                      <option>Pakistan</option>
+                      <option>United States</option>
+                      <option>United Kingdom</option>
+                    </select>
+                  </div>
+                </div>
               </div>
 
-              <button type="submit" disabled={!stripe || isRegistering} className="w-full bg-[#101F38] hover:bg-[#0A1526] text-white font-bold py-4 rounded-[12px] transition-all duration-300 shadow-[0_10px_20px_rgba(16,31,56,0.2)] hover:-translate-y-0.5 mt-4 text-[16px] flex justify-center items-center space-x-2 disabled:opacity-50">
-                <span className="material-icons text-[18px]">lock</span>
-                <span>{isRegistering ? 'Processing...' : 'Pay & Create Account'}</span>
+              <div className="flex items-start gap-3 rounded-[20px] border border-gray-200 bg-white px-4 py-4">
+                <input id="save-card-info" type="checkbox" className="mt-1 h-4 w-4 rounded border-gray-300 text-orange-500 focus:ring-orange-500" />
+                <label htmlFor="save-card-info" className="text-sm text-gray-700">
+                  Save my information for faster checkout
+                  <span className="block text-xs text-gray-500">Pay securely on this site and everywhere Link is accepted.</span>
+                </label>
+              </div>
+
+              <button type="submit" disabled={!stripe || isRegistering} className="w-full rounded-[16px] bg-[#101F38] px-5 py-4 text-base font-semibold text-white transition hover:bg-[#0a1526] disabled:opacity-50">
+                {isRegistering ? 'Processing...' : 'Pay & Create Account'}
               </button>
-            </form>
+            </div>
           </div>
 
           <div className="text-center mt-6">
@@ -1398,17 +1619,17 @@ function SignupFlowContent() {
                 key={idx}
                 onClick={() => handleAnswerSelect(option)}
                 className={`relative flex items-center p-6 border rounded-[20px] transition-all duration-300 ${selectedAnswer === option
-                  ? 'border-[#E3755D] bg-[#FDFBF9] shadow-[0_10px_20px_rgba(227,117,93,0.1)]'
-                  : 'border-gray-200 bg-white hover:border-[#E3755D]/50 hover:shadow-sm'
+                  ? 'border-orange-500 bg-[#FDFBF9] shadow-[0_10px_20px_rgba(227,117,93,0.1)]'
+                  : 'border-gray-200 bg-white hover:border-orange-500/50 hover:shadow-sm'
                   }`}
               >
-                <div className="shrink-0 w-6 h-6 rounded-full border-[1.5px] border-[#E3755D] flex items-center justify-center transition-colors">
+                <div className="shrink-0 w-6 h-6 rounded-full border-[1.5px] border-orange-500 flex items-center justify-center transition-colors">
                   {selectedAnswer === option && (
-                    <div className="w-3 h-3 rounded-full bg-[#E3755D]"></div>
+                    <div className="w-3 h-3 rounded-full bg-gradient-to-b from-orange-500 to-orange-600"></div>
                   )}
                 </div>
                 <div className="flex-grow flex justify-center items-center px-4">
-                  <span className={`text-[15px] leading-snug font-bold text-center transition-colors ${selectedAnswer === option ? 'text-[#E3755D]' : 'text-[#101F38]'}`}>
+                  <span className={`text-[15px] leading-snug font-bold text-center transition-colors ${selectedAnswer === option ? 'text-orange-500' : 'text-[#101F38]'}`}>
                     {option}
                   </span>
                 </div>
@@ -1462,7 +1683,7 @@ function SignupFlowContent() {
             <div className="w-full max-w-[600px] mx-auto flex-grow flex flex-col justify-center">
 
               {!isQuestionsDone && !isDisqualified && (
-                <button onClick={handleBack} className="inline-flex items-center gap-2 text-sm font-semibold text-[#E3755D] hover:text-[#C93500] transition-colors self-start mb-6">
+                <button onClick={handleBack} className="inline-flex items-center gap-2 text-sm font-semibold text-orange-500 hover:text-[#C93500] transition-colors self-start mb-6">
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <line x1="19" y1="12" x2="5" y2="12"></line>
                     <polyline points="12 19 5 12 12 5"></polyline>
@@ -1472,7 +1693,7 @@ function SignupFlowContent() {
               )}
 
               {!isQuestionsDone && !isDisqualified && currentStep > 0 && (
-                <div className="text-[#E3755D] font-bold text-[15px] mb-3">
+                <div className="text-orange-500 font-bold text-[15px] mb-3">
                   Step {currentStep} of {totalSteps}
                 </div>
               )}
@@ -1500,7 +1721,7 @@ function SignupFlowContent() {
                 <div className="flex justify-end items-center pb-2 mt-12 w-full pt-6 border-t border-gray-100">
                   <button
                     onClick={handleRestart}
-                    className="bg-[#E3755D] hover:bg-[#C93500] text-white font-bold py-3 px-6 rounded-xl shadow-sm transition-colors flex items-center space-x-2"
+                    className="bg-gradient-to-b from-orange-500 to-orange-600 hover:bg-[#C93500] text-white font-bold py-3 px-6 rounded-xl shadow-sm transition-colors flex items-center space-x-2"
                   >
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                       <polyline points="1 4 1 10 7 10"></polyline>

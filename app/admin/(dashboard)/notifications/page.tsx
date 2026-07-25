@@ -104,7 +104,7 @@ export default function NotificationsPage() {
                 </div>
                 <div className="flex items-center gap-3">
                     <button onClick={fetch} className="px-3 py-2 rounded-md bg-white border text-sm">Refresh</button>
-                    <button onClick={handleMarkAll} className="px-3 py-2 rounded-md bg-[#E3755D] text-white text-sm">Mark all as read</button>
+                    <button onClick={handleMarkAll} className="px-3 py-2 rounded-md bg-gradient-to-b from-orange-500 to-orange-600 text-white text-sm">Mark all as read</button>
                 </div>
             </div>
 
@@ -112,10 +112,10 @@ export default function NotificationsPage() {
                 <div className="p-4 bg-white rounded-lg shadow-sm border flex items-center justify-between">
                     <div>
                         <div className="text-sm text-[#8A8F98]">Unread Notifications</div>
-                        <div className="text-2xl font-bold text-[#E3755D]">{unreadCount}</div>
+                        <div className="text-2xl font-bold text-orange-500">{unreadCount}</div>
                     </div>
-                    <div className="w-10 h-10 rounded-full bg-[#fff0ee] flex items-center justify-center text-[#E3755D]">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E3755D" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 0 1-3.46 0" /></svg>
+                    <div className="w-10 h-10 rounded-full bg-[#fff0ee] flex items-center justify-center text-orange-500">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ea580c" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 0 1-3.46 0" /></svg>
                     </div>
                 </div>
                 <div className="p-4 bg-white rounded-lg shadow-sm border flex items-center justify-between">
@@ -186,7 +186,7 @@ export default function NotificationsPage() {
                         <h3 className="font-bold mb-2">Notification Details</h3>
                         <pre className="text-xs text-[#334155] max-h-[60vh] overflow-auto bg-[#f8fafc] p-3 rounded">{JSON.stringify(infoOpen, null, 2)}</pre>
                         <div className="mt-4 text-right">
-                            <button onClick={closeInfo} className="px-3 py-2 bg-[#E3755D] text-white rounded">Close</button>
+                            <button onClick={closeInfo} className="px-3 py-2 bg-gradient-to-b from-orange-500 to-orange-600 text-white rounded">Close</button>
                         </div>
                     </div>
                 </div>

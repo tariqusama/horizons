@@ -1,6 +1,7 @@
 'use client';
 import React, { useMemo, useState, useEffect } from 'react';
-import { getTickets, Ticket as ApiTicket } from '../../../../lib/api/tickets';
+import { getTickets, updateTicketStatus, updateTicketPackage, Ticket as ApiTicket } from '../../../../lib/api/tickets';
+import { getServices, Service } from '../../../../lib/api/services';
 
 const Icon = {
     search: (p: any) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>,
@@ -37,7 +38,7 @@ const StatusBadge = ({ status }: { status: Status }) => {
 const PriorityIndicator = ({ priority }: { priority: Priority }) => {
     const dot: Record<Priority, string> = {
         High: 'bg-[#D64545]',
-        Medium: 'bg-[#E3755D]',
+        Medium: 'bg-gradient-to-b from-orange-500 to-orange-600',
         Low: 'bg-[#5B6472]',
     };
     return (
@@ -79,11 +80,17 @@ export default function TicketsPage() {
     const [priorityFilter, setPriorityFilter] = useState<Priority | 'All Priorities'>('All Priorities');
     const [activeTab, setActiveTab] = useState<Status | 'All'>('All');
     const [page, setPage] = useState(1);
+    const [selectedTicket, setSelectedTicket] = useState<ApiTicket | null>(null);
+    const [editPackage, setEditPackage] = useState(false);
+    const [newTitle, setNewTitle] = useState('');
+    const [newAmount, setNewAmount] = useState('');
+    const [services, setServices] = useState<Service[]>([]);
 
     const ITEMS_PER_PAGE = 10;
 
     useEffect(() => {
         loadTickets();
+        getServices().then(setServices).catch(console.error);
     }, []);
 
     const loadTickets = async () => {
@@ -101,7 +108,7 @@ export default function TicketsPage() {
         inProgress: tickets.filter(t => t.status === 'In Progress').length,
         resolved: tickets.filter(t => t.status === 'Resolved').length,
         closed: tickets.filter(t => t.status === 'Closed').length,
-    }), []);
+    }), [tickets]);
 
     const filtered = useMemo(() => {
         return tickets.filter(t => {
@@ -157,7 +164,7 @@ export default function TicketsPage() {
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
                                 placeholder="Search tickets by ID, subject, or client..."
-                                className="w-full pl-9 pr-4 py-2 rounded-xl border border-[#ECE9E2] bg-[#F5F4F1] text-sm text-[#101F38] placeholder-[#B7B4AA] outline-none focus:border-[#E3755D] focus:bg-white transition-all"
+                                className="w-full pl-9 pr-4 py-2 rounded-xl border border-[#ECE9E2] bg-[#F5F4F1] text-sm text-[#101F38] placeholder-[#B7B4AA] outline-none focus:border-orange-500 focus:bg-white transition-all"
                             />
                         </div>
                     </div>
@@ -167,7 +174,7 @@ export default function TicketsPage() {
                             <select
                                 value={statusFilter}
                                 onChange={(e) => setStatusFilter(e.target.value as any)}
-                                className="w-full appearance-none pl-4 pr-9 py-2 rounded-xl border border-[#ECE9E2] bg-[#F5F4F1] text-sm font-semibold text-[#101F38] outline-none focus:border-[#E3755D] focus:bg-white transition-all"
+                                className="w-full appearance-none pl-4 pr-9 py-2 rounded-xl border border-[#ECE9E2] bg-[#F5F4F1] text-sm font-semibold text-[#101F38] outline-none focus:border-orange-500 focus:bg-white transition-all"
                             >
                                 <option>All Statuses</option>
                                 <option>Open</option>
@@ -184,7 +191,7 @@ export default function TicketsPage() {
                             <select
                                 value={priorityFilter}
                                 onChange={(e) => setPriorityFilter(e.target.value as any)}
-                                className="w-full appearance-none pl-4 pr-9 py-2 rounded-xl border border-[#ECE9E2] bg-[#F5F4F1] text-sm font-semibold text-[#101F38] outline-none focus:border-[#E3755D] focus:bg-white transition-all"
+                                className="w-full appearance-none pl-4 pr-9 py-2 rounded-xl border border-[#ECE9E2] bg-[#F5F4F1] text-sm font-semibold text-[#101F38] outline-none focus:border-orange-500 focus:bg-white transition-all"
                             >
                                 <option>All Priorities</option>
                                 <option>High</option>
@@ -246,7 +253,7 @@ export default function TicketsPage() {
                             </thead>
                             <tbody className="divide-y divide-[#ECE9E2]">
                                 {pageTickets.map((ticket) => (
-                                    <tr key={ticket.id} className="hover:bg-[#F9F8F6] transition-colors group cursor-pointer">
+                                    <tr key={ticket.id} onClick={() => setSelectedTicket(ticket)} className="hover:bg-[#F9F8F6] transition-colors group cursor-pointer">
                                         <td className="px-6 py-4 text-sm font-bold text-[#8A8F98]">{ticket.ticket_id}</td>
                                         <td className="px-6 py-4 text-sm font-bold text-[#101F38]">{ticket.subject}</td>
                                         <td className="px-6 py-4 text-sm font-semibold text-[#5B6472]">{ticket.user?.name}</td>
@@ -288,6 +295,166 @@ export default function TicketsPage() {
                     </div>
                 </div>
             </div>
+
+            {/* Ticket Details Modal */}
+            {selectedTicket && (
+                <div className="fixed inset-0 bg-[#101F38]/40 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+                    <div className="bg-white rounded-3xl w-full max-w-2xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
+                        <div className="px-8 py-6 border-b border-[#ECE9E2] flex items-center justify-between bg-[#F9F8F6]">
+                            <div>
+                                <p className="text-[11px] font-black tracking-widest text-[#8A8F98] uppercase mb-1">{selectedTicket.ticket_id}</p>
+                                <h3 className="text-xl font-black text-[#101F38]">{selectedTicket.subject}</h3>
+                            </div>
+                            <button
+                                onClick={() => setSelectedTicket(null)}
+                                className="w-10 h-10 rounded-full bg-white border border-[#ECE9E2] flex items-center justify-center text-[#5B6472] hover:text-[#101F38] transition shadow-sm"
+                            >
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+                            </button>
+                        </div>
+                        <div className="p-8 overflow-y-auto">
+                            <div className="flex flex-wrap gap-6 mb-8 p-6 bg-[#F9F8F6] rounded-2xl border border-[#ECE9E2]">
+                                <div>
+                                    <p className="text-[11px] font-bold text-[#8A8F98] uppercase tracking-wider mb-1">Status</p>
+                                    <StatusBadge status={selectedTicket.status as Status} />
+                                </div>
+                                <div>
+                                    <p className="text-[11px] font-bold text-[#8A8F98] uppercase tracking-wider mb-1">Priority</p>
+                                    <PriorityIndicator priority={selectedTicket.priority as Priority} />
+                                </div>
+                                <div>
+                                    <p className="text-[11px] font-bold text-[#8A8F98] uppercase tracking-wider mb-1">Client</p>
+                                    <p className="text-sm font-semibold text-[#101F38]">{selectedTicket.user?.name || 'Unknown'}</p>
+                                </div>
+                                <div>
+                                    <p className="text-[11px] font-bold text-[#8A8F98] uppercase tracking-wider mb-1">Created At</p>
+                                    <p className="text-sm font-semibold text-[#101F38]">{new Date(selectedTicket.created_at).toLocaleString()}</p>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <p className="text-sm font-black text-[#101F38] mb-3">Message</p>
+                                <div className="bg-[#F5F4F1] rounded-2xl p-6 text-sm text-[#5B6472] font-medium leading-relaxed whitespace-pre-wrap border border-[#ECE9E2]">
+                                    {selectedTicket.message || 'No message provided.'}
+                                </div>
+                            </div>
+
+                            {selectedTicket.application && (
+                                <div className="mt-8">
+                                    <div className="flex items-center justify-between mb-3">
+                                        <p className="text-sm font-black text-[#101F38]">Associated Application</p>
+                                        {!editPackage && (
+                                            <button 
+                                                onClick={() => {
+                                                    setNewTitle(selectedTicket.application?.title || '');
+                                                    setNewAmount((selectedTicket.application?.amount || 0).toString());
+                                                    setEditPackage(true);
+                                                }}
+                                                className="text-xs font-bold text-[#1E40AF] hover:underline"
+                                            >
+                                                Edit Package
+                                            </button>
+                                        )}
+                                    </div>
+                                    <div className="bg-white rounded-2xl p-6 border border-[#ECE9E2] shadow-sm">
+                                        {editPackage ? (
+                                            <div className="space-y-4">
+                                                <div>
+                                                    <label className="block text-[11px] font-bold text-[#8A8F98] uppercase tracking-wider mb-1">Package Name</label>
+                                                    <select 
+                                                        value={newTitle} 
+                                                        onChange={(e) => {
+                                                            const selected = services.find(s => s.name === e.target.value);
+                                                            setNewTitle(e.target.value);
+                                                            if (selected) {
+                                                                setNewAmount(selected.price.toString());
+                                                            }
+                                                        }}
+                                                        className="w-full px-4 py-2 border border-[#ECE9E2] rounded-xl text-sm font-semibold focus:outline-none focus:border-[#101F38]"
+                                                    >
+                                                        <option value="" disabled>Select a package...</option>
+                                                        {services.map(s => (
+                                                            <option key={s.id} value={s.name}>{s.name}</option>
+                                                        ))}
+                                                    </select>
+                                                </div>
+                                                <div>
+                                                    <label className="block text-[11px] font-bold text-[#8A8F98] uppercase tracking-wider mb-1">Price ($)</label>
+                                                    <input 
+                                                        type="number" 
+                                                        value={newAmount} 
+                                                        onChange={(e) => setNewAmount(e.target.value)}
+                                                        className="w-full px-4 py-2 border border-[#ECE9E2] rounded-xl text-sm font-semibold focus:outline-none focus:border-[#101F38]"
+                                                    />
+                                                </div>
+                                                <div className="flex justify-end gap-2 pt-2">
+                                                    <button 
+                                                        onClick={() => setEditPackage(false)}
+                                                        className="px-4 py-2 text-xs font-bold text-[#5B6472] hover:bg-[#F5F4F1] rounded-lg transition"
+                                                    >
+                                                        Cancel
+                                                    </button>
+                                                    <button 
+                                                        onClick={async () => {
+                                                            try {
+                                                                const updated = await updateTicketPackage(selectedTicket.id, newTitle, Number(newAmount));
+                                                                setTickets(prev => prev.map(t => t.id === updated.id ? updated : t));
+                                                                setSelectedTicket(updated);
+                                                                setEditPackage(false);
+                                                            } catch (e) {
+                                                                console.error("Failed to update package", e);
+                                                            }
+                                                        }}
+                                                        className="px-4 py-2 text-xs font-bold text-white bg-[#101F38] hover:bg-[#1B3A64] rounded-lg transition"
+                                                    >
+                                                        Save Changes
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <div className="flex justify-between items-center">
+                                                <div>
+                                                    <p className="text-[11px] font-bold text-[#8A8F98] uppercase tracking-wider mb-1">Package Name</p>
+                                                    <p className="text-sm font-semibold text-[#101F38]">{selectedTicket.application.title}</p>
+                                                </div>
+                                                <div className="text-right">
+                                                    <p className="text-[11px] font-bold text-[#8A8F98] uppercase tracking-wider mb-1">Price</p>
+                                                    <p className="text-sm font-black text-[#101F38]">${Number(selectedTicket.application.amount).toFixed(2)}</p>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                        <div className="px-8 py-5 border-t border-[#ECE9E2] bg-[#F9F8F6] flex justify-end gap-3">
+                            {selectedTicket.status !== 'Resolved' && selectedTicket.status !== 'Closed' && (
+                                <button
+                                    onClick={async () => {
+                                        try {
+                                            const updated = await updateTicketStatus(selectedTicket.id, 'Resolved');
+                                            setTickets(prev => prev.map(t => t.id === updated.id ? updated : t));
+                                            setSelectedTicket(updated);
+                                        } catch (e) {
+                                            console.error('Failed to resolve ticket', e);
+                                        }
+                                    }}
+                                    className="px-6 py-2.5 rounded-full bg-[#E7F5EC] text-[#2F8A5F] text-sm font-bold hover:bg-[#CFEBDA] transition-colors flex items-center gap-2"
+                                >
+                                    <Icon.checkCircle width={16} height={16} />
+                                    Mark as Resolved
+                                </button>
+                            )}
+                            <button
+                                onClick={() => { setSelectedTicket(null); setEditPackage(false); }}
+                                className="px-6 py-2.5 rounded-full bg-[#101F38] text-white text-sm font-bold hover:bg-[#1B3A64] transition-colors"
+                            >
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

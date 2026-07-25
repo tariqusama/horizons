@@ -43,7 +43,7 @@ export default function Header({ isDashboard = false }: { isDashboard?: boolean 
   const navLinkClass = (path: string, mobile = false) => {
     const isActive = pathname === path;
     return `${mobile ? 'text-base font-semibold' : 'pb-1 border-b-[3px] text-[15px] font-bold'} transition-colors ${isActive
-      ? 'text-[#E3755D] border-[#E3755D]'
+      ? 'text-orange-500 border-orange-500'
       : 'text-[#5A6579] border-transparent hover:text-[#1B3A64]'
       }`;
   };
@@ -90,8 +90,8 @@ export default function Header({ isDashboard = false }: { isDashboard?: boolean 
 
             {/* Right Section for Marketing Site */}
             <div className="hidden md:flex items-center space-x-6">
-              <Link href="/login" className="font-bold text-[#1B3A64] hover:text-[#E3755D] transition-colors text-[15px]">Login</Link>
-              <Link href="/signup" className="bg-[#E3755D] hover:bg-[#C8634D] text-white px-7 py-3 rounded-[12px] font-bold transition-transform shadow-sm text-[15px]">
+              <Link href="/login" className="font-bold text-[#1B3A64] hover:text-orange-500 transition-colors text-[15px]">Login</Link>
+              <Link href="/signup" className="bg-gradient-to-b from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-7 py-3 rounded-[12px] font-bold transition-transform shadow-sm text-[15px]">
                 Start Assessment
               </Link>
             </div>
@@ -105,7 +105,7 @@ export default function Header({ isDashboard = false }: { isDashboard?: boolean 
             >
               <span className="material-icons text-[24px]">notifications</span>
               {unreadCount > 0 && (
-                <span className="absolute top-0 right-0 inline-flex h-4 min-w-[1rem] rounded-full bg-[#E3755D] px-[0.25rem] text-[10px] font-bold text-white items-center justify-center">
+                <span className="absolute top-0 right-0 inline-flex h-4 min-w-[1rem] rounded-full bg-gradient-to-b from-orange-500 to-orange-600 px-[0.25rem] text-[10px] font-bold text-white items-center justify-center">
                   {unreadCount}
                 </span>
               )}
@@ -117,8 +117,8 @@ export default function Header({ isDashboard = false }: { isDashboard?: boolean 
                 <div className="px-5 py-3 border-b border-gray-100 flex justify-between items-center bg-[#F8F9FA]">
                   <h3 className="font-bold text-[#1B3A64] text-sm">Notifications</h3>
                   <div className="flex items-center gap-3">
-                    <button onClick={handleMarkAllRead} className="text-xs text-[#5A6579] hover:text-[#E3755D] font-medium">Mark all as read</button>
-                    <button onClick={() => setShowNotifications(false)} className="text-xs text-[#5A6579] hover:text-[#E3755D] font-medium">Close</button>
+                    <button onClick={handleMarkAllRead} className="text-xs text-[#5A6579] hover:text-orange-500 font-medium">Mark all as read</button>
+                    <button onClick={() => setShowNotifications(false)} className="text-xs text-[#5A6579] hover:text-orange-500 font-medium">Close</button>
                   </div>
                 </div>
                 <div className="max-h-[320px] overflow-y-auto">
@@ -130,7 +130,7 @@ export default function Header({ isDashboard = false }: { isDashboard?: boolean 
                     const isUnread = !n.read_at;
                     return (
                       <div key={n.id} className={`p-4 transition-colors flex gap-3 items-start border-b border-gray-50 ${isUnread ? 'bg-[#FDFCFB]' : 'bg-white hover:bg-[#F9F8F6]'}`}>
-                        <div className="w-3 h-3 mt-2 rounded-full shrink-0" style={{ background: isUnread ? '#E3755D' : '#D1D5DB' }}></div>
+                        <div className="w-3 h-3 mt-2 rounded-full shrink-0" style={{ background: isUnread ? '#f97316' : '#D1D5DB' }}></div>
                         <div className="flex-1 min-w-0">
                           <div className="flex justify-between items-start mb-1 gap-2">
                             <p className={`text-sm ${isUnread ? 'font-black text-[#101F38]' : 'font-bold text-[#101F38]'}`}>{parsedData.title}</p>
@@ -143,7 +143,7 @@ export default function Header({ isDashboard = false }: { isDashboard?: boolean 
                   })}
                 </div>
                 <div className="px-5 py-3 border-t border-gray-100 text-center bg-[#F8F9FA]">
-                  <Link href={pathname.startsWith('/admin') ? '/admin/notifications' : '/dashboard/notifications'} onClick={() => setShowNotifications(false)} className="text-xs font-bold text-[#E3755D] hover:text-[#C8634D]">
+                  <Link href={pathname.startsWith('/admin') ? '/admin/notifications' : '/dashboard/notifications'} onClick={() => setShowNotifications(false)} className="text-xs font-bold text-orange-500 hover:text-orange-600">
                     View all notifications
                   </Link>
                 </div>
@@ -153,7 +153,7 @@ export default function Header({ isDashboard = false }: { isDashboard?: boolean 
             <div className="flex items-center gap-2 sm:gap-3 pl-0 sm:pl-5 sm:border-l sm:border-gray-200">
               <div className="hidden sm:flex flex-col text-right">
                 <span className="text-sm font-bold text-[#1B3A64]">Alex Johnson</span>
-                <span className="text-xs font-bold uppercase tracking-wider text-[#E3755D]">Client</span>
+                <span className="text-xs font-bold uppercase tracking-wider text-orange-500">Client</span>
               </div>
               <Link href="/dashboard/profile" className="flex h-10 w-10 items-center justify-center rounded-full bg-[#1B3A64] text-white font-bold tracking-wider hover:bg-[#122846] transition-colors shadow-sm">
                 AJ
@@ -174,7 +174,7 @@ export default function Header({ isDashboard = false }: { isDashboard?: boolean 
             <Link href="/free-tools" onClick={() => setIsMobileMenuOpen(false)} className={navLinkClass("/free-tools", true)}>Free Tools</Link>
             <div className="flex flex-col gap-2 pt-2 border-t border-gray-100">
               <Link href="/login" onClick={() => setIsMobileMenuOpen(false)} className="font-bold text-[#1B3A64]">Login</Link>
-              <Link href="/signup" onClick={() => setIsMobileMenuOpen(false)} className="bg-[#E3755D] hover:bg-[#C8634D] text-white px-4 py-3 rounded-[12px] font-bold text-center">
+              <Link href="/signup" onClick={() => setIsMobileMenuOpen(false)} className="bg-gradient-to-b from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-4 py-3 rounded-[12px] font-bold text-center">
                 Start Assessment
               </Link>
             </div>

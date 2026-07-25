@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { getManagerAssignedCases, Application } from '@/lib/api/cases';
 
 const TOP_STATS = [
-    { label: 'Total pending', value: '--', sub: 'Assigned to you', bg: '#FBF1EA', labelColor: '#101F38', valueColor: '#E3755D', iconBg: '#FAEEDA', iconColor: '#BA7517', icon: (<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z" /><line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" /></svg>) },
+    { label: 'Total pending', value: '--', sub: 'Assigned to you', bg: '#FBF1EA', labelColor: '#101F38', valueColor: '#f97316', iconBg: '#FAEEDA', iconColor: '#BA7517', icon: (<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z" /><line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" /></svg>) },
     { label: 'Critical', value: '--', sub: 'Stalled >7 days', bg: '#FCEBEB', labelColor: '#101F38', valueColor: '#E24B4A', iconBg: '#F7C1C1', iconColor: '#A32D2D', icon: (<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z" /><line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" /></svg>) },
     { label: 'Avg progress', value: '--', sub: 'Across pending tasks', bg: '#EAF3DE', labelColor: '#101F38', valueColor: '#3B6D11', iconBg: '#C0DD97', iconColor: '#27500A', icon: (<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" /></svg>) },
 ];
@@ -84,9 +84,9 @@ function CaseRow({ item }: { item: CaseItem }) {
 
             <div className="flex items-center gap-3 mt-3">
                 <div className="h-1.5 flex-1 rounded-full bg-[#ECE9E2] overflow-hidden">
-                    <div className="h-full rounded-full bg-[#E3755D]" style={{ width: `${item.progressPct}%` }} />
+                    <div className="h-full rounded-full bg-gradient-to-b from-orange-500 to-orange-600" style={{ width: `${item.progressPct}%` }} />
                 </div>
-                <span className="text-[11px] font-semibold text-[#E3755D] w-8 text-right">{item.progressPct}%</span>
+                <span className="text-[11px] font-semibold text-orange-500 w-8 text-right">{item.progressPct}%</span>
             </div>
         </div>
     );
@@ -94,7 +94,7 @@ function CaseRow({ item }: { item: CaseItem }) {
 
 function GroupSection({ group }: { group: Group }) {
     return (
-        <div className={`rounded-3xl border bg-white p-6 shadow-sm ${group.highlight ? 'border-[#E3755D]' : 'border-[#ECE9E2]'}`}>
+        <div className={`rounded-3xl border bg-white p-6 shadow-sm ${group.highlight ? 'border-orange-500' : 'border-[#ECE9E2]'}`}>
             <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                     <span style={{ color: group.iconColor }}>{group.icon}</span>
@@ -368,7 +368,7 @@ export default function ManagerPendingTasksPage() {
                                                 <p className="text-xs text-[#9AA0A8]">{it.email} • {it.daysStuck} days</p>
                                             </div>
                                             <div className="flex items-center gap-3">
-                                                <div className="text-sm font-semibold text-[#E3755D]">{it.progressPct}%</div>
+                                                <div className="text-sm font-semibold text-orange-500">{it.progressPct}%</div>
                                                 <Link href={`/manager/assigned-cases?caseId=${it.id}`} className="text-xs font-semibold text-[#101F38] border border-[#ECE9E2] rounded-full px-3 py-1 hover:bg-[#F7F5F0]">View</Link>
                                             </div>
                                         </div>

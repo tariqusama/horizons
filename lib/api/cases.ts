@@ -5,12 +5,17 @@ export interface Application {
     user_id: number;
     manager_id: number | null;
     title: string;
+    package_name: string | null;
     subtitle: string | null;
+    amount?: number;
+    paid_amount?: number;
     status: string;
     progress: string;
     priority?: string;
     service_type?: string;
     next_step: string | null;
+    is_escalated?: boolean;
+    is_requested?: boolean;
     receipt_number: string | null;
     created_at: string;
     timeline?: Array<{
@@ -26,6 +31,7 @@ export interface Application {
         initials: string;
         color: string;
         role?: string;
+        phone?: string;
     };
     manager?: {
         id: number;
@@ -35,6 +41,7 @@ export interface Application {
         color: string;
         role?: string;
     };
+    documents?: any[];
 }
 
 export interface AssignmentRequest {
@@ -82,6 +89,15 @@ export const getManagerAssignedCases = async (): Promise<Application[]> => {
     return response.data;
 };
 
+export const getManagerUnassignedCases = async (): Promise<Application[]> => {
+    const response = await api.get('/manager/unassigned-cases');
+    return response.data;
+};
+
+export const requestCaseAssignment = async (id: number): Promise<void> => {
+    await api.post(`/manager/applications/${id}/request-assignment`);
+};
+
 export const assignCaseManager = async (id: number, managerId: number | null): Promise<Application> => {
     const response = await api.put(`/admin/cases/${id}/assign`, { manager_id: managerId });
     return response.data.application;
@@ -117,7 +133,7 @@ export const updateCaseStatus = async (id: number, status: string): Promise<Appl
 
 export const updateApplication = async (
     id: number,
-    payload: Partial<Pick<Application, 'status' | 'progress' | 'next_step' | 'timeline'>>
+    payload: Partial<Pick<Application, 'status' | 'progress' | 'next_step' | 'timeline' | 'title' | 'package_name' | 'subtitle' | 'amount' | 'paid_amount' | 'receipt_number' | 'is_escalated' | 'internal_notes'>>
 ): Promise<Application> => {
     const response = await api.put(`/manager/applications/${id}`, payload);
     return response.data;
@@ -145,5 +161,18 @@ export const requestManagerDocuments = async (applicationId: number, documents: 
 
 export const escalateApplication = async (applicationId: number, reason: string): Promise<any> => {
     const response = await api.post(`/manager/applications/${applicationId}/escalate`, { reason });
+    return response.data;
+};
+
+export interface Service {
+    id: number;
+    name: string;
+    description: string | null;
+    price: number;
+    tier: string | null;
+}
+
+export const getServices = async (): Promise<Service[]> => {
+    const response = await api.get('/services');
     return response.data;
 };

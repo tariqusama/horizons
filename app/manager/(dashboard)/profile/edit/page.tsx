@@ -63,7 +63,7 @@ export default function ManagerEditProfilePage() {
         <div className="max-w-[1000px] mx-auto pb-24 pt-8">
             <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                 <div>
-                    <Link href="/manager/profile" className="text-[#E3755D] hover:underline font-bold text-sm mb-2 inline-block">
+                    <Link href="/manager/profile" className="text-orange-500 hover:underline font-bold text-sm mb-2 inline-block">
                         &larr; Back to Profile
                     </Link>
                     <h1 className="text-3xl font-black text-[#101F38] mb-2">Edit Profile Settings</h1>
@@ -124,7 +124,7 @@ export default function ManagerEditProfilePage() {
                                         type="text"
                                         value={firstName}
                                         onChange={(e) => setFirstName(e.target.value)}
-                                        className="w-full bg-[#F7F5F0] border border-[#ECE9E2] text-[#101F38] font-bold text-[15px] rounded-2xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#E3755D]/30 focus:border-[#E3755D] transition-colors"
+                                        className="w-full bg-[#F7F5F0] border border-[#ECE9E2] text-[#101F38] font-bold text-[15px] rounded-2xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-500 transition-colors"
                                     />
                                 </div>
                                 <div className="space-y-2">
@@ -133,7 +133,7 @@ export default function ManagerEditProfilePage() {
                                         type="text"
                                         value={lastName}
                                         onChange={(e) => setLastName(e.target.value)}
-                                        className="w-full bg-[#F7F5F0] border border-[#ECE9E2] text-[#101F38] font-bold text-[15px] rounded-2xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#E3755D]/30 focus:border-[#E3755D] transition-colors"
+                                        className="w-full bg-[#F7F5F0] border border-[#ECE9E2] text-[#101F38] font-bold text-[15px] rounded-2xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-500 transition-colors"
                                     />
                                 </div>
                             </div>
@@ -144,7 +144,7 @@ export default function ManagerEditProfilePage() {
                                     type="email"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
-                                    className="w-full bg-[#F7F5F0] border border-[#ECE9E2] text-[#101F38] font-bold text-[15px] rounded-2xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#E3755D]/30 focus:border-[#E3755D] transition-colors"
+                                    className="w-full bg-[#F7F5F0] border border-[#ECE9E2] text-[#101F38] font-bold text-[15px] rounded-2xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-500 transition-colors"
                                 />
                             </div>
 
@@ -154,7 +154,7 @@ export default function ManagerEditProfilePage() {
                                     type="tel"
                                     value={phone}
                                     onChange={(e) => setPhone(e.target.value)}
-                                    className="w-full bg-[#F7F5F0] border border-[#ECE9E2] text-[#101F38] font-bold text-[15px] rounded-2xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#E3755D]/30 focus:border-[#E3755D] transition-colors"
+                                    className="w-full bg-[#F7F5F0] border border-[#ECE9E2] text-[#101F38] font-bold text-[15px] rounded-2xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-500 transition-colors"
                                 />
                             </div>
 
@@ -175,7 +175,7 @@ export default function ManagerEditProfilePage() {
                                 <button
                                     type="submit"
                                     disabled={saving}
-                                    className="bg-[#E3755D] hover:bg-[#C8634D] disabled:cursor-not-allowed disabled:opacity-60 text-white px-8 py-3 rounded-2xl font-bold text-sm transition-colors shadow-sm"
+                                    className="bg-gradient-to-b from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 disabled:cursor-not-allowed disabled:opacity-60 text-white px-8 py-3 rounded-2xl font-bold text-sm transition-colors shadow-sm"
                                 >
                                     {saving ? 'Saving...' : 'Save Changes'}
                                 </button>

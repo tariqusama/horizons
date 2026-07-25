@@ -7,13 +7,13 @@ export default function FreeToolsSection() {
       title: "AR-11 Change of Address",
       description: "Required notification for all immigrants when changing address. Get a pre-filled PDF instantly.",
       iconBg: "bg-white",
-      iconColor: "text-[#E3755D]",
+      iconColor: "text-orange-500",
       tagText: "Most Popular",
-      tagColor: "text-[#E3755D]",
+      tagColor: "text-orange-500",
       tagBg: "bg-white",
-      tagBorder: "border-[#E3755D]",
+      tagBorder: "border-orange-500",
       buttonText: "Start Free AR-11",
-      buttonColor: "bg-[#E3755D] hover:bg-[#C8634D]",
+      buttonColor: "bg-gradient-to-b from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700",
       icon: "mark_email_read"
     },
     {
@@ -85,7 +85,7 @@ export default function FreeToolsSection() {
       </div>
 
       <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-        <Link href="/free-tools" className="bg-[#E3755D] hover:bg-[#C8634D] text-white px-8 py-4 rounded-xl font-bold text-[15px] transition-colors shadow-sm flex items-center w-full sm:w-auto justify-center">
+        <Link href="/free-tools" className="bg-gradient-to-b from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-8 py-4 rounded-xl font-bold text-[15px] transition-colors shadow-sm flex items-center w-full sm:w-auto justify-center">
           <span>View All Free Tools</span>
           <span className="material-icons text-[18px] ml-2">widgets</span>
         </Link>

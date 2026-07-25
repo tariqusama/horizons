@@ -65,7 +65,7 @@ export default function AdminRolesPage() {
     ];
 
     const ROLE_META: Record<string, { bg: string; text: string }> = {
-        "Super Admin": { bg: "bg-[#E3755D]", text: "text-white" },
+        "Super Admin": { bg: "bg-gradient-to-b from-orange-500 to-orange-600", text: "text-white" },
         "Immigration Attorney": { bg: "bg-[#1B3A64]/10", text: "text-[#1B3A64]" },
         "Case Manager": { bg: "bg-[#3B66A5]/10", text: "text-[#3B66A5]" },
         "Paralegal": { bg: "bg-[#D6497A]/10", text: "text-[#D6497A]" },
@@ -127,7 +127,7 @@ export default function AdminRolesPage() {
                         <h2 className="text-xl font-black text-gray-900">Role Assignments</h2>
                         <p className="text-gray-500 mt-1 text-sm font-medium">View and manage all role assignments</p>
                     </div>
-                    <button onClick={() => setIsModalOpen(true)} className="flex items-center gap-2 bg-[#E3755D] text-white px-5 py-2.5 rounded-lg font-bold text-sm hover:bg-[#C8634D] transition-colors shadow-sm w-fit">
+                    <button onClick={() => setIsModalOpen(true)} className="flex items-center gap-2 bg-gradient-to-b from-orange-500 to-orange-600 text-white px-5 py-2.5 rounded-lg font-bold text-sm hover:from-orange-600 hover:to-orange-700 transition-colors shadow-sm w-fit">
                         <Icon.plus width={15} height={15} />
                         Assign Role
                     </button>
@@ -141,7 +141,7 @@ export default function AdminRolesPage() {
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                             placeholder="Search by name or email..."
-                            className="w-full bg-white border border-gray-200 rounded-lg px-4 py-2.5 pl-10 text-sm focus:outline-none focus:ring-2 focus:ring-[#E3755D]/50 shadow-sm font-medium text-gray-900"
+                            className="w-full bg-white border border-gray-200 rounded-lg px-4 py-2.5 pl-10 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50 shadow-sm font-medium text-gray-900"
                         />
                         <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
                             <Icon.search width={16} height={16} />
@@ -151,7 +151,7 @@ export default function AdminRolesPage() {
                         <select
                             value={roleFilter}
                             onChange={(e) => setRoleFilter(e.target.value)}
-                            className="appearance-none bg-white border border-gray-200 rounded-lg pl-4 pr-10 py-2.5 text-sm font-semibold text-gray-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#E3755D]/50 cursor-pointer"
+                            className="appearance-none bg-white border border-gray-200 rounded-lg pl-4 pr-10 py-2.5 text-sm font-semibold text-gray-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50 cursor-pointer"
                         >
                             <option>All Roles</option>
                             {roleStats.map((r, i) => <option key={i}>{r.name}</option>)}
@@ -190,7 +190,7 @@ export default function AdminRolesPage() {
                                         </td>
                                         <td className="px-4 py-4 text-sm font-medium text-gray-600 whitespace-nowrap">{a.assigned}</td>
                                         <td className="px-4 py-4">
-                                            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-[#E3755D] text-white">
+                                            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-gradient-to-b from-orange-500 to-orange-600 text-white">
                                                 {a.status}
                                             </span>
                                         </td>

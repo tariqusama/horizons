@@ -7,7 +7,7 @@ export default function HelpCTASection() {
       <div className="w-full rounded-[48px] p-12 md:p-20 bg-gradient-to-br from-[#0A192F] via-[#1B3A64] to-[#122846] shadow-[0_30px_60px_-15px_rgba(27,58,100,0.3)] flex flex-col md:flex-row items-center justify-between relative overflow-hidden">
         
         {/* Decorative Circles */}
-        <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-[#E3755D]/20 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
+        <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-orange-500/20 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
         <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-[#4375A3]/20 rounded-full blur-[60px] translate-y-1/2 -translate-x-1/4 pointer-events-none"></div>
 
         {/* Content */}
@@ -27,7 +27,7 @@ export default function HelpCTASection() {
 
         {/* Buttons */}
         <div className="w-full md:w-[45%] flex flex-col sm:flex-row md:flex-col lg:flex-row items-center justify-end gap-5 relative z-10">
-          <Link href="/services" className="w-full sm:w-auto bg-gradient-to-r from-[#E3755D] to-[#C8634D] hover:from-[#C8634D] hover:to-[#B65640] text-white font-bold text-[17px] rounded-[20px] px-8 py-5 flex items-center justify-center transition-all duration-300 shadow-[0_15px_30px_rgba(227,117,93,0.3)] hover:shadow-[0_20px_40px_rgba(227,117,93,0.4)] hover:-translate-y-1">
+          <Link href="/services" className="w-full sm:w-auto bg-gradient-to-b from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-bold text-[17px] rounded-[20px] px-8 py-5 flex items-center justify-center transition-all duration-300 shadow-[0_15px_30px_rgba(227,117,93,0.3)] hover:shadow-[0_20px_40px_rgba(227,117,93,0.4)] hover:-translate-y-1">
             <span>See All Services</span>
             <span className="material-icons text-[20px] ml-3">arrow_forward</span>
           </Link>

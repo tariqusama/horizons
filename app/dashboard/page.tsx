@@ -2,10 +2,51 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import styles from './dashboard.module.css';
 import { useAuth } from '@/contexts/AuthContext';
 import api from '@/lib/api';
 import ApplicationSelectionModal from "@/app/components/ApplicationSelectionModal";
+
+const getPlanPrice = (title: string, subtitle: string) => {
+    if (!title || !subtitle) return '--';
+
+    const isPremium = subtitle.includes('Premium');
+    const isAdvanced = subtitle.includes('Advanced');
+
+    if (title.includes('Adjust status')) {
+        if (isPremium) return '$1249.99';
+        if (isAdvanced) return '$949.99';
+        return '$599.99';
+    }
+    if (title.includes('Bring a fiancé(e)')) {
+        if (isPremium) return '$999.99';
+        if (isAdvanced) return '$789.99';
+        return '$549.99';
+    }
+    if (title.includes('Remove conditions')) {
+        if (isPremium) return '$699.99';
+        if (isAdvanced) return '$499.99';
+        return '$399.99';
+    }
+    if (title.includes('Replace or fix')) {
+        if (isPremium) return '$599.99';
+        if (isAdvanced) return '$449.99';
+        return '$349.99';
+    }
+    if (title.includes('DACA')) {
+        if (isPremium) return '$539.99';
+        if (isAdvanced) return '$399.99';
+        return '$299.99';
+    }
+    if (title.includes('Citizenship')) {
+        if (isPremium) return '$649.99';
+        if (isAdvanced) return '$449.99';
+        return '$349.99';
+    }
+
+    if (isPremium) return '$599.99';
+    if (isAdvanced) return '$449.99';
+    return '$349.99';
+};
 
 export default function DashboardPage() {
     const router = useRouter();
@@ -15,11 +56,30 @@ export default function DashboardPage() {
     const [documents, setDocuments] = useState<any[]>([]);
     const [messages, setMessages] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [showChatError, setShowChatError] = useState(false);
+    const [showWrongPackageError, setShowWrongPackageError] = useState(false);
+    const [showPaymentError, setShowPaymentError] = useState(false);
+    const [isPaying, setIsPaying] = useState(false);
+
+    // Use the most recently updated application for the dashboard context
+    const latestApplication = applications[0];
+    const pendingBalance = latestApplication ? (Number(latestApplication.amount || 0) - Number(latestApplication.paid_amount || 0)) : 0;
 
     useEffect(() => {
         const loadData = async () => {
             setIsLoading(true);
             try {
+                if (typeof window !== 'undefined') {
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const sessionId = urlParams.get('session_id');
+                    if (sessionId) {
+                        await api.post('/payment/verify', { session_id: sessionId });
+                        // Clean up URL without refreshing the page
+                        window.history.replaceState({}, document.title, window.location.pathname);
+                        alert('Payment successful! Your application status has been updated.');
+                    }
+                }
+
                 const [appsRes, docsRes, messagesRes] = await Promise.all([
                     api.get('/applications'),
                     api.get('/documents'),
@@ -38,215 +98,472 @@ export default function DashboardPage() {
         loadData();
     }, []);
 
-    const openForm = () => router.push('/dashboard/get-started');
+    useEffect(() => {
+        if (latestApplication && typeof window !== 'undefined') {
+            if (latestApplication.is_escalated === false || latestApplication.is_escalated === 0) {
+                window.localStorage.removeItem('wrong_package_reported');
+            }
+        }
+    }, [latestApplication]);
+
+    const openForm = () => {
+        if (typeof window !== 'undefined' && window.localStorage.getItem('wrong_package_reported') === 'true') {
+            setShowWrongPackageError(true);
+            return;
+        }
+        if (pendingBalance > 0 || latestApplication?.status === 'Pending') {
+            setShowPaymentError(true);
+            return;
+        }
+        if (!latestApplication) {
+            return;
+        }
+
+        if (['submitted', 'completed', 'review'].includes(latestApplication.status?.toLowerCase())) {
+            router.push('/dashboard/get-started/submission');
+        } else {
+            router.push('/dashboard/get-started');
+        }
+    };
+
+    const handlePayBalance = async () => {
+        setIsPaying(true);
+        try {
+            const res = await api.post('/payment/process', {
+                amount: pendingBalance,
+                email: user?.email || 'user@example.com',
+                plan: 'Package Upgrade Balance',
+                goal: 'Payment for upgraded package difference'
+            });
+            if (res.data.url) {
+                window.location.href = res.data.url;
+            } else {
+                alert('Payment processing failed: No checkout URL returned.');
+                setIsPaying(false);
+            }
+        } catch (e: any) {
+            console.error('Payment failed', e);
+            alert(e.response?.data?.message || e.message || 'Payment failed to process.');
+            setIsPaying(false);
+        }
+    };
 
     const headlineName = user?.name ? user.name.split(' ')[0] : 'there';
     const activeCount = applications.length;
     const pendingDocuments = documents.filter((doc) => doc.status !== 'Uploaded').length;
     const unreadMessages = messages.length;
 
-    const latestApplication = applications[0];
-
     return (
-        <div className={styles.dashboardGrid}>
-            <div className={styles.leftColumn}>
-
-                <div className={styles.welcomeBanner}>
-                    <div className={styles.welcomeText}>
-                        <h1>Welcome back, {headlineName}!</h1>
-                        <p>Track your immigration applications, documents, and support requests in one place.</p>
-                    </div>
-                    <button className={styles.chatButton} onClick={() => router.push('/dashboard/chat')}>
-                        <svg className={styles.chatIcon} width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-                        </svg>
-                        Chat with Case Manager
-                    </button>
-                </div>
-
-                <div className={styles.metricsGrid}>
-                    <div className={styles.metricCard}>
-                        <div className={styles.metricHeader}>
-                            <span className={styles.metricLabel}>Active Applications</span>
-                            <div className={`${styles.metricIcon} ${styles.iconOrange}`}>
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zM6 20V4h7v5h5v11H6z" /></svg>
+        <main className="flex-1 px-4 sm:px-6 pb-8 pt-2">
+            <div className="space-y-6">
+                {pendingBalance > 0 && (
+                    <div className="mb-6 bg-[#FEF2F2] border border-[#FCA5A5] rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between shadow-sm">
+                        <div className="flex items-center gap-4 mb-4 md:mb-0">
+                            <div className="bg-[#FEE2E2] text-[#DC2626] p-3 rounded-full">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <circle cx="12" cy="12" r="10" />
+                                    <line x1="12" y1="8" x2="12" y2="12" />
+                                    <line x1="12" y1="16" x2="12.01" y2="16" />
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 className="text-lg font-bold text-[#991B1B]">Pending Balance Due: ${pendingBalance.toFixed(2)}</h3>
+                                <p className="text-sm text-[#B91C1C] mt-1">Your package has been updated by the Admin. Please pay the remaining balance to proceed.</p>
                             </div>
                         </div>
-                        <div>
-                            <div className={styles.metricValue}>{isLoading ? '–' : activeCount}</div>
-                            <div className={styles.metricDesc}>{activeCount === 0 ? 'No active applications' : `${activeCount} active application${activeCount > 1 ? 's' : ''}`}</div>
-                        </div>
+                        <button
+                            onClick={handlePayBalance}
+                            disabled={isPaying}
+                            className="w-full md:w-auto px-6 py-3 bg-[#DC2626] text-white font-bold rounded-xl hover:bg-[#B91C1C] transition shadow-md whitespace-nowrap disabled:opacity-50"
+                        >
+                            {isPaying ? 'Processing...' : 'Pay Balance Now'}
+                        </button>
                     </div>
+                )}
 
-                    <div className={styles.metricCard}>
-                        <div className={styles.metricHeader}>
-                            <span className={styles.metricLabel}>Pending Documents</span>
-                            <div className={`${styles.metricIcon} ${styles.iconGreen}`}>
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M16 6V4c0-1.11-.89-2-2-2h-4c-1.11 0-2 .89-2 2v2H2v13c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6h-6zm-6-2h4v2h-4V4zM4 8h16v11H4V8z" /></svg>
-                            </div>
-                        </div>
-                        <div>
-                            <div className={styles.metricValue}>{isLoading ? '–' : pendingDocuments}</div>
-                            <div className={styles.metricDesc}>{pendingDocuments === 0 ? 'All files uploaded' : 'Need to upload documents'}</div>
-                        </div>
+                <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-violet-100 via-blue-50 to-sky-100 px-6 sm:px-10 py-8 sm:py-10">
+                    <div className="absolute right-0 top-0 w-1/2 h-full opacity-60 pointer-events-none">
+                        <div className="absolute right-10 top-1/2 -translate-y-1/2 w-72 h-72 rounded-full border border-white/60" />
+                        <div className="absolute right-24 top-1/2 -translate-y-1/2 w-56 h-56 rounded-full border border-white/60" />
                     </div>
-
-                    <div className={styles.metricCard}>
-                        <div className={styles.metricHeader}>
-                            <span className={styles.metricLabel}>Messages</span>
-                            <div className={`${styles.metricIcon} ${styles.iconPurple}`}>
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" /></svg>
-                            </div>
-                        </div>
+                    <div className="relative flex flex-col md:flex-row md:items-start md:justify-between gap-4">
                         <div>
-                            <div className={styles.metricValue}>{isLoading ? '–' : unreadMessages}</div>
-                            <div className={styles.metricDesc}>{unreadMessages === 0 ? 'No new messages' : 'New messages available'}</div>
+                            <h1 className="text-3xl md:text-4xl font-bold text-slate-900">Welcome back, {headlineName}!</h1>
+                            <p className="mt-2 text-slate-600">Track your immigration applications and documents</p>
                         </div>
-                    </div>
-
-                    <div className={styles.metricCard}>
-                        <div className={styles.metricHeader}>
-                            <span className={styles.metricLabel}>Latest Application</span>
-                            <div className={`${styles.metricIcon} ${styles.iconBlue}`}>
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" /></svg>
-                            </div>
-                        </div>
-                        <div>
-                            <div className={styles.metricValue}>{latestApplication ? latestApplication.title : 'No app'}</div>
-                            <div className={styles.metricDesc}>{latestApplication ? `Last updated ${new Date(latestApplication.created_at).toLocaleDateString()}` : 'Start a new application'}</div>
-                        </div>
+                        <button
+                            onClick={() => router.push('/dashboard/chat')}
+                            className="self-start inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-white border border-slate-200 shadow-sm text-sm font-semibold text-slate-800 hover:bg-slate-50 transition"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 text-sky-600">
+                                <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" />
+                            </svg>
+                            Chat with Case Manager
+                        </button>
                     </div>
                 </div>
 
-                <div className={styles.quickActions}>
-                    <h2 className={styles.sectionTitle}>Quick Actions</h2>
-                    <div className={styles.actionList}>
-                        <div className={styles.actionItem} onClick={openForm} role="button" tabIndex={0} style={{ cursor: 'pointer' }}>
-                            <div className={styles.actionIconBox}>
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 14h-3v3h-2v-3H8v-2h3v-3h2v3h3v2zm-3-7V3.5L18.5 9H13z" /></svg>
-                            </div>
-                            <div className={styles.actionContent}>
-                                <h4>Start Application — Green Card Renewal</h4>
-                                <p>Continue with your purchased Advanced Plan package</p>
-                            </div>
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                    <div className="rounded-2xl bg-white border border-slate-200/70 p-5 shadow-[0_4px_20px_rgb(0,0,0,0.03)]">
+                        <div className="flex items-start justify-between">
+                            <p className="text-sm font-medium text-slate-600">Active Applications</p>
+                            <span className="w-9 h-9 rounded-lg flex items-center justify-center bg-orange-50">
+                                <img src="/checklist.png" alt="Active Applications" className="w-5 h-5 object-contain" />
+                            </span>
                         </div>
-
-                        <div className={styles.actionItem} onClick={() => router.push('/dashboard/applications')} role="button" tabIndex={0} style={{ cursor: 'pointer' }}>
-                            <div className={`${styles.actionIconBox} ${styles.blue}`}>
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm-2 14l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z" /></svg>
-                            </div>
-                            <div className={styles.actionContent}>
-                                <h4>Complete Application</h4>
-                                <p>Continue working on your existing application</p>
-                            </div>
+                        <div className="mt-6 flex items-end gap-2">
+                            <p className="text-3xl font-bold text-slate-900">{isLoading ? '–' : activeCount}</p>
                         </div>
-
-                        <div className={styles.actionItem}>
-                            <div className={`${styles.actionIconBox} ${styles.green}`}>
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 14h-3v3h-2v-3H8v-2h3v-3h2v3h3v2zm-3-7V3.5L18.5 9H13z" /></svg>
-                            </div>
-                            <div className={styles.actionContent}>
-                                <h4>View Documents</h4>
-                                <p>Access your uploaded documents and files</p>
-                            </div>
-                        </div>
-
-                        <div className={styles.actionItem}>
-                            <div className={`${styles.actionIconBox} ${styles.teal}`}>
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M19 2H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h4l3 3 3-3h4c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-6 16h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 11.9 13 12.5 13 14h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z" /></svg>
-                            </div>
-                            <div className={styles.actionContent}>
-                                <h4>Contact Support</h4>
-                                <p>Get help from our immigration experts</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div className={styles.rightColumn}>
-                <div className={styles.purchasesCard}>
-                    <div className={styles.purchasesHeader}>
-                        <div className={styles.purchasesIconBox}>
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z" /></svg>
-                        </div>
-                        <div>
-                            <h2 className={styles.purchasesTitle}>Your Purchases</h2>
-                            <p className={styles.purchasesDesc}>View and manage your immigration service purchases</p>
-                        </div>
+                        <p className="text-xs text-slate-500 mt-1">{activeCount === 0 ? 'No active applications' : `${activeCount} active application${activeCount > 1 ? 's' : ''}`}</p>
                     </div>
 
-                    <div className={styles.purchaseItem}>
-                        <div className={styles.purchaseItemTop}>
-                            <span className={styles.purchaseName}>{latestApplication?.title || 'No application yet'}</span>
-                            <span className={styles.purchasePrice}>{latestApplication ? '$449.99' : '--'}</span>
+                    <div className="rounded-2xl bg-white border border-slate-200/70 p-5 shadow-[0_4px_20px_rgb(0,0,0,0.03)]">
+                        <div className="flex items-start justify-between">
+                            <p className="text-sm font-medium text-slate-600">Total Purchases</p>
+                            <span className="w-9 h-9 rounded-lg flex items-center justify-center bg-emerald-50">
+                                <img src="/shopping-bag.png" alt="Total Purchases" className="w-5 h-5 object-contain" />
+                            </span>
                         </div>
-                        <span className={styles.purchaseBadge}>{latestApplication ? (latestApplication.subtitle || 'Purchased plan').replace('Plan: ', '') : 'No plan'}</span>
+                        <div className="mt-6 flex items-end gap-2">
+                            <p className="text-3xl font-bold text-slate-900">{isLoading ? '–' : applications.length}</p>
+                        </div>
+                        <p className="text-xs text-slate-500 mt-1">Service packages purchased</p>
+                    </div>
+
+                    <div className="rounded-2xl bg-white border border-slate-200/70 p-5 shadow-[0_4px_20px_rgb(0,0,0,0.03)]">
+                        <div className="flex items-start justify-between">
+                            <p className="text-sm font-medium text-slate-600">Pending Actions</p>
+                            <span className="w-9 h-9 rounded-lg flex items-center justify-center bg-violet-50">
+                                <img src="/file.svg" alt="Pending Actions" className="w-5 h-5 object-contain" />
+                            </span>
+                        </div>
+                        <div className="mt-6 flex items-end gap-2">
+                            <p className="text-3xl font-bold text-slate-900">{isLoading ? '–' : pendingDocuments}</p>
+                        </div>
+                        <p className="text-xs text-slate-500 mt-1">Items requiring attention</p>
+                    </div>
+
+                    <div className="rounded-2xl bg-white border border-slate-200/70 p-5 shadow-[0_4px_20px_rgb(0,0,0,0.03)]">
+                        <div className="flex items-start justify-between">
+                            <p className="text-sm font-medium text-slate-600">Success Rate</p>
+                            <span className="w-9 h-9 rounded-lg flex items-center justify-center bg-sky-50">
+                                <img src="/immunity.png" alt="Success Rate" className="w-5 h-5 object-contain" />
+                            </span>
+                        </div>
+                        <div className="mt-6 flex items-end gap-2">
+                            <p className="text-3xl font-bold text-slate-900">{applications.length > 0 ? '100%' : '0%'}</p>
+                        </div>
+                        <p className="text-xs text-slate-500 mt-1">Application success rate</p>
                     </div>
                 </div>
 
-                <div className={styles.statusCard}>
-                    <h2 className={styles.sectionTitle}>Application Status</h2>
-                    <div className={styles.statusTimeline}>
-                        <div className={styles.statusItem}>
-                            <div className={`${styles.statusIcon} ${styles.done}`}>
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                            </div>
-                            <div className={styles.statusContent}>
-                                <div className={styles.statusText}>
-                                    <h4>Intake</h4>
-                                    <p>Intake completed</p>
+                <div className="grid gap-6 lg:grid-cols-3">
+                    <div className="lg:col-span-2 rounded-3xl bg-white border border-slate-200/70 p-6 shadow-[0_4px_20px_rgb(0,0,0,0.03)]">
+                        <h2 className="text-xl font-bold text-slate-900">Quick Actions</h2>
+                        <div className="mt-4 border-t border-slate-100 pt-4 space-y-3">
+                            <button onClick={openForm} className="w-full flex items-center gap-4 p-4 rounded-2xl border border-slate-100 hover:border-orange-200 hover:bg-orange-50/30 transition text-left">
+                                <span className="w-12 h-12 rounded-xl flex items-center justify-center bg-orange-50">
+                                    <img src="/personal-profile_1.png" alt="Start Application" className="w-6 h-6 object-contain" />
+                                </span>
+                                <div>
+                                    <p className="font-semibold text-slate-900">
+                                        {latestApplication 
+                                            ? (['submitted', 'completed', 'review'].includes(latestApplication.status?.toLowerCase()) 
+                                                ? `View Application — ${latestApplication.title}` 
+                                                : `Continue Application — ${latestApplication.title}`) 
+                                            : 'Start Application'}
+                                    </p>
+                                    <p className="text-sm text-slate-500">
+                                        {latestApplication && ['submitted', 'completed', 'review'].includes(latestApplication.status?.toLowerCase())
+                                            ? 'Review your submitted application'
+                                            : 'Continue with your purchased package'}
+                                    </p>
                                 </div>
-                                <span className={`${styles.statusBadge} ${styles.badgeDone}`}>Done</span>
+                            </button>
+                            <button onClick={() => router.push('/dashboard/applications')} className="w-full flex items-center gap-4 p-4 rounded-2xl border border-slate-100 hover:border-orange-200 hover:bg-orange-50/30 transition text-left">
+                                <span className="w-12 h-12 rounded-xl flex items-center justify-center bg-rose-50">
+                                    <img src="/completed-task.png" alt="Complete Application" className="w-6 h-6 object-contain" />
+                                </span>
+                                <div>
+                                    <p className="font-semibold text-slate-900">View All Applications</p>
+                                    <p className="text-sm text-slate-500">Manage all your active and past applications</p>
+                                </div>
+                            </button>
+                            <button onClick={() => router.push('/dashboard/documents')} className="w-full flex items-center gap-4 p-4 rounded-2xl border border-slate-100 hover:border-orange-200 hover:bg-orange-50/30 transition text-left">
+                                <span className="w-12 h-12 rounded-xl flex items-center justify-center bg-sky-50">
+                                    <img src="/analysis.png" alt="View Documents" className="w-6 h-6 object-contain" />
+                                </span>
+                                <div>
+                                    <p className="font-semibold text-slate-900">View Documents</p>
+                                    <p className="text-sm text-slate-500">Access your uploaded documents and files</p>
+                                </div>
+                            </button>
+                            <button onClick={() => router.push('/dashboard/helpline')} className="w-full flex items-center gap-4 p-4 rounded-2xl border border-slate-100 hover:border-orange-200 hover:bg-orange-50/30 transition text-left">
+                                <span className="w-12 h-12 rounded-xl flex items-center justify-center bg-emerald-50">
+                                    <img src="/customer-service.png" alt="Contact Support" className="w-6 h-6 object-contain" />
+                                </span>
+                                <div>
+                                    <p className="font-semibold text-slate-900">Contact Support</p>
+                                    <p className="text-sm text-slate-500">Get help from our immigration experts</p>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div className="space-y-6">
+                        <div className="rounded-3xl bg-white border border-slate-200/70 p-6 shadow-[0_4px_20px_rgb(0,0,0,0.03)]">
+                            <div className="flex items-start gap-3">
+                                <span className="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-100 to-rose-100 flex items-center justify-center p-1">
+                                    <img src="/shopping-cart-new.png" alt="Your Purchases" className="w-8 h-8 object-contain" />
+                                </span>
+                                <div>
+                                    <h3 className="font-bold text-slate-900">Your Purchases</h3>
+                                    <p className="text-xs text-slate-500">View and manage your immigration service purchases</p>
+                                </div>
+                            </div>
+                            <div className="mt-4 border-t border-slate-100 pt-4">
+                                <div className="space-y-3 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
+                                    {applications.length > 0 ? applications.map((app, idx) => (
+                                        <div key={app.id || idx} className="rounded-xl border border-slate-100 p-3 hover:border-orange-200 transition-colors">
+                                            <p className="text-sm font-semibold text-slate-900">{app.title || 'Unknown Application'}</p>
+                                            <div className="flex items-center justify-between mt-2 gap-3">
+                                                <span className="inline-flex items-center rounded-full border border-orange-100 px-2.5 py-0.5 text-[10px] font-semibold bg-orange-50 text-orange-600">
+                                                    {app.subtitle ? app.subtitle.replace('Plan: ', '') : 'Advanced Plan'}
+                                                </span>
+                                                <span className="text-sm font-bold text-orange-600">
+                                                    {app.amount ? `$${Number(app.amount).toFixed(2)}` : getPlanPrice(app.title, app.subtitle)}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    )) : (
+                                        <div className="rounded-xl border border-slate-100 p-3 text-center">
+                                            <p className="text-sm font-semibold text-slate-500">No applications yet</p>
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                         </div>
 
-                        <div className={styles.statusItem}>
-                            <div className={`${styles.statusIcon} ${styles.current}`}>
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 14H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z" /></svg>
+                        <div className="rounded-3xl bg-white border border-slate-200/70 p-6 sm:p-8 shadow-[0_4px_20px_rgb(0,0,0,0.03)]">
+                            <div className="pb-4 border-b border-slate-100">
+                                <h3 className="text-lg font-bold text-slate-900">Application Status</h3>
+                                <p className="text-sm font-medium text-slate-500 mt-1">{latestApplication?.title || 'Loading...'}</p>
                             </div>
-                            <div className={styles.statusContent}>
-                                <div className={styles.statusText}>
-                                    <h4>In Progress</h4>
-                                    <p>You are completing your application</p>
-                                </div>
-                                <span className={`${styles.statusBadge} ${styles.badgeCurrent}`}>Current</span>
-                            </div>
-                        </div>
-
-                        <div className={styles.statusItem}>
-                            <div className={`${styles.statusIcon} ${styles.upcoming}`}>
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2m0 2v14h14V5H5m7 12l-5-5h3V7h4v5h3l-5 5Z" /></svg>
-                            </div>
-                            <div className={styles.statusContent}>
-                                <div className={styles.statusText}>
-                                    <h4>Submitted</h4>
-                                    <p>Your application will be submitted for review</p>
-                                </div>
-                                <span className={`${styles.statusBadge} ${styles.badgeUpcoming}`}>Upcoming</span>
-                            </div>
+                            <ol className="mt-6 relative">
+                                <li className="relative pl-14 pb-6 last:pb-0">
+                                    <span className="absolute left-[19px] top-10 bottom-0 w-0.5 bg-sky-500" />
+                                    <span className="absolute left-0 top-0 w-10 h-10 rounded-full flex items-center justify-center border-2 bg-white border-emerald-500 text-emerald-600">
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4" />
+                                        </svg>
+                                    </span>
+                                    <div className="rounded-2xl px-4 py-3 flex items-start justify-between gap-3">
+                                        <div className="min-w-0">
+                                            <p className="font-semibold text-slate-900">Intake</p>
+                                            <p className="text-sm text-slate-500 mt-0.5">Intake completed</p>
+                                        </div>
+                                        <span className="shrink-0 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700">Done</span>
+                                    </div>
+                                </li>
+                                <li className="relative pl-14 pb-6 last:pb-0">
+                                    <span className={`absolute left-[19px] top-10 bottom-0 w-0.5 ${['submitted', 'completed', 'review'].includes(latestApplication?.status?.toLowerCase()) ? 'bg-sky-500' : 'bg-slate-200'}`} />
+                                    <span className={`absolute left-0 top-0 w-10 h-10 rounded-full flex items-center justify-center border-2 ${['submitted', 'completed', 'review'].includes(latestApplication?.status?.toLowerCase()) ? 'bg-white border-emerald-500 text-emerald-600' : 'bg-sky-500 border-sky-500 text-white shadow-md shadow-sky-500/30'}`}>
+                                        {['submitted', 'completed', 'review'].includes(latestApplication?.status?.toLowerCase()) ? (
+                                            <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4" />
+                                            </svg>
+                                        ) : (
+                                            <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="M12 7v4m0 4h.01M4 20h16" />
+                                            </svg>
+                                        )}
+                                    </span>
+                                    <div className={`rounded-2xl px-4 py-3 flex items-start justify-between gap-3 ${['submitted', 'completed', 'review'].includes(latestApplication?.status?.toLowerCase()) ? '' : 'bg-sky-50'}`}>
+                                        <div className="min-w-0">
+                                            <p className="font-semibold text-slate-900">In Progress</p>
+                                            <p className="text-sm text-slate-500 mt-0.5">You are completing your application</p>
+                                        </div>
+                                        <span className={`shrink-0 px-3 py-1 rounded-full text-xs font-semibold ${['submitted', 'completed', 'review'].includes(latestApplication?.status?.toLowerCase()) ? 'bg-emerald-100 text-emerald-700' : 'bg-sky-200 text-sky-800'}`}>
+                                            {['submitted', 'completed', 'review'].includes(latestApplication?.status?.toLowerCase()) ? 'Done' : 'Current'}
+                                        </span>
+                                    </div>
+                                </li>
+                                <li className="relative pl-14 pb-6 last:pb-0">
+                                    <span className={`absolute left-0 top-0 w-10 h-10 rounded-full flex items-center justify-center border-2 ${['submitted', 'completed', 'review'].includes(latestApplication?.status?.toLowerCase()) ? 'bg-sky-500 border-sky-500 text-white shadow-md shadow-sky-500/30' : 'bg-white border-slate-200 text-slate-400'}`}>
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14" />
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 5l7 7-7 7" />
+                                        </svg>
+                                    </span>
+                                    <div className={`rounded-2xl px-4 py-3 flex items-start justify-between gap-3 ${['submitted', 'completed', 'review'].includes(latestApplication?.status?.toLowerCase()) ? 'bg-sky-50' : ''}`}>
+                                        <div className="min-w-0">
+                                            <p className="font-semibold text-slate-900">Submitted</p>
+                                            <p className="text-sm text-slate-500 mt-0.5">Your application is submitted for review</p>
+                                        </div>
+                                        <span className={`shrink-0 px-3 py-1 rounded-full text-xs font-semibold ${['submitted', 'completed', 'review'].includes(latestApplication?.status?.toLowerCase()) ? 'bg-sky-200 text-sky-800' : 'bg-slate-100 text-slate-500'}`}>
+                                            {['submitted', 'completed', 'review'].includes(latestApplication?.status?.toLowerCase()) ? 'Current' : 'Upcoming'}
+                                        </span>
+                                    </div>
+                                </li>
+                            </ol>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div className={styles.journeySection}>
-                <h2 className={styles.journeyHeader}>Immigration Journey</h2>
-                <div className={styles.journeyContent}>
-                    <h3>Continue Your Immigration Journey with Horizon Pathways</h3>
-                    <p>
-                        Whether you're ready to remove the conditions on your Green Card, apply for U.S. citizenship, renew your Green Card, or
-                        begin another immigration process, Horizon Pathways makes it easy to manage all your cases in one secure account.
-                        Continue your immigration journey by adding your next application directly from your dashboard.
-                    </p>
-                    <button className={styles.journeyButton} onClick={() => setIsModalOpen(true)}>
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-                        Start Your Next Application
-                    </button>
+                <div className="rounded-3xl bg-white border border-slate-200/70 p-6 sm:p-8 shadow-[0_4px_20px_rgb(0,0,0,0.03)]">
+                    <h2 className="text-xl font-bold text-slate-900">Immigration Journey</h2>
+                    <div className="mt-4 border-t border-slate-100 pt-5">
+                        <h3 className="font-semibold text-slate-900">Continue Your Immigration Journey with Horizon Pathways</h3>
+                        <p className="mt-2 text-sm text-slate-600 leading-relaxed max-w-3xl">
+                            Whether you're ready to remove the conditions on your Green Card, apply for U.S. citizenship, renew your Green Card, or begin another immigration process, Horizon Pathways makes it easy to manage all your cases in one secure account. Continue your immigration journey by adding your next application directly from your dashboard.
+                        </p>
+                        <button className="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium h-10 px-4 py-2 mt-6 rounded-xl bg-slate-900 hover:bg-slate-800 text-white gap-2"
+                            onClick={() => setIsModalOpen(true)}>
+                            <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+                            </svg>
+                            Start Your Next Application
+                        </button>
+                    </div>
                 </div>
             </div>
 
             <ApplicationSelectionModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
-        </div>
+
+            {showChatError && (
+                <div style={{
+                    position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+                    backgroundColor: 'rgba(0,0,0,0.4)', zIndex: 9999,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    backdropFilter: 'blur(3px)'
+                }}>
+                    <div style={{
+                        backgroundColor: 'white', borderRadius: '16px', padding: '32px',
+                        maxWidth: '420px', width: '90%', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+                        textAlign: 'center', animation: 'fadeIn 0.2s ease-out'
+                    }}>
+                        <div style={{
+                            backgroundColor: '#FEF3C7', color: '#D97706',
+                            width: '64px', height: '64px', borderRadius: '50%',
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            margin: '0 auto 20px auto'
+                        }}>
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <circle cx="12" cy="12" r="10" />
+                                <line x1="12" y1="8" x2="12" y2="12" />
+                                <line x1="12" y1="16" x2="12.01" y2="16" />
+                            </svg>
+                        </div>
+                        <h3 style={{ margin: '0 0 12px 0', color: '#111827', fontSize: '1.25rem', fontWeight: 600 }}>Case Manager Pending</h3>
+                        <p style={{ color: '#6B7280', margin: '0 0 24px 0', lineHeight: 1.5, fontSize: '0.95rem' }}>
+                            You cannot proceed yet because a case manager has not been assigned to your application. We are reviewing your application and will assign a manager shortly!
+                        </p>
+                        <button
+                            onClick={() => setShowChatError(false)}
+                            style={{
+                                backgroundColor: '#1E40AF', color: 'white', border: 'none',
+                                borderRadius: '8px', padding: '12px 24px', fontWeight: 500,
+                                cursor: 'pointer', width: '100%', fontSize: '1rem',
+                                transition: 'background-color 0.2s'
+                            }}
+                            onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#1e3a8a'}
+                            onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#1E40AF'}
+                        >
+                            Got it, thanks!
+                        </button>
+                    </div>
+                </div>
+            )}
+
+            {showWrongPackageError && (
+                <div style={{
+                    position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+                    backgroundColor: 'rgba(0,0,0,0.4)', zIndex: 9999,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    backdropFilter: 'blur(3px)'
+                }}>
+                    <div style={{
+                        backgroundColor: 'white', borderRadius: '16px', padding: '32px',
+                        maxWidth: '420px', width: '90%', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+                        textAlign: 'center', animation: 'fadeIn 0.2s ease-out'
+                    }}>
+                        <div style={{
+                            backgroundColor: '#FEE2E2', color: '#DC2626',
+                            width: '64px', height: '64px', borderRadius: '50%',
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            margin: '0 auto 20px auto'
+                        }}>
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <circle cx="12" cy="12" r="10" />
+                                <line x1="12" y1="8" x2="12" y2="12" />
+                                <line x1="12" y1="16" x2="12.01" y2="16" />
+                            </svg>
+                        </div>
+                        <h3 style={{ margin: '0 0 12px 0', color: '#111827', fontSize: '1.25rem', fontWeight: 600 }}>Action Required</h3>
+                        <p style={{ color: '#6B7280', margin: '0 0 24px 0', lineHeight: 1.5, fontSize: '0.95rem' }}>
+                            You have informed your Case Manager that you selected the wrong package. Please wait for them to update your account before proceeding with your application.
+                        </p>
+                        <button
+                            onClick={() => setShowWrongPackageError(false)}
+                            style={{
+                                backgroundColor: '#1E40AF', color: 'white', border: 'none',
+                                borderRadius: '8px', padding: '12px 24px', fontWeight: 500,
+                                cursor: 'pointer', width: '100%', fontSize: '1rem',
+                                transition: 'background-color 0.2s'
+                            }}
+                            onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#1e3a8a'}
+                            onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#1E40AF'}
+                        >
+                            Got it, thanks!
+                        </button>
+                    </div>
+                </div>
+            )}
+
+            {showPaymentError && (
+                <div style={{
+                    position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+                    backgroundColor: 'rgba(0,0,0,0.4)', zIndex: 9999,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    backdropFilter: 'blur(3px)'
+                }}>
+                    <div style={{
+                        backgroundColor: 'white', borderRadius: '16px', padding: '32px',
+                        maxWidth: '420px', width: '90%', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+                        textAlign: 'center', animation: 'fadeIn 0.2s ease-out'
+                    }}>
+                        <div style={{
+                            backgroundColor: '#FEE2E2', color: '#DC2626',
+                            width: '64px', height: '64px', borderRadius: '50%',
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            margin: '0 auto 20px auto'
+                        }}>
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <circle cx="12" cy="12" r="10" />
+                                <line x1="12" y1="8" x2="12" y2="12" />
+                                <line x1="12" y1="16" x2="12.01" y2="16" />
+                            </svg>
+                        </div>
+                        <h3 style={{ margin: '0 0 12px 0', color: '#111827', fontSize: '1.25rem', fontWeight: 600 }}>Payment Required</h3>
+                        <p style={{ color: '#6B7280', margin: '0 0 24px 0', lineHeight: 1.5, fontSize: '0.95rem' }}>
+                            Please complete your package payment before starting your application. Check the payment banner above for details.
+                        </p>
+                        <button
+                            onClick={() => setShowPaymentError(false)}
+                            style={{
+                                backgroundColor: '#1E40AF', color: 'white', border: 'none',
+                                borderRadius: '8px', padding: '12px 24px', fontWeight: 500,
+                                cursor: 'pointer', width: '100%', fontSize: '1rem',
+                                transition: 'background-color 0.2s'
+                            }}
+                            onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#1e3a8a'}
+                            onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#1E40AF'}
+                        >
+                            Got it, thanks!
+                        </button>
+                    </div>
+                </div>
+            )}
+        </main>
     );
 }

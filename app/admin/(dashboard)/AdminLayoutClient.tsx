@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { getProfile, Profile } from '../../../lib/api/profile';
-import { getNotifications, markAsRead, Notification } from '../../../lib/api/notifications';
+import { getNotifications, markAsRead, clearAllNotifications, Notification } from '../../../lib/api/notifications';
 import { useAuth } from '@/contexts/AuthContext';
 
 /* ---------- Small inline icon set ---------- */
@@ -31,10 +31,12 @@ const Icon = {
     signout: (p: any) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /><polyline points="16 17 21 12 16 7" /><line x1="21" y1="12" x2="9" y2="12" /></svg>,
     menu: (p: any) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="3" y1="6" x2="21" y2="6" /><line x1="3" y1="12" x2="21" y2="12" /><line x1="3" y1="18" x2="21" y2="18" /></svg>,
     close: (p: any) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>,
+    cases: (p: any) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2" /><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" /></svg>,
 };
 
 const navItems = [
-    { label: 'Dashboard', icon: Icon.dashboard, href: '/admin', bg: '#E3755D', fg: '#FFFFFF' },
+    { label: 'Dashboard', icon: Icon.dashboard, href: '/admin', bg: '#f97316', fg: '#FFFFFF' },
+    { label: 'Case Management', icon: Icon.cases, href: '/admin/cases', bg: '#E8E2F7', fg: '#5B3B8C' },
     { label: 'Tickets', icon: Icon.tickets, href: '/admin/tickets', bg: '#FBE1E6', fg: '#D6497A' },
     { label: 'Revenue Dashboard', icon: Icon.revenue, href: '/admin/revenue', bg: '#DDF3E4', fg: '#2F8A5F' },
     { label: 'Service & Pricing', icon: Icon.service, href: '/admin/service-pricing', bg: '#E8E7E3', fg: '#5B6472' },
@@ -56,16 +58,16 @@ const navItems = [
 function SidebarContent({ pathname, logout, onLinkClick }: { pathname: string | null; logout: () => void; onLinkClick?: () => void }) {
     return (
         <>
-            <div className="flex items-center justify-center px-2 mb-8">
-                <div className="w-full max-w-[150px]">
-                    <Image src="/horizonlogo.png" alt="Horizon Pathways" width={150} height={40} className="object-contain" />
-                </div>
+            <div className="px-6 pt-6 pb-4 flex justify-start">
+                <Image src="/horizonlogo.png" alt="Horizon Pathways" width={150} height={40} className="h-12 w-auto" />
             </div>
 
-            <div className="text-[11px] font-mono uppercase tracking-wider text-[#B7B4AA] px-2 mb-3">Main</div>
+            <div className="px-6 pb-2">
+                <span className="text-xs font-semibold text-slate-500 tracking-widest">MAIN</span>
+            </div>
 
             <div className="flex flex-col flex-1 min-h-0">
-                <nav className="flex-1 min-h-0 space-y-1.5 overflow-y-auto pr-1 sidebar-scrollbar">
+                <nav className="space-y-1">
                     {navItems.map((item) => {
                         const isActive = item.href === '/admin' ? pathname === '/admin' : pathname?.startsWith(item.href);
                         return (
@@ -73,13 +75,13 @@ function SidebarContent({ pathname, logout, onLinkClick }: { pathname: string | 
                                 key={item.label}
                                 href={item.href}
                                 onClick={onLinkClick}
-                                className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-colors ${isActive ? 'bg-[#101F38] text-white' : 'text-[#5B6472] hover:bg-[#F5F4F1] hover:text-[#101F38]'}`}
+                                className={`group flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${isActive ? 'bg-slate-900 text-white shadow-md' : 'text-slate-700 hover:bg-slate-100'}`}
                             >
                                 <span
-                                    className="w-8 h-8 rounded-full flex items-center justify-center shrink-0"
-                                    style={{ backgroundColor: item.bg, color: item.fg }}
+                                    className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${isActive ? 'bg-orange-500 text-white' : ''}`}
+                                    style={!isActive ? { backgroundColor: item.bg, color: item.fg } : {}}
                                 >
-                                    <item.icon width={15} height={15} />
+                                    <item.icon width={18} height={18} />
                                 </span>
                                 <span className="truncate">{item.label}</span>
                             </Link>
@@ -87,9 +89,9 @@ function SidebarContent({ pathname, logout, onLinkClick }: { pathname: string | 
                     })}
                 </nav>
 
-                <div className="mt-4">
-                    <button onClick={logout} className="w-full flex items-center justify-center gap-2 bg-[#E3755D] hover:bg-[#C93500] text-white font-bold text-sm py-3.5 rounded-full transition-colors shadow-sm">
-                        <Icon.signout width={16} height={16} />
+                <div className="p-4">
+                    <button onClick={logout} className="w-full flex items-center justify-center gap-2 px-4 py-3.5 rounded-2xl bg-gradient-to-b from-orange-500 to-orange-600 text-white font-semibold shadow-lg shadow-orange-500/30 hover:shadow-orange-500/50 hover:from-orange-600 hover:to-orange-700 transition-all">
+                        <Icon.signout width={20} height={20} />
                         Signout
                     </button>
                 </div>
@@ -126,22 +128,34 @@ export default function AdminLayoutClient({ children }: { children: React.ReactN
         }
     }, [user, isLoading, router]);
 
+    const fetchLayoutData = async () => {
+        try {
+            const [profileData, notificationsData] = await Promise.all([
+                getProfile(),
+                getNotifications()
+            ]);
+            setProfile(profileData);
+            setUnreadCount(notificationsData.filter(n => !n.read_at).length);
+            setNotifications(notificationsData);
+        } catch (err) {
+            console.error('Failed to load layout data', err);
+        }
+    };
+
+    const toggleNotifications = async () => {
+        if (!showNotifications) {
+            await fetchLayoutData();
+        }
+        setShowNotifications(!showNotifications);
+    };
+
     useEffect(() => {
-        const fetchLayoutData = async () => {
-            try {
-                const [profileData, notificationsData] = await Promise.all([
-                    getProfile(),
-                    getNotifications()
-                ]);
-                setProfile(profileData);
-                setUnreadCount(notificationsData.filter(n => !n.read_at).length);
-                setNotifications(notificationsData);
-            } catch (err) {
-                console.error('Failed to load layout data', err);
-            }
-        };
-        fetchLayoutData();
-    }, [pathname]);
+        if (authorized) {
+            fetchLayoutData();
+            const interval = setInterval(fetchLayoutData, 30000);
+            return () => clearInterval(interval);
+        }
+    }, [pathname, authorized]);
 
     // Close sidebar on route change
     useEffect(() => {
@@ -160,10 +174,10 @@ export default function AdminLayoutClient({ children }: { children: React.ReactN
             )}
 
             {/* Mobile Sidebar Drawer */}
-            <div className={`fixed top-0 left-0 h-full w-72 bg-white z-50 flex flex-col px-4 py-6 shadow-2xl transition-transform duration-300 lg:hidden ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+            <div className={`fixed top-0 left-0 h-full w-72 bg-white z-50 flex flex-col shadow-2xl transition-transform duration-300 lg:hidden rounded-r-3xl overflow-hidden ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
                 <button
                     onClick={() => setSidebarOpen(false)}
-                    className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-[#F5F4F1] text-[#5B6472] hover:text-[#101F38] transition-colors"
+                    className="absolute top-4 right-4 z-10 w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 text-slate-600 hover:text-slate-900 transition-colors"
                 >
                     <Icon.close width={16} height={16} />
                 </button>
@@ -171,115 +185,117 @@ export default function AdminLayoutClient({ children }: { children: React.ReactN
             </div>
 
             {/* Desktop Sidebar */}
-            <aside className="hidden lg:flex lg:flex-col w-64 shrink-0 bg-white rounded-[24px] shadow-sm px-4 py-6 h-[calc(100vh-32px)] overflow-hidden sticky top-4">
-                <SidebarContent pathname={pathname} logout={logout} />
+            <aside className="hidden lg:flex lg:flex-col fixed left-4 top-4 h-[calc(100vh-2rem)] w-72 z-40">
+                <div className="h-full rounded-3xl border border-slate-200/70 bg-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden">
+                    <SidebarContent pathname={pathname} logout={logout} />
+                </div>
             </aside>
 
             {/* Main column */}
-            <div className="flex-1 min-w-0 flex flex-col">
+            <div className="flex-1 min-w-0 flex flex-col lg:ml-[19rem]">
                 {/* Topbar */}
-                <header className="flex items-center gap-2 sm:gap-4 px-3 sm:px-6 lg:px-8 py-3 sm:py-4 mb-2">
+                <header className="flex items-center gap-2 sm:gap-4 px-3 sm:px-4 lg:px-6 py-3 sm:py-4 mb-2">
                     {/* Hamburger – mobile only */}
                     <button
                         onClick={() => setSidebarOpen(true)}
-                        className="lg:hidden w-10 h-10 rounded-full bg-white border border-[#ECE9E2] flex items-center justify-center text-[#5B6472] hover:text-[#101F38] transition-colors shrink-0"
+                        className="lg:hidden w-10 h-10 rounded-full bg-white border border-slate-200/50 flex items-center justify-center text-slate-500 hover:text-slate-700 transition-colors shrink-0"
                         aria-label="Open menu"
                     >
                         <Icon.menu width={18} height={18} />
                     </button>
 
-                    <div className="flex-1 relative min-w-0">
-                        <Icon.search width={16} height={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-[#B7B4AA]" />
+                    <div className="flex-1 relative min-w-0 ">
+                        <Icon.search width={16} height={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
                         <input
                             type="text"
                             placeholder="Search clients, cases, tickets..."
-                            className="w-full pl-11 pr-4 py-2.5 rounded-full border border-[#ECE9E2] bg-white text-sm text-[#101F38] placeholder-[#B7B4AA] outline-none focus:border-[#E3755D] transition-colors"
+                            className="w-full pl-11 pr-4 py-2 rounded-full border border-slate-200/50 bg-white text-sm text-slate-700 placeholder-slate-400 outline-none focus:border-slate-300 focus:bg-white focus:ring-1 focus:ring-slate-200 transition-colors"
                         />
                     </div>
 
-                    <button className="w-10 h-10 rounded-full bg-white border border-[#ECE9E2] flex items-center justify-center text-[#5B6472] hover:text-[#101F38] transition-colors shrink-0 hidden sm:flex">
-                        <Icon.grid width={17} height={17} />
+                    <button className="w-10 h-10 rounded-full bg-white border border-slate-200/50 flex items-center justify-center text-slate-500 hover:text-slate-700 transition-colors shrink-0 hidden sm:flex">
+                        <Icon.grid width={18} height={18} />
                     </button>
 
                     <div className="relative shrink-0">
-                        <button onClick={() => setShowNotifications(!showNotifications)} className="relative w-10 h-10 rounded-full bg-white border border-[#ECE9E2] flex items-center justify-center text-[#5B6472] hover:text-[#101F38] transition-colors">
-                            <Icon.bell width={17} height={17} />
+                        <button onClick={toggleNotifications} className="relative w-10 h-10 rounded-full bg-white border border-slate-200/50 flex items-center justify-center text-slate-500 hover:text-slate-700 transition-colors">
+                            <Icon.bell width={18} height={18} />
                             {unreadCount > 0 && (
-                                <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-[#E3755D] text-white text-[10px] font-bold flex items-center justify-center">
+                                <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-orange-500 text-white text-[10px] font-bold flex items-center justify-center shadow-sm">
                                     {unreadCount}
                                 </span>
                             )}
                         </button>
 
                         {showNotifications && (
-                            <div className="absolute right-0 mt-2 w-[calc(100vw-2rem)] sm:w-[360px] bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden z-50">
-                                <div className="px-5 py-3 border-b border-gray-100 flex justify-between items-center bg-[#F8F9FA]">
-                                    <h3 className="font-bold text-[#1B3A64] text-sm">Notifications</h3>
+                            <div className="absolute right-0 mt-2 w-[calc(100vw-2rem)] sm:w-[360px] bg-white rounded-xl shadow-lg border border-slate-200/50 overflow-hidden z-50">
+                                <div className="px-5 py-3 border-b border-slate-200/50 flex justify-between items-center bg-white/50">
+                                    <h3 className="font-semibold text-slate-900 text-sm">Notifications</h3>
                                     <div className="flex items-center gap-3">
-                                        <button onClick={async () => { await markAsRead(); const data = await getNotifications(); setNotifications(data); setUnreadCount(data.filter(n => !n.read_at).length); }} className="text-xs text-[#5A6579] hover:text-[#E3755D] font-medium">Mark all as read</button>
+                                        <button onClick={async () => { await markAsRead(); const data = await getNotifications(); setNotifications(data); setUnreadCount(data.filter(n => !n.read_at).length); }} className="text-xs text-slate-600 hover:text-orange-600 font-medium">Mark all as read</button>
                                     </div>
                                 </div>
                                 <div className="max-h-[320px] overflow-y-auto">
                                     {notifications.length === 0 && (
-                                        <div className="p-6 text-center text-sm text-[#5B6472]">No notifications</div>
+                                        <div className="p-6 text-center text-sm text-slate-500">No notifications</div>
                                     )}
                                     {notifications.map((n) => {
                                         const parsedData = typeof n.data === 'string' ? JSON.parse(n.data) : n.data;
                                         const isUnread = !n.read_at;
                                         return (
-                                            <div key={n.id} className={`p-4 transition-colors flex gap-3 items-start border-b border-gray-50 ${isUnread ? 'bg-[#FDFCFB]' : 'bg-white hover:bg-[#F9F8F6]'}`}>
+                                            <div key={n.id} className={`p-4 transition-colors flex gap-3 items-start border-b border-slate-100 ${isUnread ? 'bg-white/50' : 'bg-white'}`}>
                                                 <div className="mt-1 shrink-0">
                                                     {parsedData?.type === 'message' && (
-                                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={isUnread ? "#E3755D" : "#8A8F98"} strokeWidth="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={isUnread ? "#ea580c" : "#94a3b8"} strokeWidth="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
                                                     )}
                                                     {parsedData?.type === 'alert' && (
-                                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={isUnread ? "#E3755D" : "#8A8F98"} strokeWidth="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={isUnread ? "#ea580c" : "#94a3b8"} strokeWidth="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
                                                     )}
                                                     {parsedData?.type === 'system' && (
-                                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={isUnread ? "#101F38" : "#8A8F98"} strokeWidth="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+                                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={isUnread ? "#334155" : "#94a3b8"} strokeWidth="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
                                                     )}
                                                     {parsedData?.type === 'status' && (
-                                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={isUnread ? "#2F8A5F" : "#8A8F98"} strokeWidth="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={isUnread ? "#10b981" : "#94a3b8"} strokeWidth="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
                                                     )}
                                                     {!parsedData?.type && (
-                                                        <div className="w-2 h-2 mt-1 rounded-full shrink-0" style={{ background: isUnread ? '#E3755D' : 'transparent' }}></div>
+                                                        <div className="w-2 h-2 mt-1 rounded-full shrink-0" style={{ background: isUnread ? '#ea580c' : 'transparent' }}></div>
                                                     )}
                                                 </div>
                                                 <div className="flex-1 min-w-0">
                                                     <div className="flex justify-between items-start mb-1 gap-2">
-                                                        <p className={`text-sm ${isUnread ? 'font-black text-[#101F38]' : 'font-bold text-[#101F38]'}`}>{parsedData.title}</p>
-                                                        <span className="text-[10px] font-semibold text-[#8A8F98] whitespace-nowrap">{new Date(n.created_at).toLocaleString()}</span>
+                                                        <p className={`text-sm ${isUnread ? 'font-semibold text-slate-900' : 'font-medium text-slate-900'}`}>{parsedData.title}</p>
+                                                        <span className="text-[10px] font-medium text-slate-500 whitespace-nowrap">{new Date(n.created_at).toLocaleString()}</span>
                                                     </div>
-                                                    <p className={`text-sm ${isUnread ? 'text-[#101F38] font-medium' : 'text-[#5B6472]'}`}>{parsedData.text}</p>
+                                                    <p className={`text-sm ${isUnread ? 'text-slate-700' : 'text-slate-600'}`}>{parsedData.text}</p>
                                                 </div>
                                             </div>
                                         );
                                     })}
                                 </div>
-                                <div className="px-5 py-3 border-t border-gray-100 text-center bg-[#F8F9FA]">
-                                    <Link href="/admin/notifications" onClick={() => setShowNotifications(false)} className="text-xs font-bold text-[#E3755D] hover:text-[#C8634D]">
-                                        View all notifications
-                                    </Link>
+                                <div className="px-5 py-3 border-t border-slate-200/50 text-center bg-white/50">
+                                    <button onClick={async () => { await clearAllNotifications(); await fetchLayoutData(); setShowNotifications(false); }} className="text-xs font-semibold text-orange-600 hover:text-orange-700">
+                                        Clear notifications
+                                    </button>
                                 </div>
                             </div>
                         )}
                     </div>
 
-                    <Link href="/admin/profile" className="flex items-center gap-2 pl-1 pr-2 sm:pr-3 py-1 rounded-full bg-white border border-[#ECE9E2] hover:border-[#E3755D]/50 transition-colors shrink-0">
-                        <div className="w-8 h-8 rounded-full overflow-hidden bg-gradient-to-br from-[#F2A65A] to-[#5B3B8C] flex items-center justify-center text-white font-bold text-xs uppercase">
+                    <Link href="/admin/profile" className="flex items-center gap-2 pl-1 pr-3 py-1 rounded-full bg-white/50 border border-slate-200/50 hover:bg-slate-100 transition-colors shrink-0">
+                        <div className="w-8 h-8 rounded-full overflow-hidden bg-gradient-to-br from-orange-400 to-orange-500 flex items-center justify-center text-white font-bold text-xs uppercase">
                             {profile?.profile_picture_url ? (
                                 <img src={profile.profile_picture_url} alt={profile?.name || 'Profile'} className="h-full w-full object-cover object-center block rounded-full" />
                             ) : (
                                 profile?.name?.substring(0, 2) || 'AD'
                             )}
                         </div>
-                        <span className="text-sm font-semibold text-[#101F38] hidden sm:inline">{profile?.name || 'Loading...'}</span>
-                        <Icon.chevron width={14} height={14} className="text-[#8A8F98] hidden sm:block" />
+                        <span className="text-sm font-medium text-slate-700 hidden sm:inline">{profile?.name || 'Loading...'}</span>
+                        <Icon.chevron width={14} height={14} className="text-slate-500 hidden sm:block" />
                     </Link>
                 </header>
 
                 {/* Content */}
-                <main className="flex-1 overflow-y-auto px-3 sm:px-6 lg:px-8 pb-8">
+                <main className="flex-1 overflow-y-auto px-3 sm:px-4 lg:px-6 pb-8">
                     {children}
                 </main>
             </div>

@@ -61,8 +61,8 @@ export default function DashboardChatPage() {
         <div className={styles.container}>
             <div className={styles.header}>
                 <div>
-                    <h1 className={styles.headerTitle}>Live Chat Support</h1>
-                    <p className={styles.headerSubtitle}>Typically replies in under 5 minutes</p>
+                    <h1 className={styles.headerTitle}>Case Manager Support</h1>
+                    <p className={styles.headerSubtitle}>Typically replies within 24-48 hours</p>
                 </div>
             </div>
 

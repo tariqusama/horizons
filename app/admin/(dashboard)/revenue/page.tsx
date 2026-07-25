@@ -25,59 +25,8 @@ interface Transaction {
     status: TxStatus;
 }
 
-/**
- * Full transaction set (not just the 10 shown in "Recent Transactions").
- * Both breakdown charts below aggregate over this array using the correct
- * fields — `title` for service, `plan` for tier — rather than `status`,
- * which is what was producing the "paid: 100%" donut and the sparse,
- * mislabeled service bars.
- */
-const allTransactions: Transaction[] = [
-    { id: 'TRX-9231', title: 'Green Card Renewal', plan: 'Advanced Plan', date: 'Jul 17, 2026', amount: '$0.00', status: 'Completed' },
-    { id: 'TRX-9230', title: 'Green Card Renewal', plan: 'Advanced Plan', date: 'Jul 17, 2026', amount: '$0.00', status: 'Completed' },
-    { id: 'TRX-9229', title: 'Green Card Renewal', plan: 'Basic Plan', date: 'Jul 16, 2026', amount: '$0.00', status: 'Completed' },
-    { id: 'TRX-9228', title: 'Child Petition', plan: 'Advanced Plan', date: 'Jul 15, 2026', amount: '$789.99', status: 'Completed' },
-    { id: 'TRX-9227', title: 'Child Petition', plan: 'Advanced Plan', date: 'Jul 15, 2026', amount: '$0.00', status: 'Completed' },
-    { id: 'TRX-9226', title: 'Child Petition', plan: 'Advanced Plan', date: 'Jul 14, 2026', amount: '$0.00', status: 'Completed' },
-    { id: 'TRX-9225', title: 'Marriage Green Card', plan: 'Basic Plan', date: 'Jul 13, 2026', amount: '$0.00', status: 'Completed' },
-    { id: 'TRX-9224', title: 'K-1 Fiancé Visa', plan: 'Advanced Plan', date: 'Jul 12, 2026', amount: '$849.99', status: 'Completed' },
-    { id: 'TRX-9223', title: 'K-1 Fiancé Visa', plan: 'Basic Plan', date: 'Jul 12, 2026', amount: '$0.00', status: 'Completed' },
-    { id: 'TRX-9222', title: 'Green Card Renewal', plan: 'Basic Plan', date: 'Jul 11, 2026', amount: '$0.00', status: 'Completed' },
-    { id: 'TRX-9221', title: 'Parent Adjustment of Status', plan: 'Basic Plan', date: 'Jul 10, 2026', amount: '$0.00', status: 'Completed' },
-    { id: 'TRX-9220', title: 'Parent Adjustment of Status', plan: 'Basic Plan', date: 'Jul 9, 2026', amount: '$0.00', status: 'Completed' },
-    { id: 'TRX-9219', title: 'Spouse Petition', plan: 'Basic Plan', date: 'Jul 9, 2026', amount: '$0.00', status: 'Completed' },
-    { id: 'TRX-9218', title: 'Spouse Petition', plan: 'Advanced Plan', date: 'Jul 8, 2026', amount: '$0.00', status: 'Completed' },
-    { id: 'TRX-9217', title: 'Green Card Renewal', plan: 'Advanced Plan', date: 'Jul 8, 2026', amount: '$0.00', status: 'Completed' },
-    { id: 'TRX-9216', title: 'Child Petition', plan: 'Basic Plan', date: 'Jul 7, 2026', amount: '$0.00', status: 'Completed' },
-    { id: 'TRX-9215', title: 'Marriage Green Card', plan: 'Advanced Plan', date: 'Jul 7, 2026', amount: '$0.00', status: 'Completed' },
-    { id: 'TRX-9214', title: 'K-1 Fiancé Visa', plan: 'Advanced Plan', date: 'Jul 6, 2026', amount: '$0.00', status: 'Completed' },
-    { id: 'TRX-9213', title: 'Green Card Renewal', plan: 'Basic Plan', date: 'Jul 6, 2026', amount: '$0.00', status: 'Completed' },
-    { id: 'TRX-9212', title: 'Parent Adjustment of Status', plan: 'Advanced Plan', date: 'Jul 5, 2026', amount: '$0.00', status: 'Completed' },
-    { id: 'TRX-9211', title: 'Spouse Petition', plan: 'Basic Plan', date: 'Jul 5, 2026', amount: '$0.00', status: 'Completed' },
-    { id: 'TRX-9210', title: 'Green Card Renewal', plan: 'Advanced Plan', date: 'Jul 4, 2026', amount: '$0.00', status: 'Completed' },
-    { id: 'TRX-9209', title: 'Child Petition', plan: 'Advanced Plan', date: 'Jul 4, 2026', amount: '$0.00', status: 'Completed' },
-    { id: 'TRX-9208', title: 'Marriage Green Card', plan: 'Basic Plan', date: 'Jul 3, 2026', amount: '$0.00', status: 'Completed' },
-    { id: 'TRX-9207', title: 'K-1 Fiancé Visa', plan: 'Basic Plan', date: 'Jul 3, 2026', amount: '$0.00', status: 'Completed' },
-];
-
-// "Recent Transactions" only ever shows the latest slice of the full set
-const recentTransactions = allTransactions.slice(0, 10);
-
-const monthlyRevenue = [
-    { month: 'Feb', value: 920 },
-    { month: 'Mar', value: 1180 },
-    { month: 'Apr', value: 1005 },
-    { month: 'May', value: 1340 },
-    { month: 'Jun', value: 1260 },
-    { month: 'Jul', value: 1639.98 },
-];
-
-// Real funnel counts, independent of the transaction list above since
-// "applications" includes ones that never reached checkout.
-const APPLICATIONS_CREATED = 36;
-const PAYMENTS_COMPLETED = 25;
-const PENDING_PAYMENTS = 0;
-const CONVERSION_RATE = Math.round((PAYMENTS_COMPLETED / APPLICATIONS_CREATED) * 1000) / 10; // 69.4
+// We will dynamically fetch these from the API instead of using static arrays.
+// Constants removed.
 
 const COLOR_PALETTE = ['#2F8A5F', '#3A6FC4', '#C97A2B', '#7C5CBF', '#D6497A', '#B98A0A', '#5B6472'];
 
@@ -126,8 +75,8 @@ function RevenueChart({ data }: { data: { month: string; value: number }[] }) {
                 <rect x={w / 2 - barW / 2} y={pad} width={barW} height={h - pad * 2} rx="10" fill="url(#revFillSolid)" />
                 <defs>
                     <linearGradient id="revFillSolid" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#E3755D" />
-                        <stop offset="100%" stopColor="#F2A085" />
+                        <stop offset="0%" stopColor="#f97316" />
+                        <stop offset="100%" stopColor="#ea580c" />
                     </linearGradient>
                 </defs>
                 <text x={w / 2} y={pad - 10} textAnchor="middle" fontSize="15" fontWeight="800" fill="#101F38">
@@ -151,16 +100,16 @@ function RevenueChart({ data }: { data: { month: string; value: number }[] }) {
         <svg viewBox={`0 0 ${w} ${h}`} className="w-full h-[220px] overflow-visible">
             <defs>
                 <linearGradient id="revFill" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#E3755D" stopOpacity="0.18" />
-                    <stop offset="100%" stopColor="#E3755D" stopOpacity="0" />
+                    <stop offset="0%" stopColor="#f97316" stopOpacity="0.18" />
+                    <stop offset="100%" stopColor="#f97316" stopOpacity="0" />
                 </linearGradient>
             </defs>
             {[0, 1, 2, 3].map(i => (
                 <line key={i} x1={pad} x2={w - pad} y1={pad + (i * (h - pad * 1.5)) / 3} y2={pad + (i * (h - pad * 1.5)) / 3} stroke="#ECE9E2" strokeWidth="1" />
             ))}
             <path d={area} fill="url(#revFill)" />
-            <path d={line} fill="none" stroke="#E3755D" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-            {points.map((p, i) => <circle key={i} cx={p.x} cy={p.y} r="4" fill="#fff" stroke="#E3755D" strokeWidth="2.5" />)}
+            <path d={line} fill="none" stroke="#ea580c" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+            {points.map((p, i) => <circle key={i} cx={p.x} cy={p.y} r="4" fill="#fff" stroke="#ea580c" strokeWidth="2.5" />)}
             {data.map((d, i) => (
                 <text key={i} x={points[i].x} y={h - 8} textAnchor="middle" fontSize="11" fontWeight="700" fill="#8A8F98">{d.month}</text>
             ))}
@@ -208,7 +157,7 @@ function TierDonut({ byTier }: { byTier: { tier: string; revenue: number }[] }) 
         .map(b => ({
             name: b.tier,
             value: total > 0 ? Number(((b.revenue / total) * 100).toFixed(1)) : 0,
-            color: b.tier === 'Premium' ? '#E3755D' : '#101F38',
+            color: b.tier === 'Premium' ? '#f97316' : '#101F38',
         }))
         .filter(d => d.value > 0);
 
@@ -261,11 +210,11 @@ function TierDonut({ byTier }: { byTier: { tier: string; revenue: number }[] }) 
 }
 
 /* ---------- Conversion Funnel: stage bars scaled to the top of funnel, plus a rate summary ---------- */
-function ConversionFunnel() {
+function ConversionFunnel({ stats }: { stats?: RevenueData['funnel_stats'] }) {
     const data = [
-        { step: 'Applications Created', count: APPLICATIONS_CREATED, color: '#101F38' },
-        { step: 'Payments Completed', count: PAYMENTS_COMPLETED, color: '#2F8A5F' },
-        { step: 'Pending Payments', count: PENDING_PAYMENTS, color: '#B98A0A' },
+        { step: 'Applications Created', count: stats?.applications_created || 0, color: '#101F38' },
+        { step: 'Payments Completed', count: stats?.payments_completed || 0, color: '#2F8A5F' },
+        { step: 'Pending Payments', count: stats?.pending_payments || 0, color: '#B98A0A' },
     ];
     const max = Math.max(...data.map(d => d.count), 1);
     return (
@@ -286,7 +235,7 @@ function ConversionFunnel() {
             })}
             <div className="mt-2 rounded-xl px-4 py-3 flex items-center justify-between" style={{ backgroundColor: '#FBEFE8' }}>
                 <span className="text-sm font-bold text-[#C93500]">Conversion Rate</span>
-                <span className="text-lg font-black text-[#C93500]">{CONVERSION_RATE}%</span>
+                <span className="text-lg font-black text-[#C93500]">{stats?.conversion_rate || 0}%</span>
             </div>
         </div>
     );
@@ -296,18 +245,40 @@ function ChartEmptyState({ message }: { message: string }) {
     return <div className="flex items-center justify-center h-[220px] text-sm font-semibold text-[#B7B4AA]">{message}</div>;
 }
 
-const StatCard = ({ label, value, sublabel, icon, iconBg, iconColor }: { label: string; value: string; sublabel: string; icon: (p: any) => React.ReactElement; iconBg: string; iconColor: string; }) => (
-    <div className="bg-white rounded-2xl border border-[#ECE9E2] shadow-sm p-6">
-        <div className="flex items-start justify-between mb-5">
-            <p className="text-[11px] font-bold text-[#5B6472] uppercase tracking-wider">{label}</p>
-            <span className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style={{ backgroundColor: iconBg, color: iconColor }}>
-                {icon({ width: 15, height: 15 })}
-            </span>
+const StatCard = ({ label, value, sublabel, icon, iconBg, iconColor }: { label: string; value: string; sublabel: string; icon: (p: any) => React.ReactElement; iconBg: string; iconColor: string; }) => {
+    const gradientClass = {
+        '#DDF3E4': 'from-emerald-500/10 via-emerald-500/5 to-transparent',
+        '#EAF0FB': 'from-blue-500/10 via-blue-500/5 to-transparent',
+        '#EFE9FB': 'from-purple-500/10 via-purple-500/5 to-transparent',
+        '#FBEFE3': 'from-orange-500/10 via-orange-500/5 to-transparent',
+    }[iconBg] || 'from-slate-500/10 to-transparent';
+
+    const blurBg = {
+        '#DDF3E4': 'from-emerald-500/20',
+        '#EAF0FB': 'from-blue-500/20',
+        '#EFE9FB': 'from-purple-500/20',
+        '#FBEFE3': 'from-orange-500/20',
+    }[iconBg] || 'from-slate-500/20';
+
+    return (
+        <div className={`rounded-lg relative overflow-hidden border-0 bg-gradient-to-br ${gradientClass} shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_12px_40px_rgb(0,0,0,0.08)] transition-all duration-300 hover:scale-[1.02] animate-fade-in`}>
+            <div className={`absolute top-0 right-0 w-40 h-40 bg-gradient-to-br ${blurBg} to-transparent rounded-full blur-3xl opacity-60`}></div>
+            <div className={`absolute bottom-0 left-0 w-32 h-32 bg-gradient-to-tl ${blurBg} to-transparent rounded-full blur-2xl opacity-40`}></div>
+            <div className="p-6 flex flex-row items-center justify-between space-y-0 pb-3 relative z-10">
+                <h3 className="tracking-tight text-sm font-semibold text-slate-600">{label}</h3>
+                <div className="p-2.5 rounded-xl shadow-lg" style={{ backgroundColor: iconBg }}>
+                    <span style={{ color: iconColor }}>
+                        {icon({ width: 20, height: 20 })}
+                    </span>
+                </div>
+            </div>
+            <div className="p-6 pt-0 relative z-10">
+                <div className="text-3xl font-bold bg-gradient-to-br from-slate-900 to-slate-700 bg-clip-text text-transparent">{value}</div>
+                <p className="text-xs text-slate-600 mt-2 font-medium">{sublabel}</p>
+            </div>
         </div>
-        <h3 className="text-[26px] font-black text-[#101F38] tracking-tight leading-none mb-2">{value}</h3>
-        <p className="text-xs font-semibold text-[#B7B4AA]">{sublabel}</p>
-    </div>
-);
+    );
+};
 
 const TAB_COPY: Record<Tab, { title: string; subtitle: string }> = {
     'Revenue Trends': { title: 'Monthly Revenue', subtitle: 'Revenue trends over time' },
@@ -336,88 +307,186 @@ export default function RevenueDashboardPage() {
     const money = (n: number) => "$" + n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
     return (
-        <div className="max-w-[1400px] mx-auto w-full">
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+        <main className="flex-1 px-4 sm:px-6 pb-8 pt-2">
+            <div className="mb-6 px-1 flex items-start justify-between">
                 <div>
-                    <h1 className="text-2xl md:text-[28px] font-black text-[#101F38] tracking-tight mb-2">Revenue Dashboard</h1>
-                    <p className="text-[#5B6472] font-medium text-sm">Comprehensive revenue analytics and payment insights.</p>
+                    <h1 className="text-2xl font-bold text-slate-900">Revenue Dashboard</h1>
+                    <p className="text-sm text-slate-600 mt-1">Comprehensive revenue analytics and payment insights</p>
                 </div>
-                <button onClick={loadData} className="flex items-center gap-2 bg-white border border-[#ECE9E2] hover:border-[#101F38] text-[#101F38] px-4 py-2 rounded-xl font-bold text-sm transition-colors shadow-sm w-fit">
-                    <Icon.refresh width={14} height={14} />
+                <button onClick={loadData} className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-slate-200 bg-white hover:bg-slate-100 hover:text-slate-900 h-10 px-4 py-2 shrink-0">
+                    <Icon.refresh width={16} height={16} />
                     Refresh
                 </button>
             </div>
 
-            {/* Stat cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-                <StatCard label="Total Revenue" value={revenueData ? money(revenueData.stats.total_revenue) : "$0.00"} sublabel="This month" icon={Icon.dollar} iconBg="#DDF3E4" iconColor="#2F8A5F" />
-                <StatCard label="Revenue Growth" value={revenueData ? `${revenueData.stats.revenue_growth}%` : "0%"} sublabel="vs last month" icon={Icon.trend} iconBg="#EAF0FB" iconColor="#3A6FC4" />
-                <StatCard label="Active Subscriptions" value={revenueData ? String(revenueData.stats.active_subscriptions) : "0"} sublabel="Current purchases" icon={Icon.hash} iconBg="#EFE9FB" iconColor="#7C5CBF" />
-                <StatCard label="Conversion Rate" value={`${CONVERSION_RATE}%`} sublabel="Applications to paid" icon={Icon.percent} iconBg="#FBEFE3" iconColor="#C97A2B" />
-            </div>
-
-            {/* Tabs */}
-            <div className="flex gap-1 bg-[#F5F4F1] rounded-xl p-1 mb-6 w-fit overflow-x-auto max-w-full">
-                {TABS.map(tab => (
-                    <button
-                        key={tab}
-                        onClick={() => setActiveTab(tab)}
-                        className={`px-4 py-2 rounded-lg text-sm font-bold whitespace-nowrap transition-colors ${activeTab === tab ? 'bg-white text-[#101F38] shadow-sm' : 'text-[#5B6472] hover:text-[#101F38]'}`}
-                    >
-                        {tab}
-                    </button>
-                ))}
-            </div>
-
-            {/* Chart card */}
-            <div className="bg-white rounded-2xl border border-[#ECE9E2] shadow-sm p-6 mb-6">
-                <h2 className="font-bold text-[#101F38] text-lg mb-1">{TAB_COPY[activeTab].title}</h2>
-                <p className="text-[#5B6472] font-medium text-sm mb-2">{TAB_COPY[activeTab].subtitle}</p>
-
-                {activeTab === 'Revenue Trends' && (
-                    <>
-                        <RevenueChart data={monthlyRevenue} />
-                        <div className="flex items-center justify-center gap-2 mt-2">
-                            <span className="w-2.5 h-2.5 rounded-full bg-[#E3755D]"></span>
-                            <span className="text-xs font-bold text-[#5B6472]">Revenue ($)</span>
-                        </div>
-                    </>
-                )}
-
-                {activeTab === 'By Service' && <ServiceBreakdown byService={revenueData?.by_service || []} />}
-                {activeTab === 'By Tier' && <TierDonut byTier={revenueData?.by_tier || []} />}
-                {activeTab === 'Conversion Funnel' && <ConversionFunnel />}
-            </div>
-
-            {/* Recent Transactions */}
-            <div className="bg-white rounded-2xl border border-[#ECE9E2] shadow-sm overflow-hidden">
-                <div className="px-6 py-5 border-b border-[#ECE9E2] flex justify-between items-center bg-[#F9F8F6]">
-                    <div>
-                        <h2 className="font-bold text-[#101F38] text-lg">Recent Transactions</h2>
-                        <p className="text-[#5B6472] font-medium text-xs mt-0.5">Latest {recentTransactions.length} completed payments</p>
+            <div className="space-y-6">
+                {/* Tabs */}
+                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+                    <div style={{ animationDelay: '0ms' }}>
+                        <StatCard label="Total Revenue" value={revenueData ? money(revenueData.stats.total_revenue) : "$0.00"} sublabel="All time" icon={Icon.dollar} iconBg="#DDF3E4" iconColor="#2F8A5F" />
                     </div>
-                    <button className="text-sm font-bold text-[#E3755D] hover:underline shrink-0">View All</button>
+                    <div style={{ animationDelay: '100ms' }}>
+                        <StatCard label="Avg Transaction" value={revenueData ? money(revenueData.stats.total_revenue / Math.max(revenueData.funnel_stats?.payments_completed || 1, 1)) : "$0.00"} sublabel="Per payment" icon={Icon.trend} iconBg="#EAF0FB" iconColor="#3A6FC4" />
+                    </div>
+                    <div style={{ animationDelay: '200ms' }}>
+                        <StatCard label="Total Transactions" value={revenueData ? String(revenueData.funnel_stats?.payments_completed || 0) : "0"} sublabel="Completed payments" icon={Icon.hash} iconBg="#EFE9FB" iconColor="#7C5CBF" />
+                    </div>
+                    <div style={{ animationDelay: '300ms' }}>
+                        <StatCard label="Conversion Rate" value={`${revenueData?.funnel_stats?.conversion_rate || 0}%`} sublabel="Applications to paid" icon={Icon.percent} iconBg="#FBEFE3" iconColor="#C97A2B" />
+                    </div>
                 </div>
-                <div className="divide-y divide-[#ECE9E2]">
-                    {recentTransactions.map(trx => (
-                        <div key={trx.id} className="flex items-center justify-between px-6 py-4 hover:bg-[#F9F8F6] transition-colors">
-                            <div className="flex items-center gap-3 min-w-0">
-                                <div className="w-9 h-9 rounded-lg bg-[#F5F4F1] border border-[#ECE9E2] flex items-center justify-center text-[#5B6472] shrink-0">
-                                    <Icon.dollar width={14} height={14} />
-                                </div>
-                                <div className="min-w-0">
-                                    <p className="text-sm font-bold text-[#101F38] truncate">{trx.title} &ndash; {trx.plan}</p>
-                                    <p className="text-xs font-semibold text-[#8A8F98]">paid &middot; {trx.date}</p>
-                                </div>
-                            </div>
-                            <div className="text-right shrink-0 pl-4">
-                                <p className="text-sm font-black text-[#101F38]">{trx.amount}</p>
-                                <div className="mt-1"><StatusBadge status={trx.status} /></div>
-                            </div>
+
+                {/* Tabs */}
+                <div dir="ltr" data-orientation="horizontal" className="space-y-4">
+                    <div role="tablist" aria-orientation="horizontal" className="h-10 items-center justify-center text-slate-500 grid w-full grid-cols-4 bg-slate-100/30 p-1 rounded-xl" tabIndex={0}>
+                        {TABS.map(tab => (
+                            <button
+                                key={tab}
+                                role="tab"
+                                aria-selected={activeTab === tab}
+                                onClick={() => setActiveTab(tab)}
+                                className={`inline-flex items-center justify-center whitespace-nowrap px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 rounded-lg ${activeTab === tab ? 'bg-white text-slate-900 shadow-md' : 'text-slate-600'}`}
+                                tabIndex={-1}
+                            >
+                                {tab}
+                            </button>
+                        ))}
+                    </div>
+
+                    {/* Chart card */}
+                    <div className="rounded-lg border-0 bg-gradient-to-br from-slate-50 via-slate-50 to-slate-100/20 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_12px_40px_rgb(0,0,0,0.08)] transition-all duration-300">
+                        <div className="flex flex-col space-y-1.5 p-6">
+                            <h3 className="tracking-tight text-xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">{TAB_COPY[activeTab].title}</h3>
+                            <p className="text-slate-600 text-sm">{TAB_COPY[activeTab].subtitle}</p>
                         </div>
-                    ))}
+                        <div className="p-6 pt-6">
+                            {activeTab === 'Revenue Trends' && (
+                                <>
+                                    <RevenueChart data={revenueData?.monthly_revenue || []} />
+                                    <div className="flex items-center justify-center gap-2 mt-2">
+                                        <span className="w-2.5 h-2.5 rounded-full bg-blue-500"></span>
+                                        <span className="text-xs font-bold text-slate-600">Revenue ($)</span>
+                                    </div>
+                                </>
+                            )}
+
+                            {activeTab === 'By Service' && <ServiceBreakdown byService={revenueData?.by_service || []} />}
+                            {activeTab === 'By Tier' && <TierDonut byTier={revenueData?.by_tier || []} />}
+                            {activeTab === 'Conversion Funnel' && <ConversionFunnel stats={revenueData?.funnel_stats} />}
+                        </div>
+                    </div>
+                </div>
+
+                {/* Performance Leaderboard */}
+                <div className="rounded-lg border bg-card text-card-foreground shadow-sm">
+                    <div className="flex flex-col space-y-1.5 p-6">
+                        <h3 className="text-2xl font-semibold leading-none tracking-tight">Performance Leaderboard</h3>
+                        <p className="text-sm text-muted-foreground">Top performers by completed cases</p>
+                    </div>
+                    <div className="p-6 pt-0">
+                        <div className="space-y-4">
+                            {[
+                                {
+                                    rank: 1,
+                                    name: 'David Kim',
+                                    role: 'case manager',
+                                    completed: 55,
+                                    active: 7,
+                                    avg: '13d avg',
+                                    percent: 70,
+                                },
+                                {
+                                    rank: 2,
+                                    name: 'Emily Davis',
+                                    role: 'case manager',
+                                    completed: 52,
+                                    active: 6,
+                                    avg: '12d avg',
+                                    percent: 60,
+                                },
+                                {
+                                    rank: 3,
+                                    name: 'Alex Rodriguez',
+                                    role: 'case manager',
+                                    completed: 48,
+                                    active: 4,
+                                    avg: '11d avg',
+                                    percent: 40,
+                                },
+                                {
+                                    rank: 4,
+                                    name: 'Sarah Johnson',
+                                    role: 'immigration attorney',
+                                    completed: 45,
+                                    active: 8,
+                                    avg: '14d avg',
+                                    percent: 80,
+                                },
+                                {
+                                    rank: 5,
+                                    name: 'Lisa Wang',
+                                    role: 'immigration attorney',
+                                    completed: 42,
+                                    active: 9,
+                                    avg: '15d avg',
+                                    percent: 90,
+                                },
+                                {
+                                    rank: 6,
+                                    name: 'Mike Chen',
+                                    role: 'immigration attorney',
+                                    completed: 38,
+                                    active: 12,
+                                    avg: '16d avg',
+                                    percent: 120,
+                                },
+                            ].map((person) => (
+                                <div key={person.rank} className="flex items-center gap-4">
+                                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary font-bold">
+                                        {person.rank}
+                                    </div>
+                                    <div className="flex-1">
+                                        <div className="flex items-center gap-2">
+                                            <p className="font-medium">{person.name}</p>
+                                            <div className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold text-foreground">
+                                                {person.role}
+                                            </div>
+                                        </div>
+                                        <div className="mt-1 flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
+                                            <span className="flex items-center gap-1">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-3 w-3">
+                                                    <path d="M21.801 10A10 10 0 1 1 17 3.335"></path>
+                                                    <path d="m9 11 3 3L22 4"></path>
+                                                </svg>
+                                                {person.completed} completed
+                                            </span>
+                                            <span className="flex items-center gap-1">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-3 w-3">
+                                                    <path d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2"></path>
+                                                </svg>
+                                                {person.active} active
+                                            </span>
+                                            <span className="flex items-center gap-1">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-3 w-3">
+                                                    <circle cx="12" cy="12" r="10"></circle>
+                                                    <polyline points="12 6 12 12 16 14"></polyline>
+                                                </svg>
+                                                {person.avg}
+                                            </span>
+                                        </div>
+                                        <div className="mt-2 flex items-center gap-2">
+                                            <div aria-valuemax={100} aria-valuemin={0} role="progressbar" data-state="indeterminate" data-max="100" className="relative h-4 w-full flex-1 overflow-hidden rounded-full bg-secondary">
+                                                <div data-state="indeterminate" data-max="100" className="h-full w-full flex-1 transition-all bg-gradient-to-r from-orange-500 to-orange-600" style={{ transform: `translateX(-${100 - Math.min(person.percent, 100)}%)` }} />
+                                            </div>
+                                            <span className="w-12 text-right text-xs text-muted-foreground">{person.percent}%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
+        </main>
     );
 }

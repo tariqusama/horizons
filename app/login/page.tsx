@@ -94,7 +94,7 @@ export default function LoginPage() {
 
                 <div>
                   <label htmlFor="email" className="block text-sm font-medium text-[#101F38]">
-                    Email Address<span className="text-[#E3755D]">*</span>
+                    Email Address<span className="text-orange-500">*</span>
                   </label>
                   <div className="mt-1.5 relative">
                     <span className="absolute inset-y-0 left-3 flex items-center text-[#8A8F98]">
@@ -112,7 +112,7 @@ export default function LoginPage() {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="you@example.com"
-                      className="block w-full rounded-lg border border-[#E5E3DC] bg-white pl-10 pr-3 py-2.5 text-[15px] text-[#101F38] placeholder-[#B7B4AA] focus:outline-none focus:ring-2 focus:ring-[#E3755D]/40 focus:border-[#E3755D] transition-colors"
+                      className="block w-full rounded-lg border border-[#E5E3DC] bg-white pl-10 pr-3 py-2.5 text-[15px] text-[#101F38] placeholder-[#B7B4AA] focus:outline-none focus:ring-2 focus:ring-orange-500/40 focus:border-orange-500 transition-colors"
                     />
                   </div>
                 </div>
@@ -120,9 +120,9 @@ export default function LoginPage() {
                 <div>
                   <div className="flex items-center justify-between">
                     <label htmlFor="password" className="block text-sm font-medium text-[#101F38]">
-                      Password<span className="text-[#E3755D]">*</span>
+                      Password<span className="text-orange-500">*</span>
                     </label>
-                    <Link href="/forgot-password" className="text-sm font-semibold text-[#E3755D] hover:text-[#C93500] transition-colors">
+                    <Link href="/forgot-password" className="text-sm font-semibold text-orange-500 hover:text-[#C93500] transition-colors">
                       Forgot password?
                     </Link>
                   </div>
@@ -142,7 +142,7 @@ export default function LoginPage() {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder="••••••••••"
-                      className="block w-full rounded-lg border border-[#E5E3DC] bg-white pl-10 pr-10 py-2.5 text-[15px] text-[#101F38] placeholder-[#B7B4AA] focus:outline-none focus:ring-2 focus:ring-[#E3755D]/40 focus:border-[#E3755D] transition-colors"
+                      className="block w-full rounded-lg border border-[#E5E3DC] bg-white pl-10 pr-10 py-2.5 text-[15px] text-[#101F38] placeholder-[#B7B4AA] focus:outline-none focus:ring-2 focus:ring-orange-500/40 focus:border-orange-500 transition-colors"
                     />
                     <button
                       type="button"
@@ -172,7 +172,7 @@ export default function LoginPage() {
                     type="checkbox"
                     checked={rememberMe}
                     onChange={(e) => setRememberMe(e.target.checked)}
-                    className="h-4 w-4 rounded-full text-[#E3755D] focus:ring-[#E3755D] border-[#CBC8BF] cursor-pointer"
+                    className="h-4 w-4 rounded-full text-orange-500 focus:ring-orange-500 border-[#CBC8BF] cursor-pointer"
                   />
                   Remember me for 30 days
                 </label>
@@ -197,7 +197,7 @@ export default function LoginPage() {
 
               <p className="mt-4 text-center text-[15px] text-[#5B6472]">
                 Don&apos;t have an account?{' '}
-                <Link href="/signup" className="font-semibold text-[#E3755D] hover:text-[#C93500] transition-colors">
+                <Link href="/signup" className="font-semibold text-orange-500 hover:text-[#C93500] transition-colors">
                   Create new account
                 </Link>
               </p>
@@ -212,7 +212,7 @@ export default function LoginPage() {
           </div>
           <button
             aria-label="Open chat"
-            className="w-12 h-12 rounded-full bg-[#E3755D] hover:bg-[#C93500] transition-colors shadow-md flex items-center justify-center"
+            className="w-12 h-12 rounded-full bg-gradient-to-b from-orange-500 to-orange-600 hover:bg-[#C93500] transition-colors shadow-md flex items-center justify-center"
           >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />

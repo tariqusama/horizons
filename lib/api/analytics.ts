@@ -11,6 +11,11 @@ export const getRecentActivity = async () => {
 };
 
 export const getAnalyticsData = async () => {
-    const response = await api.get('/admin/analytics/data');
+    const response = await api.get('/admin/analytics/data', { params: { _t: new Date().getTime() } });
+    return response.data;
+};
+
+export const getControlCenterData = async () => {
+    const response = await api.get('/admin/control-center/data', { params: { _t: new Date().getTime() } });
     return response.data;
 };

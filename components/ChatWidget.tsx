@@ -84,7 +84,7 @@ export default function ChatWidget() {
       >
         <span className="text-sm font-semibold text-[#101F38]">Need help? Chat Nancy</span>
         <div className="relative">
-          <div className="w-10 h-10 bg-[#E3755D] rounded-full flex items-center justify-center text-white shadow-sm">
+          <div className="w-10 h-10 bg-gradient-to-b from-orange-500 to-orange-600 rounded-full flex items-center justify-center text-white shadow-sm">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
               <path d="M20 2H4C2.9 2 2 2.9 2 4V22L6 18H20C21.1 18 22 17.1 22 16V4C22 2.9 21.1 2 20 2Z" />
             </svg>
@@ -102,7 +102,7 @@ export default function ChatWidget() {
       {/* Header */}
       <div className="bg-[#101F38] p-4 flex justify-between items-center text-white">
         <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 bg-[#E3755D] rounded-full flex items-center justify-center font-bold text-lg">
+          <div className="w-10 h-10 bg-gradient-to-b from-orange-500 to-orange-600 rounded-full flex items-center justify-center font-bold text-lg">
             N
           </div>
           <div>
@@ -122,7 +122,7 @@ export default function ChatWidget() {
       <div className="flex-1 p-4 overflow-y-auto bg-[#FDFBF9] space-y-4 max-h-[400px] min-h-[300px]">
         {messages.map(msg => (
           <div key={msg.id} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
-            <div className={`max-w-[85%] rounded-2xl px-4 py-2.5 text-[14px] ${msg.sender === 'user' ? 'bg-[#E3755D] text-white rounded-br-sm' : 'bg-white text-[#101F38] border border-gray-100 shadow-sm rounded-bl-sm'}`}>
+            <div className={`max-w-[85%] rounded-2xl px-4 py-2.5 text-[14px] ${msg.sender === 'user' ? 'bg-gradient-to-b from-orange-500 to-orange-600 text-white rounded-br-sm' : 'bg-white text-[#101F38] border border-gray-100 shadow-sm rounded-bl-sm'}`}>
               {msg.text}
             </div>
           </div>
@@ -152,7 +152,7 @@ export default function ChatWidget() {
           <button
             type="submit"
             disabled={!input.trim() || isLoading}
-            className="w-10 h-10 bg-[#E3755D] rounded-full flex items-center justify-center text-white shrink-0 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#C93500] transition-colors"
+            className="w-10 h-10 bg-gradient-to-b from-orange-500 to-orange-600 rounded-full flex items-center justify-center text-white shrink-0 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#C93500] transition-colors"
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="ml-0.5">
               <line x1="22" y1="2" x2="11" y2="13"></line>

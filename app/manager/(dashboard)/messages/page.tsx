@@ -116,9 +116,20 @@ export default function ManagerMessagesPage() {
     }, [ticketRows, searchQuery, statusFilter, priorityFilter]);
 
     const totalTickets = cases.length;
-    const openTickets = cases.filter((app) => app.status !== 'resolved').length;
-    const inProgressTickets = cases.filter((app) => app.status === 'in-progress' || Number(app.progress.toString().replace('%', '')) < 100).length;
-    const resolvedTickets = cases.filter((app) => app.status === 'resolved' || Number(app.progress.toString().replace('%', '')) >= 100).length;
+
+    const resolvedTickets = cases.filter((app) => {
+        const s = (app.status || '').toLowerCase();
+        return ['completed', 'approved', 'rejected', 'resolved'].includes(s);
+    }).length;
+
+    const inProgressTickets = cases.filter((app) => {
+        const s = (app.status || '').toLowerCase();
+        const p = (app.progress || '').toLowerCase();
+        if (['completed', 'approved', 'rejected', 'resolved'].includes(s)) return false;
+        return p.includes('progress') || p.includes('review') || s.includes('review');
+    }).length;
+
+    const openTickets = totalTickets - resolvedTickets - inProgressTickets;
 
     const handleSend = async () => {
         if (!selectedCase || !messageDraft.trim()) return;
@@ -141,7 +152,6 @@ export default function ManagerMessagesPage() {
                     <h1 className="text-2xl font-black text-[#101F38]">Support Tickets</h1>
                     <p className="text-sm text-[#5B6472]">Manage and respond to user support tickets</p>
                 </div>
-                <div className="text-sm font-semibold text-[#5B6472]">Sign Out</div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
@@ -171,12 +181,12 @@ export default function ManagerMessagesPage() {
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         placeholder="Search tickets..."
-                        className="rounded-2xl border border-[#ECE9E2] bg-[#F7F5F0] px-4 py-3 text-sm text-[#101F38] outline-none focus:border-[#E3755D] focus:bg-white"
+                        className="rounded-2xl border border-[#ECE9E2] bg-[#F7F5F0] px-4 py-3 text-sm text-[#101F38] outline-none focus:border-orange-500 focus:bg-white"
                     />
                     <select
                         value={statusFilter}
                         onChange={(e) => setStatusFilter(e.target.value as StatusOption)}
-                        className="rounded-2xl border border-[#ECE9E2] bg-[#F7F5F0] px-4 py-3 text-sm text-[#101F38] outline-none focus:border-[#E3755D] focus:bg-white"
+                        className="rounded-2xl border border-[#ECE9E2] bg-[#F7F5F0] px-4 py-3 text-sm text-[#101F38] outline-none focus:border-orange-500 focus:bg-white"
                     >
                         {STATUS_OPTIONS.map((option) => (
                             <option key={option} value={option}>{option}</option>
@@ -185,7 +195,7 @@ export default function ManagerMessagesPage() {
                     <select
                         value={priorityFilter}
                         onChange={(e) => setPriorityFilter(e.target.value as PriorityOption)}
-                        className="rounded-2xl border border-[#ECE9E2] bg-[#F7F5F0] px-4 py-3 text-sm text-[#101F38] outline-none focus:border-[#E3755D] focus:bg-white"
+                        className="rounded-2xl border border-[#ECE9E2] bg-[#F7F5F0] px-4 py-3 text-sm text-[#101F38] outline-none focus:border-orange-500 focus:bg-white"
                     >
                         {PRIORITY_OPTIONS.map((option) => (
                             <option key={option} value={option}>{option}</option>
@@ -216,7 +226,7 @@ export default function ManagerMessagesPage() {
                                 key={ticket.id}
                                 type="button"
                                 onClick={() => setSelectedCaseId(ticket.id)}
-                                className={`w-full rounded-3xl border px-5 py-5 text-left transition-colors ${selectedCaseId === ticket.id ? 'border-[#E3755D] bg-[#FEF3EC]' : 'border-[#ECE9E2] bg-white hover:bg-[#F7F5F0]'}`}
+                                className={`w-full rounded-3xl border px-5 py-5 text-left transition-colors ${selectedCaseId === ticket.id ? 'border-orange-500 bg-[#FEF3EC]' : 'border-[#ECE9E2] bg-white hover:bg-[#F7F5F0]'}`}
                             >
                                 <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
                                     <div>
@@ -249,7 +259,7 @@ export default function ManagerMessagesPage() {
                                     key={app.id}
                                     type="button"
                                     onClick={() => setSelectedCaseId(app.id)}
-                                    className={`w-full rounded-2xl px-3 py-3 text-left transition-colors ${selectedCaseId === app.id ? 'bg-[#EDE5D8] border-[#E3755D]' : 'bg-white border border-[#ECE9E2] hover:bg-[#F7F5F0]'}`}
+                                    className={`w-full rounded-2xl px-3 py-3 text-left transition-colors ${selectedCaseId === app.id ? 'bg-[#EDE5D8] border-orange-500' : 'bg-white border border-[#ECE9E2] hover:bg-[#F7F5F0]'}`}
                                 >
                                     <p className="text-sm font-semibold text-[#101F38]">{app.user?.email || `Case #${app.id}`}</p>
                                     <p className="text-xs text-[#64748b] mt-1">{app.title || 'Assigned case'}</p>
@@ -286,12 +296,12 @@ export default function ManagerMessagesPage() {
                                 onChange={(e) => setMessageDraft(e.target.value)}
                                 onKeyDown={(e) => e.key === 'Enter' && handleSend()}
                                 placeholder="Type a message..."
-                                className="flex-1 rounded-full border border-[#ECE9E2] bg-[#F7F5F0] px-4 py-3 text-sm text-[#101F38] outline-none focus:border-[#E3755D] focus:bg-white"
+                                className="flex-1 rounded-full border border-[#ECE9E2] bg-[#F7F5F0] px-4 py-3 text-sm text-[#101F38] outline-none focus:border-orange-500 focus:bg-white"
                             />
                             <button
                                 onClick={handleSend}
                                 disabled={!messageDraft.trim() || isSending || !selectedCase}
-                                className="rounded-full bg-[#E3755D] px-5 py-3 text-sm font-semibold text-white hover:bg-[#D1644C] disabled:opacity-50"
+                                className="rounded-full bg-gradient-to-b from-orange-500 to-orange-600 px-5 py-3 text-sm font-semibold text-white hover:bg-[#D1644C] disabled:opacity-50"
                             >
                                 {isSending ? 'Sending...' : 'Send'}
                             </button>

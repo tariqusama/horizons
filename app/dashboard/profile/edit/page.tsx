@@ -89,7 +89,7 @@ export default function EditProfilePage() {
     <div className="w-full max-w-[1000px] mx-auto pb-24">
       <div className="mb-8 flex items-center justify-between">
         <div>
-          <Link href="/dashboard/profile" className="text-[#E3755D] hover:underline font-bold text-sm mb-2 inline-block">
+          <Link href="/dashboard/profile" className="text-orange-500 hover:underline font-bold text-sm mb-2 inline-block">
             &larr; Back to Profile
           </Link>
           <h1 className="text-3xl font-black text-[#1B3A64] mb-2">Edit Profile Settings</h1>
@@ -141,7 +141,7 @@ export default function EditProfilePage() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
-                className="w-full px-4 py-2.5 rounded-xl border border-[#ECE9E2] bg-[#F5F4F1] text-sm font-semibold text-[#101F38] outline-none focus:border-[#E3755D] focus:bg-white transition-all"
+                className="w-full px-4 py-2.5 rounded-xl border border-[#ECE9E2] bg-[#F5F4F1] text-sm font-semibold text-[#101F38] outline-none focus:border-orange-500 focus:bg-white transition-all"
               />
             </div>
             <div>
@@ -151,7 +151,7 @@ export default function EditProfilePage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full px-4 py-2.5 rounded-xl border border-[#ECE9E2] bg-[#F5F4F1] text-sm font-semibold text-[#101F38] outline-none focus:border-[#E3755D] focus:bg-white transition-all"
+                className="w-full px-4 py-2.5 rounded-xl border border-[#ECE9E2] bg-[#F5F4F1] text-sm font-semibold text-[#101F38] outline-none focus:border-orange-500 focus:bg-white transition-all"
               />
             </div>
             <div>
@@ -160,7 +160,7 @@ export default function EditProfilePage() {
                 type="tel"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
-                className="w-full px-4 py-2.5 rounded-xl border border-[#ECE9E2] bg-[#F5F4F1] text-sm font-semibold text-[#101F38] outline-none focus:border-[#E3755D] focus:bg-white transition-all"
+                className="w-full px-4 py-2.5 rounded-xl border border-[#ECE9E2] bg-[#F5F4F1] text-sm font-semibold text-[#101F38] outline-none focus:border-orange-500 focus:bg-white transition-all"
               />
             </div>
             <div className="pt-4 border-t border-[#ECE9E2]">
@@ -173,7 +173,7 @@ export default function EditProfilePage() {
                     type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full px-4 py-2.5 rounded-xl border border-[#ECE9E2] bg-[#F5F4F1] text-sm font-semibold text-[#101F38] outline-none focus:border-[#E3755D] focus:bg-white transition-all"
+                    className="w-full px-4 py-2.5 rounded-xl border border-[#ECE9E2] bg-[#F5F4F1] text-sm font-semibold text-[#101F38] outline-none focus:border-orange-500 focus:bg-white transition-all"
                   />
                 </div>
                 <div>
@@ -182,7 +182,7 @@ export default function EditProfilePage() {
                     type="password"
                     value={passwordConfirmation}
                     onChange={(e) => setPasswordConfirmation(e.target.value)}
-                    className="w-full px-4 py-2.5 rounded-xl border border-[#ECE9E2] bg-[#F5F4F1] text-sm font-semibold text-[#101F38] outline-none focus:border-[#E3755D] focus:bg-white transition-all"
+                    className="w-full px-4 py-2.5 rounded-xl border border-[#ECE9E2] bg-[#F5F4F1] text-sm font-semibold text-[#101F38] outline-none focus:border-orange-500 focus:bg-white transition-all"
                   />
                 </div>
               </div>

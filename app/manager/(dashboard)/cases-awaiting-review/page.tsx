@@ -106,7 +106,7 @@ export default function CasesAwaitingReviewPage() {
     if (isLoading) {
         return (
             <div className="max-w-[1200px] mx-auto w-full h-[60vh] flex items-center justify-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#E3755D]"></div>
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500"></div>
             </div>
         );
     }
@@ -136,7 +136,7 @@ export default function CasesAwaitingReviewPage() {
                             <select
                                 value={selectedCase?.id ?? ''}
                                 onChange={(e) => setSelectedCaseId(Number(e.target.value))}
-                                className="appearance-none rounded-full border border-[#ECE9E2] bg-white pl-4 pr-9 py-2.5 text-sm font-semibold text-[#101F38] focus:outline-none focus:ring-2 focus:ring-[#E3755D]/30 cursor-pointer"
+                                className="appearance-none rounded-full border border-[#ECE9E2] bg-white pl-4 pr-9 py-2.5 text-sm font-semibold text-[#101F38] focus:outline-none focus:ring-2 focus:ring-orange-500/30 cursor-pointer"
                             >
                                 {filteredCases.map((c) => (
                                     <option key={c.id} value={c.id}>
@@ -162,21 +162,21 @@ export default function CasesAwaitingReviewPage() {
                             <h3 className="text-lg font-bold text-[#101F38] mb-4">Client Information</h3>
                             <div className="space-y-3">
                                 <div className="flex items-center gap-3">
-                                    <Icon.user width={18} height={18} className="text-[#E3755D]" />
+                                    <Icon.user width={18} height={18} className="text-orange-500" />
                                     <div>
                                         <p className="text-xs text-[#8A8F98] font-medium">Name</p>
                                         <p className="text-sm font-semibold text-[#101F38]">{selectedCase.user?.name || 'N/A'}</p>
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-3">
-                                    <Icon.fileText width={18} height={18} className="text-[#E3755D]" />
+                                    <Icon.fileText width={18} height={18} className="text-orange-500" />
                                     <div>
                                         <p className="text-xs text-[#8A8F98] font-medium">Email</p>
                                         <p className="text-sm font-semibold text-[#101F38]">{selectedCase.user?.email || 'N/A'}</p>
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-3">
-                                    <Icon.clock width={18} height={18} className="text-[#E3755D]" />
+                                    <Icon.clock width={18} height={18} className="text-orange-500" />
                                     <div>
                                         <p className="text-xs text-[#8A8F98] font-medium">Submission Date</p>
                                         <p className="text-sm font-semibold text-[#101F38]">

@@ -61,7 +61,7 @@ export default function InviteUserPage() {
     return (
         <div className="max-w-[800px] mx-auto w-full pb-12">
             {/* Back Button */}
-            <Link href="/admin/users" className="flex items-center text-[#E3755D] font-bold text-sm mb-8 hover:text-[#C8634D] transition-colors group">
+            <Link href="/admin/users" className="flex items-center text-orange-500 font-bold text-sm mb-8 hover:text-orange-600 transition-colors group">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="mr-2 group-hover:-translate-x-1 transition-transform">
                     <line x1="19" y1="12" x2="5" y2="12"></line>
                     <polyline points="12 19 5 12 12 5"></polyline>
@@ -97,7 +97,7 @@ export default function InviteUserPage() {
                                     onChange={(e) => setEmail(e.target.value)}
                                     required
                                     placeholder="newmember@horizonpathways.us"
-                                    className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E3755D]/20 focus:border-[#E3755D] bg-gray-50 font-medium text-gray-900"
+                                    className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 bg-gray-50 font-medium text-gray-900"
                                 />
                                 <p className="text-xs text-gray-500 mt-2">Use a company email address</p>
                             </div>
@@ -111,7 +111,7 @@ export default function InviteUserPage() {
                                         onChange={(e) => setFirstName(e.target.value)}
                                         required
                                         placeholder="First name"
-                                        className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E3755D]/20 focus:border-[#E3755D] bg-gray-50 font-medium text-gray-900"
+                                        className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 bg-gray-50 font-medium text-gray-900"
                                     />
                                 </div>
                                 <div>
@@ -122,7 +122,7 @@ export default function InviteUserPage() {
                                         onChange={(e) => setLastName(e.target.value)}
                                         required
                                         placeholder="Last name"
-                                        className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E3755D]/20 focus:border-[#E3755D] bg-gray-50 font-medium text-gray-900"
+                                        className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 bg-gray-50 font-medium text-gray-900"
                                     />
                                 </div>
                             </div>
@@ -134,7 +134,7 @@ export default function InviteUserPage() {
                                     value={phone}
                                     onChange={(e) => setPhone(e.target.value)}
                                     placeholder="+1 (555) 000-0000"
-                                    className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E3755D]/20 focus:border-[#E3755D] bg-gray-50 font-medium text-gray-900"
+                                    className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 bg-gray-50 font-medium text-gray-900"
                                 />
                             </div>
                         </div>
@@ -147,7 +147,7 @@ export default function InviteUserPage() {
                         <div>
                             <label className="block text-sm font-bold text-gray-900 mb-4">Assign Role *</label>
                             <div className="space-y-3">
-                                <label className="flex items-start gap-4 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer hover:border-[#E3755D]/50 transition-colors">
+                                <label className="flex items-start gap-4 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer hover:border-orange-500/50 transition-colors">
                                     <input
                                         type="radio"
                                         name="role"
@@ -162,7 +162,7 @@ export default function InviteUserPage() {
                                     </div>
                                 </label>
 
-                                <label className="flex items-start gap-4 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer hover:border-[#E3755D]/50 transition-colors">
+                                <label className="flex items-start gap-4 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer hover:border-orange-500/50 transition-colors">
                                     <input
                                         type="radio"
                                         name="role"
@@ -177,7 +177,7 @@ export default function InviteUserPage() {
                                     </div>
                                 </label>
 
-                                <label className="flex items-start gap-4 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer hover:border-[#E3755D]/50 transition-colors">
+                                <label className="flex items-start gap-4 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer hover:border-orange-500/50 transition-colors">
                                     <input
                                         type="radio"
                                         name="role"
@@ -192,7 +192,7 @@ export default function InviteUserPage() {
                                     </div>
                                 </label>
 
-                                <label className="flex items-start gap-4 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer hover:border-[#E3755D]/50 transition-colors">
+                                <label className="flex items-start gap-4 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer hover:border-orange-500/50 transition-colors">
                                     <input
                                         type="radio"
                                         name="role"
@@ -207,7 +207,7 @@ export default function InviteUserPage() {
                                     </div>
                                 </label>
 
-                                <label className="flex items-start gap-4 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer hover:border-[#E3755D]/50 transition-colors">
+                                <label className="flex items-start gap-4 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer hover:border-orange-500/50 transition-colors">
                                     <input
                                         type="radio"
                                         name="role"

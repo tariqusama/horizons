@@ -35,7 +35,7 @@ export default function AboutImpact() {
             <div className="absolute inset-0 bg-gradient-to-br from-[#F8F9FA] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
             
             <div className="w-20 h-20 bg-gradient-to-br from-[#EAF1F8] to-[#D5E4F2] rounded-[24px] flex items-center justify-center mb-8 border border-white shadow-inner relative z-10 group-hover:scale-110 transition-transform duration-500">
-              <span className="material-icons text-[#E3755D] text-[36px]">{stat.icon}</span>
+              <span className="material-icons text-orange-500 text-[36px]">{stat.icon}</span>
             </div>
 
             <h3 className="text-5xl font-black text-[#1B3A64] mb-3 relative z-10">

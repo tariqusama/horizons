@@ -57,7 +57,7 @@ export default function ForgotPasswordPage() {
                 <form className="space-y-5" onSubmit={handleSubmit}>
                     <div>
                         <label htmlFor="email" className="block text-sm font-medium text-[#101F38]">
-                            Email Address<span className="text-[#E3755D]">*</span>
+                            Email Address<span className="text-orange-500">*</span>
                         </label>
                         <div className="mt-2">
                             <input
@@ -68,7 +68,7 @@ export default function ForgotPasswordPage() {
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 placeholder="you@example.com"
-                                className="w-full rounded-2xl border border-[#E5E3DC] bg-white px-4 py-3 text-sm text-[#101F38] placeholder-[#B7B4AA] focus:outline-none focus:ring-2 focus:ring-[#E3755D]/40 focus:border-[#E3755D] transition-colors"
+                                className="w-full rounded-2xl border border-[#E5E3DC] bg-white px-4 py-3 text-sm text-[#101F38] placeholder-[#B7B4AA] focus:outline-none focus:ring-2 focus:ring-orange-500/40 focus:border-orange-500 transition-colors"
                             />
                         </div>
                     </div>
@@ -85,7 +85,7 @@ export default function ForgotPasswordPage() {
                 <div className="mt-6 text-center text-sm text-[#5B6472]">
                     <p>
                         Remembered your password?{' '}
-                        <Link href="/login" className="font-semibold text-[#E3755D] hover:text-[#C93500]">
+                        <Link href="/login" className="font-semibold text-orange-500 hover:text-[#C93500]">
                             Sign in
                         </Link>
                     </p>

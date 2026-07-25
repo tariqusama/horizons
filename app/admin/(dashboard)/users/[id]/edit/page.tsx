@@ -136,7 +136,7 @@ export default function AdminEditUserProfilePage() {
     return (
         <div className="max-w-[900px] mx-auto pb-24 pt-8">
             <div className="mb-8">
-                <button onClick={() => router.back()} className="text-[#E3755D] hover:underline font-bold text-sm mb-2 inline-block">
+                <button onClick={() => router.back()} className="text-orange-500 hover:underline font-bold text-sm mb-2 inline-block">
                     &larr; Back to users
                 </button>
                 <h1 className="text-3xl font-black text-[#111827] mb-2">Edit User Profile</h1>
@@ -184,7 +184,7 @@ export default function AdminEditUserProfilePage() {
                                     value={name}
                                     onChange={(e) => setName(e.target.value)}
                                     required
-                                    className="w-full rounded-2xl border border-[#ECE9E2] bg-[#F8FAFB] px-4 py-3 text-sm font-medium text-[#111827] outline-none focus:border-[#E3755D] focus:bg-white transition"
+                                    className="w-full rounded-2xl border border-[#ECE9E2] bg-[#F8FAFB] px-4 py-3 text-sm font-medium text-[#111827] outline-none focus:border-orange-500 focus:bg-white transition"
                                 />
                             </div>
                             <div>
@@ -194,7 +194,7 @@ export default function AdminEditUserProfilePage() {
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     required
-                                    className="w-full rounded-2xl border border-[#ECE9E2] bg-[#F8FAFB] px-4 py-3 text-sm font-medium text-[#111827] outline-none focus:border-[#E3755D] focus:bg-white transition"
+                                    className="w-full rounded-2xl border border-[#ECE9E2] bg-[#F8FAFB] px-4 py-3 text-sm font-medium text-[#111827] outline-none focus:border-orange-500 focus:bg-white transition"
                                 />
                             </div>
                         </div>
@@ -206,7 +206,7 @@ export default function AdminEditUserProfilePage() {
                                     type="tel"
                                     value={phone}
                                     onChange={(e) => setPhone(e.target.value)}
-                                    className="w-full rounded-2xl border border-[#ECE9E2] bg-[#F8FAFB] px-4 py-3 text-sm font-medium text-[#111827] outline-none focus:border-[#E3755D] focus:bg-white transition"
+                                    className="w-full rounded-2xl border border-[#ECE9E2] bg-[#F8FAFB] px-4 py-3 text-sm font-medium text-[#111827] outline-none focus:border-orange-500 focus:bg-white transition"
                                 />
                             </div>
                             <div>
@@ -215,7 +215,7 @@ export default function AdminEditUserProfilePage() {
                                     type="text"
                                     value={country}
                                     onChange={(e) => setCountry(e.target.value)}
-                                    className="w-full rounded-2xl border border-[#ECE9E2] bg-[#F8FAFB] px-4 py-3 text-sm font-medium text-[#111827] outline-none focus:border-[#E3755D] focus:bg-white transition"
+                                    className="w-full rounded-2xl border border-[#ECE9E2] bg-[#F8FAFB] px-4 py-3 text-sm font-medium text-[#111827] outline-none focus:border-orange-500 focus:bg-white transition"
                                 />
                             </div>
                         </div>
@@ -226,7 +226,7 @@ export default function AdminEditUserProfilePage() {
                                 <select
                                     value={role}
                                     onChange={(e) => setRole(e.target.value)}
-                                    className="w-full rounded-2xl border border-[#ECE9E2] bg-[#F8FAFB] px-4 py-3 text-sm font-medium text-[#111827] outline-none focus:border-[#E3755D] focus:bg-white transition"
+                                    className="w-full rounded-2xl border border-[#ECE9E2] bg-[#F8FAFB] px-4 py-3 text-sm font-medium text-[#111827] outline-none focus:border-orange-500 focus:bg-white transition"
                                 >
                                     {roleOptions.length > 0 ? (
                                         roleOptions.map((option) => (
@@ -257,7 +257,7 @@ export default function AdminEditUserProfilePage() {
                                     type="password"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
-                                    className="w-full rounded-2xl border border-[#ECE9E2] bg-[#F8FAFB] px-4 py-3 text-sm font-medium text-[#111827] outline-none focus:border-[#E3755D] focus:bg-white transition"
+                                    className="w-full rounded-2xl border border-[#ECE9E2] bg-[#F8FAFB] px-4 py-3 text-sm font-medium text-[#111827] outline-none focus:border-orange-500 focus:bg-white transition"
                                 />
                             </div>
                             <div>
@@ -266,7 +266,7 @@ export default function AdminEditUserProfilePage() {
                                     type="password"
                                     value={passwordConfirmation}
                                     onChange={(e) => setPasswordConfirmation(e.target.value)}
-                                    className="w-full rounded-2xl border border-[#ECE9E2] bg-[#F8FAFB] px-4 py-3 text-sm font-medium text-[#111827] outline-none focus:border-[#E3755D] focus:bg-white transition"
+                                    className="w-full rounded-2xl border border-[#ECE9E2] bg-[#F8FAFB] px-4 py-3 text-sm font-medium text-[#111827] outline-none focus:border-orange-500 focus:bg-white transition"
                                 />
                             </div>
                         </div>
@@ -282,7 +282,7 @@ export default function AdminEditUserProfilePage() {
                             <button
                                 type="submit"
                                 disabled={saving}
-                                className="rounded-2xl bg-[#E3755D] px-6 py-3 text-sm font-bold text-white hover:bg-[#C8634D] transition disabled:opacity-60"
+                                className="rounded-2xl bg-gradient-to-b from-orange-500 to-orange-600 px-6 py-3 text-sm font-bold text-white hover:from-orange-600 hover:to-orange-700 transition disabled:opacity-60"
                             >
                                 {saving ? 'Saving...' : 'Save Changes'}
                             </button>

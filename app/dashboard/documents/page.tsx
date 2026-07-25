@@ -71,7 +71,7 @@ export default function DashboardDocumentsPage() {
             />
 
             <div className="rounded-[40px] bg-white p-10 shadow-[0_25px_70px_rgba(61,68,101,0.08)]">
-                <p className="text-sm uppercase tracking-[0.28em] text-[#E3755D]">Documents</p>
+                <p className="text-sm uppercase tracking-[0.28em] text-orange-500">Documents</p>
                 <h1 className="mt-4 text-4xl font-black text-[#1B3A64]">Upload and review files</h1>
                 <p className="mt-4 max-w-2xl text-base leading-7 text-[#5A6579]">
                     Keep your case moving by uploading documents early and checking the status of every required file.
@@ -102,7 +102,7 @@ export default function DashboardDocumentsPage() {
                                         onClick={() => triggerUpload(item.id)}
                                         disabled={uploadingId === item.id}
                                         className={item.status !== "Uploaded"
-                                            ? "rounded-full bg-[#E3755D] px-4 py-2 text-xs font-bold uppercase text-white transition-colors hover:bg-[#C8634D] disabled:opacity-50"
+                                            ? "rounded-full bg-gradient-to-b from-orange-500 to-orange-600 px-4 py-2 text-xs font-bold uppercase text-white transition-colors hover:from-orange-600 hover:to-orange-700 disabled:opacity-50"
                                             : "rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-[#1B3A64] hover:bg-slate-50 transition-colors disabled:opacity-50"}
                                     >
                                         {uploadingId === item.id ? '...' : (item.status !== "Uploaded" ? "Upload" : "Replace")}
@@ -115,13 +115,13 @@ export default function DashboardDocumentsPage() {
             </div>
 
             <div className="grid gap-6 lg:grid-cols-2">
-                <div className="rounded-[40px] bg-[#E3755D]/5 p-10 shadow-[0_25px_70px_rgba(61,68,101,0.08)]">
-                    <p className="text-sm uppercase tracking-[0.28em] text-[#E3755D]">Upload reminders</p>
+                <div className="rounded-[40px] bg-gradient-to-b from-orange-500 to-orange-600/5 p-10 shadow-[0_25px_70px_rgba(61,68,101,0.08)]">
+                    <p className="text-sm uppercase tracking-[0.28em] text-orange-500">Upload reminders</p>
                     <h2 className="mt-4 text-2xl font-black text-[#1B3A64]">Documents still needed</h2>
                     <ul className="mt-6 space-y-4 text-sm leading-7 text-[#5A6579]">
                         {documents.filter(d => d.status !== 'Uploaded').slice(0, 3).map(d => (
                             <li key={d.id} className="flex items-center gap-3">
-                                <span className="inline-flex h-3 w-3 rounded-full bg-[#E3755D]" />
+                                <span className="inline-flex h-3 w-3 rounded-full bg-gradient-to-b from-orange-500 to-orange-600" />
                                 {d.name}
                             </li>
                         ))}
@@ -129,7 +129,7 @@ export default function DashboardDocumentsPage() {
                 </div>
 
                 <div className="rounded-[40px] bg-white p-10 shadow-[0_25px_70px_rgba(61,68,101,0.08)]">
-                    <p className="text-sm uppercase tracking-[0.28em] text-[#E3755D]">Document tips</p>
+                    <p className="text-sm uppercase tracking-[0.28em] text-orange-500">Document tips</p>
                     <h2 className="mt-4 text-2xl font-black text-[#1B3A64]">Submit clean files the first time</h2>
                     <ul className="mt-6 space-y-4 text-sm text-[#5A6579]">
                         <li className="rounded-3xl border border-slate-200 bg-[#F8F6F3] p-4">

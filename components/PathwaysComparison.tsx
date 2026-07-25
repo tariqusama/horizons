@@ -66,7 +66,7 @@ export default function PathwaysComparison() {
 
   const CheckIcon = () => (
     <div className="w-10 h-10 rounded-2xl bg-[#EAF1F8] border border-blue-100/50 flex items-center justify-center mx-auto shadow-sm">
-      <span className="material-icons text-[#E3755D] text-[22px]">check_circle</span>
+      <span className="material-icons text-orange-500 text-[22px]">check_circle</span>
     </div>
   );
 
@@ -106,7 +106,7 @@ export default function PathwaysComparison() {
                 <tr key={idx} className="hover:bg-[#FDFBF9] transition-colors duration-300 group">
                   <td className="py-8 px-10">
                     <div className="flex flex-col">
-                      <span className="text-[12px] font-bold text-[#E3755D] uppercase tracking-wider mb-2">{pathway.category}</span>
+                      <span className="text-[12px] font-bold text-orange-500 uppercase tracking-wider mb-2">{pathway.category}</span>
                       <span className="font-bold text-[#1B3A64] text-[18px] mb-2">{pathway.title}</span>
                       <span className="text-[15px] text-[#5A6579] font-medium leading-relaxed">{pathway.description}</span>
                     </div>
@@ -136,7 +136,7 @@ export default function PathwaysComparison() {
         
         <div className="mt-8 text-center text-[15px] text-[#5A6579] max-w-3xl mx-auto font-medium bg-white p-6 rounded-[24px] border border-gray-100 shadow-sm inline-block">
           <p className="flex items-start justify-center space-x-3">
-            <span className="material-icons text-[#E3755D] text-[24px] shrink-0">info</span>
+            <span className="material-icons text-orange-500 text-[24px] shrink-0">info</span>
             <span className="leading-relaxed text-left">
               <strong>Note:</strong> Processing times and costs are approximate and may vary based on individual circumstances, USCIS service centers, and current processing backlogs. Always check the official USCIS website for the most up-to-date information.
             </span>

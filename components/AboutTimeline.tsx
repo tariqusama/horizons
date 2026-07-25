@@ -38,7 +38,7 @@ export default function AboutTimeline() {
     <section className="w-full py-32 px-4 md:px-8 lg:px-16 bg-gradient-to-br from-[#0A192F] via-[#122846] to-[#1B3A64] text-center relative overflow-hidden">
       
       {/* Decorative Glows */}
-      <div className="absolute top-1/4 left-0 w-[500px] h-[500px] bg-[#E3755D]/10 rounded-full blur-[100px] -translate-x-1/2 pointer-events-none"></div>
+      <div className="absolute top-1/4 left-0 w-[500px] h-[500px] bg-orange-500/10 rounded-full blur-[100px] -translate-x-1/2 pointer-events-none"></div>
       <div className="absolute bottom-1/4 right-0 w-[600px] h-[600px] bg-[#4375A3]/20 rounded-full blur-[120px] translate-x-1/3 pointer-events-none"></div>
 
       <div className="max-w-[1400px] mx-auto relative z-10">
@@ -62,7 +62,7 @@ export default function AboutTimeline() {
 
               <div className="w-5/12"></div>
 
-              <div className="z-20 w-12 h-12 flex items-center justify-center bg-gradient-to-br from-[#E3755D] to-[#C8634D] rounded-full shadow-[0_0_0_8px_rgba(10,25,47,0.8)] border border-white/20 group-hover:scale-125 transition-transform duration-500">
+              <div className="z-20 w-12 h-12 flex items-center justify-center bg-gradient-to-b from-orange-500 to-orange-600 rounded-full shadow-[0_0_0_8px_rgba(10,25,47,0.8)] border border-white/20 group-hover:scale-125 transition-transform duration-500">
                 <span className="material-icons text-white text-[20px]">{event.icon}</span>
               </div>
 
@@ -71,10 +71,10 @@ export default function AboutTimeline() {
                   <div className={`flex items-center space-x-5 mb-5 ${idx % 2 === 0 ? '' : 'flex-row-reverse space-x-reverse justify-end'}`}>
                     <h3 className="text-2xl font-bold text-white">{event.title}</h3>
                     <div className="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center border border-white/20 shrink-0 shadow-inner">
-                      <span className="material-icons text-[#E3755D] text-[28px] drop-shadow-sm">{event.icon}</span>
+                      <span className="material-icons text-orange-500 text-[28px] drop-shadow-sm">{event.icon}</span>
                     </div>
                   </div>
-                  <div className={`inline-flex items-center bg-[#E3755D]/20 border border-[#E3755D]/30 rounded-full px-5 py-1.5 mb-6 text-white font-bold text-[14px] shadow-sm ${idx % 2 === 0 ? '' : 'float-right'}`}>
+                  <div className={`inline-flex items-center bg-orange-500/20 border border-orange-500/30 rounded-full px-5 py-1.5 mb-6 text-white font-bold text-[14px] shadow-sm ${idx % 2 === 0 ? '' : 'float-right'}`}>
                     {event.year}
                   </div>
                   <div className="clear-both"></div>

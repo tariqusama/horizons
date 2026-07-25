@@ -66,7 +66,7 @@ export default function WhyChooseProcess() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {reasons.map((reason, idx) => (
             <div key={idx} className={`bg-white rounded-[24px] p-8 shadow-[0_8px_30px_rgb(0,0,0,0.06)] border ${idx === 1 ? 'border-orange-400 border-2' : 'border-gray-100'} flex flex-col items-center hover:-translate-y-1 transition-transform`}>
-              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#E3755D] to-[#1B3A64] flex items-center justify-center mb-6 shadow-lg">
+              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-500 to-[#1B3A64] flex items-center justify-center mb-6 shadow-lg">
                 {reason.icon}
               </div>
               <h3 className="text-xl font-bold text-[#1B3A64] mb-4">{reason.title}</h3>

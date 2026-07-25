@@ -5,7 +5,7 @@ export default function AboutJourney() {
     <section className="w-full py-32 px-4 md:px-8 lg:px-16 bg-white relative overflow-hidden">
       
       {/* Decorative Glow */}
-      <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[#E3755D]/5 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+      <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-gradient-to-b from-orange-500 to-orange-600/5 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
 
       <div className="max-w-[1400px] mx-auto text-center relative z-10">
         <div className="inline-flex items-center bg-[#EAF1F8] rounded-full px-6 py-2 mb-8 border border-blue-100/50 shadow-sm">
@@ -20,7 +20,7 @@ export default function AboutJourney() {
           <div className="w-full lg:w-1/2 space-y-8">
             <div className="bg-white rounded-[40px] p-10 shadow-[0_20px_40px_-15px_rgba(27,58,100,0.08)] border border-gray-100 flex items-start space-x-6 hover:-translate-y-2 transition-all duration-300 group">
               <div className="w-16 h-16 rounded-[24px] bg-[#F8F9FA] flex items-center justify-center border border-gray-100 shadow-inner shrink-0 group-hover:bg-[#EAF1F8] transition-colors duration-300">
-                <span className="material-icons text-[#E3755D] text-[32px]">flight_takeoff</span>
+                <span className="material-icons text-orange-500 text-[32px]">flight_takeoff</span>
               </div>
               <p className="text-[#5A6579] font-medium leading-relaxed text-[17px] mt-1">
                 Horizon Pathways started with one person's story. Our founder came to America as an immigrant and quickly hit the same wall most people do — the system is confusing, the legal fees are out of reach, and one wrong form can cost you everything.
@@ -29,7 +29,7 @@ export default function AboutJourney() {
 
             <div className="bg-white rounded-[40px] p-10 shadow-[0_20px_40px_-15px_rgba(27,58,100,0.08)] border border-gray-100 flex items-start space-x-6 hover:-translate-y-2 transition-all duration-300 group">
               <div className="w-16 h-16 rounded-[24px] bg-[#F8F9FA] flex items-center justify-center border border-gray-100 shadow-inner shrink-0 group-hover:bg-[#EAF1F8] transition-colors duration-300">
-                <span className="material-icons text-[#E3755D] text-[32px]">diversity_1</span>
+                <span className="material-icons text-orange-500 text-[32px]">diversity_1</span>
               </div>
               <p className="text-[#5A6579] font-medium leading-relaxed text-[17px] mt-1">
                 He figured it out the hard way — and once he did, friends started asking for help. Then friends of friends. Word spread fast, transforming a personal mission into a professional service helping thousands.

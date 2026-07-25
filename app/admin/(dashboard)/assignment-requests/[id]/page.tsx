@@ -27,7 +27,7 @@ export default function AssignmentRequestDetail({ params }: { params: { id: stri
 
     if (loading) return (
         <div className="max-w-[1000px] mx-auto w-full py-12 text-center">
-            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-[#E3755D] mx-auto mb-4"></div>
+            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-orange-500 mx-auto mb-4"></div>
             <p className="text-sm text-[#5B6472]">Loading request...</p>
         </div>
     );
@@ -35,7 +35,7 @@ export default function AssignmentRequestDetail({ params }: { params: { id: stri
     if (!request) return (
         <div className="max-w-[1000px] mx-auto w-full py-12 text-center">
             <p className="text-sm text-red-600">Assignment request not found.</p>
-            <Link href="/admin/assignment-requests" className="text-sm text-[#E3755D] font-semibold">Back</Link>
+            <Link href="/admin/assignment-requests" className="text-sm text-orange-500 font-semibold">Back</Link>
         </div>
     );
 
@@ -46,7 +46,7 @@ export default function AssignmentRequestDetail({ params }: { params: { id: stri
                     <h1 className="text-2xl font-black text-[#101F38]">Assignment Request #{request.id}</h1>
                     <p className="text-sm text-[#5B6472]">Requested for application {request.application?.receipt_number || request.application_id}</p>
                 </div>
-                <Link href="/admin/assignment-requests" className="text-sm text-[#E3755D] font-semibold">← Back to list</Link>
+                <Link href="/admin/assignment-requests" className="text-sm text-orange-500 font-semibold">← Back to list</Link>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

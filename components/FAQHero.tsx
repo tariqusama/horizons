@@ -41,7 +41,7 @@ export default function FAQHero() {
             placeholder="Search for answers..." 
             className="w-full bg-transparent border-none outline-none px-4 py-3 text-[#1B3A64] font-medium placeholder:text-gray-400"
           />
-          <button className="bg-[#E3755D] hover:bg-[#C8634D] text-white px-8 py-3 rounded-xl font-bold transition-colors">
+          <button className="bg-gradient-to-b from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-8 py-3 rounded-xl font-bold transition-colors">
             Search
           </button>
         </div>

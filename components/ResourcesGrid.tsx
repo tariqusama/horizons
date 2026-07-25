@@ -139,7 +139,7 @@ export default function ResourcesGrid() {
           return (
             <div key={idx} className="bg-white rounded-[32px] p-8 border border-gray-100 shadow-[0_15px_30px_-10px_rgba(27,58,100,0.08)] hover:-translate-y-2 hover:shadow-[0_25px_50px_-12px_rgba(27,58,100,0.12)] transition-all duration-300 flex flex-col h-full group">
               <div className="flex items-center justify-between mb-8">
-                <span className={`inline-flex items-center space-x-2 px-4 py-1.5 rounded-full text-[12px] font-bold uppercase tracking-wider bg-[#FDFBF9] border border-gray-200/60 shadow-inner text-[#E3755D]`}>
+                <span className={`inline-flex items-center space-x-2 px-4 py-1.5 rounded-full text-[12px] font-bold uppercase tracking-wider bg-[#FDFBF9] border border-gray-200/60 shadow-inner text-orange-500`}>
                   <span className="material-icons text-[16px]">{res.icon}</span>
                   <span>{res.type}</span>
                 </span>
@@ -148,7 +148,7 @@ export default function ResourcesGrid() {
                 </span>
               </div>
               
-              <h3 className="text-[#1B3A64] font-bold text-[20px] mb-4 leading-snug group-hover:text-[#E3755D] transition-colors">
+              <h3 className="text-[#1B3A64] font-bold text-[20px] mb-4 leading-snug group-hover:text-orange-500 transition-colors">
                 {res.title}
               </h3>
               
@@ -157,7 +157,7 @@ export default function ResourcesGrid() {
               </p>
               
               <div className="pt-5 border-t border-gray-100 flex items-center justify-between mt-auto">
-                <span className="text-[#1B3A64] font-bold text-[14px] uppercase hover:text-[#E3755D] transition-colors cursor-pointer flex items-center space-x-2">
+                <span className="text-[#1B3A64] font-bold text-[14px] uppercase hover:text-orange-500 transition-colors cursor-pointer flex items-center space-x-2">
                   <span>{res.action}</span>
                   <span className="material-icons text-[18px]">arrow_forward</span>
                 </span>

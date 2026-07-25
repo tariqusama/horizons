@@ -158,7 +158,7 @@ export default function AdminUsersPage() {
                         <p className="text-[32px] font-black text-gray-900 leading-none">{totalUsers}</p>
                         <p className="text-xs font-medium text-gray-400 mt-2">Registered accounts</p>
                     </div>
-                    <div className="w-10 h-10 rounded-full bg-[#E3755D]/10 text-[#E3755D] flex items-center justify-center shrink-0">
+                    <div className="w-10 h-10 rounded-full bg-orange-500/10 text-orange-500 flex items-center justify-center shrink-0">
                         <Icon.userPlus width={17} height={17} />
                     </div>
                 </div>
@@ -209,7 +209,7 @@ export default function AdminUsersPage() {
                             value={search}
                             onChange={(e) => { setSearch(e.target.value); setPage(1); }}
                             placeholder="Search by name or email..."
-                            className="w-full bg-white border border-gray-200 rounded-lg px-4 py-2.5 pl-10 text-sm focus:outline-none focus:ring-2 focus:ring-[#E3755D]/50 shadow-sm font-medium text-gray-900"
+                            className="w-full bg-white border border-gray-200 rounded-lg px-4 py-2.5 pl-10 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50 shadow-sm font-medium text-gray-900"
                         />
                         <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
                             <Icon.search width={16} height={16} />
@@ -232,7 +232,7 @@ export default function AdminUsersPage() {
                                 <select
                                     value={roleFilter}
                                     onChange={(e) => { setRoleFilter(e.target.value); setPage(1); }}
-                                    className="w-full bg-white border border-gray-200 rounded-lg px-4 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#E3755D]/50"
+                                    className="w-full bg-white border border-gray-200 rounded-lg px-4 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-500/50"
                                 >
                                     <option>All Roles</option>
                                     <option>Super Admin</option>
@@ -248,7 +248,7 @@ export default function AdminUsersPage() {
                                 <select
                                     value={statusFilter}
                                     onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }}
-                                    className="w-full bg-white border border-gray-200 rounded-lg px-4 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#E3755D]/50"
+                                    className="w-full bg-white border border-gray-200 rounded-lg px-4 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-500/50"
                                 >
                                     <option>All Statuses</option>
                                     <option>Active</option>
@@ -269,7 +269,7 @@ export default function AdminUsersPage() {
                                 </button>
                                 <button
                                     onClick={() => setShowFilters(false)}
-                                    className="w-full bg-[#E3755D] text-white rounded-lg px-4 py-2 text-sm font-semibold hover:bg-[#C8634D] transition-colors"
+                                    className="w-full bg-gradient-to-b from-orange-500 to-orange-600 text-white rounded-lg px-4 py-2 text-sm font-semibold hover:from-orange-600 hover:to-orange-700 transition-colors"
                                 >
                                     Close
                                 </button>

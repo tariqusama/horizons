@@ -68,7 +68,7 @@ export default function AuditLogsPage() {
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                             placeholder="Search by IP, user, or action..."
-                            className="w-full pl-9 pr-4 py-2 rounded-xl border border-[#ECE9E2] bg-white text-sm text-[#101F38] placeholder-[#B7B4AA] outline-none focus:border-[#E3755D] transition-all"
+                            className="w-full pl-9 pr-4 py-2 rounded-xl border border-[#ECE9E2] bg-white text-sm text-[#101F38] placeholder-[#B7B4AA] outline-none focus:border-orange-500 transition-all"
                         />
                     </div>
                     <div className="flex items-center gap-2">

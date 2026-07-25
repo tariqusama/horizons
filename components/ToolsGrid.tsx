@@ -80,18 +80,18 @@ export default function ToolsGrid() {
           {tools.map((tool, idx) => (
             <div key={idx} className="bg-white rounded-[40px] p-10 border border-gray-100 shadow-[0_20px_40px_-15px_rgba(27,58,100,0.08)] relative flex flex-col hover:-translate-y-3 hover:shadow-[0_40px_60px_-15px_rgba(27,58,100,0.12)] transition-all duration-500 group">
               {tool.isPopular && (
-                <div className="absolute -top-5 right-8 bg-gradient-to-r from-[#E3755D] to-[#C8634D] text-white text-[12px] font-bold px-5 py-2.5 rounded-full flex items-center shadow-[0_10px_20px_rgba(227,117,93,0.3)] uppercase tracking-wider z-10">
+                <div className="absolute -top-5 right-8 bg-gradient-to-b from-orange-500 to-orange-600 text-white text-[12px] font-bold px-5 py-2.5 rounded-full flex items-center shadow-[0_10px_20px_rgba(227,117,93,0.3)] uppercase tracking-wider z-10">
                   <span className="material-icons text-[16px] mr-1.5">star</span>
                   Most Popular
                 </div>
               )}
 
               <div className="mb-8 flex-grow">
-                <h3 className="text-[24px] font-bold text-[#1B3A64] mb-4 group-hover:text-[#E3755D] transition-colors leading-snug">{tool.title}</h3>
+                <h3 className="text-[24px] font-bold text-[#1B3A64] mb-4 group-hover:text-orange-500 transition-colors leading-snug">{tool.title}</h3>
                 <p className="text-[#5A6579] font-medium leading-relaxed mb-8 text-[16px] min-h-[50px]">{tool.description}</p>
                 
                 <div className="flex items-center space-x-2 text-[14px] font-bold text-[#1B3A64] mb-8 bg-[#FDFBF9] inline-flex px-4 py-2 rounded-xl border border-gray-100 shadow-inner">
-                  <span className="material-icons text-[#E3755D] text-[20px]">schedule</span>
+                  <span className="material-icons text-orange-500 text-[20px]">schedule</span>
                   <span>{tool.time}</span>
                 </div>
 

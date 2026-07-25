@@ -26,7 +26,7 @@ export default function AnalyticsPage() {
     if (isLoading) {
         return (
             <div className="max-w-[1200px] mx-auto w-full h-[60vh] flex items-center justify-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#E3755D]"></div>
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500"></div>
             </div>
         );
     }
@@ -48,6 +48,39 @@ export default function AnalyticsPage() {
     const topTypes = Object.entries(casesByType)
         .sort((a, b) => b[1] - a[1])
         .slice(0, 4);
+
+    let avgProcessingTime = '0.0';
+    const processedCasesArr = cases.filter(c => c.status === 'Approved' || c.status === 'Completed');
+    if (processedCasesArr.length > 0) {
+        const totalDays = processedCasesArr.reduce((sum, c) => {
+            const start = new Date(c.created_at).getTime();
+            const end = new Date((c as any).updated_at || c.created_at).getTime();
+            return sum + Math.max((end - start) / (1000 * 60 * 60 * 24), 0);
+        }, 0);
+        avgProcessingTime = (totalDays / processedCasesArr.length).toFixed(1);
+    }
+
+    const last5Days = [...Array(5)].map((_, i) => {
+        const d = new Date();
+        d.setDate(d.getDate() - (4 - i));
+        d.setHours(0, 0, 0, 0);
+        return d;
+    });
+
+    const volumeData = last5Days.map(date => {
+        const nextDay = new Date(date);
+        nextDay.setDate(nextDay.getDate() + 1);
+        const count = cases.filter(c => {
+            const createdAt = new Date(c.created_at);
+            return createdAt >= date && createdAt < nextDay;
+        }).length;
+        
+        return {
+            label: date.toLocaleDateString('en-US', { weekday: 'short' }),
+            count
+        };
+    });
+    const maxVolume = Math.max(...volumeData.map(v => v.count), 1);
 
     return (
         <div className="max-w-[1200px] mx-auto w-full pb-12">
@@ -76,7 +109,7 @@ export default function AnalyticsPage() {
                 <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm">
                     <p className="text-gray-500 text-sm font-semibold uppercase tracking-wide mb-1">Average Processing Time</p>
                     <div className="flex items-end space-x-3">
-                        <p className="text-4xl font-black text-gray-900">2.4</p>
+                        <p className="text-4xl font-black text-gray-900">{avgProcessingTime}</p>
                         <p className="text-gray-500 font-medium mb-1">days</p>
                     </div>
                     <p className="text-sm text-green-600 font-bold mt-4 flex items-center gap-1">
@@ -118,30 +151,21 @@ export default function AnalyticsPage() {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                {/* Volume Chart Placeholder */}
+                {/* Volume Chart */}
                 <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
                     <h2 className="text-lg font-bold text-gray-900 mb-6 border-b border-gray-100 pb-4">Processing Volume</h2>
                     <div className="h-64 flex items-end justify-between space-x-2 pt-4">
-                        {/* Mock Bars */}
-                        <div className="w-full bg-blue-50 rounded-t-sm h-[40%] relative group">
-                            <div className="absolute inset-x-0 bottom-[-24px] text-center text-xs font-bold text-gray-400">Mon</div>
-                            <div className="absolute inset-0 bg-[#E3755D] opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                        </div>
-                        <div className="w-full bg-blue-50 rounded-t-sm h-[65%] relative group">
-                            <div className="absolute inset-x-0 bottom-[-24px] text-center text-xs font-bold text-gray-400">Tue</div>
-                            <div className="absolute inset-0 bg-[#E3755D] opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                        </div>
-                        <div className="w-full bg-blue-50 rounded-t-sm h-[85%] relative group">
-                            <div className="absolute inset-x-0 bottom-[-24px] text-center text-xs font-bold text-gray-400">Wed</div>
-                            <div className="absolute inset-0 bg-[#E3755D] opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                        </div>
-                        <div className="w-full bg-[#111827] rounded-t-sm h-[50%] relative group">
-                            <div className="absolute inset-x-0 bottom-[-24px] text-center text-xs font-bold text-gray-900">Thu</div>
-                        </div>
-                        <div className="w-full bg-blue-50 rounded-t-sm h-[70%] relative group">
-                            <div className="absolute inset-x-0 bottom-[-24px] text-center text-xs font-bold text-gray-400">Fri</div>
-                            <div className="absolute inset-0 bg-[#E3755D] opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                        </div>
+                        {volumeData.map((v, i) => {
+                            const heightPct = Math.max((v.count / maxVolume) * 100, 5); // 5% min height so it's visible
+                            const isToday = i === volumeData.length - 1;
+                            return (
+                                <div key={i} className={`w-full ${isToday ? 'bg-[#111827]' : 'bg-blue-50'} rounded-t-sm relative group`} style={{ height: `${heightPct}%` }}>
+                                    <div className={`absolute inset-x-0 bottom-[-24px] text-center text-xs font-bold ${isToday ? 'text-gray-900' : 'text-gray-400'}`}>{v.label}</div>
+                                    {!isToday && <div className="absolute inset-0 bg-gradient-to-b from-orange-500 to-orange-600 opacity-0 group-hover:opacity-100 transition-opacity"></div>}
+                                    <div className="absolute -top-6 inset-x-0 text-center text-xs font-bold text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity">{v.count}</div>
+                                </div>
+                            );
+                        })}
                     </div>
                 </div>
 
@@ -154,7 +178,7 @@ export default function AnalyticsPage() {
                         ) : (
                             topTypes.map(([type, count], index) => {
                                 const percentage = Math.round((count / totalCases) * 100);
-                                const colors = ['bg-[#E3755D]', 'bg-[#111827]', 'bg-blue-400', 'bg-gray-400'];
+                                const colors = ['bg-gradient-to-b from-orange-500 to-orange-600', 'bg-[#111827]', 'bg-blue-400', 'bg-gray-400'];
                                 return (
                                     <div key={type}>
                                         <div className="flex justify-between text-sm font-bold text-gray-900 mb-2">

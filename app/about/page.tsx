@@ -27,7 +27,7 @@ export default function AboutPage() {
         {/* Heading */}
         <h1 className="text-5xl md:text-[80px] font-bold mb-8 text-center leading-[1.05] tracking-tight text-[#1B3A64] drop-shadow-sm">
           About Horizon<br/>
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#E3755D] to-[#C8634D]">Pathways</span>
+          <span className="text-transparent bg-clip-text bg-gradient-to-b from-orange-500 to-orange-600">Pathways</span>
         </h1>
 
         {/* Subtitle */}

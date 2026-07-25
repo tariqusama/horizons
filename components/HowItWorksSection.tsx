@@ -28,7 +28,7 @@ export default function HowItWorksSection() {
     <section className="w-full py-32 px-4 md:px-8 lg:px-16 bg-gradient-to-br from-[#0A192F] via-[#122846] to-[#1B3A64] text-center relative overflow-hidden">
       
       {/* Decorative Blur */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[500px] bg-[#E3755D]/10 rounded-full blur-[120px] pointer-events-none"></div>
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[500px] bg-orange-500/10 rounded-full blur-[120px] pointer-events-none"></div>
 
       <div className="max-w-[1400px] mx-auto relative z-10">
         <div className="inline-flex items-center bg-white/10 backdrop-blur-md rounded-full px-6 py-2 mb-8 border border-white/20 shadow-lg">
@@ -49,7 +49,7 @@ export default function HowItWorksSection() {
                 {step.num}
               </div>
               
-              <div className="w-20 h-20 rounded-[24px] bg-gradient-to-br from-[#E3755D] to-[#C8634D] flex items-center justify-center mb-8 shadow-inner border border-white/20 relative z-10 group-hover:scale-110 transition-transform duration-500">
+              <div className="w-20 h-20 rounded-[24px] bg-gradient-to-b from-orange-500 to-orange-600 flex items-center justify-center mb-8 shadow-inner border border-white/20 relative z-10 group-hover:scale-110 transition-transform duration-500">
                 <span className="text-white font-black text-3xl drop-shadow-md">{step.num}</span>
               </div>
               

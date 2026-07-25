@@ -6,7 +6,7 @@ export default function ProcessVideo() {
       title: "Quick Overview",
       description: "See the entire process in under 7 minutes",
       iconBg: "bg-orange-50",
-      iconColor: "#E3755D",
+      iconColor: "#ea580c",
       icon: (
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <circle cx="12" cy="12" r="10"></circle>
@@ -31,7 +31,7 @@ export default function ProcessVideo() {
       title: "Expert Insights",
       description: "Hear from our immigration specialists",
       iconBg: "bg-orange-50",
-      iconColor: "#E3755D",
+      iconColor: "#ea580c",
       icon: (
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
@@ -69,12 +69,12 @@ export default function ProcessVideo() {
           />
           
           <div className="absolute top-6 left-6 bg-white/20 backdrop-blur-md rounded-full px-4 py-2 flex items-center space-x-2 border border-white/30">
-            <span className="w-2 h-2 rounded-full bg-[#E3755D] animate-pulse"></span>
+            <span className="w-2 h-2 rounded-full bg-gradient-to-b from-orange-500 to-orange-600 animate-pulse"></span>
             <span className="text-white text-xs font-bold tracking-widest uppercase">Watch Video Tour</span>
           </div>
 
           <div className="absolute inset-0 flex items-center justify-center">
-            <button className="w-24 h-24 bg-[#E3755D] rounded-full flex items-center justify-center shadow-[0_0_0_12px_rgba(255,69,0,0.2)] hover:scale-110 transition-transform">
+            <button className="w-24 h-24 bg-gradient-to-b from-orange-500 to-orange-600 rounded-full flex items-center justify-center shadow-[0_0_0_12px_rgba(255,69,0,0.2)] hover:scale-110 transition-transform">
               <svg width="40" height="40" viewBox="0 0 24 24" fill="white" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="ml-2">
                 <polygon points="5 3 19 12 5 21 5 3"></polygon>
               </svg>

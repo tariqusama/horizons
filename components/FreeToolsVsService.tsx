@@ -22,31 +22,31 @@ export default function FreeToolsVsService() {
 
             <div className="space-y-5 mb-10 flex-grow">
               <div className="flex items-center space-x-4 text-[#5A6579] font-medium text-[16px]">
-                <span className="material-icons text-[#E3755D] text-[20px]">check</span>
+                <span className="material-icons text-orange-500 text-[20px]">check</span>
                 <span>You're comfortable with DIY</span>
               </div>
               <div className="flex items-center space-x-4 text-[#5A6579] font-medium text-[16px]">
-                <span className="material-icons text-[#E3755D] text-[20px]">check</span>
+                <span className="material-icons text-orange-500 text-[20px]">check</span>
                 <span>Fill forms yourself with guidance</span>
               </div>
               <div className="flex items-center space-x-4 text-[#5A6579] font-medium text-[16px]">
-                <span className="material-icons text-[#E3755D] text-[20px]">check</span>
+                <span className="material-icons text-orange-500 text-[20px]">check</span>
                 <span>Simple form submission</span>
               </div>
               <div className="flex items-center space-x-4 text-[#5A6579] font-medium text-[16px]">
-                <span className="material-icons text-[#E3755D] text-[20px]">check</span>
+                <span className="material-icons text-orange-500 text-[20px]">check</span>
                 <span>AR-11, G-1145, I-94 retrieval</span>
               </div>
               <div className="flex items-center space-x-4 text-[#5A6579] font-medium text-[16px]">
-                <span className="material-icons text-[#E3755D] text-[20px]">check</span>
+                <span className="material-icons text-orange-500 text-[20px]">check</span>
                 <span>No legal complexities</span>
               </div>
               <div className="flex items-center space-x-4 text-[#5A6579] font-medium text-[16px]">
-                <span className="material-icons text-[#E3755D] text-[20px]">check</span>
+                <span className="material-icons text-orange-500 text-[20px]">check</span>
                 <span>Clean immigration history</span>
               </div>
               <div className="flex items-center space-x-4 text-[#5A6579] font-medium text-[16px]">
-                <span className="material-icons text-[#E3755D] text-[20px]">check</span>
+                <span className="material-icons text-orange-500 text-[20px]">check</span>
                 <span>Budget-conscious</span>
               </div>
             </div>
@@ -81,7 +81,7 @@ export default function FreeToolsVsService() {
           {/* Full Service Column */}
           <div className="bg-gradient-to-br from-[#0A192F] via-[#122846] to-[#1B3A64] rounded-[48px] p-12 shadow-[0_30px_60px_-15px_rgba(27,58,100,0.4)] border border-[#122b4f] flex flex-col hover:-translate-y-2 transition-transform duration-500 relative overflow-hidden">
             
-            <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-[#E3755D]/20 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
+            <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-orange-500/20 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
 
             <div className="relative z-10 flex flex-col h-full">
               <h3 className="text-[32px] font-bold text-white mb-3">Full Service</h3>
@@ -89,35 +89,35 @@ export default function FreeToolsVsService() {
 
               <div className="space-y-5 mb-10 flex-grow">
                 <div className="flex items-center space-x-4 text-white font-medium text-[16px]">
-                  <span className="material-icons text-[#E3755D] text-[20px]">check</span>
+                  <span className="material-icons text-orange-500 text-[20px]">check</span>
                   <span>You want expert guidance</span>
                 </div>
                 <div className="flex items-center space-x-4 text-white font-medium text-[16px]">
-                  <span className="material-icons text-[#E3755D] text-[20px]">check</span>
+                  <span className="material-icons text-orange-500 text-[20px]">check</span>
                   <span>Attorney-led case management</span>
                 </div>
                 <div className="flex items-center space-x-4 text-white font-medium text-[16px]">
-                  <span className="material-icons text-[#E3755D] text-[20px]">check</span>
+                  <span className="material-icons text-orange-500 text-[20px]">check</span>
                   <span>Complex immigration case</span>
                 </div>
                 <div className="flex items-center space-x-4 text-white font-medium text-[16px]">
-                  <span className="material-icons text-[#E3755D] text-[20px]">check</span>
+                  <span className="material-icons text-orange-500 text-[20px]">check</span>
                   <span>Adjustment, naturalization, waivers</span>
                 </div>
                 <div className="flex items-center space-x-4 text-white font-medium text-[16px]">
-                  <span className="material-icons text-[#E3755D] text-[20px]">check</span>
+                  <span className="material-icons text-orange-500 text-[20px]">check</span>
                   <span>Legal challenges exist</span>
                 </div>
                 <div className="flex items-center space-x-4 text-white font-medium text-[16px]">
-                  <span className="material-icons text-[#E3755D] text-[20px]">check</span>
+                  <span className="material-icons text-orange-500 text-[20px]">check</span>
                   <span>Criminal history, denials, appeals</span>
                 </div>
                 <div className="flex items-center space-x-4 text-white font-medium text-[16px]">
-                  <span className="material-icons text-[#E3755D] text-[20px]">check</span>
+                  <span className="material-icons text-orange-500 text-[20px]">check</span>
                   <span>Peace of mind matters</span>
                 </div>
                 <div className="flex items-center space-x-4 text-white font-medium text-[16px]">
-                  <span className="material-icons text-[#E3755D] text-[20px]">check</span>
+                  <span className="material-icons text-orange-500 text-[20px]">check</span>
                   <span>Professional handling end-to-end</span>
                 </div>
               </div>

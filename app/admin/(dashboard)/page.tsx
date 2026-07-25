@@ -151,7 +151,7 @@ export default function AdminDashboard() {
                                 <Link
                                     key={idx}
                                     href={action.href || '#'}
-                                    className="flex items-start gap-3 p-4 rounded-xl border border-[#ECE9E2] hover:border-[#E3755D]/40 hover:shadow-sm transition-all text-left"
+                                    className="flex items-start gap-3 p-4 rounded-xl border border-[#ECE9E2] hover:border-orange-500/40 hover:shadow-sm transition-all text-left"
                                 >
                                     <span
                                         className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0"

@@ -41,7 +41,7 @@ export default function AboutValues() {
         {values.map((val, idx) => (
           <div key={idx} className="bg-white rounded-[40px] p-10 text-left shadow-[0_20px_40px_-15px_rgba(27,58,100,0.08)] border border-gray-100 hover:-translate-y-3 hover:shadow-[0_40px_60px_-15px_rgba(27,58,100,0.12)] transition-all duration-500 group">
             <div className="w-16 h-16 bg-gradient-to-br from-[#EAF1F8] to-[#D5E4F2] border border-white rounded-[24px] flex items-center justify-center shadow-inner mb-8 group-hover:scale-110 transition-transform duration-500">
-              <span className="material-icons text-[#E3755D] text-[28px] drop-shadow-sm">{val.icon}</span>
+              <span className="material-icons text-orange-500 text-[28px] drop-shadow-sm">{val.icon}</span>
             </div>
             <h3 className="text-[24px] font-bold text-[#1B3A64] mb-4">{val.title}</h3>
             <p className="text-[#5A6579] font-medium leading-relaxed text-[16px]">

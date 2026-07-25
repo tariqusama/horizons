@@ -108,14 +108,18 @@ export default function AssignedCasesPage() {
     // Request additional documents (UI-only until an API is wired up)
     const [docRequests, setDocRequests] = useState<DocRequest[]>([]);
     const [isDocModalOpen, setIsDocModalOpen] = useState(false);
+    const [showEscalationSuccessModal, setShowEscalationSuccessModal] = useState(false);
     const [docsNeeded, setDocsNeeded] = useState('');
     const [docNote, setDocNote] = useState('');
     const [isSendingDocRequest, setIsSendingDocRequest] = useState(false);
+    const [selectedActionInfo, setSelectedActionInfo] = useState<string | null>(null);
 
     // Escalation (UI-only until an API is wired up)
     const [isReasonOpen, setIsReasonOpen] = useState(false);
     const [escalationReason, setEscalationReason] = useState('');
+    const [escalationMessage, setEscalationMessage] = useState('');
     const [isEscalating, setIsEscalating] = useState(false);
+    const [isResolving, setIsResolving] = useState(false);
 
     const selectedCase = useMemo(
         () => cases.find((c) => c.id === selectedCaseId) ?? cases[0] ?? null,
@@ -123,7 +127,7 @@ export default function AssignedCasesPage() {
     );
 
     const selectedCaseTimeline = Array.isArray(selectedCase?.timeline) ? selectedCase.timeline : [];
-    const notes = selectedCaseTimeline;
+    const notes = Array.isArray(selectedCase?.internal_notes) ? selectedCase.internal_notes : [];
 
     const activeConversation = conversations.find((c) => c.id === activeConversationId) ?? conversations[0] ?? null;
 
@@ -219,11 +223,11 @@ export default function AssignedCasesPage() {
             created_at: new Date().toISOString(),
         };
 
-        const updatedTimeline = [...selectedCaseTimeline, nextNote];
+        const updatedNotes = [...notes, nextNote];
 
         try {
             const updatedCase = await updateApplication(selectedCase.id, {
-                timeline: updatedTimeline,
+                internal_notes: updatedNotes,
             });
 
             setCases((prev) => prev.map((c) => (c.id === updatedCase.id ? updatedCase : c)));
@@ -287,16 +291,33 @@ export default function AssignedCasesPage() {
     const handleEscalate = async () => {
         if (!selectedCase || !escalationReason.trim()) return;
 
+        if (!selectedCase || !escalationReason) return;
         setIsEscalating(true);
         try {
-            await escalateApplication(selectedCase.id, escalationReason.trim());
-            alert('Escalation submitted successfully.');
+            await escalateApplication(selectedCase.id, escalationReason);
+            setCases((prev) => prev.map((c) => (c.id === selectedCase.id ? { ...c, is_escalated: true } : c)));
+            setShowEscalationSuccessModal(true);
             setEscalationReason('');
+            setEscalationMessage('');
         } catch (err) {
-            console.error('Unable to escalate case:', err);
-            alert('Unable to submit escalation. Please try again.');
+            console.error('Failed to escalate case:', err);
+            alert('Unable to escalate case. Please try again.');
         } finally {
             setIsEscalating(false);
+        }
+    };
+
+    const handleResolveEscalation = async () => {
+        if (!selectedCase) return;
+        setIsResolving(true);
+        try {
+            const updatedCase = await updateApplication(selectedCase.id, { is_escalated: false });
+            setCases((prev) => prev.map((c) => (c.id === updatedCase.id ? updatedCase : c)));
+        } catch (err) {
+            console.error('Failed to resolve escalation:', err);
+            alert('Unable to resolve escalation. Please try again.');
+        } finally {
+            setIsResolving(false);
         }
     };
 
@@ -326,7 +347,7 @@ export default function AssignedCasesPage() {
     if (isLoading) {
         return (
             <div className="max-w-[1200px] mx-auto w-full h-[60vh] flex items-center justify-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#E3755D]"></div>
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500"></div>
             </div>
         );
     }
@@ -346,7 +367,7 @@ export default function AssignedCasesPage() {
                     const colors: Record<typeof filter, { bg: string; text: string }> = {
                         all: { bg: '#101F38', text: '#FFFFFF' },
                         urgent: { bg: '#E24B4A', text: '#FFFFFF' },
-                        high: { bg: '#E3755D', text: '#FFFFFF' },
+                        high: { bg: '#f97316', text: '#FFFFFF' },
                         medium: { bg: '#BA7517', text: '#FFFFFF' },
                         low: { bg: '#3B6D11', text: '#FFFFFF' },
                     };
@@ -370,10 +391,30 @@ export default function AssignedCasesPage() {
 
             {/* Client header + case switcher */}
             <div className="rounded-3xl border border-[#ECE9E2] bg-white shadow-sm p-6 mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div>
-                    <p className="text-[11px] uppercase tracking-[0.2em] text-[#8A8F98] font-semibold mb-1">Client</p>
-                    <p className="text-base font-bold text-[#101F38]">{selectedCase?.user?.email || 'No client selected'}</p>
-                    <p className="text-xs text-[#5B6472] font-medium">{selectedCase?.user?.email}</p>
+                <div className="flex flex-col sm:flex-row gap-8 sm:gap-16">
+                    <div>
+                        <p className="text-[11px] uppercase tracking-[0.2em] text-[#8A8F98] font-semibold mb-1">Client</p>
+                        <div className="flex items-center gap-2">
+                            <p className="text-base font-bold text-[#101F38]">{selectedCase?.user?.name || 'No client selected'}</p>
+                            {selectedCase?.is_escalated && (
+                                <span className="inline-flex items-center gap-1.5 rounded-full bg-[#E24B4A]/10 px-2 py-0.5 text-xs font-semibold text-[#E24B4A]">
+                                    <Icon.alert width={12} height={12} />
+                                    Escalated to Super Admin
+                                </span>
+                            )}
+                        </div>
+                        <p className="text-xs text-[#5B6472] font-medium">{selectedCase?.user?.email}</p>
+                    </div>
+
+                    {selectedCase && (
+                        <div>
+                            <p className="text-[11px] uppercase tracking-[0.2em] text-[#8A8F98] font-semibold mb-1">Current Package</p>
+                            <p className="text-sm font-bold text-[#101F38]">{selectedCase.title || selectedCase.service_type || 'Unknown Package'}</p>
+                            <p className="text-xs text-[#5B6472] font-medium mt-0.5">
+                                Price: <span className="font-semibold">${Number(selectedCase.amount || 0).toFixed(2)}</span>
+                            </p>
+                        </div>
+                    )}
                 </div>
                 <div className="flex items-center gap-3">
                     <div className="flex items-center gap-2 rounded-full border border-[#ECE9E2] bg-[#F7F5F0] px-4 py-2.5">
@@ -390,7 +431,7 @@ export default function AssignedCasesPage() {
                         <select
                             value={selectedCase?.id ?? ''}
                             onChange={(e) => setSelectedCaseId(Number(e.target.value))}
-                            className="appearance-none rounded-full border border-[#ECE9E2] bg-white pl-4 pr-9 py-2.5 text-sm font-semibold text-[#101F38] focus:outline-none focus:ring-2 focus:ring-[#E3755D]/30 cursor-pointer"
+                            className="appearance-none rounded-full border border-[#ECE9E2] bg-white pl-4 pr-9 py-2.5 text-sm font-semibold text-[#101F38] focus:outline-none focus:ring-2 focus:ring-orange-500/30 cursor-pointer"
                         >
                             {filteredCases.map((c) => (
                                 <option key={c.id} value={c.id}>
@@ -413,7 +454,8 @@ export default function AssignedCasesPage() {
                         <button
                             key={action.label}
                             type="button"
-                            className="flex items-center gap-4 rounded-3xl border border-[#ECE9E2] bg-white p-5 text-left shadow-sm hover:border-[#E3755D] transition-colors"
+                            onClick={() => setSelectedActionInfo(action.label)}
+                            className="flex items-center gap-4 rounded-3xl border border-[#ECE9E2] bg-white p-5 text-left shadow-sm hover:border-orange-500 transition-colors"
                         >
                             <span
                                 className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0"
@@ -467,18 +509,18 @@ export default function AssignedCasesPage() {
                                 <div key={note.id} className="rounded-2xl border border-[#ECE9E2] bg-[#F7F5F0] p-5">
                                     <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                                         <div>
-                                            <p className="text-sm text-[#101F38]">{note.text}</p>
+                                            <p className="text-sm text-[#101F38]">{note.text || 'Invalid note data'}</p>
                                             <div className="flex items-center gap-1.5 text-xs text-[#5B6472] font-medium mt-2">
-                                                <Icon.clock width={13} height={13} className="text-[#E3755D]" />
-                                                {new Date(note.created_at).toLocaleString('en-US', {
+                                                <Icon.clock width={13} height={13} className="text-orange-500" />
+                                                {note.created_at ? new Date(note.created_at).toLocaleString('en-US', {
                                                     hour: 'numeric',
                                                     minute: '2-digit',
                                                     month: 'short',
                                                     day: '2-digit',
                                                     year: 'numeric',
-                                                })}
+                                                }) : 'Unknown date'}
                                             </div>
-                                            <p className="text-xs text-[#8A8F98] font-medium mt-0.5">by {note.author}</p>
+                                            <p className="text-xs text-[#8A8F98] font-medium mt-0.5">by {note.author || 'Unknown author'}</p>
                                         </div>
                                         <div className="flex items-center gap-2 shrink-0">
                                             <button className="inline-flex items-center gap-1.5 rounded-full border border-[#ECE9E2] bg-white px-3 py-1.5 text-xs font-semibold text-[#101F38] hover:bg-[#F7F5F0] transition-colors">
@@ -496,7 +538,7 @@ export default function AssignedCasesPage() {
                         </div>
 
                         <div className="flex items-start gap-2 rounded-2xl border border-[#F0D9CE] bg-[#FBF1EA] px-4 py-3 mb-6">
-                            <Icon.alert width={15} height={15} className="text-[#E3755D] shrink-0 mt-0.5" />
+                            <Icon.alert width={15} height={15} className="text-orange-500 shrink-0 mt-0.5" />
                             <span className="text-sm font-medium text-[#BA5A3E]">Keep notes visible only to internal staff (not the client)</span>
                         </div>
 
@@ -506,7 +548,7 @@ export default function AssignedCasesPage() {
                                 value={newNote}
                                 onChange={(event) => setNewNote(event.target.value)}
                                 rows={4}
-                                className="w-full rounded-2xl border border-[#ECE9E2] bg-[#F7F5F0] px-4 py-3 text-sm text-[#101F38] outline-none transition focus:border-[#E3755D] focus:bg-white"
+                                className="w-full rounded-2xl border border-[#ECE9E2] bg-[#F7F5F0] px-4 py-3 text-sm text-[#101F38] outline-none transition focus:border-orange-500 focus:bg-white"
                                 placeholder="Add a note for internal staff review..."
                             />
                         </div>
@@ -523,7 +565,7 @@ export default function AssignedCasesPage() {
                                         key={conv.id}
                                         type="button"
                                         onClick={() => setActiveConversationId(conv.id)}
-                                        className={`w-full flex items-center gap-3 rounded-xl border px-3 py-2.5 text-left transition-colors ${activeConversation?.id === conv.id ? 'border-[#E3755D] bg-[#FBF1EA]' : 'border-[#ECE9E2] bg-white hover:bg-[#F7F5F0]'
+                                        className={`w-full flex items-center gap-3 rounded-xl border px-3 py-2.5 text-left transition-colors ${activeConversation?.id === conv.id ? 'border-orange-500 bg-[#FBF1EA]' : 'border-[#ECE9E2] bg-white hover:bg-[#F7F5F0]'
                                             }`}
                                     >
                                         <span className="w-8 h-8 rounded-full bg-[#FAEEDA] text-[#BA7517] font-bold text-xs flex items-center justify-center shrink-0">
@@ -561,7 +603,7 @@ export default function AssignedCasesPage() {
                                         onChange={(e) => setMessageDraft(e.target.value)}
                                         onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
                                         placeholder="Type a message..."
-                                        className="flex-1 bg-[#F7F5F0] rounded-full border border-[#ECE9E2] px-4 py-2.5 text-sm text-[#101F38] outline-none focus:border-[#E3755D]"
+                                        className="flex-1 bg-[#F7F5F0] rounded-full border border-[#ECE9E2] px-4 py-2.5 text-sm text-[#101F38] outline-none focus:border-orange-500"
                                     />
                                     <button className="text-[#8A8F98] hover:text-[#101F38] transition-colors shrink-0 p-2">
                                         <Icon.paperclip width={17} height={17} />
@@ -569,7 +611,7 @@ export default function AssignedCasesPage() {
                                     <button
                                         onClick={handleSendMessage}
                                         disabled={!messageDraft.trim() || isSendingMessage}
-                                        className="w-9 h-9 rounded-full bg-[#E3755D] text-white flex items-center justify-center shrink-0 hover:bg-[#D1644C] transition-colors disabled:opacity-50"
+                                        className="w-9 h-9 rounded-full bg-gradient-to-b from-orange-500 to-orange-600 text-white flex items-center justify-center shrink-0 hover:bg-[#D1644C] transition-colors disabled:opacity-50"
                                     >
                                         {isSendingMessage ? <span className="text-xs">…</span> : <Icon.send width={15} height={15} />}
                                     </button>
@@ -592,7 +634,7 @@ export default function AssignedCasesPage() {
                                         <h3 className="text-base font-bold text-[#101F38]">Application for Spouse Abroad</h3>
                                         <p className="text-xs text-[#5B6472] font-medium mt-1">Form I-130 + I-130A</p>
                                     </div>
-                                    <span className="inline-flex items-center gap-1.5 rounded-full bg-[#E3755D] text-white px-3 py-1 text-xs font-bold">
+                                    <span className="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-b from-orange-500 to-orange-600 text-white px-3 py-1 text-xs font-bold">
                                         17 Documents
                                     </span>
                                 </div>
@@ -603,7 +645,7 @@ export default function AssignedCasesPage() {
                                     {/* Petitioner Documents */}
                                     <div>
                                         <p className="text-sm font-bold text-[#101F38] mb-2 flex items-center gap-2">
-                                            <span className="w-5 h-5 rounded-full bg-[#E3755D] text-white flex items-center justify-center text-xs">1</span>
+                                            <span className="w-5 h-5 rounded-full bg-gradient-to-b from-orange-500 to-orange-600 text-white flex items-center justify-center text-xs">1</span>
                                             Petitioner Documents
                                         </p>
                                         <div className="space-y-2 pl-7">
@@ -627,7 +669,7 @@ export default function AssignedCasesPage() {
                                     {/* Beneficiary Documents */}
                                     <div>
                                         <p className="text-sm font-bold text-[#101F38] mb-2 flex items-center gap-2">
-                                            <span className="w-5 h-5 rounded-full bg-[#E3755D] text-white flex items-center justify-center text-xs">2</span>
+                                            <span className="w-5 h-5 rounded-full bg-gradient-to-b from-orange-500 to-orange-600 text-white flex items-center justify-center text-xs">2</span>
                                             Beneficiary (Spouse) Documents
                                         </p>
                                         <div className="space-y-2 pl-7">
@@ -651,7 +693,7 @@ export default function AssignedCasesPage() {
                                     {/* Marriage & Relationship Evidence */}
                                     <div>
                                         <p className="text-sm font-bold text-[#101F38] mb-2 flex items-center gap-2">
-                                            <span className="w-5 h-5 rounded-full bg-[#E3755D] text-white flex items-center justify-center text-xs">3</span>
+                                            <span className="w-5 h-5 rounded-full bg-gradient-to-b from-orange-500 to-orange-600 text-white flex items-center justify-center text-xs">3</span>
                                             Marriage & Relationship Evidence
                                         </p>
                                         <div className="space-y-2 pl-7">
@@ -689,7 +731,7 @@ export default function AssignedCasesPage() {
                                     {/* At Least 5 of Following */}
                                     <div>
                                         <p className="text-sm font-bold text-[#101F38] mb-2 flex items-center gap-2">
-                                            <span className="w-5 h-5 rounded-full bg-[#E3755D] text-white flex items-center justify-center text-xs">4</span>
+                                            <span className="w-5 h-5 rounded-full bg-gradient-to-b from-orange-500 to-orange-600 text-white flex items-center justify-center text-xs">4</span>
                                             At Least Five (5) of the Following
                                         </p>
                                         <div className="space-y-2 pl-7">
@@ -755,7 +797,7 @@ export default function AssignedCasesPage() {
                                     {/* Additional Documents */}
                                     <div>
                                         <p className="text-sm font-bold text-[#101F38] mb-2 flex items-center gap-2">
-                                            <span className="w-5 h-5 rounded-full bg-[#E3755D] text-white flex items-center justify-center text-xs">5</span>
+                                            <span className="w-5 h-5 rounded-full bg-gradient-to-b from-orange-500 to-orange-600 text-white flex items-center justify-center text-xs">5</span>
                                             Any Other Additional Documents
                                         </p>
                                         <div className="space-y-2 pl-7">
@@ -827,7 +869,7 @@ export default function AssignedCasesPage() {
                                         value={docsNeeded}
                                         onChange={(e) => setDocsNeeded(e.target.value)}
                                         rows={4}
-                                        className="w-full rounded-xl border border-[#E3755D] bg-white px-3 py-2.5 text-sm text-[#101F38] outline-none focus:ring-2 focus:ring-[#E3755D]/30 mb-4"
+                                        className="w-full rounded-xl border border-orange-500 bg-white px-3 py-2.5 text-sm text-[#101F38] outline-none focus:ring-2 focus:ring-orange-500/30 mb-4"
                                         placeholder="e.g. Updated passport copy, proof of address"
                                     />
 
@@ -836,7 +878,7 @@ export default function AssignedCasesPage() {
                                         value={docNote}
                                         onChange={(e) => setDocNote(e.target.value)}
                                         rows={2}
-                                        className="w-full rounded-xl border border-[#ECE9E2] bg-white px-3 py-2.5 text-sm text-[#101F38] outline-none focus:border-[#E3755D] mb-6"
+                                        className="w-full rounded-xl border border-[#ECE9E2] bg-white px-3 py-2.5 text-sm text-[#101F38] outline-none focus:border-orange-500 mb-6"
                                         placeholder="Add any extra context for the client"
                                     />
 
@@ -850,7 +892,7 @@ export default function AssignedCasesPage() {
                                         <button
                                             onClick={handleSendDocRequest}
                                             disabled={!docsNeeded.trim() || isSendingDocRequest}
-                                            className="rounded-full bg-[#E3755D] px-5 py-2.5 text-sm font-bold text-white hover:bg-[#D1644C] transition-colors disabled:opacity-50"
+                                            className="rounded-full bg-gradient-to-b from-orange-500 to-orange-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-[#D1644C] transition-colors disabled:opacity-50"
                                         >
                                             {isSendingDocRequest ? 'Sending...' : 'Send request'}
                                         </button>
@@ -863,60 +905,220 @@ export default function AssignedCasesPage() {
 
                 {activeTab === 'Escalate to Super Admin' && (
                     <div>
-                        <h2 className="text-lg font-bold text-[#101F38] mb-4">Escalate To Super Admin</h2>
-                        <div className="border-t border-[#ECE9E2] pt-6">
-                            <div className="relative max-w-md">
+                        {selectedCase?.is_escalated ? (
+                            <div className="bg-[#FDFCFB] rounded-2xl border border-orange-500/30 p-6 max-w-2xl">
+                                <h2 className="text-xl font-black text-[#101F38] mb-2 flex items-center gap-2">
+                                    <Icon.alert width={20} height={20} className="text-orange-500" />
+                                    Escalation is Active
+                                </h2>
+                                <p className="text-sm font-medium text-[#5B6472] mb-6">
+                                    This case has been escalated to a Super Admin for review. Once the issue has been addressed and you are ready to resume standard processing, you can resolve the escalation status below.
+                                </p>
                                 <button
-                                    type="button"
-                                    onClick={() => setIsReasonOpen((v) => !v)}
-                                    className="w-full flex items-center justify-between rounded-xl border border-[#E3755D] bg-white px-4 py-3 text-sm text-left focus:outline-none focus:ring-2 focus:ring-[#E3755D]/30"
+                                    onClick={handleResolveEscalation}
+                                    disabled={isResolving}
+                                    className="rounded-full bg-gradient-to-b from-orange-500 to-orange-600 px-6 py-3 text-sm font-bold text-white hover:bg-[#D1644C] transition-colors disabled:opacity-50 shadow-sm"
                                 >
-                                    <span className={escalationReason ? 'text-[#101F38] font-medium' : 'text-[#8A8F98]'}>
-                                        {escalationReason || 'Select reason for escalation.'}
-                                    </span>
-                                    <Icon.chevronDown width={15} height={15} className="text-[#8A8F98] shrink-0" />
+                                    {isResolving ? 'Resolving...' : 'Resolve Escalation'}
                                 </button>
-
-                                {isReasonOpen && (
-                                    <div className="absolute z-10 mt-1 w-full rounded-xl border border-[#ECE9E2] bg-white shadow-lg overflow-hidden">
-                                        <button
-                                            onClick={() => {
-                                                setEscalationReason('');
-                                                setIsReasonOpen(false);
-                                            }}
-                                            className="w-full text-left px-4 py-2.5 text-sm bg-[#F7F5F0] text-[#5B6472] font-medium"
-                                        >
-                                            Select reason for escalation.
-                                        </button>
-                                        {ESCALATION_REASONS.map((reason) => (
-                                            <button
-                                                key={reason}
-                                                onClick={() => {
-                                                    setEscalationReason(reason);
-                                                    setIsReasonOpen(false);
-                                                }}
-                                                className="w-full text-left px-4 py-2.5 text-sm text-[#185FA5] font-medium hover:bg-[#F7F5F0] transition-colors"
-                                            >
-                                                {reason}
-                                            </button>
-                                        ))}
-                                    </div>
-                                )}
                             </div>
+                        ) : (
+                            <>
+                                <h2 className="text-lg font-bold text-[#101F38] mb-4">Escalate To Super Admin</h2>
+                                <div className="border-t border-[#ECE9E2] pt-6">
+                                    <div className="relative max-w-md">
+                                        <button
+                                            type="button"
+                                            onClick={() => setIsReasonOpen((v) => !v)}
+                                            className="w-full flex items-center justify-between rounded-xl border border-orange-500 bg-white px-4 py-3 text-sm text-left focus:outline-none focus:ring-2 focus:ring-orange-500/30"
+                                        >
+                                            <span className={escalationReason ? 'text-[#101F38] font-medium' : 'text-[#8A8F98]'}>
+                                                {escalationReason || 'Select reason for escalation.'}
+                                            </span>
+                                            <Icon.chevronDown width={15} height={15} className="text-[#8A8F98] shrink-0" />
+                                        </button>
 
-                            {escalationReason && (
-                                <button
-                                    onClick={handleEscalate}
-                                    disabled={isEscalating}
-                                    className="mt-6 rounded-full bg-[#E3755D] px-5 py-2.5 text-sm font-bold text-white hover:bg-[#D1644C] transition-colors disabled:opacity-50"
-                                >
-                                    {isEscalating ? 'Submitting...' : 'Submit escalation'}
-                                </button>
-                            )}
-                        </div>
+                                        {isReasonOpen && (
+                                            <div className="absolute z-10 mt-1 w-full rounded-xl border border-[#ECE9E2] bg-white shadow-lg overflow-hidden">
+                                                <button
+                                                    onClick={() => {
+                                                        setEscalationReason('');
+                                                        setIsReasonOpen(false);
+                                                    }}
+                                                    className="w-full text-left px-4 py-2.5 text-sm bg-[#F7F5F0] text-[#5B6472] font-medium"
+                                                >
+                                                    Select reason for escalation.
+                                                </button>
+                                                {ESCALATION_REASONS.map((reason) => (
+                                                    <button
+                                                        key={reason}
+                                                        onClick={() => {
+                                                            setEscalationReason(reason);
+                                                            setIsReasonOpen(false);
+                                                        }}
+                                                        className="w-full text-left px-4 py-2.5 text-sm text-[#185FA5] font-medium hover:bg-[#F7F5F0] transition-colors"
+                                                    >
+                                                        {reason}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    <div className="mt-4 max-w-md">
+                                        <label className="block text-xs font-semibold text-[#101F38] mb-2">Message (Optional)</label>
+                                        <textarea
+                                            value={escalationMessage}
+                                            onChange={(e) => setEscalationMessage(e.target.value)}
+                                            rows={4}
+                                            className="w-full rounded-xl border border-[#ECE9E2] bg-white px-3 py-2.5 text-sm text-[#101F38] outline-none focus:border-orange-500"
+                                            placeholder="Explain exactly what happened..."
+                                        />
+                                    </div>
+
+                                    {escalationReason && (
+                                        <button
+                                            onClick={handleEscalate}
+                                            disabled={isEscalating}
+                                            className="mt-6 rounded-full bg-gradient-to-b from-orange-500 to-orange-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-[#D1644C] transition-colors disabled:opacity-50"
+                                        >
+                                            {isEscalating ? 'Escalating...' : 'Submit Escalation'}
+                                        </button>
+                                    )}
+                                </div>
+                            </>
+                        )}
                     </div>
                 )}
             </div>
+
+            {showEscalationSuccessModal && (
+                <div style={{
+                    position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+                    backgroundColor: 'rgba(0,0,0,0.4)', zIndex: 9999,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    backdropFilter: 'blur(3px)'
+                }}>
+                    <div style={{
+                        backgroundColor: 'white', borderRadius: '16px', padding: '32px',
+                        maxWidth: '420px', width: '90%', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+                        textAlign: 'center', animation: 'fadeIn 0.2s ease-out'
+                    }}>
+                        <div style={{ 
+                            backgroundColor: '#e2f5e9', color: '#16a34a', 
+                            width: '64px', height: '64px', borderRadius: '50%', 
+                            display: 'flex', alignItems: 'center', justifyContent: 'center', 
+                            margin: '0 auto 20px auto' 
+                        }}>
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        </div>
+                        <h3 style={{ margin: '0 0 12px 0', color: '#111827', fontSize: '1.25rem', fontWeight: 600 }}>Escalation Submitted!</h3>
+                        <p style={{ color: '#6B7280', margin: '0 0 24px 0', lineHeight: 1.5, fontSize: '0.95rem' }}>
+                            The escalation has been successfully submitted to the Super Admin team.
+                        </p>
+                        <button 
+                            onClick={() => setShowEscalationSuccessModal(false)}
+                            style={{
+                                backgroundColor: '#1E40AF', color: 'white', border: 'none',
+                                borderRadius: '8px', padding: '12px 24px', fontWeight: 500,
+                                cursor: 'pointer', width: '100%', fontSize: '1rem',
+                                transition: 'background-color 0.2s'
+                            }}
+                            onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#1e3a8a'}
+                            onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#1E40AF'}
+                        >
+                            OK
+                        </button>
+                    </div>
+                </div>
+            )}
+
+            {selectedActionInfo && (
+                <div style={{
+                    position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+                    backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 9999,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    backdropFilter: 'blur(3px)'
+                }}>
+                    <div style={{
+                        backgroundColor: 'white', borderRadius: '16px', padding: '32px',
+                        maxWidth: '500px', width: '90%', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+                        animation: 'fadeIn 0.2s ease-out', position: 'relative'
+                    }}>
+                        <button 
+                            onClick={() => setSelectedActionInfo(null)}
+                            style={{ position: 'absolute', top: '16px', right: '16px', background: 'none', border: 'none', cursor: 'pointer', color: '#6B7280' }}
+                        >
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+                        </button>
+                        <h3 style={{ margin: '0 0 20px 0', color: '#111827', fontSize: '1.25rem', fontWeight: 700 }}>{selectedActionInfo}</h3>
+                        
+                        {selectedActionInfo === 'View client profile' && (
+                            <div className="text-left text-sm text-[#5B6472] space-y-3">
+                                <p><strong className="text-[#101F38]">Name:</strong> {selectedCase?.user?.name || 'N/A'}</p>
+                                <p><strong className="text-[#101F38]">Email:</strong> {selectedCase?.user?.email || 'N/A'}</p>
+                                <p><strong className="text-[#101F38]">Phone:</strong> {selectedCase?.user?.phone || 'Not provided'}</p>
+                            </div>
+                        )}
+                        
+                        {selectedActionInfo === 'View submitted intake information' && (
+                            <div className="text-left text-sm text-[#5B6472]">
+                                <div className="p-4 bg-[#F7F5F0] rounded-xl border border-[#ECE9E2]">
+                                    <p className="italic">Intake information is currently being processed for this application.</p>
+                                </div>
+                            </div>
+                        )}
+
+                        {selectedActionInfo === 'View uploaded supporting documents' && (
+                            <div className="text-left text-sm text-[#5B6472]">
+                                {selectedCase?.documents?.length ? (
+                                    <ul className="list-disc pl-5 space-y-2">
+                                        {selectedCase.documents.map((doc: any) => (
+                                            <li key={doc.id}>
+                                                <span className="font-medium text-[#101F38]">{doc.name || doc.file_path.split('/').pop()}</span> 
+                                                <span className="text-xs ml-2 px-2 py-0.5 rounded-full bg-[#EAF3DE] text-[#3B6D11]">{doc.status}</span>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                ) : (
+                                    <div className="p-4 bg-[#F7F5F0] rounded-xl border border-[#ECE9E2]">
+                                        <p>No documents uploaded yet.</p>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+
+                        {selectedActionInfo === 'Required documents checklist' && (
+                            <div className="text-left text-sm text-[#5B6472]">
+                                <p className="mb-4">Required documents depend on the selected service type: <strong className="text-[#101F38]">{selectedCase?.service_type || 'N/A'}</strong></p>
+                                <button 
+                                    className="w-full rounded-full border border-[#185FA5] text-[#185FA5] px-4 py-2 text-sm font-bold hover:bg-[#E6F1FB] transition-colors"
+                                    onClick={() => { setSelectedActionInfo(null); setActiveTab('Document Checklist'); }}
+                                >
+                                    Open Document Checklist Tab
+                                </button>
+                            </div>
+                        )}
+
+                        {selectedActionInfo === 'View case timeline & status' && (
+                            <div className="text-left text-sm text-[#5B6472] space-y-3">
+                                <p><strong className="text-[#101F38]">Current Status:</strong> {selectedCase?.status}</p>
+                                <p><strong className="text-[#101F38]">Progress:</strong> {selectedCase?.progress}%</p>
+                                <p><strong className="text-[#101F38]">Created On:</strong> {selectedCase?.created_at ? new Date(selectedCase.created_at).toLocaleDateString() : 'N/A'}</p>
+                            </div>
+                        )}
+
+                        {selectedActionInfo === 'View payment & service details' && (
+                            <div className="text-left text-sm text-[#5B6472] space-y-3">
+                                <p><strong className="text-[#101F38]">Service Package:</strong> {selectedCase?.title || selectedCase?.service_type}</p>
+                                <p><strong className="text-[#101F38]">Payment Status:</strong> <span className="text-[#3B6D11] font-semibold">Paid</span></p>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

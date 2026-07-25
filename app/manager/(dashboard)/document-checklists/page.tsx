@@ -622,7 +622,7 @@ export default function DocumentChecklistPage() {
                         </div>
                     </div>
                     <div className="flex items-center justify-center w-16 h-16 rounded-full bg-[#FBF1EA]">
-                        <span className="text-2xl font-bold text-[#E3755D]">{checklist.totalDocuments}</span>
+                        <span className="text-2xl font-bold text-orange-500">{checklist.totalDocuments}</span>
                     </div>
                 </div>
             </div>
@@ -632,7 +632,7 @@ export default function DocumentChecklistPage() {
                 {checklist.sections.map((section, sectionIdx) => (
                     <div key={sectionIdx} className="rounded-3xl border border-[#ECE9E2] bg-white shadow-sm p-6">
                         <h2 className="text-lg font-bold text-[#101F38] mb-4 flex items-center gap-2">
-                            <span className="w-8 h-8 rounded-full bg-[#E3755D] text-white flex items-center justify-center text-sm font-bold">
+                            <span className="w-8 h-8 rounded-full bg-gradient-to-b from-orange-500 to-orange-600 text-white flex items-center justify-center text-sm font-bold">
                                 {sectionIdx + 1}
                             </span>
                             {section.title}
@@ -646,8 +646,8 @@ export default function DocumentChecklistPage() {
                                 return (
                                     <div key={docId} className="flex items-start gap-3 p-4 rounded-2xl border border-[#ECE9E2] hover:bg-[#F7F5F0] transition-colors cursor-pointer" onClick={() => toggleCheck(docId)}>
                                         <div className="w-6 h-6 rounded border-2 border-[#ECE9E2] flex items-center justify-center shrink-0 mt-1 bg-white transition-all" style={{
-                                            borderColor: isChecked ? '#E3755D' : '#ECE9E2',
-                                            backgroundColor: isChecked ? '#E3755D' : 'white',
+                                            borderColor: isChecked ? '#f97316' : '#ECE9E2',
+                                            backgroundColor: isChecked ? '#f97316' : 'white',
                                         }}>
                                             {isChecked && <Icon.check width={16} height={16} className="text-white" />}
                                         </div>
@@ -677,13 +677,13 @@ export default function DocumentChecklistPage() {
             <div className="rounded-3xl border border-[#ECE9E2] bg-white shadow-sm p-6 mt-6">
                 <div className="flex items-center justify-between mb-3">
                     <p className="text-sm font-semibold text-[#101F38]">Document Collection Progress</p>
-                    <span className="text-xs font-bold text-[#E3755D]">
+                    <span className="text-xs font-bold text-orange-500">
                         {Object.values(checkedItems).filter(Boolean).length} of {checklist.totalDocuments}
                     </span>
                 </div>
                 <div className="w-full bg-[#ECE9E2] rounded-full h-3 overflow-hidden">
                     <div
-                        className="h-full bg-[#E3755D] transition-all"
+                        className="h-full bg-gradient-to-b from-orange-500 to-orange-600 transition-all"
                         style={{ width: `${(Object.values(checkedItems).filter(Boolean).length / checklist.totalDocuments) * 100}%` }}
                     />
                 </div>

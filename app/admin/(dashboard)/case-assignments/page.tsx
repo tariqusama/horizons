@@ -129,7 +129,7 @@ export default function AdminCaseAssignmentsPage() {
                 <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 px-6 py-6 border-b border-gray-100">
                     <div>
                         <div className="flex items-center gap-2.5 mb-1.5">
-                            <span className="text-[#E3755D]">
+                            <span className="text-orange-500">
                                 <Icon.userCog width={20} height={20} />
                             </span>
                             <h2 className="text-lg font-black text-gray-900">Assign Clients to Case Managers</h2>
@@ -144,7 +144,7 @@ export default function AdminCaseAssignmentsPage() {
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                             placeholder="Search clients..."
-                            className="w-full pl-9 pr-3 py-2.5 rounded-lg border border-gray-200 bg-gray-50 text-sm text-gray-900 placeholder-gray-400 outline-none focus:border-[#E3755D] focus:bg-white transition-colors"
+                            className="w-full pl-9 pr-3 py-2.5 rounded-lg border border-gray-200 bg-gray-50 text-sm text-gray-900 placeholder-gray-400 outline-none focus:border-orange-500 focus:bg-white transition-colors"
                         />
                         <Icon.search width={15} height={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                     </div>
@@ -155,6 +155,7 @@ export default function AdminCaseAssignmentsPage() {
                         <thead>
                             <tr>
                                 <th className="px-6 pt-5 pb-3 text-xs font-bold text-gray-500 uppercase tracking-wider">Client</th>
+                                <th className="px-6 pt-5 pb-3 text-xs font-bold text-gray-500 uppercase tracking-wider">Case / Application</th>
                                 <th className="px-6 pt-5 pb-3 text-xs font-bold text-gray-500 uppercase tracking-wider">Current Case Manager</th>
                                 <th className="px-6 pt-5 pb-3 text-xs font-bold text-gray-500 uppercase tracking-wider">Assign</th>
                             </tr>
@@ -167,6 +168,10 @@ export default function AdminCaseAssignmentsPage() {
                                         <td className="px-6 py-4 align-top">
                                             <p className="font-bold text-gray-900 text-sm">{c.user?.name}</p>
                                             <p className="text-xs text-gray-500 mt-0.5">{c.user?.email}</p>
+                                        </td>
+                                        <td className="px-6 py-4 align-top">
+                                            <p className="font-bold text-gray-900 text-sm">{c.title}</p>
+                                            <p className="text-xs text-gray-500 mt-0.5">{c.subtitle}</p>
                                         </td>
                                         <td className="px-6 py-4 align-top">
                                             {manager ? (
@@ -191,7 +196,7 @@ export default function AdminCaseAssignmentsPage() {
 
                             {pageCases.length === 0 && (
                                 <tr>
-                                    <td colSpan={3} className="px-6 py-12 text-center text-sm font-medium text-gray-400">
+                                    <td colSpan={4} className="px-6 py-12 text-center text-sm font-medium text-gray-400">
                                         No clients match your search.
                                     </td>
                                 </tr>

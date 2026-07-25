@@ -33,14 +33,27 @@ export default function ManagerDashboardPage() {
     if (isLoading) {
         return (
             <div className="max-w-[1200px] mx-auto w-full h-[60vh] flex items-center justify-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#E3755D]"></div>
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500"></div>
             </div>
         );
     }
 
     const totalAssigned = cases.length;
     const pendingReview = cases.filter(c => c.status === 'Pending' || c.status === 'Active' || c.status === 'Under Review').length;
-    const processedCases = cases.filter(c => c.status === 'Approved' || c.status === 'Completed').length;
+    const processedCasesArr = cases.filter(c => c.status === 'Approved' || c.status === 'Completed');
+    const processedCases = processedCasesArr.length;
+
+    let avgProcessingTime = 'N/A';
+    if (processedCases > 0) {
+        const totalDays = processedCasesArr.reduce((sum, c) => {
+            const start = new Date(c.created_at).getTime();
+            const end = new Date((c as any).updated_at || c.created_at).getTime();
+            const diffDays = Math.max((end - start) / (1000 * 60 * 60 * 24), 0);
+            return sum + diffDays;
+        }, 0);
+        const avg = totalDays / processedCases;
+        avgProcessingTime = `~${avg.toFixed(1)} days`;
+    }
 
     // Use top 5 recent cases
     const recentCases = cases.slice(0, 5);
@@ -94,7 +107,7 @@ export default function ManagerDashboardPage() {
                 </div>
                 <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm">
                     <div className="flex justify-between items-start mb-4">
-                        <div className="w-10 h-10 rounded-full bg-orange-50 text-[#E3755D] flex items-center justify-center">
+                        <div className="w-10 h-10 rounded-full bg-orange-50 text-orange-500 flex items-center justify-center">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                 <circle cx="12" cy="12" r="10"></circle>
                                 <path d="M12 6v6l4 2"></path>
@@ -102,7 +115,7 @@ export default function ManagerDashboardPage() {
                         </div>
                     </div>
                     <p className="text-gray-500 text-sm font-semibold uppercase tracking-wide">Avg Processing Time</p>
-                    <p className="text-3xl font-black text-gray-900 mt-1">~2.4 days</p>
+                    <p className="text-3xl font-black text-gray-900 mt-1">{avgProcessingTime}</p>
                 </div>
             </div>
 
@@ -111,7 +124,7 @@ export default function ManagerDashboardPage() {
                 <div className="lg:col-span-2 bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden flex flex-col">
                     <div className="px-6 py-5 border-b border-gray-200 flex justify-between items-center bg-gray-50/50">
                         <h2 className="font-bold text-gray-900 text-lg">Your Priority Cases</h2>
-                        <Link href="/manager/assigned-cases" className="text-sm text-[#E3755D] font-semibold hover:underline">View All Assigned</Link>
+                        <Link href="/manager/assigned-cases" className="text-sm text-orange-500 font-semibold hover:underline">View All Assigned</Link>
                     </div>
                     <div className="overflow-x-auto flex-1">
                         {recentCases.length === 0 ? (
@@ -147,7 +160,7 @@ export default function ManagerDashboardPage() {
                                                 </span>
                                             </td>
                                             <td className="px-6 py-4">
-                                                <Link href={`/manager/assigned-cases/${c.id}`} className="text-[#E3755D] font-semibold text-sm hover:underline">
+                                                <Link href={`/manager/assigned-cases/${c.id}`} className="text-orange-500 font-semibold text-sm hover:underline">
                                                     Review Case
                                                 </Link>
                                             </td>

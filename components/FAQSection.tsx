@@ -30,9 +30,9 @@ export default function FAQSection() {
       <div className="w-full max-w-[900px] space-y-5 text-left">
         {faqs.map((faq, idx) => (
           <div key={idx} className="bg-white border border-gray-200/60 rounded-[28px] p-8 flex items-center justify-between cursor-pointer hover:border-[#EAF1F8] hover:bg-[#FDFBF9] hover:shadow-[0_15px_30px_-10px_rgba(27,58,100,0.08)] transition-all duration-300 group">
-            <h3 className="text-[#1B3A64] font-bold text-[18px] group-hover:text-[#E3755D] transition-colors">{faq}</h3>
-            <div className="w-10 h-10 rounded-full bg-[#EAF1F8] group-hover:bg-[#E3755D]/10 flex items-center justify-center shrink-0 ml-4 transition-colors">
-              <span className="material-icons text-[#1B3A64] group-hover:text-[#E3755D] transition-colors">
+            <h3 className="text-[#1B3A64] font-bold text-[18px] group-hover:text-orange-500 transition-colors">{faq}</h3>
+            <div className="w-10 h-10 rounded-full bg-[#EAF1F8] group-hover:bg-orange-500/10 flex items-center justify-center shrink-0 ml-4 transition-colors">
+              <span className="material-icons text-[#1B3A64] group-hover:text-orange-500 transition-colors">
                 add
               </span>
             </div>

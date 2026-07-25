@@ -4,7 +4,7 @@ import React from 'react';
 export default function ReadyCTA() {
   return (
     <section className="w-full py-24 px-4 bg-[#FDFBF9] flex justify-center">
-      <div className="max-w-[1000px] w-full bg-[#E3755D] rounded-[40px] p-12 md:p-20 text-center relative overflow-hidden shadow-2xl">
+      <div className="max-w-[1000px] w-full bg-gradient-to-b from-orange-500 to-orange-600 rounded-[40px] p-12 md:p-20 text-center relative overflow-hidden shadow-2xl">
         {/* Decorative Background Elements */}
         <div className="absolute -top-32 -right-32 w-80 h-80 bg-white opacity-10 rounded-full blur-3xl"></div>
         <div className="absolute -bottom-32 -left-32 w-80 h-80 bg-black opacity-10 rounded-full blur-3xl"></div>
@@ -32,7 +32,7 @@ export default function ReadyCTA() {
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full">
-            <Link href="/signup" className="w-full sm:w-auto bg-white text-[#E3755D] px-8 py-4 rounded-xl font-bold text-[15px] transition-transform hover:scale-105 shadow-lg flex items-center justify-center space-x-2">
+            <Link href="/signup" className="w-full sm:w-auto bg-white text-orange-500 px-8 py-4 rounded-xl font-bold text-[15px] transition-transform hover:scale-105 shadow-lg flex items-center justify-center space-x-2">
               <span>Start Free Assessment</span>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M5 12h14"></path>
