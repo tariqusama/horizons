@@ -351,7 +351,7 @@ export default function ManagerLayoutClient({ children }: { children: React.Reac
         setShowNotifications((current) => !current);
     };
 
-    // Check authorization
+    // Check authorization — only allow users with the manager role to access manager layout
     useEffect(() => {
         if (!isLoading) {
             if (!user) {
@@ -360,7 +360,7 @@ export default function ManagerLayoutClient({ children }: { children: React.Reac
             }
 
             const role = (user.role || '').toString().toLowerCase();
-            if (!role.includes('admin') && !role.includes('manager')) {
+            if (!role.includes('manager')) {
                 router.push('/dashboard');
             } else {
                 setAuthorized(true);

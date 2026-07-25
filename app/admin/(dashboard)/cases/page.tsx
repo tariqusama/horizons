@@ -89,7 +89,7 @@ export default function AdminCasesPage() {
                                         <p className="font-bold text-gray-900 text-sm">{c.user.name}</p>
                                         {c.is_escalated && (
                                             <span className="inline-flex mt-1 items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-red-50 text-red-600 border border-red-100">
-                                                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                                                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" /></svg>
                                                 ESCALATED
                                             </span>
                                         )}
@@ -119,11 +119,11 @@ export default function AdminCasesPage() {
                                         </select>
                                     </td>
                                     <td className="px-6 py-4 text-right space-y-2">
-                                        <Link href={`/manager/assigned-cases/${c.id}`} className="block">
+                                        <Link href={`/admin/cases/${c.id}`} className="block">
                                             <span className="text-orange-500 hover:text-orange-600 font-bold text-sm cursor-pointer transition-colors">View Details</span>
                                         </Link>
                                         {c.is_escalated && (
-                                            <button 
+                                            <button
                                                 onClick={() => resolveEscalation(c.id)}
                                                 className="text-xs font-bold text-white bg-green-600 hover:bg-green-700 px-3 py-1.5 rounded-md transition-colors w-full"
                                             >

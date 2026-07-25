@@ -111,7 +111,7 @@ export default function AdminLayoutClient({ children }: { children: React.ReactN
     const [authorized, setAuthorized] = useState(false);
     const [sidebarOpen, setSidebarOpen] = useState(false);
 
-    // Check authorization
+    // Check authorization — allow only explicit admins for admin layout
     useEffect(() => {
         if (!isLoading) {
             if (!user) {
@@ -120,7 +120,7 @@ export default function AdminLayoutClient({ children }: { children: React.ReactN
             }
 
             const role = (user.role || '').toString().toLowerCase();
-            if (!role.includes('admin') && !role.includes('manager')) {
+            if (!role.includes('admin')) {
                 router.push('/dashboard');
             } else {
                 setAuthorized(true);
