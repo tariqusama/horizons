@@ -12,6 +12,7 @@ import {
     requestManagerDocuments,
     escalateApplication,
     Application,
+    DocumentPayload,
 } from '@/lib/api/cases';
 
 const Icon = {
@@ -92,7 +93,9 @@ export default function AssignedCasesPage() {
 
     const [cases, setCases] = useState<Application[]>([]);
     const [selectedCaseId, setSelectedCaseId] = useState<number | null>(null);
+    const [uploadedDocuments, setUploadedDocuments] = useState<DocumentPayload[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [isLoadingDocuments, setIsLoadingDocuments] = useState(false);
     const [activeTab, setActiveTab] = useState<TabLabel>('Internal Case Notes');
     const [newNote, setNewNote] = useState('');
     const [isSavingNote, setIsSavingNote] = useState(false);
@@ -196,6 +199,7 @@ export default function AssignedCasesPage() {
                 setConversations([
                     { id: `${selectedCase.id}-client`, email: selectedCase.user?.email || 'client@email.com', messages: mappedMessages },
                 ]);
+                setUploadedDocuments(documents);
                 setActiveConversationId(`${selectedCase.id}-client`);
                 setDocRequests(documents.map((document) => ({
                     id: String(document.id),
@@ -1004,11 +1008,11 @@ export default function AssignedCasesPage() {
                         maxWidth: '420px', width: '90%', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
                         textAlign: 'center', animation: 'fadeIn 0.2s ease-out'
                     }}>
-                        <div style={{ 
-                            backgroundColor: '#e2f5e9', color: '#16a34a', 
-                            width: '64px', height: '64px', borderRadius: '50%', 
-                            display: 'flex', alignItems: 'center', justifyContent: 'center', 
-                            margin: '0 auto 20px auto' 
+                        <div style={{
+                            backgroundColor: '#e2f5e9', color: '#16a34a',
+                            width: '64px', height: '64px', borderRadius: '50%',
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            margin: '0 auto 20px auto'
                         }}>
                             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                                 <polyline points="20 6 9 17 4 12"></polyline>
@@ -1018,7 +1022,7 @@ export default function AssignedCasesPage() {
                         <p style={{ color: '#6B7280', margin: '0 0 24px 0', lineHeight: 1.5, fontSize: '0.95rem' }}>
                             The escalation has been successfully submitted to the Super Admin team.
                         </p>
-                        <button 
+                        <button
                             onClick={() => setShowEscalationSuccessModal(false)}
                             style={{
                                 backgroundColor: '#1E40AF', color: 'white', border: 'none',
@@ -1047,14 +1051,14 @@ export default function AssignedCasesPage() {
                         maxWidth: '500px', width: '90%', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
                         animation: 'fadeIn 0.2s ease-out', position: 'relative'
                     }}>
-                        <button 
+                        <button
                             onClick={() => setSelectedActionInfo(null)}
                             style={{ position: 'absolute', top: '16px', right: '16px', background: 'none', border: 'none', cursor: 'pointer', color: '#6B7280' }}
                         >
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
                         </button>
                         <h3 style={{ margin: '0 0 20px 0', color: '#111827', fontSize: '1.25rem', fontWeight: 700 }}>{selectedActionInfo}</h3>
-                        
+
                         {selectedActionInfo === 'View client profile' && (
                             <div className="text-left text-sm text-[#5B6472] space-y-3">
                                 <p><strong className="text-[#101F38]">Name:</strong> {selectedCase?.user?.name || 'N/A'}</p>
@@ -1062,7 +1066,7 @@ export default function AssignedCasesPage() {
                                 <p><strong className="text-[#101F38]">Phone:</strong> {selectedCase?.user?.phone || 'Not provided'}</p>
                             </div>
                         )}
-                        
+
                         {selectedActionInfo === 'View submitted intake information' && (
                             <div className="text-left text-sm text-[#5B6472]">
                                 <div className="p-4 bg-[#F7F5F0] rounded-xl border border-[#ECE9E2]">
@@ -1073,11 +1077,11 @@ export default function AssignedCasesPage() {
 
                         {selectedActionInfo === 'View uploaded supporting documents' && (
                             <div className="text-left text-sm text-[#5B6472]">
-                                {selectedCase?.documents?.length ? (
+                                {uploadedDocuments.length ? (
                                     <ul className="list-disc pl-5 space-y-2">
-                                        {selectedCase.documents.map((doc: any) => (
+                                        {uploadedDocuments.map((doc) => (
                                             <li key={doc.id}>
-                                                <span className="font-medium text-[#101F38]">{doc.name || doc.file_path.split('/').pop()}</span> 
+                                                <span className="font-medium text-[#101F38]">{doc.name || doc.file_path.split('/').pop()}</span>
                                                 <span className="text-xs ml-2 px-2 py-0.5 rounded-full bg-[#EAF3DE] text-[#3B6D11]">{doc.status}</span>
                                             </li>
                                         ))}
@@ -1093,7 +1097,7 @@ export default function AssignedCasesPage() {
                         {selectedActionInfo === 'Required documents checklist' && (
                             <div className="text-left text-sm text-[#5B6472]">
                                 <p className="mb-4">Required documents depend on the selected service type: <strong className="text-[#101F38]">{selectedCase?.service_type || 'N/A'}</strong></p>
-                                <button 
+                                <button
                                     className="w-full rounded-full border border-[#185FA5] text-[#185FA5] px-4 py-2 text-sm font-bold hover:bg-[#E6F1FB] transition-colors"
                                     onClick={() => { setSelectedActionInfo(null); setActiveTab('Document Checklist'); }}
                                 >

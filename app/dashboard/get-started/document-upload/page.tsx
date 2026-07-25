@@ -1,62 +1,310 @@
 "use client";
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect, Suspense } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
+import api from '@/lib/api';
 import styles from '../form.module.css';
 
-export default function DocumentUploadPage() {
+interface DocItem {
+    key: string;
+    label: string;
+    required: boolean;
+}
+
+interface DocGroup {
+    header: string;
+    items: DocItem[];
+}
+
+interface FormChecklist {
+    title: string;
+    subtitle: string;
+    requiredKeys: string[];
+    groups: DocGroup[];
+}
+
+const formChecklists: Record<string, FormChecklist> = {
+    "i-90": {
+        title: "Document Upload — Form I-90",
+        subtitle: "Upload the documents required to replace or renew your Permanent Resident Card (Green Card).",
+        requiredKeys: ["prCard", "photoId", "statement"],
+        groups: [
+            {
+                header: "Identity & Status",
+                items: [
+                    { key: "prCard", label: "Clear copy (front and back) of your current or expired Permanent Resident Card, if available", required: true },
+                    { key: "photoId", label: "Government issued photo ID (driver's license, state ID, or passport biographic page)", required: true },
+                    { key: "birthCert", label: "Birth certificate (with certified English translation if applicable)", required: false }
+                ]
+            },
+            {
+                header: "If Card Was Lost, Stolen, or Destroyed",
+                items: [
+                    { key: "statement", label: "Signed statement describing when and how the card was lost, stolen, or destroyed", required: true },
+                    { key: "policeReport", label: "Copy of police report filed for lost/stolen card (recommended)", required: false }
+                ]
+            },
+            {
+                header: "If Name or Biographic Data Changed",
+                items: [
+                    { key: "marriageCert", label: "Marriage certificate (for name change due to marriage)", required: false },
+                    { key: "divorceDecree", label: "Divorce decree (for name change due to divorce)", required: false },
+                    { key: "courtOrder", label: "Court order legally changing your name", required: false }
+                ]
+            }
+        ]
+    },
+    "i-130": {
+        title: "Document Upload — Form I-130",
+        subtitle: "Upload required supporting evidence to petition for your relative.",
+        requiredKeys: ["usCitizenProof", "photoId", "beneficiaryPassport", "beneficiaryBirthCert", "marriageCert"],
+        groups: [
+            {
+                header: "Petitioner's Proof of Status",
+                items: [
+                    { key: "usCitizenProof", label: "Proof of U.S. Citizenship (Birth Certificate, U.S. Passport, or Naturalization Cert)", required: true },
+                    { key: "photoId", label: "Petitioner's Government-issued Photo ID", required: true }
+                ]
+            },
+            {
+                header: "Beneficiary Identification",
+                items: [
+                    { key: "beneficiaryPassport", label: "Beneficiary's Passport Biographic Page", required: true },
+                    { key: "beneficiaryBirthCert", label: "Beneficiary's Birth Certificate with certified English translation", required: true },
+                    { key: "passportPhotos", label: "Two 2x2 inch passport-style photos of Petitioner & Beneficiary", required: false }
+                ]
+            },
+            {
+                header: "Relationship & Marriage Evidence",
+                items: [
+                    { key: "marriageCert", label: "Marriage Certificate (for Spouse petitions)", required: true },
+                    { key: "divorceDecree", label: "Proof of termination of prior marriages (Divorce Decree or Death Cert)", required: false },
+                    { key: "bonaFideEvidence", label: "Evidence of bona fide marriage (joint bank accounts, joint lease, photos)", required: false }
+                ]
+            }
+        ]
+    },
+    "i-485": {
+        title: "Document Upload — Form I-485",
+        subtitle: "Upload required supporting documents to adjust status and register permanent residence.",
+        requiredKeys: ["passport", "i94Record", "birthCert", "photoId", "i693Medical", "i864Support"],
+        groups: [
+            {
+                header: "Identity & Legal U.S. Entry",
+                items: [
+                    { key: "passport", label: "Copy of Passport biographic page & U.S. Entry Visa stamp", required: true },
+                    { key: "i94Record", label: "Form I-94 Arrival/Departure Record", required: true },
+                    { key: "birthCert", label: "Birth Certificate with certified English translation", required: true },
+                    { key: "photoId", label: "Government-issued Photo ID", required: true },
+                    { key: "passportPhotos", label: "Two recent 2x2 inch passport-style photos", required: false }
+                ]
+            },
+            {
+                header: "Medical Exam & Financial Support",
+                items: [
+                    { key: "i693Medical", label: "Form I-693 Report of Medical Examination and Vaccination Record", required: true },
+                    { key: "i864Support", label: "Form I-864 Affidavit of Support with Sponsor Tax Returns & W-2s", required: true }
+                ]
+            }
+        ]
+    },
+    "n-400": {
+        title: "Document Upload — Form N-400",
+        subtitle: "Upload required evidence to apply for U.S. Citizenship / Naturalization.",
+        requiredKeys: ["prCard", "photoId", "taxTranscripts"],
+        groups: [
+            {
+                header: "Permanent Residence & ID",
+                items: [
+                    { key: "prCard", label: "Copy of Permanent Resident Card (front and back)", required: true },
+                    { key: "photoId", label: "State Driver's License or State Photo ID", required: true }
+                ]
+            },
+            {
+                header: "Tax & Residence Records",
+                items: [
+                    { key: "taxTranscripts", label: "IRS Tax Return Transcripts for the past 3 to 5 years", required: true },
+                    { key: "marriageCert", label: "Marriage Certificate (if applying based on marriage to U.S. citizen for 3 years)", required: false }
+                ]
+            }
+        ]
+    },
+    "i-765": {
+        title: "Document Upload — Form I-765",
+        subtitle: "Upload evidence to apply for an Employment Authorization Document (EAD Work Permit).",
+        requiredKeys: ["priorEAD", "i94Record", "passportPhotos"],
+        groups: [
+            {
+                header: "Work Permit Evidence",
+                items: [
+                    { key: "priorEAD", label: "Copy of previous EAD Work Permit or Passport biographic page", required: true },
+                    { key: "i94Record", label: "Form I-94 Arrival/Departure Record", required: true },
+                    { key: "passportPhotos", label: "Two 2x2 inch passport-style photos", required: true },
+                    { key: "eligibilityProof", label: "Proof of eligibility category (e.g. pending I-485 receipt notice)", required: false }
+                ]
+            }
+        ]
+    },
+    "i-751": {
+        title: "Document Upload — Form I-751",
+        subtitle: "Upload joint evidence to remove 2-year conditions on your Green Card.",
+        requiredKeys: ["prCard", "jointLease", "jointTaxes"],
+        groups: [
+            {
+                header: "Conditional Green Card",
+                items: [
+                    { key: "prCard", label: "Copy of 2-year Conditional Permanent Resident Card (front and back)", required: true }
+                ]
+            },
+            {
+                header: "Joint Marital Evidence",
+                items: [
+                    { key: "jointLease", label: "Joint lease, mortgage, or property deed", required: true },
+                    { key: "jointTaxes", label: "Joint tax returns or joint bank account statements", required: true },
+                    { key: "childrenBirthCert", label: "Birth certificates of children born to the marriage", required: false }
+                ]
+            }
+        ]
+    },
+    "i-864": {
+        title: "Document Upload — Form I-864",
+        subtitle: "Upload sponsor income evidence for the Affidavit of Support.",
+        requiredKeys: ["taxReturns", "payStubs", "sponsorCitizenship"],
+        groups: [
+            {
+                header: "Sponsor Income & Status",
+                items: [
+                    { key: "taxReturns", label: "Most recent Federal Income Tax Return & W-2s", required: true },
+                    { key: "payStubs", label: "Recent pay stubs or proof of current employment letter", required: true },
+                    { key: "sponsorCitizenship", label: "Proof of Sponsor's U.S. Citizenship or Green Card status", required: true }
+                ]
+            }
+        ]
+    }
+};
+
+function DocumentUploadContent() {
     const router = useRouter();
+    const searchParams = useSearchParams();
     const fileInputRef = useRef<HTMLInputElement>(null);
+
+    const [formCode, setFormCode] = useState<string>("i-90");
     const [activeDocType, setActiveDocType] = useState<string | null>(null);
     const [fileNames, setFileNames] = useState<Record<string, string>>({});
-    
-    // Simulate upload state for each document type
-    const [uploads, setUploads] = useState<Record<string, boolean>>({
-        prCard: false,
-        photoId: false,
-        birthCert: false,
-        policeReport: false,
-        statement: false,
-        marriageCert: false,
-        divorceDecree: false,
-        courtOrder: false,
-        residenceEvidence: false,
-        priorCard: false,
-        otherDocs: false
-    });
-
+    const [isUploading, setIsUploading] = useState<string | null>(null);
+    const [uploads, setUploads] = useState<Record<string, boolean>>({});
     const [error, setError] = useState(false);
 
-    // Calculate progress
-    const totalRequired = 3; // prCard, photoId, statement (as an example of required docs from the UI)
-    const uploadedRequired = (uploads.prCard ? 1 : 0) + (uploads.photoId ? 1 : 0) + (uploads.statement ? 1 : 0);
-    const progress = Math.round((uploadedRequired / totalRequired) * 100);
+    useEffect(() => {
+        const paramCode = searchParams.get('form')?.toLowerCase();
+        if (paramCode && formChecklists[paramCode]) {
+            setFormCode(paramCode);
+        } else {
+            api.get('/applications')
+                .then(res => {
+                    if (res.data && res.data[0]) {
+                        const title = (res.data[0].title || '').toLowerCase();
+                        if (title.includes('130')) setFormCode('i-130');
+                        else if (title.includes('485')) setFormCode('i-485');
+                        else if (title.includes('400')) setFormCode('n-400');
+                        else if (title.includes('765')) setFormCode('i-765');
+                        else if (title.includes('751')) setFormCode('i-751');
+                        else if (title.includes('864')) setFormCode('i-864');
+                        else setFormCode('i-90');
+                    }
+                })
+                .catch(() => {});
+        }
+    }, [searchParams]);
 
-    const handleUploadClick = (docType: string) => {
-        setActiveDocType(docType);
+    const checklist = formChecklists[formCode] || formChecklists['i-90'];
+
+    const docNameMap: Record<string, string> = {
+        'Permanent Resident Card': 'prCard',
+        'Government Issued Photo ID': 'photoId',
+        'Birth Certificate': 'birthCert',
+        'Police Report': 'policeReport',
+        'Signed Statement': 'statement',
+        'Marriage Certificate': 'marriageCert',
+        'Divorce Decree': 'divorceDecree',
+        'Court Order': 'courtOrder',
+        'Residence Evidence': 'residenceEvidence',
+        'Prior Green Card Copy': 'priorCard',
+        'Supporting Evidence': 'otherDocs',
+        'Proof of U.S. Citizenship': 'usCitizenProof',
+        'Beneficiary Passport': 'beneficiaryPassport',
+        'Beneficiary Birth Certificate': 'beneficiaryBirthCert',
+        'Passport Photos': 'passportPhotos',
+        'Medical Exam Report': 'i693Medical',
+        'Affidavit of Support': 'i864Support',
+        'Tax Transcripts': 'taxTranscripts',
+        'Pay Stubs': 'payStubs'
+    };
+
+    useEffect(() => {
+        api.get('/documents')
+            .then(res => {
+                if (Array.isArray(res.data)) {
+                    res.data.forEach((doc: any) => {
+                        if (doc.status === 'Uploaded' || doc.file_path) {
+                            const key = docNameMap[doc.name] || doc.name;
+                            setUploads(prev => ({ ...prev, [key]: true }));
+                            if (doc.file_path) {
+                                const filename = doc.file_path.split('/').pop() || 'Uploaded file';
+                                setFileNames(prev => ({ ...prev, [key]: filename }));
+                            }
+                        }
+                    });
+                }
+            })
+            .catch(() => {});
+    }, []);
+
+    const totalRequired = checklist.requiredKeys.length;
+    const uploadedRequiredCount = checklist.requiredKeys.filter(k => uploads[k]).length;
+    const progress = totalRequired > 0 ? Math.round((uploadedRequiredCount / totalRequired) * 100) : 100;
+
+    const handleUploadClick = (docKey: string) => {
+        setActiveDocType(docKey);
         fileInputRef.current?.click();
     };
 
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0] && activeDocType) {
             const file = e.target.files[0];
-            setUploads(prev => ({ ...prev, [activeDocType]: true }));
-            setFileNames(prev => ({ ...prev, [activeDocType]: file.name }));
-            if (error) setError(false);
+            const currentDocKey = activeDocType;
+            setIsUploading(currentDocKey);
+
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('doc_type', currentDocKey);
+
+            try {
+                await api.post('/documents/upload', formData, {
+                    headers: { 'Content-Type': 'multipart/form-data' }
+                });
+
+                setUploads(prev => ({ ...prev, [currentDocKey]: true }));
+                setFileNames(prev => ({ ...prev, [currentDocKey]: file.name }));
+                if (error) setError(false);
+            } catch (err) {
+                console.error("Document upload failed", err);
+                alert("Upload failed. Max file size is 10MB (PDF, JPG, PNG).");
+            } finally {
+                setIsUploading(null);
+            }
         }
         if (fileInputRef.current) fileInputRef.current.value = '';
     };
 
     const handleNext = (e: React.MouseEvent) => {
         e.preventDefault();
-        
-        // Validate required documents
-        if (!uploads.prCard || !uploads.photoId || !uploads.statement) {
+        const missingRequired = checklist.requiredKeys.some(k => !uploads[k]);
+        if (missingRequired) {
             setError(true);
             return;
         }
-        
         router.push('/dashboard/get-started/submission');
     };
 
@@ -76,9 +324,8 @@ export default function DocumentUploadPage() {
                 accept=".pdf,.jpg,.jpeg,.png"
             />
             <div className={styles.formSection}>
-                <h1 className={styles.pageTitle}>Document Upload</h1>
-                <p className={styles.pageSubtitle}>Upload the documents required to replace your Permanent Resident Card (Green Card).</p>
-                <p className={styles.pageDesc}>The exact evidence depends on your reason for filing (lost/stolen, expired, name change, etc.).</p>
+                <h1 className={styles.pageTitle}>{checklist.title}</h1>
+                <p className={styles.pageSubtitle}>{checklist.subtitle}</p>
 
                 <div className={styles.alertBox}>
                     <p className={styles.alertTitle}>Need document translation?</p>
@@ -101,131 +348,57 @@ export default function DocumentUploadPage() {
                     </div>
                 )}
 
-                <div className={styles.uploadGroup}>
-                    <div className={styles.uploadGroupHeader}>Identity & Status</div>
-                    <div className={styles.uploadRow}>
-                        <div className={styles.uploadInfo}>
-                            {getIcon(uploads.prCard)}
-                            <span className={styles.uploadText}>Clear copy (front and back) of your current or expired Permanent Resident Card, if you still have it <span className={styles.requiredText} style={{ color: error && !uploads.prCard ? '#ef4444' : '' }}>*Required</span></span>
-                        </div>
-                        <button onClick={() => handleUploadClick('prCard')} className={styles.btnUpload} style={{ backgroundColor: uploads.prCard ? '#f3f4f6' : '', color: uploads.prCard ? '#10b981' : '' }}>
-                            {uploads.prCard ? 'Uploaded' : 'Upload'}
-                        </button>
+                {checklist.groups.map((group, gIdx) => (
+                    <div key={gIdx} className={styles.uploadGroup}>
+                        <div className={styles.uploadGroupHeader}>{group.header}</div>
+                        {group.items.map((item) => {
+                            const isUploaded = !!uploads[item.key];
+                            return (
+                                <div key={item.key} className={styles.uploadRow}>
+                                    <div className={styles.uploadInfo}>
+                                        {getIcon(isUploaded)}
+                                        <span className={styles.uploadText}>
+                                            {item.label}{' '}
+                                            {item.required ? (
+                                                <span className={styles.requiredText} style={{ color: error && !isUploaded ? '#ef4444' : '' }}>
+                                                    *Required
+                                                </span>
+                                            ) : (
+                                                <span className={styles.optionalText}>(optional)</span>
+                                            )}
+                                        </span>
+                                    </div>
+                                    <button 
+                                        onClick={() => handleUploadClick(item.key)} 
+                                        disabled={isUploading === item.key}
+                                        className={styles.btnUpload} 
+                                        style={{ backgroundColor: isUploaded ? '#f3f4f6' : '', color: isUploaded ? '#10b981' : '' }}
+                                    >
+                                        {isUploading === item.key ? 'Uploading...' : (isUploaded ? 'Uploaded' : 'Upload')}
+                                    </button>
+                                </div>
+                            );
+                        })}
                     </div>
-                    <div className={styles.uploadRow}>
-                        <div className={styles.uploadInfo}>
-                            {getIcon(uploads.photoId)}
-                            <span className={styles.uploadText}>Government issued photo ID (driver's license, state ID, or passport biographic page) <span className={styles.requiredText} style={{ color: error && !uploads.photoId ? '#ef4444' : '' }}>*Required</span></span>
-                        </div>
-                        <button onClick={() => handleUploadClick('photoId')} className={styles.btnUpload} style={{ backgroundColor: uploads.photoId ? '#f3f4f6' : '', color: uploads.photoId ? '#10b981' : '' }}>
-                            {uploads.photoId ? 'Uploaded' : 'Upload'}
-                        </button>
-                    </div>
-                    <div className={styles.uploadRow}>
-                        <div className={styles.uploadInfo}>
-                            {getIcon(uploads.birthCert)}
-                            <span className={styles.uploadText}>Birth certificate (with certified English translation if applicable) <span className={styles.optionalText}>(optional)</span></span>
-                        </div>
-                        <button onClick={() => handleUploadClick('birthCert')} className={styles.btnUpload} style={{ backgroundColor: uploads.birthCert ? '#f3f4f6' : '', color: uploads.birthCert ? '#10b981' : '' }}>
-                            {uploads.birthCert ? 'Uploaded' : 'Upload'}
-                        </button>
-                    </div>
-                </div>
+                ))}
 
-                <div className={styles.uploadGroup}>
-                    <div className={styles.uploadGroupHeader}>If Card Was Lost, Stolen, or Destroyed</div>
-                    <div className={styles.uploadRow}>
-                        <div className={styles.uploadInfo}>
-                            {getIcon(uploads.policeReport)}
-                            <span className={styles.uploadText}>Copy of the police report filed for the lost or stolen card (recommended, not always required) <span className={styles.optionalText}>(optional)</span></span>
-                        </div>
-                        <button onClick={() => handleUploadClick('policeReport')} className={styles.btnUpload} style={{ backgroundColor: uploads.policeReport ? '#f3f4f6' : '', color: uploads.policeReport ? '#10b981' : '' }}>
-                            {uploads.policeReport ? 'Uploaded' : 'Upload'}
-                        </button>
-                    </div>
-                    <div className={styles.uploadRow}>
-                        <div className={styles.uploadInfo}>
-                            {getIcon(uploads.statement)}
-                            <span className={styles.uploadText}>Signed statement describing when and how the card was lost, stolen, or destroyed <span className={styles.requiredText} style={{ color: error && !uploads.statement ? '#ef4444' : '' }}>*Required</span></span>
-                        </div>
-                        <button onClick={() => handleUploadClick('statement')} className={styles.btnUpload} style={{ backgroundColor: uploads.statement ? '#f3f4f6' : '', color: uploads.statement ? '#10b981' : '' }}>
-                            {uploads.statement ? 'Uploaded' : 'Upload'}
-                        </button>
-                    </div>
-                </div>
-
-                <div className={styles.uploadGroup}>
-                    <div className={styles.uploadGroupHeader}>If Name or Biographic Data Changed</div>
-                    <div className={styles.uploadRow}>
-                        <div className={styles.uploadInfo}>
-                            {getIcon(uploads.marriageCert)}
-                            <span className={styles.uploadText}>Marriage certificate (for name change due to marriage) <span className={styles.optionalText}>(optional)</span></span>
-                        </div>
-                        <button onClick={() => handleUploadClick('marriageCert')} className={styles.btnUpload} style={{ backgroundColor: uploads.marriageCert ? '#f3f4f6' : '', color: uploads.marriageCert ? '#10b981' : '' }}>
-                            {uploads.marriageCert ? 'Uploaded' : 'Upload'}
-                        </button>
-                    </div>
-                    <div className={styles.uploadRow}>
-                        <div className={styles.uploadInfo}>
-                            {getIcon(uploads.divorceDecree)}
-                            <span className={styles.uploadText}>Divorce decree (for name change due to divorce) <span className={styles.optionalText}>(optional)</span></span>
-                        </div>
-                        <button onClick={() => handleUploadClick('divorceDecree')} className={styles.btnUpload} style={{ backgroundColor: uploads.divorceDecree ? '#f3f4f6' : '', color: uploads.divorceDecree ? '#10b981' : '' }}>
-                            {uploads.divorceDecree ? 'Uploaded' : 'Upload'}
-                        </button>
-                    </div>
-                    <div className={styles.uploadRow}>
-                        <div className={styles.uploadInfo}>
-                            {getIcon(uploads.courtOrder)}
-                            <span className={styles.uploadText}>Court order legally changing your name <span className={styles.optionalText}>(optional)</span></span>
-                        </div>
-                        <button onClick={() => handleUploadClick('courtOrder')} className={styles.btnUpload} style={{ backgroundColor: uploads.courtOrder ? '#f3f4f6' : '', color: uploads.courtOrder ? '#10b981' : '' }}>
-                            {uploads.courtOrder ? 'Uploaded' : 'Upload'}
-                        </button>
-                    </div>
-                </div>
-
-                <div className={styles.uploadGroup}>
-                    <div className={styles.uploadGroupHeader}>Commuter Status / Automatic Conversion (if applicable)</div>
-                    <div className={styles.uploadRow}>
-                        <div className={styles.uploadInfo}>
-                            {getIcon(uploads.residenceEvidence)}
-                            <span className={styles.uploadText}>Evidence of U.S. residence (lease, utility bills) if changing from commuter to resident status <span className={styles.optionalText}>(optional)</span></span>
-                        </div>
-                        <button onClick={() => handleUploadClick('residenceEvidence')} className={styles.btnUpload} style={{ backgroundColor: uploads.residenceEvidence ? '#f3f4f6' : '', color: uploads.residenceEvidence ? '#10b981' : '' }}>
-                            {uploads.residenceEvidence ? 'Uploaded' : 'Upload'}
-                        </button>
-                    </div>
-                    <div className={styles.uploadRow}>
-                        <div className={styles.uploadInfo}>
-                            {getIcon(uploads.priorCard)}
-                            <span className={styles.uploadText}>Copy of your prior edition Alien Registration Card, if replacing an older AR-3, AR-103, or I-151 <span className={styles.optionalText}>(optional)</span></span>
-                        </div>
-                        <button onClick={() => handleUploadClick('priorCard')} className={styles.btnUpload} style={{ backgroundColor: uploads.priorCard ? '#f3f4f6' : '', color: uploads.priorCard ? '#10b981' : '' }}>
-                            {uploads.priorCard ? 'Uploaded' : 'Upload'}
-                        </button>
-                    </div>
-                </div>
-
-                <div className={styles.uploadGroup}>
-                    <div className={styles.uploadGroupHeader}>Any Other Supporting Documents</div>
-                    <div className={styles.uploadRow}>
-                        <div className={styles.uploadInfo}>
-                            {getIcon(uploads.otherDocs)}
-                            <span className={styles.uploadText}>Any additional documents that support your reason for replacement <span className={styles.optionalText}>(optional)</span></span>
-                        </div>
-                        <button onClick={() => handleUploadClick('otherDocs')} className={styles.btnUpload} style={{ backgroundColor: uploads.otherDocs ? '#f3f4f6' : '', color: uploads.otherDocs ? '#10b981' : '' }}>
-                            {uploads.otherDocs ? 'Uploaded' : 'Upload'}
-                        </button>
-                    </div>
-                </div>
-
-                <div className={styles.footerActions}>
-                    <button onClick={handleNext} className={styles.btnNext} style={{ border: 'none', cursor: 'pointer', width: '100%', maxWidth: '300px' }}>
+                <div className={styles.footerScreenshot}>
+                    <Link href="/dashboard/get-started" className={styles.btnTeal}>
+                        &#8592; Previous
+                    </Link>
+                    <button onClick={handleNext} className={styles.btnTeal}>
                         Save and Continue
                     </button>
                 </div>
             </div>
         </div>
+    );
+}
+
+export default function DocumentUploadPage() {
+    return (
+        <Suspense fallback={<div className="p-10 text-center text-slate-500">Loading document checklist...</div>}>
+            <DocumentUploadContent />
+        </Suspense>
     );
 }

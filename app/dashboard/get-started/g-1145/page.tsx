@@ -78,7 +78,7 @@ export default function G1145FormPage() {
     const totalFields = Object.keys(formData).length;
     const filledFields = Object.values(formData).filter(val => typeof val === 'string' && val.trim() !== '').length;
     const percentage = totalFields > 0 ? Math.round((filledFields / totalFields) * 100) : 0;
-    const applicantName = [formData.firstName, formData.lastName].filter(Boolean).join(' ') || 'the Applicant';
+    const applicantName = [(formData as any).firstName, (formData as any).lastName].filter(Boolean).join(' ') || 'the Applicant';
 
     return (
         <div className={styles.pageWrapper}>

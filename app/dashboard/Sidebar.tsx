@@ -30,58 +30,53 @@ export default function Sidebar({ isOpen = false, onClose }: SidebarProps) {
         }
     }, [isGetStartedFlow]);
 
-    const getDynamicSteps = () => {
-        const baseSteps = [
-            { path: '/dashboard/get-started', name: '1. Start Application' }
-        ];
-
-        let formSteps: { path: string; name: string }[] = [];
-        if (!goalTitle || goalTitle.includes('Replace or fix a Green Card')) {
-            formSteps = [
-                { path: '/dashboard/get-started/i-90', name: '2. I-90 Form' },
-                { path: '/dashboard/get-started/g-1145', name: '3. G-1145 e-Notification' }
-            ];
-        } else if (goalTitle.includes('DACA')) {
-            formSteps = [
-                { path: '/dashboard/get-started/i-821d', name: '2. I-821D Form' },
-                { path: '/dashboard/get-started/i-765', name: '3. I-765 Form' },
-                { path: '/dashboard/get-started/i-765ws', name: '4. I-765WS Worksheet' }
-            ];
-        } else if (goalTitle.includes('Naturalization') || goalTitle.includes('Citizenship')) {
-            formSteps = [
-                { path: '/dashboard/get-started/n-400', name: '2. N-400 Form' }
-            ];
-        } else if (goalTitle.includes('fiancé(e) or spouse/relative')) {
-            formSteps = [
-                { path: '/dashboard/get-started/i-130', name: '2. I-130 Petition' },
-                { path: '/dashboard/get-started/i-130a', name: '3. I-130A Supp.' }
-            ];
-        } else if (goalTitle.includes('Adjust status')) {
-            formSteps = [
-                { path: '/dashboard/get-started/i-130', name: '2. I-130 Form' },
-                { path: '/dashboard/get-started/i-485', name: '3. I-485 Form' },
-                { path: '/dashboard/get-started/i-864', name: '4. I-864 Affidavit' }
-            ];
-        } else if (goalTitle.includes('Remove conditions')) {
-            formSteps = [
-                { path: '/dashboard/get-started/i-751', name: '2. I-751 Form' }
-            ];
-        } else {
-            formSteps = [
-                { path: '/dashboard/get-started/forms', name: '2. Required Forms' }
+    const getFormList = () => {
+        const title = (goalTitle || '').toLowerCase();
+        if (title.includes('replace') || title.includes('i-90') || title.includes('green card')) {
+            return [
+                { path: '/dashboard/get-started/i-90', code: 'i-90', name: 'Form I-90 (Green Card)' },
+                { path: '/dashboard/get-started/g-1145', code: 'g-1145', name: 'Form G-1145 (e-Notification)' }
             ];
         }
-
-        const nextIndex = formSteps.length + 2;
-        const endSteps = [
-            { path: '/dashboard/get-started/document-upload', name: `${nextIndex}. Document Upload` },
-            { path: '/dashboard/get-started/submission', name: `${nextIndex + 1}. Submission` }
+        if (title.includes('daca') || title.includes('821d')) {
+            return [
+                { path: '/dashboard/get-started/i-821d', code: 'i-821d', name: 'Form I-821D (DACA)' },
+                { path: '/dashboard/get-started/i-765', code: 'i-765', name: 'Form I-765 (Work Permit)' },
+                { path: '/dashboard/get-started/i-765ws', code: 'i-765ws', name: 'Form I-765WS (Worksheet)' },
+                { path: '/dashboard/get-started/g-1145', code: 'g-1145', name: 'Form G-1145 (e-Notification)' }
+            ];
+        }
+        if (title.includes('naturalization') || title.includes('citizenship') || title.includes('n-400')) {
+            return [
+                { path: '/dashboard/get-started/n-400', code: 'n-400', name: 'Form N-400 (Naturalization)' },
+                { path: '/dashboard/get-started/g-1145', code: 'g-1145', name: 'Form G-1145 (e-Notification)' }
+            ];
+        }
+        if (title.includes('adjust') || title.includes('485')) {
+            return [
+                { path: '/dashboard/get-started/i-130', code: 'i-130', name: 'Form I-130 (Petition)' },
+                { path: '/dashboard/get-started/i-485', code: 'i-485', name: 'Form I-485 (Green Card)' },
+                { path: '/dashboard/get-started/i-864', code: 'i-864', name: 'Form I-864 (Affidavit)' },
+                { path: '/dashboard/get-started/g-1145', code: 'g-1145', name: 'Form G-1145 (e-Notification)' }
+            ];
+        }
+        if (title.includes('remove') || title.includes('751')) {
+            return [
+                { path: '/dashboard/get-started/i-751', code: 'i-751', name: 'Form I-751 (Remove Conditions)' },
+                { path: '/dashboard/get-started/g-1145', code: 'g-1145', name: 'Form G-1145 (e-Notification)' }
+            ];
+        }
+        // Default relative / spouse petition flow
+        return [
+            { path: '/dashboard/get-started/i-130', code: 'i-130', name: 'Form I-130 (Petition)' },
+            { path: '/dashboard/get-started/i-130a', code: 'i-130a', name: 'Form I-130A (Spouse Supp.)' },
+            { path: '/dashboard/get-started/g-1145', code: 'g-1145', name: 'Form G-1145 (e-Notification)' }
         ];
-
-        return [...baseSteps, ...formSteps, ...endSteps];
     };
 
-    const dynamicSteps = getDynamicSteps();
+    const formsList = getFormList();
+
+    const isFormRouteActive = formsList.some(f => pathname === f.path) || pathname === '/dashboard/get-started/forms';
 
     return (
         <aside className={`${styles.sidebar} ${isOpen ? styles.open : ''} hide-scrollbar`}>
@@ -92,16 +87,66 @@ export default function Sidebar({ isOpen = false, onClose }: SidebarProps) {
             {isGetStartedFlow ? (
                 <div className={styles.navSection}>
                     <div className={styles.navSectionTitle}>MAIN</div>
-                    {dynamicSteps.map((step, idx) => (
+
+                    {/* Step 1 */}
+                    <Link
+                        href="/dashboard/get-started"
+                        onClick={onClose}
+                        className={pathname === '/dashboard/get-started' ? styles.flowNavItemActive : styles.flowNavItem}
+                    >
+                        1. Start Application
+                    </Link>
+
+                    {/* Step 2: Required Forms */}
+                    <div>
                         <Link
-                            key={idx}
-                            href={step.path}
+                            href={formsList[0]?.path || '/dashboard/get-started/forms'}
                             onClick={onClose}
-                            className={pathname === step.path ? styles.flowNavItemActive : styles.flowNavItem}
+                            className={isFormRouteActive ? styles.flowNavItemActive : styles.flowNavItem}
                         >
-                            {step.name}
+                            2. Required Forms
                         </Link>
-                    ))}
+
+                        {/* Nested Sub-Forms List */}
+                        <div className="pl-4 pr-1 py-1 space-y-1 mb-2">
+                            {formsList.map((form, fIdx) => {
+                                const isSubActive = pathname === form.path;
+                                return (
+                                    <Link
+                                        key={fIdx}
+                                        href={form.path}
+                                        onClick={onClose}
+                                        className={`flex items-center justify-between text-xs font-semibold px-3 py-2 rounded-lg transition-colors ${
+                                            isSubActive 
+                                                ? 'bg-blue-600 text-white font-bold shadow-sm' 
+                                                : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                                        }`}
+                                    >
+                                        <span>{form.name}</span>
+                                        <span className={isSubActive ? 'text-white' : 'text-emerald-600'}>✓</span>
+                                    </Link>
+                                );
+                            })}
+                        </div>
+                    </div>
+
+                    {/* Step 3: Document Upload */}
+                    <Link
+                        href="/dashboard/get-started/document-upload"
+                        onClick={onClose}
+                        className={pathname === '/dashboard/get-started/document-upload' ? styles.flowNavItemActive : styles.flowNavItem}
+                    >
+                        3. Document Upload
+                    </Link>
+
+                    {/* Step 4: Submission */}
+                    <Link
+                        href="/dashboard/get-started/submission"
+                        onClick={onClose}
+                        className={pathname === '/dashboard/get-started/submission' ? styles.flowNavItemActive : styles.flowNavItem}
+                    >
+                        4. Submission
+                    </Link>
                 </div>
             ) : (
                 <div className={styles.navSection}>

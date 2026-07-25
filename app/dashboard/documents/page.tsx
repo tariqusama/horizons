@@ -15,11 +15,31 @@ export default function DashboardDocumentsPage() {
     const [uploadingId, setUploadingId] = useState<number | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
+    const defaultChecklist: Document[] = [
+        { id: 1, name: 'Passport photo page', status: 'Missing', file_path: null },
+        { id: 2, name: 'Birth certificate', status: 'Missing', file_path: null },
+        { id: 3, name: 'Proof of residency', status: 'Missing', file_path: null },
+        { id: 4, name: 'Medical exam report', status: 'Missing', file_path: null },
+        { id: 5, name: 'Affidavit of support', status: 'Missing', file_path: null },
+        { id: 6, name: 'Government Issued Photo ID', status: 'Missing', file_path: null },
+        { id: 7, name: 'Permanent Resident Card', status: 'Missing', file_path: null },
+        { id: 8, name: 'Signed Statement', status: 'Missing', file_path: null },
+    ];
+
     const fetchDocuments = () => {
         setIsLoading(true);
         api.get('/documents')
-            .then(res => setDocuments(res.data))
-            .catch(err => console.error(err))
+            .then(res => {
+                if (Array.isArray(res.data) && res.data.length > 0) {
+                    setDocuments(res.data);
+                } else {
+                    setDocuments(defaultChecklist);
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                setDocuments(defaultChecklist);
+            })
             .finally(() => setIsLoading(false));
     };
 
@@ -34,16 +54,23 @@ export default function DashboardDocumentsPage() {
 
     const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
-        if (!file || !uploadingId) return;
+        if (!file) return;
 
         const formData = new FormData();
         formData.append('file', file);
 
         try {
-            await api.post(`/api/documents/${uploadingId}/upload`, formData, {
-                headers: { 'Content-Type': 'multipart/form-data' }
-            });
-            fetchDocuments(); // Refresh the list
+            if (uploadingId && uploadingId > 0) {
+                await api.post(`/documents/${uploadingId}/upload`, formData, {
+                    headers: { 'Content-Type': 'multipart/form-data' }
+                });
+            } else {
+                formData.append('name', file.name.replace(/\.[^/.]+$/, ""));
+                await api.post('/documents/upload', formData, {
+                    headers: { 'Content-Type': 'multipart/form-data' }
+                });
+            }
+            fetchDocuments(); // Refresh list persistently
         } catch (error) {
             console.error('Upload failed', error);
             alert('File upload failed. Max size is 10MB.');
@@ -71,11 +98,23 @@ export default function DashboardDocumentsPage() {
             />
 
             <div className="rounded-[40px] bg-white p-10 shadow-[0_25px_70px_rgba(61,68,101,0.08)]">
-                <p className="text-sm uppercase tracking-[0.28em] text-orange-500">Documents</p>
-                <h1 className="mt-4 text-4xl font-black text-[#1B3A64]">Upload and review files</h1>
-                <p className="mt-4 max-w-2xl text-base leading-7 text-[#5A6579]">
-                    Keep your case moving by uploading documents early and checking the status of every required file.
-                </p>
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                        <p className="text-sm uppercase tracking-[0.28em] text-orange-500">Documents</p>
+                        <h1 className="mt-4 text-4xl font-black text-[#1B3A64]">Upload and review files</h1>
+                        <p className="mt-4 max-w-2xl text-base leading-7 text-[#5A6579]">
+                            Keep your case moving by uploading documents early and checking the status of every required file.
+                        </p>
+                    </div>
+                    <div className="mt-4 sm:mt-0">
+                        <button 
+                            onClick={() => triggerUpload(-1)}
+                            className="bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white font-bold px-6 py-3 rounded-full shadow-lg shadow-blue-500/30 transition-all text-sm flex items-center gap-2"
+                        >
+                            <span className="text-base">+</span> Upload Document
+                        </button>
+                    </div>
+                </div>
 
                 <div className="mt-10 overflow-hidden rounded-[28px] border border-slate-200">
                     <div className="grid grid-cols-12 gap-4 bg-[#F8F6F3] px-6 py-4 text-sm font-semibold text-[#5A6579]">
