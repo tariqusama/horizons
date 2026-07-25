@@ -78,9 +78,13 @@ function InfoBanner({ children }: { children: ReactNode }) {
     );
 }
 
-function RefreshButton() {
+function RefreshButton({ onClick }: { onClick: () => void }) {
     return (
-        <button className="inline-flex items-center gap-2 text-sm font-semibold text-[#101F38] border border-[#ECE9E2] rounded-full px-4 py-2 hover:bg-[#F7F5F0] transition-colors shrink-0">
+        <button
+            type="button"
+            onClick={onClick}
+            className="inline-flex items-center gap-2 text-sm font-semibold text-[#101F38] border border-[#ECE9E2] rounded-full px-4 py-2 hover:bg-[#F7F5F0] transition-colors shrink-0"
+        >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <polyline points="23 4 23 10 17 10" />
                 <polyline points="1 20 1 14 7 14" />
@@ -145,26 +149,26 @@ function ServiceModal({
                 <div className="px-6 py-4 border-b border-[#ECE9E2] flex justify-between items-center">
                     <h2 className="text-lg font-bold text-[#101F38]">{service ? 'Edit Item' : 'Add Item'}</h2>
                     <button onClick={onClose} className="text-[#9CA3AF] hover:text-[#101F38] transition-colors">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
                     </button>
                 </div>
                 <form onSubmit={handleSubmit} className="p-6 space-y-4">
                     <div>
                         <label className="block text-xs font-semibold text-[#101F38] mb-1">Name</label>
-                        <input required value={name} onChange={e=>setName(e.target.value)} className="w-full border border-[#ECE9E2] rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-orange-500" placeholder="e.g. I-485 Form" />
+                        <input required value={name} onChange={e => setName(e.target.value)} className="w-full border border-[#ECE9E2] rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-orange-500" placeholder="e.g. I-485 Form" />
                     </div>
                     <div>
                         <label className="block text-xs font-semibold text-[#101F38] mb-1">Description</label>
-                        <input value={description} onChange={e=>setDescription(e.target.value)} className="w-full border border-[#ECE9E2] rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-orange-500" placeholder="Brief description" />
+                        <input value={description} onChange={e => setDescription(e.target.value)} className="w-full border border-[#ECE9E2] rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-orange-500" placeholder="Brief description" />
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                         <div>
                             <label className="block text-xs font-semibold text-[#101F38] mb-1">Fee ($)</label>
-                            <input required type="number" step="0.01" value={price} onChange={e=>setPrice(parseFloat(e.target.value))} className="w-full border border-[#ECE9E2] rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-orange-500" />
+                            <input required type="number" step="0.01" value={price} onChange={e => setPrice(parseFloat(e.target.value))} className="w-full border border-[#ECE9E2] rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-orange-500" />
                         </div>
                         <div>
                             <label className="block text-xs font-semibold text-[#101F38] mb-1">Tier / Info</label>
-                            <input required value={tier} onChange={e=>setTier(e.target.value)} className="w-full border border-[#ECE9E2] rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-orange-500" placeholder="Standard" />
+                            <input required value={tier} onChange={e => setTier(e.target.value)} className="w-full border border-[#ECE9E2] rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-orange-500" placeholder="Standard" />
                         </div>
                     </div>
                     <div className="pt-4 flex justify-end gap-3">
@@ -227,23 +231,23 @@ function LockboxModal({
                 <div className="px-6 py-4 border-b border-[#ECE9E2] flex justify-between items-center">
                     <h2 className="text-lg font-bold text-[#101F38]">{rule ? 'Edit Lockbox Rule' : 'Add Lockbox Rule'}</h2>
                     <button onClick={onClose} className="text-[#9CA3AF] hover:text-[#101F38] transition-colors">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
                     </button>
                 </div>
                 <form onSubmit={handleSubmit} className="p-6 space-y-4">
                     <div className="grid grid-cols-2 gap-4">
                         <div>
                             <label className="block text-xs font-semibold text-[#101F38] mb-1">State</label>
-                            <input required value={state} onChange={e=>setState(e.target.value)} className="w-full border border-[#ECE9E2] rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-orange-500" placeholder="e.g. California" />
+                            <input required value={state} onChange={e => setState(e.target.value)} className="w-full border border-[#ECE9E2] rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-orange-500" placeholder="e.g. California" />
                         </div>
                         <div>
                             <label className="block text-xs font-semibold text-[#101F38] mb-1">Form Type</label>
-                            <input required value={formType} onChange={e=>setFormType(e.target.value)} className="w-full border border-[#ECE9E2] rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-orange-500" placeholder="e.g. I-485" />
+                            <input required value={formType} onChange={e => setFormType(e.target.value)} className="w-full border border-[#ECE9E2] rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-orange-500" placeholder="e.g. I-485" />
                         </div>
                     </div>
                     <div>
                         <label className="block text-xs font-semibold text-[#101F38] mb-1">Mailing Address</label>
-                        <textarea required value={address} onChange={e=>setAddress(e.target.value)} className="w-full border border-[#ECE9E2] rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-orange-500 min-h-[80px]" placeholder="Full Lockbox Address" />
+                        <textarea required value={address} onChange={e => setAddress(e.target.value)} className="w-full border border-[#ECE9E2] rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-orange-500 min-h-[80px]" placeholder="Full Lockbox Address" />
                     </div>
                     <div className="pt-4 flex justify-end gap-3">
                         <button type="button" onClick={onClose} className="px-4 py-2 text-sm font-medium text-[#5B6472] hover:bg-[#F7F5F0] rounded-lg transition-colors">Cancel</button>
@@ -317,7 +321,7 @@ function GuideEngineTab({ services }: { services: Service[] }) {
                         </svg>
                         Auto-sync {autoSync ? 'on' : 'off'}
                     </button>
-                    <button 
+                    <button
                         onClick={handleRunAnalysis}
                         disabled={isAnalyzing}
                         className="inline-flex items-center gap-2 text-sm font-semibold text-white bg-gradient-to-b from-orange-500 to-orange-600 rounded-full px-4 py-2 hover:bg-[#D1644C] transition-colors disabled:opacity-50"
@@ -507,7 +511,7 @@ function FormsTrackerTab({ services, onRefresh, onEdit, onDelete, onAdd }: { ser
                 </div>
                 <div className="flex gap-2">
                     <button onClick={onAdd} className="inline-flex items-center gap-2 text-sm font-semibold text-white bg-gradient-to-b from-orange-500 to-orange-600 rounded-full px-4 py-2 hover:from-orange-600 hover:to-orange-700 transition-colors shrink-0">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
                         Add Form
                     </button>
                     <RefreshButton onClick={onRefresh} />
@@ -537,7 +541,7 @@ function FormsTrackerTab({ services, onRefresh, onEdit, onDelete, onAdd }: { ser
                                 <button onClick={() => onEdit(service)} className="text-[#5B6472] hover:text-orange-500 transition-colors p-1" title="Edit">
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9" /><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" /></svg>
                                 </button>
-                                <button onClick={() => { if(window.confirm('Delete this form?')) onDelete(service.id); }} className="text-[#5B6472] hover:text-red-500 transition-colors p-1" title="Delete">
+                                <button onClick={() => { if (window.confirm('Delete this form?')) onDelete(service.id); }} className="text-[#5B6472] hover:text-red-500 transition-colors p-1" title="Delete">
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6" /><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /></svg>
                                 </button>
                             </div>
@@ -563,7 +567,7 @@ function FeesTab({ services, onRefresh, onEdit, onDelete, onAdd }: { services: S
                 </div>
                 <div className="flex gap-2">
                     <button onClick={onAdd} className="inline-flex items-center gap-2 text-sm font-semibold text-white bg-gradient-to-b from-orange-500 to-orange-600 rounded-full px-4 py-2 hover:from-orange-600 hover:to-orange-700 transition-colors shrink-0">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
                         Add Fee
                     </button>
                     <RefreshButton onClick={onRefresh} />
@@ -589,7 +593,7 @@ function FeesTab({ services, onRefresh, onEdit, onDelete, onAdd }: { services: S
                                     <button onClick={() => onEdit(service)} className="text-[#5B6472] hover:text-orange-500 transition-colors" title="Edit">
                                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9" /><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" /></svg>
                                     </button>
-                                    <button onClick={() => { if(window.confirm('Delete this fee entry?')) onDelete(service.id); }} className="text-[#5B6472] hover:text-red-500 transition-colors" title="Delete">
+                                    <button onClick={() => { if (window.confirm('Delete this fee entry?')) onDelete(service.id); }} className="text-[#5B6472] hover:text-red-500 transition-colors" title="Delete">
                                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6" /><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /></svg>
                                     </button>
                                 </div>
@@ -618,13 +622,13 @@ function LockboxTab() {
     const [rules, setRules] = useState<LockboxRule[]>(INITIAL_LOCKBOX_RULES);
     const [stateFilter, setStateFilter] = useState('');
     const [formFilter, setFormFilter] = useState('');
-    
+
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingRule, setEditingRule] = useState<LockboxRule | null>(null);
 
     const states = Array.from(new Set(rules.map(r => r.state))).sort();
     const forms = Array.from(new Set(rules.map(r => r.formType))).sort();
-    
+
     // Find matching rule for finder
     const matchingRule = rules.find(r => r.state === stateFilter && (r.formType === formFilter || r.formType === 'All' || formFilter === 'All'));
 
@@ -650,7 +654,7 @@ function LockboxTab() {
                     <p className="text-sm text-[#5B6472] font-medium">Configure and manage lockbox routing rules</p>
                 </div>
                 <button onClick={() => { setEditingRule(null); setIsModalOpen(true); }} className="inline-flex items-center gap-2 text-sm font-semibold text-white bg-gradient-to-b from-orange-500 to-orange-600 rounded-full px-4 py-2 hover:from-orange-600 hover:to-orange-700 transition-colors shrink-0">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
                     Add Rule
                 </button>
             </div>
@@ -727,11 +731,11 @@ function LockboxTab() {
                 Lockbox rules map specific states and forms to mailing addresses. Use "All" in Form Type as a fallback for a state.
             </InfoBanner>
 
-            <LockboxModal 
-                isOpen={isModalOpen} 
-                onClose={() => setIsModalOpen(false)} 
-                onSave={handleSaveRule} 
-                rule={editingRule} 
+            <LockboxModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                onSave={handleSaveRule}
+                rule={editingRule}
             />
         </div>
     );
@@ -742,7 +746,7 @@ export default function AdminGuideEnginePage() {
     const [services, setServices] = useState<Service[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
-    
+
     const [isServiceModalOpen, setIsServiceModalOpen] = useState(false);
     const [editingService, setEditingService] = useState<Service | null>(null);
 
@@ -795,7 +799,7 @@ export default function AdminGuideEnginePage() {
 
     // Calculate dynamic stats
     const activeGuidesCount = services.length;
-    const formsTrackedCount = services.length; 
+    const formsTrackedCount = services.length;
     const feeUpdatesCount = services.length;
     const locationsCount = new Set(services.map(s => s.tier)).size;
 
@@ -804,262 +808,262 @@ export default function AdminGuideEnginePage() {
             <div className="mb-6 px-1">
                 <h1 className="text-2xl font-bold text-slate-900">Guide Engine</h1>
             </div>
-            
+
             {loading && <div className="text-center py-10 text-slate-500">Loading services...</div>}
             {error && <div className="text-center py-10 text-red-500">{error}</div>}
-            
+
             {!loading && !error && (
-            <div className="space-y-6">
-                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                    {/* Stat Card 1 */}
-                    <div className="rounded-lg bg-white text-slate-900 relative overflow-hidden border-0 bg-gradient-to-br from-blue-500/10 via-white to-cyan-500/10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_12px_40px_rgb(0,0,0,0.08)] transition-all duration-300 animate-fade-in hover:scale-[1.02]">
-                        <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 opacity-0 hover:opacity-100 transition-opacity duration-300"></div>
-                        <div className="p-6 relative flex flex-row items-center justify-between space-y-0 pb-2">
-                            <h3 className="tracking-tight text-sm font-medium">Active Guides</h3>
-                            <div className="p-2.5 rounded-xl bg-gradient-to-br from-blue-500/20 to-cyan-500/20 backdrop-blur-sm">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5 text-blue-500"><path d="M12 7v14"></path><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"></path></svg>
+                <div className="space-y-6">
+                    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                        {/* Stat Card 1 */}
+                        <div className="rounded-lg bg-white text-slate-900 relative overflow-hidden border-0 bg-gradient-to-br from-blue-500/10 via-white to-cyan-500/10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_12px_40px_rgb(0,0,0,0.08)] transition-all duration-300 animate-fade-in hover:scale-[1.02]">
+                            <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 opacity-0 hover:opacity-100 transition-opacity duration-300"></div>
+                            <div className="p-6 relative flex flex-row items-center justify-between space-y-0 pb-2">
+                                <h3 className="tracking-tight text-sm font-medium">Active Guides</h3>
+                                <div className="p-2.5 rounded-xl bg-gradient-to-br from-blue-500/20 to-cyan-500/20 backdrop-blur-sm">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5 text-blue-500"><path d="M12 7v14"></path><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"></path></svg>
+                                </div>
+                            </div>
+                            <div className="p-6 pt-0 relative">
+                                <div className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">{activeGuidesCount}</div>
+                                <p className="text-xs text-slate-500 mt-1">USCIS guides available</p>
                             </div>
                         </div>
-                        <div className="p-6 pt-0 relative">
-                            <div className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">{activeGuidesCount}</div>
-                            <p className="text-xs text-slate-500 mt-1">USCIS guides available</p>
+
+                        {/* Stat Card 2 */}
+                        <div className="rounded-lg bg-white text-slate-900 relative overflow-hidden border-0 bg-gradient-to-br from-green-500/10 via-white to-emerald-500/10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_12px_40px_rgb(0,0,0,0.08)] transition-all duration-300 animate-fade-in hover:scale-[1.02]" style={{ animationDelay: '100ms' }}>
+                            <div className="absolute inset-0 bg-gradient-to-br from-green-500/20 to-emerald-500/20 opacity-0 hover:opacity-100 transition-opacity duration-300"></div>
+                            <div className="p-6 relative flex flex-row items-center justify-between space-y-0 pb-2">
+                                <h3 className="tracking-tight text-sm font-medium">Forms Tracked</h3>
+                                <div className="p-2.5 rounded-xl bg-gradient-to-br from-green-500/20 to-emerald-500/20 backdrop-blur-sm">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5 text-green-500"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"></path><path d="M14 2v4a2 2 0 0 0 2 2h4"></path><path d="M10 9H8"></path><path d="M16 13H8"></path><path d="M16 17H8"></path></svg>
+                                </div>
+                            </div>
+                            <div className="p-6 pt-0 relative">
+                                <div className="text-3xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">{formsTrackedCount}</div>
+                                <p className="text-xs text-slate-500 mt-1">USCIS forms monitored</p>
+                            </div>
+                        </div>
+
+                        {/* Stat Card 3 */}
+                        <div className="rounded-lg bg-white text-slate-900 relative overflow-hidden border-0 bg-gradient-to-br from-purple-500/10 via-white to-pink-500/10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_12px_40px_rgb(0,0,0,0.08)] transition-all duration-300 animate-fade-in hover:scale-[1.02]" style={{ animationDelay: '200ms' }}>
+                            <div className="absolute inset-0 bg-gradient-to-br from-purple-500/20 to-pink-500/20 opacity-0 hover:opacity-100 transition-opacity duration-300"></div>
+                            <div className="p-6 relative flex flex-row items-center justify-between space-y-0 pb-2">
+                                <h3 className="tracking-tight text-sm font-medium">Fee Updates</h3>
+                                <div className="p-2.5 rounded-xl bg-gradient-to-br from-purple-500/20 to-pink-500/20 backdrop-blur-sm">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5 text-purple-500"><line x1="12" x2="12" y1="2" y2="22"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                                </div>
+                            </div>
+                            <div className="p-6 pt-0 relative">
+                                <div className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">{feeUpdatesCount}</div>
+                                <p className="text-xs text-slate-500 mt-1">Current filing fees</p>
+                            </div>
+                        </div>
+
+                        {/* Stat Card 4 */}
+                        <div className="rounded-lg bg-white text-slate-900 relative overflow-hidden border-0 bg-gradient-to-br from-orange-500/10 via-white to-amber-500/10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_12px_40px_rgb(0,0,0,0.08)] transition-all duration-300 animate-fade-in hover:scale-[1.02]" style={{ animationDelay: '300ms' }}>
+                            <div className="absolute inset-0 bg-gradient-to-br from-orange-500/20 to-amber-500/20 opacity-0 hover:opacity-100 transition-opacity duration-300"></div>
+                            <div className="p-6 relative flex flex-row items-center justify-between space-y-0 pb-2">
+                                <h3 className="tracking-tight text-sm font-medium">Locations</h3>
+                                <div className="p-2.5 rounded-xl bg-gradient-to-br from-orange-500/20 to-amber-500/20 backdrop-blur-sm">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5 text-orange-500"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                                </div>
+                            </div>
+                            <div className="p-6 pt-0 relative">
+                                <div className="text-3xl font-bold bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent">{locationsCount}</div>
+                                <p className="text-xs text-slate-500 mt-1">Filing lockboxes</p>
+                            </div>
                         </div>
                     </div>
 
-                    {/* Stat Card 2 */}
-                    <div className="rounded-lg bg-white text-slate-900 relative overflow-hidden border-0 bg-gradient-to-br from-green-500/10 via-white to-emerald-500/10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_12px_40px_rgb(0,0,0,0.08)] transition-all duration-300 animate-fade-in hover:scale-[1.02]" style={{ animationDelay: '100ms' }}>
-                        <div className="absolute inset-0 bg-gradient-to-br from-green-500/20 to-emerald-500/20 opacity-0 hover:opacity-100 transition-opacity duration-300"></div>
-                        <div className="p-6 relative flex flex-row items-center justify-between space-y-0 pb-2">
-                            <h3 className="tracking-tight text-sm font-medium">Forms Tracked</h3>
-                            <div className="p-2.5 rounded-xl bg-gradient-to-br from-green-500/20 to-emerald-500/20 backdrop-blur-sm">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5 text-green-500"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"></path><path d="M14 2v4a2 2 0 0 0 2 2h4"></path><path d="M10 9H8"></path><path d="M16 13H8"></path><path d="M16 17H8"></path></svg>
+                    {/* Main Content Card */}
+                    <div className="rounded-lg bg-white text-slate-900 border-0 bg-gradient-to-br from-white via-white to-slate-100/50 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+                        <div className="flex flex-col space-y-1.5 p-6 border-b border-slate-200/50 bg-gradient-to-r from-orange-500/5 to-transparent">
+                            <div className="flex items-center gap-3">
+                                <div className="p-2.5 rounded-xl bg-gradient-to-br from-orange-500/20 to-orange-500/10 backdrop-blur-sm">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6 text-orange-500"><path d="M12 7v14"></path><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"></path></svg>
+                                </div>
+                                <div>
+                                    <h3 className="font-semibold tracking-tight text-2xl">USCIS Guide Engine</h3>
+                                    <p className="text-sm text-slate-500 mt-1">Access comprehensive USCIS forms, fees, and processing information for administrative oversight</p>
+                                </div>
                             </div>
                         </div>
-                        <div className="p-6 pt-0 relative">
-                            <div className="text-3xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">{formsTrackedCount}</div>
-                            <p className="text-xs text-slate-500 mt-1">USCIS forms monitored</p>
-                        </div>
-                    </div>
 
-                    {/* Stat Card 3 */}
-                    <div className="rounded-lg bg-white text-slate-900 relative overflow-hidden border-0 bg-gradient-to-br from-purple-500/10 via-white to-pink-500/10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_12px_40px_rgb(0,0,0,0.08)] transition-all duration-300 animate-fade-in hover:scale-[1.02]" style={{ animationDelay: '200ms' }}>
-                        <div className="absolute inset-0 bg-gradient-to-br from-purple-500/20 to-pink-500/20 opacity-0 hover:opacity-100 transition-opacity duration-300"></div>
-                        <div className="p-6 relative flex flex-row items-center justify-between space-y-0 pb-2">
-                            <h3 className="tracking-tight text-sm font-medium">Fee Updates</h3>
-                            <div className="p-2.5 rounded-xl bg-gradient-to-br from-purple-500/20 to-pink-500/20 backdrop-blur-sm">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5 text-purple-500"><line x1="12" x2="12" y1="2" y2="22"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
-                            </div>
-                        </div>
-                        <div className="p-6 pt-0 relative">
-                            <div className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">{feeUpdatesCount}</div>
-                            <p className="text-xs text-slate-500 mt-1">Current filing fees</p>
-                        </div>
-                    </div>
+                        <div className="p-6 pt-6">
+                            <div className="w-full">
+                                {/* Tab List */}
+                                <div className="items-center justify-center text-slate-500 grid w-full grid-cols-4 bg-slate-100 p-1 rounded-xl h-auto mb-6">
+                                    {PANEL_TABS.map((tab) => (
+                                        <button
+                                            key={tab}
+                                            onClick={() => setActiveTab(tab)}
+                                            className={`inline-flex items-center justify-center whitespace-nowrap px-3 text-sm font-medium rounded-lg transition-all py-3 ${activeTab === tab ? 'bg-white text-slate-900 shadow-sm' : 'hover:text-slate-900'}`}
+                                        >
+                                            {tab}
+                                        </button>
+                                    ))}
+                                </div>
 
-                    {/* Stat Card 4 */}
-                    <div className="rounded-lg bg-white text-slate-900 relative overflow-hidden border-0 bg-gradient-to-br from-orange-500/10 via-white to-amber-500/10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_12px_40px_rgb(0,0,0,0.08)] transition-all duration-300 animate-fade-in hover:scale-[1.02]" style={{ animationDelay: '300ms' }}>
-                        <div className="absolute inset-0 bg-gradient-to-br from-orange-500/20 to-amber-500/20 opacity-0 hover:opacity-100 transition-opacity duration-300"></div>
-                        <div className="p-6 relative flex flex-row items-center justify-between space-y-0 pb-2">
-                            <h3 className="tracking-tight text-sm font-medium">Locations</h3>
-                            <div className="p-2.5 rounded-xl bg-gradient-to-br from-orange-500/20 to-amber-500/20 backdrop-blur-sm">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5 text-orange-500"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"></path><circle cx="12" cy="10" r="3"></circle></svg>
-                            </div>
-                        </div>
-                        <div className="p-6 pt-0 relative">
-                            <div className="text-3xl font-bold bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent">{locationsCount}</div>
-                            <p className="text-xs text-slate-500 mt-1">Filing lockboxes</p>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Main Content Card */}
-                <div className="rounded-lg bg-white text-slate-900 border-0 bg-gradient-to-br from-white via-white to-slate-100/50 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
-                    <div className="flex flex-col space-y-1.5 p-6 border-b border-slate-200/50 bg-gradient-to-r from-orange-500/5 to-transparent">
-                        <div className="flex items-center gap-3">
-                            <div className="p-2.5 rounded-xl bg-gradient-to-br from-orange-500/20 to-orange-500/10 backdrop-blur-sm">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6 text-orange-500"><path d="M12 7v14"></path><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"></path></svg>
-                            </div>
-                            <div>
-                                <h3 className="font-semibold tracking-tight text-2xl">USCIS Guide Engine</h3>
-                                <p className="text-sm text-slate-500 mt-1">Access comprehensive USCIS forms, fees, and processing information for administrative oversight</p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div className="p-6 pt-6">
-                        <div className="w-full">
-                            {/* Tab List */}
-                            <div className="items-center justify-center text-slate-500 grid w-full grid-cols-4 bg-slate-100 p-1 rounded-xl h-auto mb-6">
-                                {PANEL_TABS.map((tab) => (
-                                    <button
-                                        key={tab}
-                                        onClick={() => setActiveTab(tab)}
-                                        className={`inline-flex items-center justify-center whitespace-nowrap px-3 text-sm font-medium rounded-lg transition-all py-3 ${activeTab === tab ? 'bg-white text-slate-900 shadow-sm' : 'hover:text-slate-900'}`}
-                                    >
-                                        {tab}
-                                    </button>
-                                ))}
-                            </div>
-
-                            {/* Tab Content */}
-                            <div className="mt-6">
-                                {activeTab === 'Guide Engine' && (
-                                    <div className="space-y-8">
-                                        <div className="flex items-center justify-between">
-                                            <div className="space-y-2">
-                                                <h1 className="text-4xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">Guide Engine</h1>
-                                                <p className="text-base text-slate-500">Automatically sync form changes and generate intake fields</p>
+                                {/* Tab Content */}
+                                <div className="mt-6">
+                                    {activeTab === 'Guide Engine' && (
+                                        <div className="space-y-8">
+                                            <div className="flex items-center justify-between">
+                                                <div className="space-y-2">
+                                                    <h1 className="text-4xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">Guide Engine</h1>
+                                                    <p className="text-base text-slate-500">Automatically sync form changes and generate intake fields</p>
+                                                </div>
+                                                <div className="flex items-center gap-3">
+                                                    <button className="rounded-md text-sm font-medium border border-slate-200 bg-white hover:bg-slate-50 hover:text-slate-900 py-2 flex items-center gap-2 h-11 px-6 transition-colors">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                                                        Auto-Sync Off
+                                                    </button>
+                                                    <button className="rounded-md text-sm font-medium bg-gradient-to-b from-orange-500 to-orange-600 text-white hover:from-orange-600 hover:to-orange-700 py-2 flex items-center gap-2 h-11 px-6 transition-colors shadow-sm">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>
+                                                        Run Analysis
+                                                    </button>
+                                                </div>
                                             </div>
-                                            <div className="flex items-center gap-3">
-                                                <button className="rounded-md text-sm font-medium border border-slate-200 bg-white hover:bg-slate-50 hover:text-slate-900 py-2 flex items-center gap-2 h-11 px-6 transition-colors">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-                                                    Auto-Sync Off
-                                                </button>
-                                                <button className="rounded-md text-sm font-medium bg-gradient-to-b from-orange-500 to-orange-600 text-white hover:from-orange-600 hover:to-orange-700 py-2 flex items-center gap-2 h-11 px-6 transition-colors shadow-sm">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>
-                                                    Run Analysis
-                                                </button>
-                                            </div>
-                                        </div>
-                                        
-                                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                                            {/* Sub stat 1 */}
-                                            <div className="rounded-lg bg-white text-slate-900 relative overflow-hidden border border-slate-100 shadow-sm transition-all duration-300 hover:shadow-md hover:scale-[1.02]">
-                                                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-cyan-500/5 opacity-0 hover:opacity-100 transition-opacity duration-300"></div>
-                                                <div className="relative p-6">
-                                                    <div className="flex items-center justify-between">
-                                                        <div className="space-y-1">
-                                                            <p className="text-sm font-medium text-slate-500">Form Editions</p>
-                                                            <p className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">0</p>
+
+                                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                                                {/* Sub stat 1 */}
+                                                <div className="rounded-lg bg-white text-slate-900 relative overflow-hidden border border-slate-100 shadow-sm transition-all duration-300 hover:shadow-md hover:scale-[1.02]">
+                                                    <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-cyan-500/5 opacity-0 hover:opacity-100 transition-opacity duration-300"></div>
+                                                    <div className="relative p-6">
+                                                        <div className="flex items-center justify-between">
+                                                            <div className="space-y-1">
+                                                                <p className="text-sm font-medium text-slate-500">Form Editions</p>
+                                                                <p className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">0</p>
+                                                            </div>
+                                                            <div className="p-3 rounded-xl bg-gradient-to-br from-blue-500/10 to-cyan-500/10 backdrop-blur-sm">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6 text-blue-500"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"></path><path d="M14 2v4a2 2 0 0 0 2 2h4"></path><path d="M10 9H8"></path><path d="M16 13H8"></path><path d="M16 17H8"></path></svg>
+                                                            </div>
                                                         </div>
-                                                        <div className="p-3 rounded-xl bg-gradient-to-br from-blue-500/10 to-cyan-500/10 backdrop-blur-sm">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6 text-blue-500"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"></path><path d="M14 2v4a2 2 0 0 0 2 2h4"></path><path d="M10 9H8"></path><path d="M16 13H8"></path><path d="M16 17H8"></path></svg>
+                                                    </div>
+                                                </div>
+                                                {/* Sub stat 2 */}
+                                                <div className="rounded-lg bg-white text-slate-900 relative overflow-hidden border border-slate-100 shadow-sm transition-all duration-300 hover:shadow-md hover:scale-[1.02]">
+                                                    <div className="absolute inset-0 bg-gradient-to-br from-orange-500/5 to-amber-500/5 opacity-0 hover:opacity-100 transition-opacity duration-300"></div>
+                                                    <div className="relative p-6">
+                                                        <div className="flex items-center justify-between">
+                                                            <div className="space-y-1">
+                                                                <p className="text-sm font-medium text-slate-500">Field Changes</p>
+                                                                <p className="text-4xl font-bold bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent">0</p>
+                                                            </div>
+                                                            <div className="p-3 rounded-xl bg-gradient-to-br from-orange-500/10 to-amber-500/10 backdrop-blur-sm">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6 text-orange-500"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path><path d="M21 3v5h-5"></path><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path><path d="M8 16H3v5"></path></svg>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                {/* Sub stat 3 */}
+                                                <div className="rounded-lg bg-white text-slate-900 relative overflow-hidden border border-slate-100 shadow-sm transition-all duration-300 hover:shadow-md hover:scale-[1.02]">
+                                                    <div className="absolute inset-0 bg-gradient-to-br from-green-500/5 to-emerald-500/5 opacity-0 hover:opacity-100 transition-opacity duration-300"></div>
+                                                    <div className="relative p-6">
+                                                        <div className="flex items-center justify-between">
+                                                            <div className="space-y-1">
+                                                                <p className="text-sm font-medium text-slate-500">Generated Questions</p>
+                                                                <p className="text-4xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">0</p>
+                                                            </div>
+                                                            <div className="p-3 rounded-xl bg-gradient-to-br from-green-500/10 to-emerald-500/10 backdrop-blur-sm">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6 text-green-500"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                {/* Sub stat 4 */}
+                                                <div className="rounded-lg bg-white text-slate-900 relative overflow-hidden border border-slate-100 shadow-sm transition-all duration-300 hover:shadow-md hover:scale-[1.02]">
+                                                    <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-pink-500/5 opacity-0 hover:opacity-100 transition-opacity duration-300"></div>
+                                                    <div className="relative p-6">
+                                                        <div className="flex items-center justify-between">
+                                                            <div className="space-y-1">
+                                                                <p className="text-sm font-medium text-slate-500">Approved</p>
+                                                                <p className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">0</p>
+                                                            </div>
+                                                            <div className="p-3 rounded-xl bg-gradient-to-br from-purple-500/10 to-pink-500/10 backdrop-blur-sm">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6 text-purple-500"><path d="M21.801 10A10 10 0 1 1 17 3.335"></path><path d="m9 11 3 3L22 4"></path></svg>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                            {/* Sub stat 2 */}
-                                            <div className="rounded-lg bg-white text-slate-900 relative overflow-hidden border border-slate-100 shadow-sm transition-all duration-300 hover:shadow-md hover:scale-[1.02]">
-                                                <div className="absolute inset-0 bg-gradient-to-br from-orange-500/5 to-amber-500/5 opacity-0 hover:opacity-100 transition-opacity duration-300"></div>
-                                                <div className="relative p-6">
-                                                    <div className="flex items-center justify-between">
-                                                        <div className="space-y-1">
-                                                            <p className="text-sm font-medium text-slate-500">Field Changes</p>
-                                                            <p className="text-4xl font-bold bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent">0</p>
+
+                                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                                {/* Field Changes */}
+                                                <div className="rounded-lg bg-white text-slate-900 border border-slate-100 shadow-sm">
+                                                    <div className="flex flex-col space-y-1.5 p-6 pb-4">
+                                                        <h3 className="font-semibold tracking-tight text-xl flex items-center gap-2">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5 text-orange-500"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path><path d="M21 3v5h-5"></path><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path><path d="M8 16H3v5"></path></svg>
+                                                            Recent Field Changes
+                                                        </h3>
+                                                        <p className="text-slate-500 text-sm">Latest detected changes in form fields</p>
+                                                    </div>
+                                                    <div className="p-6 pt-0">
+                                                        <div className="space-y-3">
+                                                            <div className="text-center py-12 rounded-xl bg-slate-50">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-12 w-12 mx-auto mb-3 text-slate-300"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path><path d="M21 3v5h-5"></path><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path><path d="M8 16H3v5"></path></svg>
+                                                                <p className="text-slate-500 font-medium">No field changes detected yet</p>
+                                                                <p className="text-sm text-slate-400 mt-1">Run analysis to detect form changes</p>
+                                                            </div>
                                                         </div>
-                                                        <div className="p-3 rounded-xl bg-gradient-to-br from-orange-500/10 to-amber-500/10 backdrop-blur-sm">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6 text-orange-500"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path><path d="M21 3v5h-5"></path><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path><path d="M8 16H3v5"></path></svg>
+                                                    </div>
+                                                </div>
+
+                                                {/* Auto Questions */}
+                                                <div className="rounded-lg bg-white text-slate-900 border border-slate-100 shadow-sm">
+                                                    <div className="flex flex-col space-y-1.5 p-6 pb-4">
+                                                        <h3 className="font-semibold tracking-tight text-xl flex items-center gap-2">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5 text-orange-500"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>
+                                                            Auto-Generated Questions
+                                                        </h3>
+                                                        <p className="text-slate-500 text-sm">Questions automatically created from form changes</p>
+                                                    </div>
+                                                    <div className="p-6 pt-0">
+                                                        <div className="space-y-3">
+                                                            <div className="text-center py-12 rounded-xl bg-slate-50">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-12 w-12 mx-auto mb-3 text-slate-300"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>
+                                                                <p className="text-slate-500 font-medium">No auto-generated questions yet</p>
+                                                                <p className="text-sm text-slate-400 mt-1">Questions will appear after form analysis</p>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                            {/* Sub stat 3 */}
-                                            <div className="rounded-lg bg-white text-slate-900 relative overflow-hidden border border-slate-100 shadow-sm transition-all duration-300 hover:shadow-md hover:scale-[1.02]">
-                                                <div className="absolute inset-0 bg-gradient-to-br from-green-500/5 to-emerald-500/5 opacity-0 hover:opacity-100 transition-opacity duration-300"></div>
-                                                <div className="relative p-6">
-                                                    <div className="flex items-center justify-between">
-                                                        <div className="space-y-1">
-                                                            <p className="text-sm font-medium text-slate-500">Generated Questions</p>
-                                                            <p className="text-4xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">0</p>
-                                                        </div>
-                                                        <div className="p-3 rounded-xl bg-gradient-to-br from-green-500/10 to-emerald-500/10 backdrop-blur-sm">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6 text-green-500"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            {/* Sub stat 4 */}
-                                            <div className="rounded-lg bg-white text-slate-900 relative overflow-hidden border border-slate-100 shadow-sm transition-all duration-300 hover:shadow-md hover:scale-[1.02]">
-                                                <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-pink-500/5 opacity-0 hover:opacity-100 transition-opacity duration-300"></div>
-                                                <div className="relative p-6">
-                                                    <div className="flex items-center justify-between">
-                                                        <div className="space-y-1">
-                                                            <p className="text-sm font-medium text-slate-500">Approved</p>
-                                                            <p className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">0</p>
-                                                        </div>
-                                                        <div className="p-3 rounded-xl bg-gradient-to-br from-purple-500/10 to-pink-500/10 backdrop-blur-sm">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6 text-purple-500"><path d="M21.801 10A10 10 0 1 1 17 3.335"></path><path d="m9 11 3 3L22 4"></path></svg>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        
-                                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                                            {/* Field Changes */}
+
+                                            {/* Form Editions */}
                                             <div className="rounded-lg bg-white text-slate-900 border border-slate-100 shadow-sm">
                                                 <div className="flex flex-col space-y-1.5 p-6 pb-4">
                                                     <h3 className="font-semibold tracking-tight text-xl flex items-center gap-2">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5 text-orange-500"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path><path d="M21 3v5h-5"></path><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path><path d="M8 16H3v5"></path></svg>
-                                                        Recent Field Changes
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5 text-orange-500"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"></path><path d="M14 2v4a2 2 0 0 0 2 2h4"></path><path d="M10 9H8"></path><path d="M16 13H8"></path><path d="M16 17H8"></path></svg>
+                                                        Recent Form Editions
                                                     </h3>
-                                                    <p className="text-slate-500 text-sm">Latest detected changes in form fields</p>
+                                                    <p className="text-slate-500 text-sm">Latest form editions processed by the system</p>
                                                 </div>
                                                 <div className="p-6 pt-0">
                                                     <div className="space-y-3">
                                                         <div className="text-center py-12 rounded-xl bg-slate-50">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-12 w-12 mx-auto mb-3 text-slate-300"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path><path d="M21 3v5h-5"></path><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path><path d="M8 16H3v5"></path></svg>
-                                                            <p className="text-slate-500 font-medium">No field changes detected yet</p>
-                                                            <p className="text-sm text-slate-400 mt-1">Run analysis to detect form changes</p>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            {/* Auto Questions */}
-                                            <div className="rounded-lg bg-white text-slate-900 border border-slate-100 shadow-sm">
-                                                <div className="flex flex-col space-y-1.5 p-6 pb-4">
-                                                    <h3 className="font-semibold tracking-tight text-xl flex items-center gap-2">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5 text-orange-500"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>
-                                                        Auto-Generated Questions
-                                                    </h3>
-                                                    <p className="text-slate-500 text-sm">Questions automatically created from form changes</p>
-                                                </div>
-                                                <div className="p-6 pt-0">
-                                                    <div className="space-y-3">
-                                                        <div className="text-center py-12 rounded-xl bg-slate-50">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-12 w-12 mx-auto mb-3 text-slate-300"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>
-                                                            <p className="text-slate-500 font-medium">No auto-generated questions yet</p>
-                                                            <p className="text-sm text-slate-400 mt-1">Questions will appear after form analysis</p>
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-12 w-12 mx-auto mb-3 text-slate-300"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"></path><path d="M14 2v4a2 2 0 0 0 2 2h4"></path><path d="M10 9H8"></path><path d="M16 13H8"></path><path d="M16 17H8"></path></svg>
+                                                            <p className="text-slate-500 font-medium">No form editions found</p>
+                                                            <p className="text-sm text-slate-400 mt-1">Form editions will appear after processing</p>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
+                                    )}
 
-                                        {/* Form Editions */}
-                                        <div className="rounded-lg bg-white text-slate-900 border border-slate-100 shadow-sm">
-                                            <div className="flex flex-col space-y-1.5 p-6 pb-4">
-                                                <h3 className="font-semibold tracking-tight text-xl flex items-center gap-2">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5 text-orange-500"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"></path><path d="M14 2v4a2 2 0 0 0 2 2h4"></path><path d="M10 9H8"></path><path d="M16 13H8"></path><path d="M16 17H8"></path></svg>
-                                                    Recent Form Editions
-                                                </h3>
-                                                <p className="text-slate-500 text-sm">Latest form editions processed by the system</p>
-                                            </div>
-                                            <div className="p-6 pt-0">
-                                                <div className="space-y-3">
-                                                    <div className="text-center py-12 rounded-xl bg-slate-50">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-12 w-12 mx-auto mb-3 text-slate-300"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"></path><path d="M14 2v4a2 2 0 0 0 2 2h4"></path><path d="M10 9H8"></path><path d="M16 13H8"></path><path d="M16 17H8"></path></svg>
-                                                        <p className="text-slate-500 font-medium">No form editions found</p>
-                                                        <p className="text-sm text-slate-400 mt-1">Form editions will appear after processing</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                )}
-                                
-                                {activeTab === 'Forms Tracker' && <FormsTrackerTab services={services} onRefresh={load} onEdit={openEditService} onDelete={handleDeleteService} onAdd={openAddService} />}
-                                {activeTab === 'Fees' && <FeesTab services={services} onRefresh={load} onEdit={openEditService} onDelete={handleDeleteService} onAdd={openAddService} />}
-                                {activeTab === 'Lockbox' && <LockboxTab />}
+                                    {activeTab === 'Forms Tracker' && <FormsTrackerTab services={services} onRefresh={load} onEdit={openEditService} onDelete={handleDeleteService} onAdd={openAddService} />}
+                                    {activeTab === 'Fees' && <FeesTab services={services} onRefresh={load} onEdit={openEditService} onDelete={handleDeleteService} onAdd={openAddService} />}
+                                    {activeTab === 'Lockbox' && <LockboxTab />}
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
             )}
-            
-            <ServiceModal 
+
+            <ServiceModal
                 isOpen={isServiceModalOpen}
                 onClose={() => setIsServiceModalOpen(false)}
                 onSave={handleSaveService}
