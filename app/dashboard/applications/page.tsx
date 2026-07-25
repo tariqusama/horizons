@@ -198,9 +198,9 @@ export default function DashboardApplicationsPage() {
                                         </li>
                                     ))}
                                 </ul>
-                                
+
                                 <div className="mt-6 pt-4 border-t border-gray-200/60 flex justify-end">
-                                    <button 
+                                    <button
                                         onClick={() => handleStartApplication(app)}
                                         className="bg-[#1B3A64] hover:bg-[#152e52] text-white font-semibold py-2.5 px-6 rounded-lg transition-colors flex items-center space-x-2 shadow-sm"
                                     >

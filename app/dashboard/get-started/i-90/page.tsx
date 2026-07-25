@@ -88,9 +88,11 @@ export default function I90FormPage() {
 
     if (isLoading) return <div className={styles.pageWrapper}><div className="p-8 text-center text-gray-500">Loading form data...</div></div>;
 
-    const totalFields = 17;
-    const filledFields = Object.values(formData).filter(val => val.trim() !== '').length;
-    const percentage = Math.round((filledFields / totalFields) * 100);
+
+
+    const totalFields = Object.keys(formData).length;
+    const filledFields = Object.values(formData).filter(val => typeof val === 'string' && val.trim() !== '').length;
+    const percentage = totalFields > 0 ? Math.round((filledFields / totalFields) * 100) : 0;
 
     return (
         <div className={styles.pageWrapper}>
@@ -99,136 +101,218 @@ export default function I90FormPage() {
                 <span>{percentage}%</span>
             </div>
             <div className={styles.progressBarContainer}>
-                <div className={styles.progressBar} style={{ width: `${percentage}%` }}></div>
+                <div className={styles.progressBar} style={{ width: `%` }}></div>
+            </div>
+            <div className={styles.pageHeader}>
+                <h1 className={styles.pageTitleText}>Immigrant Information</h1>
+                <p className={styles.pageSubtitleText}>Basic information about the Green Card applicant</p>
             </div>
 
-            <h1 className={styles.pageTitle}>Application to Replace Permanent Resident Card — USCIS Form I-90</h1>
-            <p className={styles.pageSubtitle}>Answer every question about your identity, your current Permanent Resident Card, and the reason you are requesting a replacement. Your progress saves automatically.</p>
-
-            <div className={styles.formSection}>
-                <div className={styles.partLabel}>PART 1</div>
-                <h2 className={styles.sectionHeading}>Information About You</h2>
-
-                <div className={styles.formGrid}>
-                    <div className={styles.formGroup}>
-                        <label className={styles.label}>Alien Registration Number (A-Number) <span className={styles.required}>*</span></label>
-                        <input type="text" name="aNumber" value={formData.aNumber} onChange={handleChange} className={`${styles.input} ${errors.aNumber ? '!border-red-500' : ''}`} />
-                        {errors.aNumber && <div className="text-red-500 text-sm mt-1">{errors.aNumber[0]}</div>}
+            <div className={styles.formQuestion}>
+                <div className={styles.questionHeader}>
+                    <div className={styles.questionCheck}>
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                        </svg>
                     </div>
-                    <div className={styles.formGroup}>
-                        <label className={styles.label}>USCIS Online Account Number (if any)</label>
-                        <input type="text" name="uscisOnlineAccount" value={formData.uscisOnlineAccount} onChange={handleChange} className={styles.input} />
-                    </div>
-
-                    <div className={styles.formGroup}>
-                        <label className={styles.label}>Family Name (Last Name) <span className={styles.required}>*</span></label>
-                        <input type="text" name="lastName" value={formData.lastName} onChange={handleChange} className={`${styles.input} ${errors.lastName ? '!border-red-500' : ''}`} />
-                        {errors.lastName && <div className="text-red-500 text-sm mt-1">{errors.lastName[0]}</div>}
-                    </div>
-                    <div className={styles.formGroup}>
-                        <label className={styles.label}>Given Name (First Name) <span className={styles.required}>*</span></label>
-                        <input type="text" name="firstName" value={formData.firstName} onChange={handleChange} className={`${styles.input} ${errors.firstName ? '!border-red-500' : ''}`} />
+                    <h2 className={styles.questionText}>What is the full legal name of the green card Applicant (the intending immigrant)?<span style={{color: '#f97316'}}>*</span></h2>
+                </div>
+                <p className={styles.questionSubtext}>This is the Applicant's CURRENT full legal name, including first, middle, and last names.</p>
+                
+                <div className={styles.screenshotInputGroup}>
+                    <div className={styles.screenshotInputWrapper}>
+                        <label className={styles.screenshotInputLabel}>First Name</label>
+                        <input type="text" name="firstName" value={formData.firstName} onChange={handleChange} className={styles.screenshotInput} />
                         {errors.firstName && <div className="text-red-500 text-sm mt-1">{errors.firstName[0]}</div>}
                     </div>
+                    <div className={styles.screenshotInputWrapper}>
+                        <label className={styles.screenshotInputLabel}>Middle Name</label>
+                        <input type="text" name="middleName" value={formData.middleName} onChange={handleChange} className={styles.screenshotInput} />
+                    </div>
+                    <div className={styles.screenshotInputWrapper}>
+                        <label className={styles.screenshotInputLabel}>Last Name</label>
+                        <input type="text" name="lastName" value={formData.lastName} onChange={handleChange} className={styles.screenshotInput} />
+                        {errors.lastName && <div className="text-red-500 text-sm mt-1">{errors.lastName[0]}</div>}
+                    </div>
+                </div>
+            </div>
 
-                    <div className={styles.formGroupFull}>
-                        <label className={styles.label}>Middle Name</label>
-                        <input type="text" name="middleName" value={formData.middleName} onChange={handleChange} className={styles.input} />
+            <div className={styles.formQuestion}>
+                <div className={styles.questionHeader}>
+                    <div className={styles.questionCheck}>
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                        </svg>
+                    </div>
+                    <h2 className={styles.questionText}>What is the sex of the Applicant?<span style={{color: '#f97316'}}>*</span></h2>
+                </div>
+                <p className={styles.questionSubtext}>USCIS allows individuals to self-identify their gender marker. The selected gender will not be required to match the gender marker from their supporting documentation.</p>
+                
+                <div className={styles.iconRadioRow}>
+                    <label className={styles.iconRadioCircle}>
+                        <input type="radio" name="gender" value="Female" checked={formData.gender === 'Female'} onChange={handleChange} />
+                        <div className={styles.genderIcon}>
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C9.243 2 7 4.243 7 7v3H6a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2v-8a2 2 0 00-2-2h-1V7c0-2.757-2.243-5-5-5zm-3 8V7c0-1.654 1.346-3 3-3s3 1.346 3 3v3H9z"/></svg>
+                        </div>
+                        <span>Female</span>
+                    </label>
+                    <label className={styles.iconRadioCircle}>
+                        <input type="radio" name="gender" value="Male" checked={formData.gender === 'Male'} onChange={handleChange} />
+                        <div className={styles.genderIcon}>
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a5 5 0 105 5 5.006 5.006 0 00-5-5zm0 8a3 3 0 113-3 3.003 3.003 0 01-3 3zm9 11v-1a7 7 0 00-7-7h-4a7 7 0 00-7 7v1h2v-1a5 5 0 015-5h4a5 5 0 015 5v1z"/></svg>
+                        </div>
+                        <span>Male</span>
+                    </label>
+                </div>
+                {errors.gender && <div className="text-red-500 text-sm mt-2 ml-8">{errors.gender[0]}</div>}
+            </div>
+
+            <div className={styles.formQuestion}>
+                <div className={styles.questionHeader}>
+                    <div className={styles.questionCheck}>
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                        </svg>
+                    </div>
+                    <h2 className={styles.questionText}>Has the Applicant used other name(s)?<span style={{color: '#f97316'}}>*</span></h2>
+                </div>
+                <p className={styles.questionSubtext}>This includes names such as maiden names, nicknames, and aliases.</p>
+                
+                <div className={styles.radioRow}>
+                    <label className={styles.radioCircle}>
+                        <input type="radio" name="otherNames" value="Yes" checked={formData.otherNames === 'Yes'} onChange={handleChange} />
+                        <span className={styles.radioIndicator}></span>
+                        <span>Yes</span>
+                    </label>
+                    <label className={styles.radioCircle}>
+                        <input type="radio" name="otherNames" value="No" checked={formData.otherNames === 'No'} onChange={handleChange} />
+                        <span className={styles.radioIndicator}></span>
+                        <span>No</span>
+                    </label>
+                </div>
+                {errors.otherNames && <div className="text-red-500 text-sm mt-2 ml-8">{errors.otherNames[0]}</div>}
+            </div>
+
+            <div className={styles.formQuestion}>
+                <div className={styles.questionHeader}>
+                    <div className={styles.questionCheck}>
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                        </svg>
+                    </div>
+                    <h2 className={styles.questionText}>What are the Applicant's identification numbers?</h2>
+                </div>
+                <p className={styles.questionSubtext}>Provide the Alien Registration Number and USCIS Online Account Number if you have them.</p>
+                
+                <div className={styles.screenshotInputGroup}>
+                    <div className={styles.screenshotInputWrapper}>
+                        <label className={styles.screenshotInputLabel}>Alien Registration Number (A-Number)</label>
+                        <input type="text" name="aNumber" value={formData.aNumber} onChange={handleChange} className={styles.screenshotInput} />
+                    </div>
+                    
+                    <div className={styles.screenshotInputWrapper}>
+                        <label className={styles.screenshotInputLabel}>USCIS Online Account Number</label>
+                        <input type="text" name="uscisOnlineAccount" value={formData.uscisOnlineAccount} onChange={handleChange} className={styles.screenshotInput} />
                     </div>
 
-                    <div className={styles.formGroupFull}>
-                        <label className={styles.label}>Have you ever used any other names (including maiden name / nicknames / aliases)? <span className={styles.required}>*</span></label>
-                        <div className={styles.radioGroup}>
-                            <label className={styles.radioLabel}>
-                                <input type="radio" name="otherNames" value="Yes" checked={formData.otherNames === 'Yes'} onChange={handleChange} />
-                                Yes
-                            </label>
-                            <label className={styles.radioLabel}>
-                                <input type="radio" name="otherNames" value="No" checked={formData.otherNames === 'No'} onChange={handleChange} />
-                                No
-                            </label>
-                        </div>
-                        {errors.otherNames && <div className="text-red-500 text-sm mt-1">{errors.otherNames[0]}</div>}
+                    <div className={styles.screenshotInputWrapper}>
+                        <label className={styles.screenshotInputLabel}>U.S. Social Security Number (if any)</label>
+                        <input type="text" name="ssn" value={formData.ssn} onChange={handleChange} className={styles.screenshotInput} />
                     </div>
+                </div>
+            </div>
 
-                    <div className={styles.formGroup}>
-                        <label className={styles.label}>Date of Birth (mm/dd/yyyy) <span className={styles.required}>*</span></label>
-                        <div className={styles.dateInputWrapper}>
-                            <input type="date" name="dob" value={formData.dob} onChange={handleChange} className={`${styles.dateInput} ${errors.dob ? '!border-red-500' : ''}`} />
-                        </div>
+            <div className={styles.formQuestion}>
+                <div className={styles.questionHeader}>
+                    <div className={styles.questionCheck}>
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                        </svg>
+                    </div>
+                    <h2 className={styles.questionText}>Applicant's Birth Information<span style={{color: '#f97316'}}>*</span></h2>
+                </div>
+                <p className={styles.questionSubtext}>Provide details regarding the date and location of birth.</p>
+                
+                <div className={styles.screenshotInputGroup}>
+                    <div className={styles.screenshotInputWrapper}>
+                        <label className={styles.screenshotInputLabel}>Date of Birth (mm/dd/yyyy)</label>
+                        <input type="date" name="dob" value={formData.dob} onChange={handleChange} className={styles.screenshotInput} />
                         {errors.dob && <div className="text-red-500 text-sm mt-1">{errors.dob[0]}</div>}
                     </div>
-                    <div className={styles.formGroup}>
-                        <label className={styles.label}>Country of Birth <span className={styles.required}>*</span></label>
-                        <input type="text" name="countryOfBirth" value={formData.countryOfBirth} onChange={handleChange} className={`${styles.input} ${errors.countryOfBirth ? '!border-red-500' : ''}`} />
+                    <div className={styles.screenshotInputWrapper}>
+                        <label className={styles.screenshotInputLabel}>Country of Birth</label>
+                        <input type="text" name="countryOfBirth" value={formData.countryOfBirth} onChange={handleChange} className={styles.screenshotInput} />
                         {errors.countryOfBirth && <div className="text-red-500 text-sm mt-1">{errors.countryOfBirth[0]}</div>}
                     </div>
-
-                    <div className={styles.formGroup}>
-                        <label className={styles.label}>Country of Citizenship or Nationality <span className={styles.required}>*</span></label>
-                        <input type="text" name="countryOfCitizenship" value={formData.countryOfCitizenship} onChange={handleChange} className={`${styles.input} ${errors.countryOfCitizenship ? '!border-red-500' : ''}`} />
+                    <div className={styles.screenshotInputWrapper}>
+                        <label className={styles.screenshotInputLabel}>Country of Citizenship</label>
+                        <input type="text" name="countryOfCitizenship" value={formData.countryOfCitizenship} onChange={handleChange} className={styles.screenshotInput} />
                         {errors.countryOfCitizenship && <div className="text-red-500 text-sm mt-1">{errors.countryOfCitizenship[0]}</div>}
                     </div>
-                    <div className={styles.formGroup}>
-                        <label className={styles.label}>U.S. Social Security Number (if any)</label>
-                        <input type="text" name="ssn" value={formData.ssn} onChange={handleChange} className={styles.input} />
-                    </div>
+                </div>
+            </div>
 
-                    <div className={styles.formGroupFull}>
-                        <label className={styles.label}>Gender <span className={styles.required}>*</span></label>
-                        <div className={styles.radioGroup}>
-                            <label className={styles.radioLabel}>
-                                <input type="radio" name="gender" value="Male" checked={formData.gender === 'Male'} onChange={handleChange} />
-                                Male
-                            </label>
-                            <label className={styles.radioLabel}>
-                                <input type="radio" name="gender" value="Female" checked={formData.gender === 'Female'} onChange={handleChange} />
-                                Female
-                            </label>
-                        </div>
-                        {errors.gender && <div className="text-red-500 text-sm mt-1">{errors.gender[0]}</div>}
+            <div className={styles.formQuestion}>
+                <div className={styles.questionHeader}>
+                    <div className={styles.questionCheck}>
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                        </svg>
                     </div>
-
-                    <div className={styles.formGroup}>
-                        <label className={styles.label}>Mother's First Name at Birth</label>
-                        <input type="text" name="motherFirstName" value={formData.motherFirstName} onChange={handleChange} className={styles.input} />
+                    <h2 className={styles.questionText}>Parents' Information</h2>
+                </div>
+                <p className={styles.questionSubtext}>Please provide the first names of the Applicant's parents.</p>
+                
+                <div className={styles.screenshotInputGroup}>
+                    <div className={styles.screenshotInputWrapper}>
+                        <label className={styles.screenshotInputLabel}>Mother's First Name at Birth</label>
+                        <input type="text" name="motherFirstName" value={formData.motherFirstName} onChange={handleChange} className={styles.screenshotInput} />
                     </div>
-                    <div className={styles.formGroup}>
-                        <label className={styles.label}>Father's First Name at Birth</label>
-                        <input type="text" name="fatherFirstName" value={formData.fatherFirstName} onChange={handleChange} className={styles.input} />
-                    </div>
-
-                    <div className={styles.formGroup}>
-                        <label className={styles.label}>Class of Admission (from current Green Card)</label>
-                        <input type="text" name="classOfAdmission" value={formData.classOfAdmission} onChange={handleChange} className={styles.input} />
-                    </div>
-                    <div className={styles.formGroup}>
-                        <label className={styles.label}>Date of Admission as LPR (mm/dd/yyyy)</label>
-                        <div className={styles.dateInputWrapper}>
-                            <input type="date" name="dateOfAdmission" value={formData.dateOfAdmission} onChange={handleChange} className={styles.dateInput} />
-                        </div>
-                    </div>
-
-                    <div className={styles.formGroup}>
-                        <label className={styles.label}>Port of Admission — City</label>
-                        <input type="text" name="portOfAdmissionCity" value={formData.portOfAdmissionCity} onChange={handleChange} className={styles.input} />
-                    </div>
-                    <div className={styles.formGroup}>
-                        <label className={styles.label}>Port of Admission — State</label>
-                        <input type="text" name="portOfAdmissionState" value={formData.portOfAdmissionState} onChange={handleChange} className={styles.input} />
+                    <div className={styles.screenshotInputWrapper}>
+                        <label className={styles.screenshotInputLabel}>Father's First Name at Birth</label>
+                        <input type="text" name="fatherFirstName" value={formData.fatherFirstName} onChange={handleChange} className={styles.screenshotInput} />
                     </div>
                 </div>
+            </div>
 
-                <div className={styles.footerActions}>
-                    <button className={styles.btnPrev} disabled>
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-                        Previous
-                    </button>
-                    <button onClick={handleNext} disabled={isSaving} className={styles.btnNext} style={{ opacity: isSaving ? 0.7 : 1 }}>
-                        {isSaving ? 'Saving...' : 'Next'}
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-                    </button>
+            <div className={styles.formQuestion}>
+                <div className={styles.questionHeader}>
+                    <div className={styles.questionCheck}>
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                        </svg>
+                    </div>
+                    <h2 className={styles.questionText}>Green Card Details</h2>
                 </div>
+                <p className={styles.questionSubtext}>Provide information regarding the current admission as a Lawful Permanent Resident.</p>
+                
+                <div className={styles.screenshotInputGroup}>
+                    <div className={styles.screenshotInputWrapper}>
+                        <label className={styles.screenshotInputLabel}>Class of Admission</label>
+                        <input type="text" name="classOfAdmission" value={formData.classOfAdmission} onChange={handleChange} className={styles.screenshotInput} />
+                    </div>
+                    <div className={styles.screenshotInputWrapper}>
+                        <label className={styles.screenshotInputLabel}>Date of Admission (mm/dd/yyyy)</label>
+                        <input type="date" name="dateOfAdmission" value={formData.dateOfAdmission} onChange={handleChange} className={styles.screenshotInput} />
+                    </div>
+                    <div className={styles.screenshotInputWrapper}>
+                        <label className={styles.screenshotInputLabel}>Port of Admission — City</label>
+                        <input type="text" name="portOfAdmissionCity" value={formData.portOfAdmissionCity} onChange={handleChange} className={styles.screenshotInput} />
+                    </div>
+                    <div className={styles.screenshotInputWrapper}>
+                        <label className={styles.screenshotInputLabel}>Port of Admission — State</label>
+                        <input type="text" name="portOfAdmissionState" value={formData.portOfAdmissionState} onChange={handleChange} className={styles.screenshotInput} />
+                    </div>
+                </div>
+            </div>
+
+            <div className={styles.footerScreenshot}>
+                <Link href="/dashboard/get-started" className={styles.btnTeal}>
+                    &#8592; Previous
+                </Link>
+                <button onClick={handleNext} disabled={isSaving} className={styles.btnTeal}>
+                    {isSaving ? 'Saving...' : 'Save and Continue'}
+                </button>
             </div>
         </div>
     );

@@ -72,45 +72,57 @@ export default function I765WSFormPage() {
 
     if (isLoading) return <div className={styles.pageWrapper}><div className="p-8 text-center text-gray-500">Loading form data...</div></div>;
 
+
+    const totalFields = Object.keys(formData).length;
+    const filledFields = Object.values(formData).filter(val => typeof val === 'string' && val.trim() !== '').length;
+    const percentage = totalFields > 0 ? Math.round((filledFields / totalFields) * 100) : 0;
+
     return (
         <div className={styles.pageWrapper}>
             <div className={styles.topHeader}>
-                <span>Question 1 of 3</span>
-                <span>33%</span>
+                <span>Completed {filledFields} of {totalFields} fields</span>
+                <span>{percentage}%</span>
             </div>
             <div className={styles.progressBarContainer}>
-                <div className={styles.progressBar} style={{ width: '33%' }}></div>
+                <div className={styles.progressBar} style={{ width: `%` }}></div>
+            </div>
+            <div className={styles.pageHeader}>
+                <h1 className={styles.pageTitleText}>I-765 Worksheet</h1>
+                <p className={styles.pageSubtitleText}>Provide information about your financial situation.</p>
             </div>
 
-            <h1 className={styles.pageTitle}>Form I-765 Worksheet (DACA) — USCIS Form I-765WS</h1>
-            <p className={styles.pageSubtitle}>Answer every question about your financial situation. Your progress saves automatically.</p>
-
-            <div className={styles.formSection}>
-                <div className={styles.partLabel}>PART 1</div>
-                <h2 className={styles.sectionHeading}>Financial Information</h2>
-
-                <div className={styles.formGrid}>
-                    <div className={styles.formGroup}>
-                        <label className={styles.label}>My current annual income is: <span className={styles.required}>*</span></label>
-                        <input type="text" name="currentAnnualIncome" value={formData.currentAnnualIncome} onChange={handleChange} className={`${styles.input} ${errors.currentAnnualIncome ? '!border-red-500' : ''}`} placeholder="$" />
+            <div className={styles.formQuestion}>
+                <div className={styles.questionHeader}>
+                    <div className={styles.questionCheck}>
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                        </svg>
+                    </div>
+                    <h2 className={styles.questionText}>Financial Information</h2>
+                </div>
+                <p className={styles.questionSubtext}>Please provide your current annual income and expenses.</p>
+                
+                <div className={styles.screenshotInputGroup}>
+                    <div className={styles.screenshotInputWrapper}>
+                        <label className={styles.screenshotInputLabel}>My current annual income is: <span style={{color: '#f97316'}}>*</span></label>
+                        <input type="text" name="currentAnnualIncome" value={formData.currentAnnualIncome} onChange={handleChange} className={styles.screenshotInput} placeholder="$" />
                         {errors.currentAnnualIncome && <div className="text-red-500 text-sm mt-1">{errors.currentAnnualIncome[0]}</div>}
                     </div>
-                    <div className={styles.formGroup}>
-                        <label className={styles.label}>My current annual expenses are: <span className={styles.required}>*</span></label>
-                        <input type="text" name="currentAnnualExpenses" value={formData.currentAnnualExpenses} onChange={handleChange} className={`${styles.input} ${errors.currentAnnualExpenses ? '!border-red-500' : ''}`} placeholder="$" />
+                    <div className={styles.screenshotInputWrapper}>
+                        <label className={styles.screenshotInputLabel}>My current annual expenses are: <span style={{color: '#f97316'}}>*</span></label>
+                        <input type="text" name="currentAnnualExpenses" value={formData.currentAnnualExpenses} onChange={handleChange} className={styles.screenshotInput} placeholder="$" />
                         {errors.currentAnnualExpenses && <div className="text-red-500 text-sm mt-1">{errors.currentAnnualExpenses[0]}</div>}
                     </div>
                 </div>
             </div>
 
-            <div className={styles.formActions}>
-                <button className={styles.btnSecondary}>Save Draft</button>
-                <div className={styles.rightActions}>
-                    <Link href="/dashboard/get-started" className={styles.btnOutline}>Back</Link>
-                    <button onClick={handleNext} disabled={isSaving} className={styles.btnPrimary} style={{ opacity: isSaving ? 0.7 : 1 }}>
-                        {isSaving ? 'Saving...' : 'Continue'}
-                    </button>
-                </div>
+            <div className={styles.footerScreenshot}>
+                <Link href="/dashboard/get-started" className={styles.btnTeal}>
+                    &#8592; Previous
+                </Link>
+                <button onClick={handleNext} disabled={isSaving} className={styles.btnTeal}>
+                    {isSaving ? 'Saving...' : 'Save and Continue'}
+                </button>
             </div>
         </div>
     );

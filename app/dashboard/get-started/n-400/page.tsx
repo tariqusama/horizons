@@ -76,87 +76,116 @@ export default function N400FormPage() {
 
     if (isLoading) return <div className={styles.pageWrapper}><div className="p-8 text-center text-gray-500">Loading form data...</div></div>;
 
+
+    const totalFields = Object.keys(formData).length;
+    const filledFields = Object.values(formData).filter(val => typeof val === 'string' && val.trim() !== '').length;
+    const percentage = totalFields > 0 ? Math.round((filledFields / totalFields) * 100) : 0;
+
     return (
         <div className={styles.pageWrapper}>
             <div className={styles.topHeader}>
-                <span>Question 1 of 18</span>
-                <span>5%</span>
+                <span>Completed {filledFields} of {totalFields} fields</span>
+                <span>{percentage}%</span>
             </div>
             <div className={styles.progressBarContainer}>
-                <div className={styles.progressBar} style={{ width: '5%' }}></div>
+                <div className={styles.progressBar} style={{ width: `%` }}></div>
+            </div>
+            <div className={styles.pageHeader}>
+                <h1 className={styles.pageTitleText}>Application for Naturalization</h1>
+                <p className={styles.pageSubtitleText}>Provide information about your eligibility and identity.</p>
             </div>
 
-            <h1 className={styles.pageTitle}>Application for Naturalization — USCIS Form N-400</h1>
-            <p className={styles.pageSubtitle}>Answer every question about your eligibility, identity, and residence to apply for U.S. citizenship. Your progress saves automatically.</p>
-
-            <div className={styles.formSection}>
-                <div className={styles.partLabel}>PART 1</div>
-                <h2 className={styles.sectionHeading}>Information About Your Eligibility</h2>
-
-                <div className={styles.formGrid}>
-                    <div className={styles.formGroupFull}>
-                        <label className={styles.label}>You are at least 18 years of age and: <span className={styles.required}>*</span></label>
-                        <div className={styles.radioGroup} style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '12px' }}>
-                            <label className={styles.radioLabel}>
-                                <input type="radio" name="eligibility" value="5_years" checked={formData.eligibility === '5_years'} onChange={handleChange} />
-                                Have been a lawful permanent resident of the United States for at least 5 years.
-                            </label>
-                            <label className={styles.radioLabel}>
-                                <input type="radio" name="eligibility" value="3_years" checked={formData.eligibility === '3_years'} onChange={handleChange} />
-                                Have been a lawful permanent resident of the United States for at least 3 years, AND have been married to and living with the same U.S. citizen spouse.
-                            </label>
-                            <label className={styles.radioLabel}>
-                                <input type="radio" name="eligibility" value="military" checked={formData.eligibility === 'military'} onChange={handleChange} />
-                                Are applying on the basis of qualifying military service.
-                            </label>
-                        </div>
-                        {errors.eligibility && <div className="text-red-500 text-sm mt-1">{errors.eligibility[0]}</div>}
+            <div className={styles.formQuestion}>
+                <div className={styles.questionHeader}>
+                    <div className={styles.questionCheck}>
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                        </svg>
                     </div>
+                    <h2 className={styles.questionText}>Eligibility<span style={{color: '#f97316'}}>*</span></h2>
                 </div>
+                <p className={styles.questionSubtext}>You are at least 18 years of age and:</p>
+                
+                <div className={styles.iconRadioRow} style={{ flexDirection: 'column', alignItems: 'flex-start' }}>
+                    <label className={styles.iconRadioCircle}>
+                        <input type="radio" name="eligibility" value="5_years" checked={formData.eligibility === '5_years'} onChange={handleChange} />
+                        <span className={styles.radioIndicator}></span>
+                        <span>Have been a lawful permanent resident of the United States for at least 5 years.</span>
+                    </label>
+                    <label className={styles.iconRadioCircle} style={{ marginTop: '0.5rem' }}>
+                        <input type="radio" name="eligibility" value="3_years" checked={formData.eligibility === '3_years'} onChange={handleChange} />
+                        <span className={styles.radioIndicator}></span>
+                        <span>Have been a lawful permanent resident for at least 3 years, AND have been married to and living with the same U.S. citizen spouse.</span>
+                    </label>
+                    <label className={styles.iconRadioCircle} style={{ marginTop: '0.5rem' }}>
+                        <input type="radio" name="eligibility" value="military" checked={formData.eligibility === 'military'} onChange={handleChange} />
+                        <span className={styles.radioIndicator}></span>
+                        <span>Are applying on the basis of qualifying military service.</span>
+                    </label>
+                </div>
+                {errors.eligibility && <div className="text-red-500 text-sm mt-2 ml-8">{errors.eligibility[0]}</div>}
             </div>
 
-            <div className={styles.formSection}>
-                <div className={styles.partLabel}>PART 2</div>
-                <h2 className={styles.sectionHeading}>Information About You (Person Applying for Naturalization)</h2>
-
-                <div className={styles.formGrid}>
-                    <div className={styles.formGroup}>
-                        <label className={styles.label}>Alien Registration Number (A-Number) <span className={styles.required}>*</span></label>
-                        <input type="text" name="aNumber" value={formData.aNumber} onChange={handleChange} className={`${styles.input} ${errors.aNumber ? '!border-red-500' : ''}`} />
+            <div className={styles.formQuestion}>
+                <div className={styles.questionHeader}>
+                    <div className={styles.questionCheck}>
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                        </svg>
+                    </div>
+                    <h2 className={styles.questionText}>Information About You</h2>
+                </div>
+                <p className={styles.questionSubtext}>Please provide your identification numbers.</p>
+                
+                <div className={styles.screenshotInputGroup}>
+                    <div className={styles.screenshotInputWrapper}>
+                        <label className={styles.screenshotInputLabel}>Alien Registration Number (A-Number) <span style={{color: '#f97316'}}>*</span></label>
+                        <input type="text" name="aNumber" value={formData.aNumber} onChange={handleChange} className={styles.screenshotInput} />
                         {errors.aNumber && <div className="text-red-500 text-sm mt-1">{errors.aNumber[0]}</div>}
                     </div>
-                    <div className={styles.formGroup}>
-                        <label className={styles.label}>USCIS Online Account Number (if any)</label>
-                        <input type="text" name="uscisOnlineAccount" value={formData.uscisOnlineAccount} onChange={handleChange} className={styles.input} />
-                    </div>
-
-                    <div className={styles.formGroup}>
-                        <label className={styles.label}>Current Legal Family Name (Last Name) <span className={styles.required}>*</span></label>
-                        <input type="text" name="lastName" value={formData.lastName} onChange={handleChange} className={`${styles.input} ${errors.lastName ? '!border-red-500' : ''}`} />
-                        {errors.lastName && <div className="text-red-500 text-sm mt-1">{errors.lastName[0]}</div>}
-                    </div>
-                    <div className={styles.formGroup}>
-                        <label className={styles.label}>Current Legal Given Name (First Name) <span className={styles.required}>*</span></label>
-                        <input type="text" name="firstName" value={formData.firstName} onChange={handleChange} className={`${styles.input} ${errors.firstName ? '!border-red-500' : ''}`} />
-                        {errors.firstName && <div className="text-red-500 text-sm mt-1">{errors.firstName[0]}</div>}
-                    </div>
-
-                    <div className={styles.formGroupFull}>
-                        <label className={styles.label}>Current Legal Middle Name</label>
-                        <input type="text" name="middleName" value={formData.middleName} onChange={handleChange} className={styles.input} />
+                    <div className={styles.screenshotInputWrapper}>
+                        <label className={styles.screenshotInputLabel}>USCIS Online Account Number (if any)</label>
+                        <input type="text" name="uscisOnlineAccount" value={formData.uscisOnlineAccount} onChange={handleChange} className={styles.screenshotInput} />
                     </div>
                 </div>
             </div>
 
-            <div className={styles.footerActions}>
-                <button className={styles.btnPrev} disabled={isSaving}>Save Draft</button>
-                <div style={{ display: 'flex', gap: '1rem' }}>
-                    <button className={styles.btnPrev} onClick={() => router.push('/dashboard/get-started')} disabled={isSaving}>Back</button>
-                    <button onClick={handleNext} disabled={isSaving} className={styles.btnNext} style={{ opacity: isSaving ? 0.7 : 1 }}>
-                        {isSaving ? 'Saving...' : 'Continue'}
-                        {!isSaving && <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginLeft: '0.5rem', display: 'inline-block' }}><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>}
-                    </button>
+            <div className={styles.formQuestion}>
+                <div className={styles.questionHeader}>
+                    <div className={styles.questionCheck}>
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                        </svg>
+                    </div>
+                    <h2 className={styles.questionText}>Your Current Legal Name</h2>
                 </div>
+                <p className={styles.questionSubtext}>This is the name currently on your official documents.</p>
+                
+                <div className={styles.screenshotInputGroup}>
+                    <div className={styles.screenshotInputWrapper}>
+                        <label className={styles.screenshotInputLabel}>First Name <span style={{color: '#f97316'}}>*</span></label>
+                        <input type="text" name="firstName" value={formData.firstName} onChange={handleChange} className={styles.screenshotInput} />
+                        {errors.firstName && <div className="text-red-500 text-sm mt-1">{errors.firstName[0]}</div>}
+                    </div>
+                    <div className={styles.screenshotInputWrapper}>
+                        <label className={styles.screenshotInputLabel}>Middle Name</label>
+                        <input type="text" name="middleName" value={formData.middleName} onChange={handleChange} className={styles.screenshotInput} />
+                    </div>
+                    <div className={styles.screenshotInputWrapper}>
+                        <label className={styles.screenshotInputLabel}>Last Name <span style={{color: '#f97316'}}>*</span></label>
+                        <input type="text" name="lastName" value={formData.lastName} onChange={handleChange} className={styles.screenshotInput} />
+                        {errors.lastName && <div className="text-red-500 text-sm mt-1">{errors.lastName[0]}</div>}
+                    </div>
+                </div>
+            </div>
+
+            <div className={styles.footerScreenshot}>
+                <Link href="/dashboard/get-started" className={styles.btnTeal}>
+                    &#8592; Previous
+                </Link>
+                <button onClick={handleNext} disabled={isSaving} className={styles.btnTeal}>
+                    {isSaving ? 'Saving...' : 'Save and Continue'}
+                </button>
             </div>
         </div>
     );

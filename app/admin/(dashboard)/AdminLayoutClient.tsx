@@ -75,7 +75,7 @@ function SidebarContent({ pathname, logout, onLinkClick }: { pathname: string | 
                                 key={item.label}
                                 href={item.href}
                                 onClick={onLinkClick}
-                                className={`group flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${isActive ? 'bg-slate-900 text-white shadow-md' : 'text-slate-700 hover:bg-slate-100'}`}
+                                className={`group flex items-center gap-3 px-3 py-2.5 rounded-xl text-[12px] sm:text-xs md:text-sm font-medium transition-all duration-200 ${isActive ? 'bg-slate-900 text-white shadow-md' : 'text-slate-700 hover:bg-slate-100'}`}
                             >
                                 <span
                                     className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${isActive ? 'bg-orange-500 text-white' : ''}`}
@@ -115,11 +115,11 @@ export default function AdminLayoutClient({ children }: { children: React.ReactN
     useEffect(() => {
         if (!isLoading) {
             if (!user) {
-                router.push('/dashboard');
+                router.push('/login');
                 return;
             }
 
-            const role = user.role.toLowerCase();
+            const role = (user.role || '').toString().toLowerCase();
             if (!role.includes('admin') && !role.includes('manager')) {
                 router.push('/dashboard');
             } else {
@@ -174,7 +174,7 @@ export default function AdminLayoutClient({ children }: { children: React.ReactN
             )}
 
             {/* Mobile Sidebar Drawer */}
-            <div className={`fixed top-0 left-0 h-full w-72 bg-white z-50 flex flex-col shadow-2xl transition-transform duration-300 lg:hidden rounded-r-3xl overflow-hidden ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+            <div className={`fixed top-0 left-0 h-full w-72 bg-white z-50 flex flex-col shadow-2xl transition-transform duration-300 lg:hidden rounded-r-3xl overflow-y-auto hide-scrollbar ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
                 <button
                     onClick={() => setSidebarOpen(false)}
                     className="absolute top-4 right-4 z-10 w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 text-slate-600 hover:text-slate-900 transition-colors"
@@ -186,8 +186,10 @@ export default function AdminLayoutClient({ children }: { children: React.ReactN
 
             {/* Desktop Sidebar */}
             <aside className="hidden lg:flex lg:flex-col fixed left-4 top-4 h-[calc(100vh-2rem)] w-72 z-40">
-                <div className="h-full rounded-3xl border border-slate-200/70 bg-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden">
-                    <SidebarContent pathname={pathname} logout={logout} />
+                <div className="h-full flex flex-col rounded-3xl border border-slate-200/70 bg-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden">
+                    <div className="flex-1 min-h-0 overflow-y-auto hide-scrollbar">
+                        <SidebarContent pathname={pathname} logout={logout} />
+                    </div>
                 </div>
             </aside>
 
@@ -209,7 +211,7 @@ export default function AdminLayoutClient({ children }: { children: React.ReactN
                         <input
                             type="text"
                             placeholder="Search clients, cases, tickets..."
-                            className="w-full pl-11 pr-4 py-2 rounded-full border border-slate-200/50 bg-white text-sm text-slate-700 placeholder-slate-400 outline-none focus:border-slate-300 focus:bg-white focus:ring-1 focus:ring-slate-200 transition-colors"
+                            className="w-full pl-11 pr-4 py-2 rounded-full border border-slate-200/50 bg-white text-xs sm:text-sm text-slate-700 placeholder-slate-400 outline-none focus:border-slate-300 focus:bg-white focus:ring-1 focus:ring-slate-200 transition-colors"
                         />
                     </div>
 
@@ -230,14 +232,14 @@ export default function AdminLayoutClient({ children }: { children: React.ReactN
                         {showNotifications && (
                             <div className="absolute right-0 mt-2 w-[calc(100vw-2rem)] sm:w-[360px] bg-white rounded-xl shadow-lg border border-slate-200/50 overflow-hidden z-50">
                                 <div className="px-5 py-3 border-b border-slate-200/50 flex justify-between items-center bg-white/50">
-                                    <h3 className="font-semibold text-slate-900 text-sm">Notifications</h3>
+                                    <h3 className="font-semibold text-slate-900 text-[13px] sm:text-sm">Notifications</h3>
                                     <div className="flex items-center gap-3">
-                                        <button onClick={async () => { await markAsRead(); const data = await getNotifications(); setNotifications(data); setUnreadCount(data.filter(n => !n.read_at).length); }} className="text-xs text-slate-600 hover:text-orange-600 font-medium">Mark all as read</button>
+                                        <button onClick={async () => { await markAsRead(); const data = await getNotifications(); setNotifications(data); setUnreadCount(data.filter(n => !n.read_at).length); }} className="text-[11px] sm:text-xs text-slate-600 hover:text-orange-600 font-medium">Mark all as read</button>
                                     </div>
                                 </div>
                                 <div className="max-h-[320px] overflow-y-auto">
                                     {notifications.length === 0 && (
-                                        <div className="p-6 text-center text-sm text-slate-500">No notifications</div>
+                                        <div className="p-6 text-center text-[13px] sm:text-sm text-slate-500">No notifications</div>
                                     )}
                                     {notifications.map((n) => {
                                         const parsedData = typeof n.data === 'string' ? JSON.parse(n.data) : n.data;
@@ -263,10 +265,10 @@ export default function AdminLayoutClient({ children }: { children: React.ReactN
                                                 </div>
                                                 <div className="flex-1 min-w-0">
                                                     <div className="flex justify-between items-start mb-1 gap-2">
-                                                        <p className={`text-sm ${isUnread ? 'font-semibold text-slate-900' : 'font-medium text-slate-900'}`}>{parsedData.title}</p>
+                                                        <p className={`text-[13px] sm:text-sm ${isUnread ? 'font-semibold text-slate-900' : 'font-medium text-slate-900'}`}>{parsedData.title}</p>
                                                         <span className="text-[10px] font-medium text-slate-500 whitespace-nowrap">{new Date(n.created_at).toLocaleString()}</span>
                                                     </div>
-                                                    <p className={`text-sm ${isUnread ? 'text-slate-700' : 'text-slate-600'}`}>{parsedData.text}</p>
+                                                    <p className={`text-[12px] sm:text-sm ${isUnread ? 'text-slate-700' : 'text-slate-600'}`}>{parsedData.text}</p>
                                                 </div>
                                             </div>
                                         );
@@ -282,14 +284,14 @@ export default function AdminLayoutClient({ children }: { children: React.ReactN
                     </div>
 
                     <Link href="/admin/profile" className="flex items-center gap-2 pl-1 pr-3 py-1 rounded-full bg-white/50 border border-slate-200/50 hover:bg-slate-100 transition-colors shrink-0">
-                        <div className="w-8 h-8 rounded-full overflow-hidden bg-gradient-to-br from-orange-400 to-orange-500 flex items-center justify-center text-white font-bold text-xs uppercase">
+                        <div className="w-8 h-8 rounded-full overflow-hidden bg-gradient-to-br from-orange-400 to-orange-500 flex items-center justify-center text-white font-bold text-[11px] uppercase">
                             {profile?.profile_picture_url ? (
                                 <img src={profile.profile_picture_url} alt={profile?.name || 'Profile'} className="h-full w-full object-cover object-center block rounded-full" />
                             ) : (
                                 profile?.name?.substring(0, 2) || 'AD'
                             )}
                         </div>
-                        <span className="text-sm font-medium text-slate-700 hidden sm:inline">{profile?.name || 'Loading...'}</span>
+                        <span className="text-[13px] sm:text-sm font-medium text-slate-700 hidden sm:inline">{profile?.name || 'Loading...'}</span>
                         <Icon.chevron width={14} height={14} className="text-slate-500 hidden sm:block" />
                     </Link>
                 </header>

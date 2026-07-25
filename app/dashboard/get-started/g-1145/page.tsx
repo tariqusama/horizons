@@ -73,9 +73,11 @@ export default function G1145FormPage() {
 
     if (isLoading) return <div className={styles.pageWrapper}><div className="p-8 text-center text-gray-500">Loading form data...</div></div>;
 
-    const totalFields = 3;
-    const filledFields = [formData.lastName, formData.firstName, formData.middleName].filter(val => val.trim() !== '').length;
-    const percentage = Math.round((filledFields / totalFields) * 100);
+
+
+    const totalFields = Object.keys(formData).length;
+    const filledFields = Object.values(formData).filter(val => typeof val === 'string' && val.trim() !== '').length;
+    const percentage = totalFields > 0 ? Math.round((filledFields / totalFields) * 100) : 0;
 
     return (
         <div className={styles.pageWrapper}>
@@ -84,45 +86,49 @@ export default function G1145FormPage() {
                 <span>{percentage}%</span>
             </div>
             <div className={styles.progressBarContainer}>
-                <div className={styles.progressBar} style={{ width: `${percentage}%` }}></div>
+                <div className={styles.progressBar} style={{ width: `%` }}></div>
+            </div>
+            <div className={styles.pageHeader}>
+                <h1 className={styles.pageTitleText}>e-Notification of Application/Petition Acceptance</h1>
+                <p className={styles.pageSubtitleText}>Provide the applicant/petitioner's contact details.</p>
             </div>
 
-            <h1 className={styles.pageTitle}>e-Notification of Application/Petition Acceptance — USCIS Form G-1145</h1>
-            <p className={styles.pageSubtitle}>Provide the applicant/petitioner's contact details so USCIS can send electronic notifications when they accept the application.</p>
-
-            <div className={styles.formSection}>
-                <div className={styles.partLabel}>APPLICANT / PETITIONER INFORMATION</div>
-                <h2 className={styles.sectionHeading}>Applicant / Petitioner Information</h2>
-                <p className={styles.sectionDesc}>This information must match exactly what appears on the main petition or application you're filing with G-1145.</p>
-
-                <div className={styles.formGrid}>
-                    <div className={styles.formGroup}>
-                        <label className={styles.label}>Applicant / Petitioner Full Last Name <span className={styles.required}>*</span></label>
-                        <input type="text" name="lastName" value={formData.lastName} onChange={handleChange} className={`${styles.input} ${errors.lastName ? '!border-red-500' : ''}`} />
-                        {errors.lastName && <div className="text-red-500 text-sm mt-1">{errors.lastName[0]}</div>}
+            <div className={styles.formQuestion}>
+                <div className={styles.questionHeader}>
+                    <div className={styles.questionCheck}>
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                        </svg>
                     </div>
-                    <div className={styles.formGroup}>
-                        <label className={styles.label}>Applicant / Petitioner Full First Name <span className={styles.required}>*</span></label>
-                        <input type="text" name="firstName" value={formData.firstName} onChange={handleChange} className={`${styles.input} ${errors.firstName ? '!border-red-500' : ''}`} />
+                    <h2 className={styles.questionText}>Applicant Name</h2>
+                </div>
+                <p className={styles.questionSubtext}>Please provide your full legal name.</p>
+                
+                <div className={styles.screenshotInputGroup}>
+                    <div className={styles.screenshotInputWrapper}>
+                        <label className={styles.screenshotInputLabel}>First Name <span style={{color: '#f97316'}}>*</span></label>
+                        <input type="text" name="firstName" value={formData.firstName} onChange={handleChange} className={styles.screenshotInput} />
                         {errors.firstName && <div className="text-red-500 text-sm mt-1">{errors.firstName[0]}</div>}
                     </div>
-
-                    <div className={styles.formGroupFull}>
-                        <label className={styles.label}>Applicant / Petitioner Full Middle Name</label>
-                        <input type="text" name="middleName" value={formData.middleName} onChange={handleChange} className={styles.input} />
+                    <div className={styles.screenshotInputWrapper}>
+                        <label className={styles.screenshotInputLabel}>Middle Name</label>
+                        <input type="text" name="middleName" value={formData.middleName} onChange={handleChange} className={styles.screenshotInput} />
+                    </div>
+                    <div className={styles.screenshotInputWrapper}>
+                        <label className={styles.screenshotInputLabel}>Last Name <span style={{color: '#f97316'}}>*</span></label>
+                        <input type="text" name="lastName" value={formData.lastName} onChange={handleChange} className={styles.screenshotInput} />
+                        {errors.lastName && <div className="text-red-500 text-sm mt-1">{errors.lastName[0]}</div>}
                     </div>
                 </div>
+            </div>
 
-                <div className={styles.footerActions}>
-                    <Link href="/dashboard/get-started/i-90" className={styles.btnPrev}>
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-                        Previous
-                    </Link>
-                    <button onClick={handleNext} disabled={isSaving} className={styles.btnNext} style={{ opacity: isSaving ? 0.7 : 1 }}>
-                        {isSaving ? 'Saving...' : 'Next'}
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-                    </button>
-                </div>
+            <div className={styles.footerScreenshot}>
+                <Link href="/dashboard/get-started" className={styles.btnTeal}>
+                    &#8592; Previous
+                </Link>
+                <button onClick={handleNext} disabled={isSaving} className={styles.btnTeal}>
+                    {isSaving ? 'Saving...' : 'Save and Continue'}
+                </button>
             </div>
         </div>
     );

@@ -3,12 +3,13 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import api, { setAuthToken, initCsrf } from '@/lib/api';
 import { useRouter } from 'next/navigation';
+import { getRoleRoute } from '@/lib/roleRoutes';
 
 interface User {
     id: number;
     name: string;
     email: string;
-    role: 'admin' | 'manager' | 'user';
+    role: string;
     phone?: string;
     profile_picture?: string | null;
     profile_picture_url?: string | null;
@@ -137,10 +138,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
 
     const redirectBasedOnRole = (role: string) => {
-        const lowerRole = role.toLowerCase();
-        if (lowerRole.includes('admin')) router.push('/admin');
-        else if (lowerRole.includes('manager')) router.push('/manager');
-        else router.push('/dashboard');
+        const route = getRoleRoute(role);
+        router.push(route);
     };
 
     return (

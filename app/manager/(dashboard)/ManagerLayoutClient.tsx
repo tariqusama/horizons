@@ -355,11 +355,11 @@ export default function ManagerLayoutClient({ children }: { children: React.Reac
     useEffect(() => {
         if (!isLoading) {
             if (!user) {
-                router.push('/dashboard');
+                router.push('/login');
                 return;
             }
 
-            const role = user.role.toLowerCase();
+            const role = (user.role || '').toString().toLowerCase();
             if (!role.includes('admin') && !role.includes('manager')) {
                 router.push('/dashboard');
             } else {

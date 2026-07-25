@@ -7,6 +7,7 @@ import Sidebar from "./Sidebar";
 import styles from "./dashboardLayout.module.css";
 import { useAuth } from '@/contexts/AuthContext';
 import { getNotifications, markAsRead, clearAllNotifications, Notification } from '@/lib/api/notifications';
+import { getRoleRoute } from '@/lib/roleRoutes';
 
 export default function DashboardClient({ children }: { children: React.ReactNode }) {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -46,10 +47,11 @@ export default function DashboardClient({ children }: { children: React.ReactNod
         if (!isLoading) {
             if (!user) {
                 router.push('/login');
-            } else if (user.role === 'admin') {
-                router.push('/admin');
-            } else if (user.role === 'manager') {
-                router.push('/manager');
+            } else {
+                const destination = getRoleRoute(user.role);
+                if (destination !== '/dashboard') {
+                    router.push(destination);
+                }
             }
         }
     }, [user, isLoading, router]);
@@ -93,8 +95,8 @@ export default function DashboardClient({ children }: { children: React.ReactNod
                             </svg>
                         </button>
                         <div className="relative">
-                            <button 
-                                onClick={toggleNotifications} 
+                            <button
+                                onClick={toggleNotifications}
                                 className={`${styles.actionIconBtn} ${styles.blue} relative`}
                             >
                                 <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
@@ -106,7 +108,7 @@ export default function DashboardClient({ children }: { children: React.ReactNod
                                     </span>
                                 )}
                             </button>
-                            
+
                             {showNotifications && (
                                 <div className="absolute right-0 mt-2 w-[320px] sm:w-[360px] bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden z-50">
                                     <div className="px-5 py-3 border-b border-gray-100 flex justify-between items-center bg-[#F8F9FA]">

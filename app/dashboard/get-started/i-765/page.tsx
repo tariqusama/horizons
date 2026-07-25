@@ -71,53 +71,63 @@ export default function I765FormPage() {
 
     if (isLoading) return <div className={styles.pageWrapper}><div className="p-8 text-center text-gray-500">Loading form data...</div></div>;
 
+
+    const totalFields = Object.keys(formData).length;
+    const filledFields = Object.values(formData).filter(val => typeof val === 'string' && val.trim() !== '').length;
+    const percentage = totalFields > 0 ? Math.round((filledFields / totalFields) * 100) : 0;
+
     return (
         <div className={styles.pageWrapper}>
             <div className={styles.topHeader}>
-                <span>Question 1 of 11</span>
-                <span>9%</span>
+                <span>Completed {filledFields} of {totalFields} fields</span>
+                <span>{percentage}%</span>
             </div>
             <div className={styles.progressBarContainer}>
-                <div className={styles.progressBar} style={{ width: '9%' }}></div>
+                <div className={styles.progressBar} style={{ width: `%` }}></div>
+            </div>
+            <div className={styles.pageHeader}>
+                <h1 className={styles.pageTitleText}>Application for Employment Authorization</h1>
+                <p className={styles.pageSubtitleText}>Select the reason you are applying for employment authorization.</p>
             </div>
 
-            <h1 className={styles.pageTitle}>Application for Employment Authorization — USCIS Form I-765</h1>
-            <p className={styles.pageSubtitle}>Answer every question about your identity and eligibility category to request an Employment Authorization Document (EAD). Your progress saves automatically.</p>
-
-            <div className={styles.formSection}>
-                <div className={styles.partLabel}>PART 1</div>
-                <h2 className={styles.sectionHeading}>Reason for Applying</h2>
-
-                <div className={styles.formGrid}>
-                    <div className={styles.formGroupFull}>
-                        <label className={styles.label}>I am applying for: <span className={styles.required}>*</span></label>
-                        <div className={styles.radioGroup} style={{ flexDirection: 'column', alignItems: 'flex-start', gap: '12px' }}>
-                            <label className={styles.radioLabel}>
-                                <input type="radio" name="reason" value="Initial" checked={formData.reason === 'Initial'} onChange={handleChange} />
-                                Initial permission to accept employment.
-                            </label>
-                            <label className={styles.radioLabel}>
-                                <input type="radio" name="reason" value="Replacement" checked={formData.reason === 'Replacement'} onChange={handleChange} />
-                                Replacement of lost, stolen, or damaged employment authorization document.
-                            </label>
-                            <label className={styles.radioLabel}>
-                                <input type="radio" name="reason" value="Renewal" checked={formData.reason === 'Renewal'} onChange={handleChange} />
-                                Renewal of my permission to accept employment.
-                            </label>
-                        </div>
-                        {errors.reason && <div className="text-red-500 text-sm mt-1">{errors.reason[0]}</div>}
+            <div className={styles.formQuestion}>
+                <div className={styles.questionHeader}>
+                    <div className={styles.questionCheck}>
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                        </svg>
                     </div>
+                    <h2 className={styles.questionText}>Reason for Applying<span style={{color: '#f97316'}}>*</span></h2>
                 </div>
+                <p className={styles.questionSubtext}>I am applying for:</p>
+                
+                <div className={styles.iconRadioRow} style={{ flexDirection: 'column', alignItems: 'flex-start' }}>
+                    <label className={styles.iconRadioCircle}>
+                        <input type="radio" name="reason" value="Initial" checked={formData.reason === 'Initial'} onChange={handleChange} />
+                        <span className={styles.radioIndicator}></span>
+                        <span>Initial permission to accept employment.</span>
+                    </label>
+                    <label className={styles.iconRadioCircle} style={{ marginTop: '0.5rem' }}>
+                        <input type="radio" name="reason" value="Replacement" checked={formData.reason === 'Replacement'} onChange={handleChange} />
+                        <span className={styles.radioIndicator}></span>
+                        <span>Replacement of lost, stolen, or damaged employment authorization document.</span>
+                    </label>
+                    <label className={styles.iconRadioCircle} style={{ marginTop: '0.5rem' }}>
+                        <input type="radio" name="reason" value="Renewal" checked={formData.reason === 'Renewal'} onChange={handleChange} />
+                        <span className={styles.radioIndicator}></span>
+                        <span>Renewal of my permission to accept employment.</span>
+                    </label>
+                </div>
+                {errors.reason && <div className="text-red-500 text-sm mt-2 ml-8">{errors.reason[0]}</div>}
             </div>
 
-            <div className={styles.formActions}>
-                <button className={styles.btnSecondary}>Save Draft</button>
-                <div className={styles.rightActions}>
-                    <Link href="/dashboard/get-started" className={styles.btnOutline}>Back</Link>
-                    <button onClick={handleNext} disabled={isSaving} className={styles.btnPrimary} style={{ opacity: isSaving ? 0.7 : 1 }}>
-                        {isSaving ? 'Saving...' : 'Continue'}
-                    </button>
-                </div>
+            <div className={styles.footerScreenshot}>
+                <Link href="/dashboard/get-started" className={styles.btnTeal}>
+                    &#8592; Previous
+                </Link>
+                <button onClick={handleNext} disabled={isSaving} className={styles.btnTeal}>
+                    {isSaving ? 'Saving...' : 'Save and Continue'}
+                </button>
             </div>
         </div>
     );

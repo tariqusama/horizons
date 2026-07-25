@@ -71,40 +71,52 @@ export default function I751FormPage() {
 
     if (isLoading) return <div className={styles.pageWrapper}><div className="p-8 text-center text-gray-500">Loading form data...</div></div>;
 
+
+    const totalFields = Object.keys(formData).length;
+    const filledFields = Object.values(formData).filter(val => typeof val === 'string' && val.trim() !== '').length;
+    const percentage = totalFields > 0 ? Math.round((filledFields / totalFields) * 100) : 0;
+
     return (
         <div className={styles.pageWrapper}>
             <div className={styles.topHeader}>
-                <span>Question 1 of 10</span>
-                <span>10%</span>
+                <span>Completed {filledFields} of {totalFields} fields</span>
+                <span>{percentage}%</span>
             </div>
             <div className={styles.progressBarContainer}>
-                <div className={styles.progressBar} style={{ width: '10%' }}></div>
+                <div className={styles.progressBar} style={{ width: `%` }}></div>
+            </div>
+            <div className={styles.pageHeader}>
+                <h1 className={styles.pageTitleText}>Petition to Remove Conditions on Residence</h1>
+                <p className={styles.pageSubtitleText}>Provide information about yourself.</p>
             </div>
 
-            <h1 className={styles.pageTitle}>Petition to Remove Conditions on Residence — USCIS Form I-751</h1>
-            <p className={styles.pageSubtitle}>Answer every question about your identity and your marriage. Your progress saves automatically.</p>
-
-            <div className={styles.formSection}>
-                <div className={styles.partLabel}>PART 1</div>
-                <h2 className={styles.sectionHeading}>Information About You</h2>
-
-                <div className={styles.formGrid}>
-                    <div className={styles.formGroup}>
-                        <label className={styles.label}>Alien Registration Number (A-Number) <span className={styles.required}>*</span></label>
-                        <input type="text" name="aNumber" value={formData.aNumber} onChange={handleChange} className={`${styles.input} ${errors.aNumber ? '!border-red-500' : ''}`} />
+            <div className={styles.formQuestion}>
+                <div className={styles.questionHeader}>
+                    <div className={styles.questionCheck}>
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                        </svg>
+                    </div>
+                    <h2 className={styles.questionText}>Information About You</h2>
+                </div>
+                <p className={styles.questionSubtext}>Please provide your Alien Registration Number.</p>
+                
+                <div className={styles.screenshotInputGroup}>
+                    <div className={styles.screenshotInputWrapper}>
+                        <label className={styles.screenshotInputLabel}>Alien Registration Number (A-Number) <span style={{color: '#f97316'}}>*</span></label>
+                        <input type="text" name="aNumber" value={formData.aNumber} onChange={handleChange} className={styles.screenshotInput} />
                         {errors.aNumber && <div className="text-red-500 text-sm mt-1">{errors.aNumber[0]}</div>}
                     </div>
                 </div>
             </div>
 
-            <div className={styles.formActions}>
-                <button className={styles.btnSecondary}>Save Draft</button>
-                <div className={styles.rightActions}>
-                    <Link href="/dashboard/get-started" className={styles.btnOutline}>Back</Link>
-                    <button onClick={handleNext} disabled={isSaving} className={styles.btnPrimary} style={{ opacity: isSaving ? 0.7 : 1 }}>
-                        {isSaving ? 'Saving...' : 'Continue'}
-                    </button>
-                </div>
+            <div className={styles.footerScreenshot}>
+                <Link href="/dashboard/get-started" className={styles.btnTeal}>
+                    &#8592; Previous
+                </Link>
+                <button onClick={handleNext} disabled={isSaving} className={styles.btnTeal}>
+                    {isSaving ? 'Saving...' : 'Save and Continue'}
+                </button>
             </div>
         </div>
     );

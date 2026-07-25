@@ -75,84 +75,104 @@ export default function I485FormPage() {
 
     if (isLoading) return <div className={styles.pageWrapper}><div className="p-8 text-center text-gray-500">Loading form data...</div></div>;
 
+
+    const totalFields = Object.keys(formData).length;
+    const filledFields = Object.values(formData).filter(val => typeof val === 'string' && val.trim() !== '').length;
+    const percentage = totalFields > 0 ? Math.round((filledFields / totalFields) * 100) : 0;
+
     return (
         <div className={styles.pageWrapper}>
             <div className={styles.topHeader}>
-                <span>Question 1 of 14</span>
-                <span>8%</span>
+                <span>Completed {filledFields} of {totalFields} fields</span>
+                <span>{percentage}%</span>
             </div>
             <div className={styles.progressBarContainer}>
-                <div className={styles.progressBar} style={{ width: '8%' }}></div>
+                <div className={styles.progressBar} style={{ width: `%` }}></div>
+            </div>
+            <div className={styles.pageHeader}>
+                <h1 className={styles.pageTitleText}>Application to Register Permanent Residence or Adjust Status</h1>
+                <p className={styles.pageSubtitleText}>Provide information about yourself and your eligibility category.</p>
             </div>
 
-            <h1 className={styles.pageTitle}>Application to Register Permanent Residence or Adjust Status — USCIS Form I-485</h1>
-            <p className={styles.pageSubtitle}>Answer every question about your identity, immigration history, and eligibility to adjust status. Your progress saves automatically.</p>
-
-            <div className={styles.formSection}>
-                <div className={styles.partLabel}>PART 1</div>
-                <h2 className={styles.sectionHeading}>Information About You</h2>
-
-                <div className={styles.formGrid}>
-                    <div className={styles.formGroup}>
-                        <label className={styles.label}>Alien Registration Number (A-Number) (if any)</label>
-                        <input type="text" name="aNumber" value={formData.aNumber} onChange={handleChange} className={styles.input} />
+            <div className={styles.formQuestion}>
+                <div className={styles.questionHeader}>
+                    <div className={styles.questionCheck}>
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                        </svg>
                     </div>
-                    <div className={styles.formGroup}>
-                        <label className={styles.label}>USCIS Online Account Number (if any)</label>
-                        <input type="text" name="uscisOnlineAccount" value={formData.uscisOnlineAccount} onChange={handleChange} className={styles.input} />
+                    <h2 className={styles.questionText}>Information About You</h2>
+                </div>
+                <p className={styles.questionSubtext}>Please provide your identification numbers and current legal name.</p>
+                
+                <div className={styles.screenshotInputGroup}>
+                    <div className={styles.screenshotInputWrapper}>
+                        <label className={styles.screenshotInputLabel}>Alien Registration Number (A-Number) (if any)</label>
+                        <input type="text" name="aNumber" value={formData.aNumber} onChange={handleChange} className={styles.screenshotInput} />
                     </div>
+                    <div className={styles.screenshotInputWrapper}>
+                        <label className={styles.screenshotInputLabel}>USCIS Online Account Number (if any)</label>
+                        <input type="text" name="uscisOnlineAccount" value={formData.uscisOnlineAccount} onChange={handleChange} className={styles.screenshotInput} />
+                    </div>
+                </div>
 
-                    <div className={styles.formGroup}>
-                        <label className={styles.label}>Current Legal Family Name (Last Name) <span className={styles.required}>*</span></label>
-                        <input type="text" name="lastName" value={formData.lastName} onChange={handleChange} className={`${styles.input} ${errors.lastName ? '!border-red-500' : ''}`} />
-                        {errors.lastName && <div className="text-red-500 text-sm mt-1">{errors.lastName[0]}</div>}
-                    </div>
-                    <div className={styles.formGroup}>
-                        <label className={styles.label}>Current Legal Given Name (First Name) <span className={styles.required}>*</span></label>
-                        <input type="text" name="firstName" value={formData.firstName} onChange={handleChange} className={`${styles.input} ${errors.firstName ? '!border-red-500' : ''}`} />
+                <div className={styles.screenshotInputGroup} style={{ marginTop: '1rem' }}>
+                    <div className={styles.screenshotInputWrapper}>
+                        <label className={styles.screenshotInputLabel}>Current Legal Given Name (First Name) <span style={{color: '#f97316'}}>*</span></label>
+                        <input type="text" name="firstName" value={formData.firstName} onChange={handleChange} className={styles.screenshotInput} />
                         {errors.firstName && <div className="text-red-500 text-sm mt-1">{errors.firstName[0]}</div>}
                     </div>
-                </div>
-            </div>
-
-            <div className={styles.formSection}>
-                <div className={styles.partLabel}>PART 2</div>
-                <h2 className={styles.sectionHeading}>Application Type or Filing Category</h2>
-
-                <div className={styles.formGrid}>
-                    <div className={styles.formGroupFull}>
-                        <label className={styles.label}>I am applying to register lawful permanent residence or adjust status because: <span className={styles.required}>*</span></label>
-                        <div className={styles.radioGroup} style={{ flexDirection: 'column', alignItems: 'flex-start', gap: '12px' }}>
-                            <label className={styles.radioLabel}>
-                                <input type="radio" name="category" value="Family" checked={formData.category === 'Family'} onChange={handleChange} />
-                                Family-based (Immediate relative of a U.S. citizen, fiancé(e), etc.)
-                            </label>
-                            <label className={styles.radioLabel}>
-                                <input type="radio" name="category" value="Employment" checked={formData.category === 'Employment'} onChange={handleChange} />
-                                Employment-based
-                            </label>
-                            <label className={styles.radioLabel}>
-                                <input type="radio" name="category" value="Special" checked={formData.category === 'Special'} onChange={handleChange} />
-                                Special Immigrant
-                            </label>
-                            <label className={styles.radioLabel}>
-                                <input type="radio" name="category" value="Asylum" checked={formData.category === 'Asylum'} onChange={handleChange} />
-                                Asylum or Refugee
-                            </label>
-                        </div>
-                        {errors.category && <div className="text-red-500 text-sm mt-1">{errors.category[0]}</div>}
+                    <div className={styles.screenshotInputWrapper}>
+                        <label className={styles.screenshotInputLabel}>Current Legal Family Name (Last Name) <span style={{color: '#f97316'}}>*</span></label>
+                        <input type="text" name="lastName" value={formData.lastName} onChange={handleChange} className={styles.screenshotInput} />
+                        {errors.lastName && <div className="text-red-500 text-sm mt-1">{errors.lastName[0]}</div>}
                     </div>
                 </div>
             </div>
 
-            <div className={styles.formActions}>
-                <button className={styles.btnSecondary}>Save Draft</button>
-                <div className={styles.rightActions}>
-                    <Link href="/dashboard/get-started" className={styles.btnOutline}>Back</Link>
-                    <button onClick={handleNext} disabled={isSaving} className={styles.btnPrimary} style={{ opacity: isSaving ? 0.7 : 1 }}>
-                        {isSaving ? 'Saving...' : 'Continue'}
-                    </button>
+            <div className={styles.formQuestion}>
+                <div className={styles.questionHeader}>
+                    <div className={styles.questionCheck}>
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                        </svg>
+                    </div>
+                    <h2 className={styles.questionText}>Application Type or Filing Category<span style={{color: '#f97316'}}>*</span></h2>
                 </div>
+                <p className={styles.questionSubtext}>I am applying to register lawful permanent residence or adjust status because:</p>
+                
+                <div className={styles.iconRadioRow} style={{ flexDirection: 'column', alignItems: 'flex-start' }}>
+                    <label className={styles.iconRadioCircle}>
+                        <input type="radio" name="category" value="Family" checked={formData.category === 'Family'} onChange={handleChange} />
+                        <span className={styles.radioIndicator}></span>
+                        <span>Family-based (Immediate relative of a U.S. citizen, fiancé(e), etc.)</span>
+                    </label>
+                    <label className={styles.iconRadioCircle} style={{ marginTop: '0.5rem' }}>
+                        <input type="radio" name="category" value="Employment" checked={formData.category === 'Employment'} onChange={handleChange} />
+                        <span className={styles.radioIndicator}></span>
+                        <span>Employment-based</span>
+                    </label>
+                    <label className={styles.iconRadioCircle} style={{ marginTop: '0.5rem' }}>
+                        <input type="radio" name="category" value="Special" checked={formData.category === 'Special'} onChange={handleChange} />
+                        <span className={styles.radioIndicator}></span>
+                        <span>Special Immigrant</span>
+                    </label>
+                    <label className={styles.iconRadioCircle} style={{ marginTop: '0.5rem' }}>
+                        <input type="radio" name="category" value="Asylum" checked={formData.category === 'Asylum'} onChange={handleChange} />
+                        <span className={styles.radioIndicator}></span>
+                        <span>Asylum or Refugee</span>
+                    </label>
+                </div>
+                {errors.category && <div className="text-red-500 text-sm mt-2 ml-8">{errors.category[0]}</div>}
+            </div>
+
+            <div className={styles.footerScreenshot}>
+                <Link href="/dashboard/get-started" className={styles.btnTeal}>
+                    &#8592; Previous
+                </Link>
+                <button onClick={handleNext} disabled={isSaving} className={styles.btnTeal}>
+                    {isSaving ? 'Saving...' : 'Save and Continue'}
+                </button>
             </div>
         </div>
     );

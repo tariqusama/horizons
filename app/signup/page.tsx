@@ -787,21 +787,21 @@ function SignupFlowContent() {
       return (
         <div className="animate-in fade-in slide-in-from-right-4 duration-500 w-full max-w-[600px] mx-auto text-center pt-8">
           <div className="w-20 h-20 bg-[#F97316] rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm">
-            <span className="material-icons text-white text-[36px]">warning_amber</span>
+            <span className="material-icons text-white text-3xl sm:text-[36px]">warning_amber</span>
           </div>
           <h1 className="text-3xl md:text-[32px] font-black text-[#101F38] tracking-tight mb-4">Assessment Results</h1>
 
           <div className="w-16 h-1 bg-gradient-to-r from-[#E3755D] to-[#101F38] mx-auto mb-8 rounded-full"></div>
 
-          <div className="bg-[#FDF3E4] border border-[#F3D9B8] rounded-[16px] p-8 shadow-sm text-left mb-10">
-            <h3 className="flex items-center text-[17px] font-bold text-[#101F38] mb-4">
-              <span className="material-icons text-orange-500 mr-2">auto_awesome</span>
+          <div className="bg-[#FDF3E4] border border-[#F3D9B8] rounded-[16px] p-6 sm:p-8 shadow-sm text-left mb-10">
+            <h3 className="flex items-center text-base sm:text-[17px] font-bold text-[#101F38] mb-4">
+              <span className="material-icons text-orange-500 mr-2 text-lg sm:text-[20px]">auto_awesome</span>
               Based on your current circumstances
             </h3>
-            <p className="text-[#5B6472] font-medium text-[15px] mb-4 leading-relaxed">
+            <p className="text-sm sm:text-[15px] text-[#5B6472] font-medium mb-4 leading-relaxed">
               Thank you for completing the eligibility assessment. Based on your responses, it appears that you may not qualify for this particular service at this time, or this immigration option is not currently offered.
             </p>
-            <p className="text-[#5B6472] font-medium text-[15px] leading-relaxed">
+            <p className="text-sm sm:text-[15px] text-[#5B6472] font-medium leading-relaxed">
               We encourage you to explore other available options or reach out to our team for personalized guidance. We're here to help you find the best possible pathway forward.
             </p>
           </div>
@@ -811,21 +811,21 @@ function SignupFlowContent() {
               onClick={handleRestart}
               className="w-full bg-gradient-to-b from-orange-500 to-orange-600 hover:bg-[#C93500] text-white font-bold py-4 rounded-xl shadow-md transition-all flex items-center justify-center"
             >
-              <span className="material-icons mr-2 text-[20px]">refresh</span>
+              <span className="material-icons mr-2 text-lg sm:text-[20px]">refresh</span>
               Retake Assessment
             </button>
             <Link
               href="/"
               className="w-full bg-[#F8F9FA] hover:bg-[#E9ECEF] text-[#101F38] font-bold py-4 rounded-xl shadow-sm border border-gray-200 transition-all flex items-center justify-center"
             >
-              <span className="material-icons mr-2 text-gray-500 text-[20px]">home</span>
+              <span className="material-icons mr-2 text-gray-500 text-lg sm:text-[20px]">home</span>
               Go Home
             </Link>
           </div>
 
           <hr className="my-8 border-gray-200" />
 
-          <div className="text-[14px] text-gray-500 font-medium">
+          <div className="text-sm sm:text-[14px] text-gray-500 font-medium">
             Have questions? <a href="/contact" className="text-orange-500 font-bold hover:underline">Contact our team</a> for personalized guidance.
           </div>
         </div>
@@ -836,14 +836,14 @@ function SignupFlowContent() {
       return (
         <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
           <div className="mb-10">
-            <h1 className="text-[44px] leading-tight font-black text-[#101F38] mb-2 tracking-tight">Immigration Assessment</h1>
-            <p className="text-[#5B6472] font-medium text-[17px]">
+            <h1 className="text-3xl sm:text-[44px] leading-tight font-black text-[#101F38] mb-2 tracking-tight">Immigration Assessment</h1>
+            <p className="text-[#5B6472] font-medium text-base sm:text-[17px]">
               Answer a few questions to find the right immigration path for you
             </p>
           </div>
 
           <div className="mb-12">
-            <h2 className="text-[22px] font-bold text-[#101F38] mb-6 tracking-tight">What is your primary immigration goal today?</h2>
+            <h2 className="text-xl sm:text-[22px] font-bold text-[#101F38] mb-6 tracking-tight">What is your primary immigration goal today?</h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               {goals.map((goal, idx) => (
@@ -861,7 +861,7 @@ function SignupFlowContent() {
                     )}
                   </div>
                   <div className="flex-grow flex justify-center items-center px-4">
-                    <span className={`text-[15px] leading-snug font-bold text-center transition-colors ${selectedGoal === goal ? 'text-orange-500' : 'text-[#101F38]'}`}>
+                    <span className={`text-sm sm:text-[15px] leading-snug font-bold text-center transition-colors ${selectedGoal === goal ? 'text-orange-500' : 'text-[#101F38]'}`}>
                       {goal}
                     </span>
                   </div>
@@ -881,14 +881,14 @@ function SignupFlowContent() {
         <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 w-full max-w-[1000px] mx-auto">
           <div className="text-center mb-10">
             <div className="inline-flex items-center space-x-2 bg-[#FDF3E4] border border-[#F3D9B8] rounded-full px-5 py-2 mb-6 shadow-sm">
-              <span className="text-[#101F38] text-[11px] font-bold tracking-[0.1em] uppercase">
+              <span className="text-xs sm:text-[11px] font-bold text-[#101F38] tracking-[0.1em] uppercase">
                 {selectedGoal}
               </span>
             </div>
-            <h1 className="text-4xl md:text-[40px] font-black text-[#101F38] mb-4 tracking-tight">
+            <h1 className="text-3xl sm:text-4xl md:text-[40px] font-black text-[#101F38] mb-4 tracking-tight">
               {pricing.title}
             </h1>
-            <p className="text-[#5B6472] font-medium text-[17px] max-w-2xl mx-auto">
+            <p className="text-sm sm:text-[17px] text-[#5B6472] font-medium max-w-2xl mx-auto">
               Select the service level that best fits your needs and budget. We ensure your application is complete and accurate.
             </p>
           </div>
@@ -896,26 +896,26 @@ function SignupFlowContent() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Basic Plan */}
             <div className="bg-white rounded-[32px] p-8 border border-gray-100 shadow-sm flex flex-col hover:-translate-y-2 transition-transform duration-300">
-              <h3 className="text-[20px] font-bold text-[#101F38] text-center mb-2">Basic Plan</h3>
-              <p className="text-[#5B6472] text-center text-[13px] font-medium mb-6">Essential services for your application</p>
+              <h3 className="text-lg sm:text-[20px] font-bold text-[#101F38] text-center mb-2">Basic Plan</h3>
+              <p className="text-[#5B6472] text-center text-xs sm:text-[13px] font-medium mb-6">Essential services for your application</p>
               <div className="text-center mb-8">
-                <span className="text-[32px] font-black text-orange-500">{pricing.basic}</span>
+                <span className="text-3xl sm:text-[32px] font-black text-orange-500">{pricing.basic}</span>
               </div>
               <ul className="space-y-4 mb-8 flex-grow">
-                <li className="flex items-start text-[13px] text-[#5B6472] font-medium">
-                  <span className="material-icons text-orange-500 text-[18px] mr-2">check</span>
+                <li className="flex items-start text-xs sm:text-[13px] text-[#5B6472] font-medium">
+                  <span className="material-icons text-orange-500 text-lg sm:text-[20px] mr-2">check</span>
                   Complete form preparation and review
                 </li>
-                <li className="flex items-start text-[13px] text-[#5B6472] font-medium">
-                  <span className="material-icons text-orange-500 text-[18px] mr-2">check</span>
+                <li className="flex items-start text-xs sm:text-[13px] text-[#5B6472] font-medium">
+                  <span className="material-icons text-orange-500 text-lg sm:text-[20px] mr-2">check</span>
                   Dedicated case manager
                 </li>
-                <li className="flex items-start text-[13px] text-[#5B6472] font-medium">
-                  <span className="material-icons text-orange-500 text-[18px] mr-2">check</span>
+                <li className="flex items-start text-xs sm:text-[13px] text-[#5B6472] font-medium">
+                  <span className="material-icons text-orange-500 text-lg sm:text-[20px] mr-2">check</span>
                   Step-by-step guidance
                 </li>
-                <li className="flex items-start text-[13px] text-[#5B6472] font-medium">
-                  <span className="material-icons text-orange-500 text-[18px] mr-2">check</span>
+                <li className="flex items-start text-xs sm:text-[13px] text-[#5B6472] font-medium">
+                  <span className="material-icons text-orange-500 text-lg sm:text-[20px] mr-2">check</span>
                   100% satisfaction guarantee
                 </li>
               </ul>
@@ -933,33 +933,33 @@ function SignupFlowContent() {
 
             {/* Advanced Plan */}
             <div className="bg-white rounded-[32px] p-8 border-2 border-orange-500 shadow-[0_15px_30px_rgba(227,117,93,0.15)] flex flex-col hover:-translate-y-2 transition-transform duration-300 relative">
-              <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-b from-orange-500 to-orange-600 text-white text-[11px] font-bold px-4 py-1 rounded-full uppercase tracking-wider">
+              <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-b from-orange-500 to-orange-600 text-xs sm:text-[11px] font-bold px-4 py-1 rounded-full uppercase tracking-wider">
                 Most Popular
               </div>
-              <h3 className="text-[20px] font-bold text-[#101F38] text-center mb-2">Advanced Plan</h3>
-              <p className="text-[#5B6472] text-center text-[13px] font-medium mb-6">Comprehensive services with review</p>
+              <h3 className="text-lg sm:text-[20px] font-bold text-[#101F38] text-center mb-2">Advanced Plan</h3>
+              <p className="text-[#5B6472] text-center text-xs sm:text-[13px] font-medium mb-6">Comprehensive services with review</p>
               <div className="text-center mb-8">
-                <span className="text-[32px] font-black text-orange-500">{pricing.advanced}</span>
+                <span className="text-3xl sm:text-[32px] font-black text-orange-500">{pricing.advanced}</span>
               </div>
               <ul className="space-y-4 mb-8 flex-grow">
-                <li className="flex items-start text-[13px] text-[#5B6472] font-medium">
-                  <span className="material-icons text-orange-500 text-[18px] mr-2">check</span>
+                <li className="flex items-start text-xs sm:text-[13px] text-[#5B6472] font-medium">
+                  <span className="material-icons text-orange-500 text-lg sm:text-[20px] mr-2">check</span>
                   Everything in Basic Plan
                 </li>
-                <li className="flex items-start text-[13px] text-[#5B6472] font-medium">
-                  <span className="material-icons text-orange-500 text-[18px] mr-2">check</span>
+                <li className="flex items-start text-xs sm:text-[13px] text-[#5B6472] font-medium">
+                  <span className="material-icons text-orange-500 text-lg sm:text-[20px] mr-2">check</span>
                   Certified translation services
                 </li>
-                <li className="flex items-start text-[13px] text-[#5B6472] font-medium">
-                  <span className="material-icons text-orange-500 text-[18px] mr-2">check</span>
+                <li className="flex items-start text-xs sm:text-[13px] text-[#5B6472] font-medium">
+                  <span className="material-icons text-orange-500 text-lg sm:text-[20px] mr-2">check</span>
                   Legal review by an attorney
                 </li>
-                <li className="flex items-start text-[13px] text-[#5B6472] font-medium">
-                  <span className="material-icons text-orange-500 text-[18px] mr-2">check</span>
+                <li className="flex items-start text-xs sm:text-[13px] text-[#5B6472] font-medium">
+                  <span className="material-icons text-orange-500 text-lg sm:text-[20px] mr-2">check</span>
                   Priority 24-hour support
                 </li>
-                <li className="flex items-start text-[13px] text-[#5B6472] font-medium">
-                  <span className="material-icons text-orange-500 text-[18px] mr-2">check</span>
+                <li className="flex items-start text-xs sm:text-[13px] text-[#5B6472] font-medium">
+                  <span className="material-icons text-orange-500 text-lg sm:text-[20px] mr-2">check</span>
                   Phone support for real-time assistance
                 </li>
               </ul>
@@ -977,30 +977,30 @@ function SignupFlowContent() {
 
             {/* Premium Plan */}
             <div className="bg-[#FDFBF9] rounded-[32px] p-8 border border-gray-100 shadow-sm flex flex-col hover:-translate-y-2 transition-transform duration-300">
-              <h3 className="text-[20px] font-bold text-[#101F38] text-center mb-2">Premium Plan</h3>
-              <p className="text-[#5B6472] text-center text-[13px] font-medium mb-6">Full-service support with consultation</p>
+              <h3 className="text-lg sm:text-[20px] font-bold text-[#101F38] text-center mb-2">Premium Plan</h3>
+              <p className="text-[#5B6472] text-center text-xs sm:text-[13px] font-medium mb-6">Full-service support with consultation</p>
               <div className="text-center mb-8">
-                <span className="text-[32px] font-black text-orange-500">{pricing.premium}</span>
+                <span className="text-3xl sm:text-[32px] font-black text-orange-500">{pricing.premium}</span>
               </div>
               <ul className="space-y-4 mb-8 flex-grow">
-                <li className="flex items-start text-[13px] text-[#5B6472] font-medium">
-                  <span className="material-icons text-orange-500 text-[18px] mr-2">check</span>
+                <li className="flex items-start text-xs sm:text-[13px] text-[#5B6472] font-medium">
+                  <span className="material-icons text-orange-500 text-lg sm:text-[20px] mr-2">check</span>
                   All Advanced Benefits
                 </li>
-                <li className="flex items-start text-[13px] text-[#5B6472] font-medium">
-                  <span className="material-icons text-orange-500 text-[18px] mr-2">check</span>
+                <li className="flex items-start text-xs sm:text-[13px] text-[#5B6472] font-medium">
+                  <span className="material-icons text-orange-500 text-lg sm:text-[20px] mr-2">check</span>
                   30-minute 1-on-1 attorney consultation
                 </li>
-                <li className="flex items-start text-[13px] text-[#5B6472] font-medium">
-                  <span className="material-icons text-orange-500 text-[18px] mr-2">check</span>
+                <li className="flex items-start text-xs sm:text-[13px] text-[#5B6472] font-medium">
+                  <span className="material-icons text-orange-500 text-lg sm:text-[20px] mr-2">check</span>
                   USCIS Interview preparation kit
                 </li>
-                <li className="flex items-start text-[13px] text-[#5B6472] font-medium">
-                  <span className="material-icons text-orange-500 text-[18px] mr-2">check</span>
+                <li className="flex items-start text-xs sm:text-[13px] text-[#5B6472] font-medium">
+                  <span className="material-icons text-orange-500 text-lg sm:text-[20px] mr-2">check</span>
                   Priority email support (6 hour response)
                 </li>
-                <li className="flex items-start text-[13px] text-[#5B6472] font-medium">
-                  <span className="material-icons text-orange-500 text-[18px] mr-2">check</span>
+                <li className="flex items-start text-xs sm:text-[13px] text-[#5B6472] font-medium">
+                  <span className="material-icons text-orange-500 text-lg sm:text-[20px] mr-2">check</span>
                   Direct WhatsApp/Text support
                 </li>
               </ul>
@@ -1022,8 +1022,8 @@ function SignupFlowContent() {
 
     if (currentStep === questions.length + 2) {
       return (
-        <div className="min-h-screen bg-[#F5F5F5] flex items-center justify-center p-3 sm:p-6 lg:p-0">
-          <div className="w-full min-h-[760px] max-w-[1440px] bg-[#F5F5F5] lg:rounded-[40px] overflow-hidden grid grid-cols-1 lg:grid-cols-2 shadow-[0_25px_80px_-20px_rgba(0,0,0,0.12)]">
+        <div className="min-h-screen bg-[#F5F5F5] flex items-center justify-center p-4 sm:p-6 lg:p-10">
+          <div className="w-full min-h-[680px] sm:min-h-[760px] max-w-[1440px] bg-[#F5F5F5] lg:rounded-[40px] overflow-hidden grid grid-cols-1 lg:grid-cols-2 shadow-[0_25px_80px_-20px_rgba(0,0,0,0.12)]">
             <div className="relative hidden lg:block overflow-hidden rounded-[32px] m-4">
               <div
                 className="absolute inset-0"
@@ -1055,7 +1055,7 @@ function SignupFlowContent() {
                 <Image src="/horizonlogo.png" alt="Horizon Pathways" width={160} height={42} className="h-14 w-auto object-contain" />
               </Link>
 
-              <h1 className="text-4xl font-bold text-[#0f1b3d] tracking-tight">Create Account</h1>
+              <h1 className="text-3xl sm:text-4xl font-bold text-[#0f1b3d] tracking-tight">Create Account</h1>
               <p className="text-slate-500 mt-2 mb-6">Start your immigration journey with us</p>
 
               {error && (
@@ -1067,7 +1067,7 @@ function SignupFlowContent() {
               <form className="space-y-4" onSubmit={handleSendOtp}>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <label htmlFor="firstName" className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">First Name</label>
+                    <label htmlFor="firstName" className="text-xs sm:text-[11px] font-bold text-slate-500 uppercase tracking-wider">First Name</label>
                     <input
                       id="firstName"
                       name="firstName"
@@ -1080,7 +1080,7 @@ function SignupFlowContent() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <label htmlFor="lastName" className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Last Name</label>
+                    <label htmlFor="lastName" className="text-xs sm:text-[11px] font-bold text-slate-500 uppercase tracking-wider">Last Name</label>
                     <input
                       id="lastName"
                       name="lastName"
@@ -1095,7 +1095,7 @@ function SignupFlowContent() {
                 </div>
 
                 <div className="space-y-2">
-                  <label htmlFor="email" className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                  <label htmlFor="email" className="text-xs sm:text-[11px] font-bold text-slate-500 uppercase tracking-wider">
                     Email Address<span className="text-orange-500 ml-1">*</span>
                   </label>
                   <div className="relative">
@@ -1119,7 +1119,7 @@ function SignupFlowContent() {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <label htmlFor="password" className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Password</label>
+                    <label htmlFor="password" className="text-xs sm:text-[11px] font-bold text-slate-500 uppercase tracking-wider">Password</label>
                     <div className="relative">
                       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 peer-focus:text-orange-500 transition-colors">
                         <rect width="18" height="11" x="3" y="11" rx="2" ry="2"></rect>
@@ -1158,8 +1158,8 @@ function SignupFlowContent() {
 
                     <div className="mt-4 overflow-hidden rounded-2xl bg-gradient-to-br from-white to-slate-50/80 backdrop-blur-xl border border-white/60 p-5 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
                       <div className="mb-4 flex items-center justify-between">
-                        <p className="text-[11px] font-bold tracking-widest uppercase text-slate-500">Password strength</p>
-                        <span className={`inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider transition-colors duration-300 ${password.length === 0 ? 'bg-slate-100 text-slate-500' : passwordScore <= 2 ? 'bg-red-50 text-red-600' : passwordScore <= 4 ? 'bg-amber-50 text-amber-600' : 'bg-emerald-50 text-emerald-600'}`}>
+                        <p className="text-xs sm:text-[11px] font-bold tracking-widest uppercase text-slate-500">Password strength</p>
+                        <span className={`inline-flex items-center gap-1.5 text-xs sm:text-[11px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider transition-colors duration-300 ${password.length === 0 ? 'bg-slate-100 text-slate-500' : passwordScore <= 2 ? 'bg-red-50 text-red-600' : passwordScore <= 4 ? 'bg-amber-50 text-amber-600' : 'bg-emerald-50 text-emerald-600'}`}>
                           <span className={`h-1.5 w-1.5 rounded-full transition-colors duration-300 ${password.length === 0 ? 'bg-slate-300' : passwordScore <= 2 ? 'bg-red-500 animate-pulse' : passwordScore <= 4 ? 'bg-amber-500 animate-pulse' : 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]'}`} />
                           {passwordStrength}
                         </span>
@@ -1185,7 +1185,7 @@ function SignupFlowContent() {
                   </div>
 
                   <div className="space-y-2">
-                    <label htmlFor="confirmPassword" className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Confirm Password</label>
+                    <label htmlFor="confirmPassword" className="text-xs sm:text-[11px] font-bold text-slate-500 uppercase tracking-wider">Confirm Password</label>
                     <div className="relative">
                       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 transition-colors peer-focus:text-orange-500">
                         <rect width="18" height="11" x="3" y="11" rx="2" ry="2"></rect>
@@ -1279,11 +1279,11 @@ function SignupFlowContent() {
           <div className="bg-white border border-gray-200 rounded-[12px] p-8 md:p-10 shadow-sm text-center">
 
             <div className="w-16 h-16 bg-[#FDF3E4] rounded-full flex items-center justify-center mx-auto mb-6">
-              <span className="material-icons text-orange-500 text-[28px]">mail_outline</span>
+              <span className="material-icons text-2xl sm:text-[28px] text-orange-500">mail_outline</span>
             </div>
 
-            <h1 className="text-[24px] font-bold text-[#101F38] mb-3">Enter Verification Code</h1>
-            <p className="text-[#5B6472] font-medium text-[15px] mb-8">
+            <h1 className="text-xl sm:text-[24px] font-bold text-[#101F38] mb-3">Enter Verification Code</h1>
+            <p className="text-sm sm:text-[15px] text-[#5B6472] font-medium mb-8">
               We sent a 6-digit code to <span className="font-bold text-[#101F38]">{email || 'your email'}</span>
             </p>
 
@@ -1302,12 +1302,12 @@ function SignupFlowContent() {
                   maxLength={1}
                   value={digit}
                   onChange={(e) => handleOtpChange(idx, e.target.value)}
-                  className="w-12 h-14 border border-gray-300 rounded-[8px] text-center text-[20px] font-bold text-[#101F38] outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-all bg-white"
+                  className="w-12 h-14 border border-gray-300 rounded-[8px] text-center text-lg sm:text-[20px] font-bold text-[#101F38] outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-all bg-white"
                 />
               ))}
             </div>
 
-            <p className="text-[#5B6472] text-[14px] mb-6">
+            <p className="text-[#5B6472] text-sm sm:text-[14px] mb-6">
               Didn't get the code? Check your spam folder, or resend it below.
             </p>
 
@@ -1329,7 +1329,7 @@ function SignupFlowContent() {
 
             <button
               onClick={() => setCurrentStep(questions.length + 2)} // Go back to account details
-              className="text-orange-500 hover:text-[#C93500] text-[14px] font-medium transition-colors"
+              className="text-orange-500 hover:text-[#C93500] text-sm sm:text-[14px] font-medium transition-colors"
             >
               Use a different email address
             </button>
@@ -1461,8 +1461,8 @@ function SignupFlowContent() {
 
                 <div className="space-y-4 mb-6">
                   <div className="flex justify-between items-start">
-                    <div className="text-[#5B6472] font-medium text-[14px] pr-4">{pricing.title}</div>
-                    <div className="text-[#101F38] font-bold text-[14px] shrink-0">{selectedPlanPrice}</div>
+                    <div className="text-[#5B6472] font-medium text-sm sm:text-[14px] pr-4">{pricing.title}</div>
+                    <div className="text-[#101F38] font-bold text-sm sm:text-[14px] shrink-0">{selectedPlanPrice}</div>
                   </div>
                   {selectedAddons.map(id => {
                     const addon = addons.find(a => a.id === id);
@@ -1470,21 +1470,21 @@ function SignupFlowContent() {
                     const qty = addonQuantities[id] || 1;
                     return (
                       <div key={addon.id} className="flex justify-between items-start">
-                        <div className="text-[#5B6472] font-medium text-[14px] pr-4">
+                        <div className="text-[#5B6472] font-medium text-sm sm:text-[14px] pr-4">
                           {addon.name} {qty > 1 ? `(x${qty})` : ''}
                         </div>
-                        <div className="text-[#101F38] font-bold text-[14px] shrink-0">${addon.price * qty}</div>
+                        <div className="text-[#101F38] font-bold text-sm sm:text-[14px] shrink-0">${addon.price * qty}</div>
                       </div>
                     );
                   })}
                 </div>
 
                 <div className="border-t border-gray-200 pt-4 mb-6 flex justify-between items-center">
-                  <div className="text-[#101F38] font-bold text-[16px]">Total</div>
-                  <div className="text-[24px] font-black text-[#101F38]">${totalAmount.toFixed(2)}</div>
+                  <div className="text-[#101F38] font-bold text-sm sm:text-[16px]">Total</div>
+                  <div className="text-2xl sm:text-[24px] font-black text-[#101F38]">${totalAmount.toFixed(2)}</div>
                 </div>
 
-                {error && <div className="text-red-500 text-[14px] font-medium mb-4 text-center">{error}</div>}
+                {error && <div className="text-red-500 text-sm sm:text-[14px] font-medium mb-4 text-center">{error}</div>}
                 <button
                   onClick={handleStripeCheckout}
                   disabled={isRegistering}
@@ -1504,7 +1504,7 @@ function SignupFlowContent() {
         <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-[500px] mx-auto">
           <div className="text-center mb-8">
             <h1 className="text-3xl font-black text-[#101F38] mb-3 tracking-tight">Complete Payment</h1>
-            <p className="text-[#5B6472] font-medium text-[16px]">
+            <p className="text-base sm:text-[16px] text-[#5B6472] font-medium">
               You're almost there! Enter your payment details below.
             </p>
           </div>
@@ -1513,11 +1513,11 @@ function SignupFlowContent() {
             <div className="p-6 border-b border-gray-100">
               <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-center">
                 <button type="button" className="inline-flex min-w-[160px] items-center justify-center gap-2 rounded-[16px] bg-black px-5 py-4 text-sm font-semibold text-white transition hover:bg-gray-900">
-                  <span className="text-[18px]"></span>
+                  <span className="text-lg sm:text-[18px]"></span>
                   Apple Pay
                 </button>
                 <button type="button" className="inline-flex min-w-[160px] items-center justify-center gap-2 rounded-[16px] bg-emerald-500 px-5 py-4 text-sm font-semibold text-white transition hover:bg-emerald-600">
-                  <span className="text-[18px]">link</span>
+                  <span className="text-lg sm:text-[18px]">link</span>
                   Link
                 </button>
               </div>
@@ -1562,12 +1562,12 @@ function SignupFlowContent() {
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-[13px] font-bold uppercase tracking-[0.18em] text-gray-500">Cardholder name</label>
+                    <label className="text-xs sm:text-[13px] font-bold uppercase tracking-[0.18em] text-gray-500">Cardholder name</label>
                     <input type="text" placeholder="Full name on card" required className="w-full rounded-[12px] border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 outline-none transition focus:border-orange-500" />
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-[13px] font-bold uppercase tracking-[0.18em] text-gray-500">Country or region</label>
+                    <label className="text-xs sm:text-[13px] font-bold uppercase tracking-[0.18em] text-gray-500">Country or region</label>
                     <select className="w-full rounded-[12px] border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 outline-none transition focus:border-orange-500">
                       <option>Pakistan</option>
                       <option>United States</option>
@@ -1592,8 +1592,8 @@ function SignupFlowContent() {
           </div>
 
           <div className="text-center mt-6">
-            <p className="text-[12px] text-gray-400 flex items-center justify-center font-medium">
-              <span className="material-icons text-[14px] mr-1">security</span>
+            <p className="text-xs sm:text-[12px] text-gray-400 flex items-center justify-center font-medium">
+              <span className="material-icons text-sm sm:text-[14px] mr-1">security</span>
               Payments are secure and encrypted
             </p>
           </div>
@@ -1607,144 +1607,144 @@ function SignupFlowContent() {
     return (
       <div key={currentStep} className="animate-in fade-in slide-in-from-right-4 duration-500">
         <div className="mb-10">
-          <h1 className="text-[44px] leading-tight font-black text-[#101F38] mb-2 tracking-tight">Question {currentStep}</h1>
-        </div>
+          <h1 className="text-3xl sm:text-[44px] leading-tight font-black text-[#101F38] mb-2 tracking-tight">Question {currentStep}</h1>
 
-        <div className="mb-12">
-          <h2 className="text-[22px] font-bold text-[#101F38] mb-6 tracking-tight">{currentQuestion.question}</h2>
+          <div className="mb-12">
+            <h2 className="text-xl sm:text-[22px] font-bold text-[#101F38] mb-6 tracking-tight">{currentQuestion.question}</h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            {currentQuestion.options.map((option, idx) => (
-              <button
-                key={idx}
-                onClick={() => handleAnswerSelect(option)}
-                className={`relative flex items-center p-6 border rounded-[20px] transition-all duration-300 ${selectedAnswer === option
-                  ? 'border-orange-500 bg-[#FDFBF9] shadow-[0_10px_20px_rgba(227,117,93,0.1)]'
-                  : 'border-gray-200 bg-white hover:border-orange-500/50 hover:shadow-sm'
-                  }`}
-              >
-                <div className="shrink-0 w-6 h-6 rounded-full border-[1.5px] border-orange-500 flex items-center justify-center transition-colors">
-                  {selectedAnswer === option && (
-                    <div className="w-3 h-3 rounded-full bg-gradient-to-b from-orange-500 to-orange-600"></div>
-                  )}
-                </div>
-                <div className="flex-grow flex justify-center items-center px-4">
-                  <span className={`text-[15px] leading-snug font-bold text-center transition-colors ${selectedAnswer === option ? 'text-orange-500' : 'text-[#101F38]'}`}>
-                    {option}
-                  </span>
-                </div>
-              </button>
-            ))}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              {currentQuestion.options.map((option, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => handleAnswerSelect(option)}
+                  className={`relative flex items-center p-6 border rounded-[20px] transition-all duration-300 ${selectedAnswer === option
+                    ? 'border-orange-500 bg-[#FDFBF9] shadow-[0_10px_20px_rgba(227,117,93,0.1)]'
+                    : 'border-gray-200 bg-white hover:border-orange-500/50 hover:shadow-sm'
+                    }`}
+                >
+                  <div className="shrink-0 w-6 h-6 rounded-full border-[1.5px] border-orange-500 flex items-center justify-center transition-colors">
+                    {selectedAnswer === option && (
+                      <div className="w-3 h-3 rounded-full bg-gradient-to-b from-orange-500 to-orange-600"></div>
+                    )}
+                  </div>
+                  <div className="flex-grow flex justify-center items-center px-4">
+                    <span className={`text-sm sm:text-[15px] leading-snug font-bold text-center transition-colors ${selectedAnswer === option ? 'text-orange-500' : 'text-[#101F38]'}`}>
+                      {option}
+                    </span>
+                  </div>
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       </div>
     );
   };
 
-  return (
-    <main className="w-full min-h-screen bg-[#F5F4F1] pt-32 pb-24 px-4 md:px-8 lg:px-16 flex items-center justify-center">
-      <style>{`
+        return (
+        <main className="w-full min-h-screen bg-[#F5F4F1] py-16 px-4 sm:px-6 lg:px-12 flex items-center justify-center">
+          <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500&display=swap');
         .font-body { font-family: 'Inter', sans-serif; }
         .font-mono { font-family: 'IBM Plex Mono', monospace; }
         main, main * { font-family: 'Inter', sans-serif; }
       `}</style>
 
-      {isQuestionsDone ? (
-        // Post-Questionnaire Views (Plan Selection, Account, Verification, Payment)
-        <div className="w-full">
-          {renderContent()}
-        </div>
-      ) : (
-        <div className="w-full max-w-[1200px] mx-auto bg-white rounded-[24px] shadow-[0_20px_50px_-15px_rgba(16,31,56,0.12)] border border-gray-100 overflow-hidden flex min-h-[650px] relative">
+          {isQuestionsDone ? (
+            // Post-Questionnaire Views (Plan Selection, Account, Verification, Payment)
+            <div className="w-full">
+              {renderContent()}
+            </div>
+          ) : (
+            <div className="w-full max-w-[1200px] mx-auto bg-white rounded-[24px] shadow-[0_20px_50px_-15px_rgba(16,31,56,0.12)] border border-gray-100 overflow-hidden flex flex-col lg:flex-row min-h-[650px] relative">
 
-          {/* Left Side - Image/Illustration */}
-          <div className="hidden lg:flex lg:w-[40%] relative overflow-hidden">
-            <div
-              className="absolute inset-0 bg-cover bg-center"
-              style={{ backgroundImage: getSignupBackgroundImage(selectedGoal, currentStep, currentQuestion?.question) }}
-            ></div>
-            <div className="absolute inset-0 bg-gradient-to-t from-[#101F38]/90 via-[#101F38]/40 to-transparent"></div>
+              {/* Left Side - Image/Illustration */}
+              <div className="hidden lg:flex lg:w-[40%] relative overflow-hidden">
+                <div
+                  className="absolute inset-0 bg-cover bg-center"
+                  style={{ backgroundImage: getSignupBackgroundImage(selectedGoal, currentStep, currentQuestion?.question) }}
+                ></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-[#101F38]/90 via-[#101F38]/40 to-transparent"></div>
 
-            <div className="absolute bottom-0 left-0 right-0 p-12 text-white">
-              <div className="inline-flex items-center bg-white/10 backdrop-blur-md rounded-full px-4 py-2 mb-6 border border-white/20 shadow-sm">
-                <div className="w-[140px]">
-                  <Image src="/horizonlogo.png" alt="Horizon Pathways" width={140} height={32} className="object-contain" />
+                <div className="absolute bottom-0 left-0 right-0 p-12 text-white">
+                  <div className="inline-flex items-center bg-white/10 backdrop-blur-md rounded-full px-4 py-2 mb-6 border border-white/20 shadow-sm">
+                    <div className="w-[140px]">
+                      <Image src="/horizonlogo.png" alt="Horizon Pathways" width={140} height={32} className="object-contain" />
+                    </div>
+                  </div>
+                  <p className="text-base sm:text-[16px] font-medium leading-relaxed max-w-md text-white/80">
+                    Start your U.S. immigration journey with confidence. Answer a few quick questions and we'll guide you to the right path — with experienced attorneys by your side.
+                  </p>
                 </div>
               </div>
-              <p className="text-[16px] font-medium leading-relaxed max-w-md text-white/80">
-                Start your U.S. immigration journey with confidence. Answer a few quick questions and we'll guide you to the right path — with experienced attorneys by your side.
-              </p>
-            </div>
-          </div>
 
-          {/* Right Side - Content */}
-          <div className="w-full lg:w-[60%] flex flex-col p-8 sm:p-12 lg:p-16 relative">
-            <div className="w-full max-w-[600px] mx-auto flex-grow flex flex-col justify-center">
+              {/* Right Side - Content */}
+              <div className="w-full lg:w-[60%] flex flex-col px-6 py-8 sm:px-10 sm:py-10 lg:px-16 lg:py-16 relative">
+                <div className="w-full max-w-full lg:max-w-[600px] mx-auto flex-grow flex flex-col justify-center">
 
-              {!isQuestionsDone && !isDisqualified && (
-                <button onClick={handleBack} className="inline-flex items-center gap-2 text-sm font-semibold text-orange-500 hover:text-[#C93500] transition-colors self-start mb-6">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <line x1="19" y1="12" x2="5" y2="12"></line>
-                    <polyline points="12 19 5 12 12 5"></polyline>
-                  </svg>
-                  Back
-                </button>
-              )}
+                  {!isQuestionsDone && !isDisqualified && (
+                    <button onClick={handleBack} className="inline-flex items-center gap-2 text-sm font-semibold text-orange-500 hover:text-[#C93500] transition-colors self-start mb-6">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <line x1="19" y1="12" x2="5" y2="12"></line>
+                        <polyline points="12 19 5 12 12 5"></polyline>
+                      </svg>
+                      Back
+                    </button>
+                  )}
 
-              {!isQuestionsDone && !isDisqualified && currentStep > 0 && (
-                <div className="text-orange-500 font-bold text-[15px] mb-3">
-                  Step {currentStep} of {totalSteps}
-                </div>
-              )}
+                  {!isQuestionsDone && !isDisqualified && currentStep > 0 && (
+                    <div className="text-orange-500 font-bold text-sm sm:text-[15px] mb-3">
+                      Step {currentStep} of {totalSteps}
+                    </div>
+                  )}
 
-              {!isQuestionsDone && !isDisqualified && (
-                <div className="mb-10 w-full">
-                  <div className="flex justify-between font-mono text-[11px] text-[#8A8F98] mb-1.5">
-                    <span>{Math.round(progress)}%</span>
-                    <span>100%</span>
+                  {!isQuestionsDone && !isDisqualified && (
+                    <div className="mb-10 w-full">
+                      <div className="flex justify-between font-mono text-xs sm:text-[11px] text-[#8A8F98] mb-1.5">
+                        <span>{Math.round(progress)}%</span>
+                        <span>100%</span>
+                      </div>
+                      <div className="w-full h-2 bg-[#F0EEE8] rounded-full overflow-hidden">
+                        <div
+                          className="h-full bg-gradient-to-r from-[#5BAE8C] to-[#3F9A73] rounded-full transition-all duration-500 ease-out"
+                          style={{ width: `${progress}%` }}
+                        ></div>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="flex-grow w-full flex flex-col justify-center">
+                    {renderContent()}
                   </div>
-                  <div className="w-full h-2 bg-[#F0EEE8] rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-gradient-to-r from-[#5BAE8C] to-[#3F9A73] rounded-full transition-all duration-500 ease-out"
-                      style={{ width: `${progress}%` }}
-                    ></div>
-                  </div>
-                </div>
-              )}
 
-              <div className="flex-grow w-full flex flex-col justify-center">
-                {renderContent()}
+                  {!isDisqualified && currentStep > 0 && (
+                    <div className="flex justify-end items-center pb-2 mt-12 w-full pt-6 border-t border-gray-100">
+                      <button
+                        onClick={handleRestart}
+                        className="bg-gradient-to-b from-orange-500 to-orange-600 hover:bg-[#C93500] text-white font-bold py-3 px-6 rounded-xl shadow-sm transition-colors flex items-center space-x-2"
+                      >
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                          <polyline points="1 4 1 10 7 10"></polyline>
+                          <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+                        </svg>
+                        <span>Restart</span>
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
-
-              {!isDisqualified && currentStep > 0 && (
-                <div className="flex justify-end items-center pb-2 mt-12 w-full pt-6 border-t border-gray-100">
-                  <button
-                    onClick={handleRestart}
-                    className="bg-gradient-to-b from-orange-500 to-orange-600 hover:bg-[#C93500] text-white font-bold py-3 px-6 rounded-xl shadow-sm transition-colors flex items-center space-x-2"
-                  >
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                      <polyline points="1 4 1 10 7 10"></polyline>
-                      <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
-                    </svg>
-                    <span>Restart</span>
-                  </button>
-                </div>
-              )}
             </div>
-          </div>
-        </div>
-      )}
-    </main>
-  );
+          )}
+        </main>
+        );
 }
 
-function SignupFlow() {
+        function SignupFlow() {
   return (
-    <Elements stripe={stripePromise}>
-      <SignupFlowContent />
-    </Elements>
-  );
+        <Elements stripe={stripePromise}>
+          <SignupFlowContent />
+        </Elements>
+        );
 }
 
-export default SignupFlow;
+        export default SignupFlow;

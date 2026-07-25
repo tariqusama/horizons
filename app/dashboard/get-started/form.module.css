@@ -622,3 +622,202 @@
     margin: 0 0 2.5rem 0;
 }
 
+/* --- Screenshot Exact Form Styles --- */
+.topHeader {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    color: #64748b;
+    margin-bottom: 0.5rem;
+}
+.progressBarContainer {
+    height: 6px;
+    background-color: #e2e8f0;
+    border-radius: 4px;
+    margin-bottom: 2rem;
+    overflow: hidden;
+}
+.progressBar {
+    height: 100%;
+    background-color: #f97316;
+    border-radius: 4px;
+    transition: width 0.3s ease;
+}
+
+.pageHeader {
+    border-bottom: 1px solid #e5e7eb;
+    padding-bottom: 1rem;
+    margin-bottom: 2rem;
+}
+.pageTitleText {
+    font-size: 1.5rem;
+    color: #94a3b8;
+    font-weight: 400;
+    margin: 0;
+}
+.pageSubtitleText {
+    font-size: 0.85rem;
+    color: #94a3b8;
+    margin-top: 0.25rem;
+}
+
+.formQuestion {
+    border-bottom: 1px solid #e5e7eb;
+    padding-bottom: 2rem;
+    margin-bottom: 2rem;
+}
+.formQuestion:last-child {
+    border-bottom: none;
+}
+.questionHeader {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.25rem;
+}
+.questionCheck {
+    color: #f97316;
+    flex-shrink: 0;
+}
+.questionText {
+    font-size: 1.05rem;
+    font-weight: 500;
+    color: #475569;
+    margin: 0;
+}
+.questionSubtext {
+    font-size: 0.85rem;
+    color: #94a3b8;
+    margin-left: 2rem;
+    margin-bottom: 1.5rem;
+}
+
+.screenshotInputGroup {
+    margin-left: 2rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+.screenshotInputWrapper {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 250px;
+}
+.screenshotInputLabel {
+    font-size: 0.85rem;
+    color: #64748b;
+    margin-bottom: 0.25rem;
+}
+.screenshotInput {
+    width: 100%;
+    border: 1px solid #f97316;
+    background-color: #f8fafc;
+    padding: 0.75rem;
+    border-radius: 2px;
+    font-size: 1rem;
+    color: #334155;
+    outline: none;
+    transition: all 0.2s;
+}
+.screenshotInput:focus {
+    background-color: #fff;
+    box-shadow: 0 0 0 1px #f97316;
+}
+
+.radioRow {
+    margin-left: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-top: 1rem;
+}
+.radioCircle {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    font-size: 0.95rem;
+    color: #94a3b8;
+}
+.radioCircle input {
+    display: none;
+}
+.radioIndicator {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid #e2e8f0;
+    background-color: #f8fafc;
+    display: inline-block;
+    position: relative;
+    transition: all 0.2s;
+}
+.radioCircle input:checked + .radioIndicator {
+    border-color: #f59e0b;
+    background-color: #f59e0b;
+}
+.radioCircle input:checked ~ span {
+    color: #f59e0b;
+}
+
+.iconRadioRow {
+    margin-left: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-top: 1rem;
+}
+.iconRadioCircle {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    font-size: 0.95rem;
+    color: #94a3b8;
+}
+.iconRadioCircle input {
+    display: none;
+}
+.genderIcon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 2px solid #cbd5e1;
+    background-color: #f8fafc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #cbd5e1;
+    transition: all 0.2s;
+}
+.iconRadioCircle input:checked + .genderIcon {
+    border-color: #f59e0b;
+    background-color: #f59e0b;
+    color: #fff;
+}
+.iconRadioCircle input:checked ~ span {
+    color: #f59e0b;
+}
+
+.footerScreenshot {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 2rem;
+    padding-top: 1rem;
+}
+.btnTeal {
+    background-color: #f97316;
+    color: white;
+    font-weight: 500;
+    font-size: 0.95rem;
+    padding: 0.5rem 1.25rem;
+    border-radius: 4px;
+    border: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    text-decoration: none;
+}

@@ -14,7 +14,11 @@ export default function LayoutWrapper({ children }: { children: React.ReactNode 
   const isDashboard = pathname?.startsWith('/dashboard');
   const isAdmin = pathname?.startsWith('/admin');
   const isManager = pathname?.startsWith('/manager');
-  const hideShell = isFullScreenPage || isDashboard || isAdmin || isManager;
+  const isAttorney = pathname?.startsWith('/attorney');
+  const isParalegal = pathname?.startsWith('/paralegal');
+  const isPrintingTeam = pathname?.startsWith('/printing-team');
+  const isViewer = pathname?.startsWith('/viewer');
+  const hideShell = isFullScreenPage || isDashboard || isAdmin || isManager || isAttorney || isParalegal || isPrintingTeam || isViewer;
 
   return (
     <>
