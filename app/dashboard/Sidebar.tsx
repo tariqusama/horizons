@@ -19,12 +19,18 @@ export default function Sidebar({ isOpen = false, onClose }: SidebarProps) {
     const { logout } = useAuth();
 
     const [goalTitle, setGoalTitle] = useState<string>('');
+    const [completedForms, setCompletedForms] = useState<string[]>([]);
 
     useEffect(() => {
         if (isGetStartedFlow) {
             api.get('/applications').then((res) => {
                 if (res.data && res.data.length > 0) {
-                    setGoalTitle(res.data[0].title);
+                    const latest = res.data[0];
+                    setGoalTitle(latest.title || '');
+                    // derive completed forms from application.form_data keys
+                    const fd = latest.form_data || {};
+                    const keys = Object.keys(fd || {}).map(k => k.toLowerCase());
+                    setCompletedForms(keys);
                 }
             }).catch(err => console.error(err));
         }
@@ -111,19 +117,20 @@ export default function Sidebar({ isOpen = false, onClose }: SidebarProps) {
                         <div className="pl-4 pr-1 py-1 space-y-1 mb-2">
                             {formsList.map((form, fIdx) => {
                                 const isSubActive = pathname === form.path;
+                                const normalizedCode = form.code.replace(/-/g, '').toLowerCase();
+                                const isCompleted = completedForms.includes(normalizedCode);
                                 return (
                                     <Link
                                         key={fIdx}
                                         href={form.path}
                                         onClick={onClose}
-                                        className={`flex items-center justify-between text-xs font-semibold px-3 py-2 rounded-lg transition-colors ${
-                                            isSubActive 
-                                                ? 'bg-blue-600 text-white font-bold shadow-sm' 
-                                                : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
-                                        }`}
+                                        className={`flex items-center justify-between text-xs font-semibold px-3 py-2 rounded-lg transition-colors ${isSubActive
+                                            ? 'bg-blue-600 text-white font-bold shadow-sm'
+                                            : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                                            }`}
                                     >
                                         <span>{form.name}</span>
-                                        <span className={isSubActive ? 'text-white' : 'text-emerald-600'}>✓</span>
+                                        <span className={isSubActive ? 'text-white' : isCompleted ? 'text-emerald-600' : 'text-transparent'}>✓</span>
                                     </Link>
                                 );
                             })}

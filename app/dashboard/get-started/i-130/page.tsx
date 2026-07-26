@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import styles from '../form.module.css';
+import { getNextFormPath } from '../formsHelper';
 import api from '@/lib/api';
 
 export default function I130FormPage() {
@@ -11,7 +12,7 @@ export default function I130FormPage() {
     const [applicationId, setApplicationId] = useState<number | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
-    
+
     const [formData, setFormData] = useState({
         relationship: '',
         aNumber: '',
@@ -19,7 +20,7 @@ export default function I130FormPage() {
         lastName: '',
         firstName: '',
     });
-    
+
     const [errors, setErrors] = useState<Record<string, string[]>>({});
 
     useEffect(() => {
@@ -53,13 +54,16 @@ export default function I130FormPage() {
     const handleNext = async (e: React.MouseEvent) => {
         e.preventDefault();
         if (!applicationId) return;
-        
+
         setIsSaving(true);
         setErrors({});
-        
+
         try {
             await api.post(`/applications/${applicationId}/i130`, formData);
-            router.push('/dashboard/get-started/document-upload');
+            const apps = await api.get('/applications');
+            const latest = apps.data[0];
+            const next = getNextFormPath('/dashboard/get-started/i-130', latest?.title || '');
+            router.push(next);
         } catch (error: any) {
             console.error("Validation failed", error);
             if (error.response && error.response.status === 422) {
@@ -94,7 +98,7 @@ export default function I130FormPage() {
                 <div className="flex justify-between items-start">
                     <div>
                         <h1 className={styles.pageTitleText}>Petitioner Information for {applicantName}</h1>
-                <p className={styles.pageSubtitleText}>Basic information about the person filing this petition.</p>
+                        <p className={styles.pageSubtitleText}>Basic information about the person filing this petition.</p>
                     </div>
                     {applicantName !== 'the Applicant' && (
                         <div className="bg-amber-50 border border-amber-200 text-amber-800 text-xs font-bold px-3 py-1.5 rounded-full shadow-sm">
@@ -111,10 +115,10 @@ export default function I130FormPage() {
                             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                         </svg>
                     </div>
-                    <h2 className={styles.questionText}>Who is {applicantName} filing this petition for?<span style={{color: '#f97316'}}>*</span></h2>
+                    <h2 className={styles.questionText}>Who is {applicantName} filing this petition for?<span style={{ color: '#f97316' }}>*</span></h2>
                 </div>
                 <p className={styles.questionSubtext}>Please select the relationship to the relative you are petitioning for.</p>
-                
+
                 <div className={styles.iconRadioRow}>
                     <label className={styles.iconRadioCircle}>
                         <input type="radio" name="relationship" value="Spouse" checked={formData.relationship === 'Spouse'} onChange={handleChange} />
@@ -163,17 +167,17 @@ export default function I130FormPage() {
                             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                         </svg>
                     </div>
-                    <h2 className={styles.questionText}>What is the full legal name of the petitioner?<span style={{color: '#f97316'}}>*</span></h2>
+                    <h2 className={styles.questionText}>What is the full legal name of the petitioner?<span style={{ color: '#f97316' }}>*</span></h2>
                 </div>
                 <p className={styles.questionSubtext}>This is the Petitioner's CURRENT full legal name, including first, middle, and last names.</p>
-                
+
                 <div className={styles.screenshotInputGroup}>
                     <div className={styles.screenshotInputWrapper}>
                         <label className={styles.screenshotInputLabel}>First Name</label>
                         <input type="text" name="firstName" value={formData.firstName} onChange={handleChange} className={styles.screenshotInput} />
                         {errors.firstName && <div className="text-red-500 text-sm mt-1">{errors.firstName[0]}</div>}
                     </div>
-                    
+
                     <div className={styles.screenshotInputWrapper}>
                         <label className={styles.screenshotInputLabel}>Last Name</label>
                         <input type="text" name="lastName" value={formData.lastName} onChange={handleChange} className={styles.screenshotInput} />
@@ -192,13 +196,13 @@ export default function I130FormPage() {
                     <h2 className={styles.questionText}>What are the petitioner's identification numbers?</h2>
                 </div>
                 <p className={styles.questionSubtext}>Provide your Alien Registration Number and USCIS Online Account Number if you have them.</p>
-                
+
                 <div className={styles.screenshotInputGroup}>
                     <div className={styles.screenshotInputWrapper}>
                         <label className={styles.screenshotInputLabel}>Alien Registration Number (A-Number)</label>
                         <input type="text" name="aNumber" value={formData.aNumber} onChange={handleChange} className={styles.screenshotInput} />
                     </div>
-                    
+
                     <div className={styles.screenshotInputWrapper}>
                         <label className={styles.screenshotInputLabel}>USCIS Online Account Number</label>
                         <input type="text" name="uscisOnlineAccount" value={formData.uscisOnlineAccount} onChange={handleChange} className={styles.screenshotInput} />

@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import styles from '../form.module.css';
+import { getNextFormPath } from '../formsHelper';
 import api from '@/lib/api';
 
 export default function I765FormPage() {
@@ -11,11 +12,11 @@ export default function I765FormPage() {
     const [applicationId, setApplicationId] = useState<number | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
-    
+
     const [formData, setFormData] = useState({
         reason: '',
     });
-    
+
     const [errors, setErrors] = useState<Record<string, string[]>>({});
 
     useEffect(() => {
@@ -49,13 +50,16 @@ export default function I765FormPage() {
     const handleNext = async (e: React.MouseEvent) => {
         e.preventDefault();
         if (!applicationId) return;
-        
+
         setIsSaving(true);
         setErrors({});
-        
+
         try {
             await api.post(`/applications/${applicationId}/i765`, formData);
-            router.push('/dashboard/get-started/document-upload');
+            const apps = await api.get('/applications');
+            const latest = apps.data[0];
+            const next = getNextFormPath('/dashboard/get-started/i-765', latest?.title || '');
+            router.push(next);
         } catch (error: any) {
             console.error("Validation failed", error);
             if (error.response && error.response.status === 422) {
@@ -90,7 +94,7 @@ export default function I765FormPage() {
                 <div className="flex justify-between items-start">
                     <div>
                         <h1 className={styles.pageTitleText}>Employment Authorization for {applicantName}</h1>
-                <p className={styles.pageSubtitleText}>Select the reason you are applying for employment authorization.</p>
+                        <p className={styles.pageSubtitleText}>Select the reason you are applying for employment authorization.</p>
                     </div>
                     {applicantName !== 'the Applicant' && (
                         <div className="bg-amber-50 border border-amber-200 text-amber-800 text-xs font-bold px-3 py-1.5 rounded-full shadow-sm">
@@ -107,10 +111,10 @@ export default function I765FormPage() {
                             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                         </svg>
                     </div>
-                    <h2 className={styles.questionText}>Reason for Applying for {applicantName}<span style={{color: '#f97316'}}>*</span></h2>
+                    <h2 className={styles.questionText}>Reason for Applying for {applicantName}<span style={{ color: '#f97316' }}>*</span></h2>
                 </div>
                 <p className={styles.questionSubtext}>I am applying for:</p>
-                
+
                 <div className={styles.iconRadioRow} style={{ flexDirection: 'column', alignItems: 'flex-start' }}>
                     <label className={styles.iconRadioCircle}>
                         <input type="radio" name="reason" value="Initial" checked={formData.reason === 'Initial'} onChange={handleChange} />

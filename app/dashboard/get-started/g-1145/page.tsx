@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import styles from '../form.module.css';
+import { getNextFormPath } from '../formsHelper';
 import api from '@/lib/api';
 
 export default function G1145FormPage() {
@@ -11,13 +12,13 @@ export default function G1145FormPage() {
     const [applicationId, setApplicationId] = useState<number | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
-    
+
     const [formData, setFormData] = useState({
         lastName: '',
         firstName: '',
         middleName: '',
     });
-    
+
     const [errors, setErrors] = useState<Record<string, string[]>>({});
 
     useEffect(() => {
@@ -51,13 +52,16 @@ export default function G1145FormPage() {
     const handleNext = async (e: React.MouseEvent) => {
         e.preventDefault();
         if (!applicationId) return;
-        
+
         setIsSaving(true);
         setErrors({});
-        
+
         try {
             await api.post(`/applications/${applicationId}/g1145`, formData);
-            router.push('/dashboard/get-started/document-upload');
+            const apps = await api.get('/applications');
+            const latest = apps.data[0];
+            const next = getNextFormPath('/dashboard/get-started/g-1145', latest?.title || '');
+            router.push(next);
         } catch (error: any) {
             console.error("Validation failed", error);
             if (error.response && error.response.status === 422) {
@@ -93,7 +97,7 @@ export default function G1145FormPage() {
                 <div className="flex justify-between items-start">
                     <div>
                         <h1 className={styles.pageTitleText}>e-Notification for {applicantName}</h1>
-                <p className={styles.pageSubtitleText}>Provide the applicant/petitioner's contact details.</p>
+                        <p className={styles.pageSubtitleText}>Provide the applicant/petitioner's contact details.</p>
                     </div>
                     {applicantName !== 'the Applicant' && (
                         <div className="bg-amber-50 border border-amber-200 text-amber-800 text-xs font-bold px-3 py-1.5 rounded-full shadow-sm">
@@ -113,10 +117,10 @@ export default function G1145FormPage() {
                     <h2 className={styles.questionText}>Applicant Name</h2>
                 </div>
                 <p className={styles.questionSubtext}>Please provide your full legal name.</p>
-                
+
                 <div className={styles.screenshotInputGroup}>
                     <div className={styles.screenshotInputWrapper}>
-                        <label className={styles.screenshotInputLabel}>First Name <span style={{color: '#f97316'}}>*</span></label>
+                        <label className={styles.screenshotInputLabel}>First Name <span style={{ color: '#f97316' }}>*</span></label>
                         <input type="text" name="firstName" value={formData.firstName} onChange={handleChange} className={styles.screenshotInput} />
                         {errors.firstName && <div className="text-red-500 text-sm mt-1">{errors.firstName[0]}</div>}
                     </div>
@@ -125,7 +129,7 @@ export default function G1145FormPage() {
                         <input type="text" name="middleName" value={formData.middleName} onChange={handleChange} className={styles.screenshotInput} />
                     </div>
                     <div className={styles.screenshotInputWrapper}>
-                        <label className={styles.screenshotInputLabel}>Last Name <span style={{color: '#f97316'}}>*</span></label>
+                        <label className={styles.screenshotInputLabel}>Last Name <span style={{ color: '#f97316' }}>*</span></label>
                         <input type="text" name="lastName" value={formData.lastName} onChange={handleChange} className={styles.screenshotInput} />
                         {errors.lastName && <div className="text-red-500 text-sm mt-1">{errors.lastName[0]}</div>}
                     </div>

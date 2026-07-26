@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import styles from '../form.module.css';
+import { getNextFormPath } from '../formsHelper';
 import api from '@/lib/api';
 
 export default function I90FormPage() {
@@ -11,7 +12,7 @@ export default function I90FormPage() {
     const [applicationId, setApplicationId] = useState<number | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
-    
+
     const [formData, setFormData] = useState({
         aNumber: '',
         uscisOnlineAccount: '',
@@ -31,7 +32,7 @@ export default function I90FormPage() {
         portOfAdmissionCity: '',
         portOfAdmissionState: ''
     });
-    
+
     const [errors, setErrors] = useState<Record<string, string[]>>({});
 
     useEffect(() => {
@@ -66,13 +67,16 @@ export default function I90FormPage() {
     const handleNext = async (e: React.MouseEvent) => {
         e.preventDefault();
         if (!applicationId) return;
-        
+
         setIsSaving(true);
         setErrors({});
-        
+
         try {
             await api.post(`/applications/${applicationId}/i90`, formData);
-            router.push('/dashboard/get-started/g-1145');
+            const apps = await api.get('/applications');
+            const latest = apps.data[0];
+            const next = getNextFormPath('/dashboard/get-started/i-90', latest?.title || '');
+            router.push(next);
         } catch (error: any) {
             console.error("Validation failed", error);
             if (error.response && error.response.status === 422) {
@@ -123,10 +127,10 @@ export default function I90FormPage() {
                             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                         </svg>
                     </div>
-                    <h2 className={styles.questionText}>What is the full legal name of the green card Applicant?<span style={{color: '#f97316'}}>*</span></h2>
+                    <h2 className={styles.questionText}>What is the full legal name of the green card Applicant?<span style={{ color: '#f97316' }}>*</span></h2>
                 </div>
                 <p className={styles.questionSubtext}>This is the Applicant's CURRENT full legal name, including first, middle, and last names.</p>
-                
+
                 <div className={styles.screenshotInputGroup}>
                     <div className={styles.screenshotInputWrapper}>
                         <label className={styles.screenshotInputLabel}>First Name</label>
@@ -152,22 +156,22 @@ export default function I90FormPage() {
                             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                         </svg>
                     </div>
-                    <h2 className={styles.questionText}>What is the sex of {applicantName}?<span style={{color: '#f97316'}}>*</span></h2>
+                    <h2 className={styles.questionText}>What is the sex of {applicantName}?<span style={{ color: '#f97316' }}>*</span></h2>
                 </div>
                 <p className={styles.questionSubtext}>USCIS allows individuals to self-identify their gender marker.</p>
-                
+
                 <div className={styles.iconRadioRow}>
                     <label className={styles.iconRadioCircle}>
                         <input type="radio" name="gender" value="Female" checked={formData.gender === 'Female'} onChange={handleChange} />
                         <div className={styles.genderIcon}>
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C9.243 2 7 4.243 7 7v3H6a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2v-8a2 2 0 00-2-2h-1V7c0-2.757-2.243-5-5-5zm-3 8V7c0-1.654 1.346-3 3-3s3 1.346 3 3v3H9z"/></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C9.243 2 7 4.243 7 7v3H6a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2v-8a2 2 0 00-2-2h-1V7c0-2.757-2.243-5-5-5zm-3 8V7c0-1.654 1.346-3 3-3s3 1.346 3 3v3H9z" /></svg>
                         </div>
                         <span>Female</span>
                     </label>
                     <label className={styles.iconRadioCircle}>
                         <input type="radio" name="gender" value="Male" checked={formData.gender === 'Male'} onChange={handleChange} />
                         <div className={styles.genderIcon}>
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a5 5 0 105 5 5.006 5.006 0 00-5-5zm0 8a3 3 0 113-3 3.003 3.003 0 01-3 3zm9 11v-1a7 7 0 00-7-7h-4a7 7 0 00-7 7v1h2v-1a5 5 0 015-5h4a5 5 0 015 5v1z"/></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a5 5 0 105 5 5.006 5.006 0 00-5-5zm0 8a3 3 0 113-3 3.003 3.003 0 01-3 3zm9 11v-1a7 7 0 00-7-7h-4a7 7 0 00-7 7v1h2v-1a5 5 0 015-5h4a5 5 0 015 5v1z" /></svg>
                         </div>
                         <span>Male</span>
                     </label>
@@ -182,10 +186,10 @@ export default function I90FormPage() {
                             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                         </svg>
                     </div>
-                    <h2 className={styles.questionText}>Has {applicantName} used other name(s)?<span style={{color: '#f97316'}}>*</span></h2>
+                    <h2 className={styles.questionText}>Has {applicantName} used other name(s)?<span style={{ color: '#f97316' }}>*</span></h2>
                 </div>
                 <p className={styles.questionSubtext}>This includes names such as maiden names, nicknames, and aliases.</p>
-                
+
                 <div className={styles.radioRow}>
                     <label className={styles.radioCircle}>
                         <input type="radio" name="otherNames" value="Yes" checked={formData.otherNames === 'Yes'} onChange={handleChange} />
@@ -211,13 +215,13 @@ export default function I90FormPage() {
                     <h2 className={styles.questionText}>What are {applicantName}'s identification numbers?</h2>
                 </div>
                 <p className={styles.questionSubtext}>Provide the Alien Registration Number and USCIS Online Account Number if you have them.</p>
-                
+
                 <div className={styles.screenshotInputGroup}>
                     <div className={styles.screenshotInputWrapper}>
                         <label className={styles.screenshotInputLabel}>Alien Registration Number (A-Number)</label>
                         <input type="text" name="aNumber" value={formData.aNumber} onChange={handleChange} className={styles.screenshotInput} />
                     </div>
-                    
+
                     <div className={styles.screenshotInputWrapper}>
                         <label className={styles.screenshotInputLabel}>USCIS Online Account Number</label>
                         <input type="text" name="uscisOnlineAccount" value={formData.uscisOnlineAccount} onChange={handleChange} className={styles.screenshotInput} />
@@ -237,10 +241,10 @@ export default function I90FormPage() {
                             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                         </svg>
                     </div>
-                    <h2 className={styles.questionText}>{applicantName}'s Birth Information<span style={{color: '#f97316'}}>*</span></h2>
+                    <h2 className={styles.questionText}>{applicantName}'s Birth Information<span style={{ color: '#f97316' }}>*</span></h2>
                 </div>
                 <p className={styles.questionSubtext}>Provide details regarding the date and location of birth.</p>
-                
+
                 <div className={styles.screenshotInputGroup}>
                     <div className={styles.screenshotInputWrapper}>
                         <label className={styles.screenshotInputLabel}>Date of Birth (mm/dd/yyyy)</label>
@@ -270,7 +274,7 @@ export default function I90FormPage() {
                     <h2 className={styles.questionText}>{applicantName}'s Parents' Information</h2>
                 </div>
                 <p className={styles.questionSubtext}>Please provide the first names of the Applicant's parents.</p>
-                
+
                 <div className={styles.screenshotInputGroup}>
                     <div className={styles.screenshotInputWrapper}>
                         <label className={styles.screenshotInputLabel}>Mother's First Name at Birth</label>
@@ -293,7 +297,7 @@ export default function I90FormPage() {
                     <h2 className={styles.questionText}>Green Card Details</h2>
                 </div>
                 <p className={styles.questionSubtext}>Provide information regarding the current admission as a Lawful Permanent Resident.</p>
-                
+
                 <div className={styles.screenshotInputGroup}>
                     <div className={styles.screenshotInputWrapper}>
                         <label className={styles.screenshotInputLabel}>Class of Admission</label>

@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import styles from '../form.module.css';
+import { getNextFormPath } from '../formsHelper';
 import api from '@/lib/api';
 
 export default function I765WSFormPage() {
@@ -11,12 +12,12 @@ export default function I765WSFormPage() {
     const [applicationId, setApplicationId] = useState<number | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
-    
+
     const [formData, setFormData] = useState({
         currentAnnualIncome: '',
         currentAnnualExpenses: '',
     });
-    
+
     const [errors, setErrors] = useState<Record<string, string[]>>({});
 
     useEffect(() => {
@@ -50,13 +51,16 @@ export default function I765WSFormPage() {
     const handleNext = async (e: React.MouseEvent) => {
         e.preventDefault();
         if (!applicationId) return;
-        
+
         setIsSaving(true);
         setErrors({});
-        
+
         try {
             await api.post(`/applications/${applicationId}/i765ws`, formData);
-            router.push('/dashboard/get-started/document-upload');
+            const apps = await api.get('/applications');
+            const latest = apps.data[0];
+            const next = getNextFormPath('/dashboard/get-started/i-765ws', latest?.title || '');
+            router.push(next);
         } catch (error: any) {
             console.error("Validation failed", error);
             if (error.response && error.response.status === 422) {
@@ -91,7 +95,7 @@ export default function I765WSFormPage() {
                 <div className="flex justify-between items-start">
                     <div>
                         <h1 className={styles.pageTitleText}>I-765 Financial Worksheet for {applicantName}</h1>
-                <p className={styles.pageSubtitleText}>Provide information about your financial situation.</p>
+                        <p className={styles.pageSubtitleText}>Provide information about your financial situation.</p>
                     </div>
                     {applicantName !== 'the Applicant' && (
                         <div className="bg-amber-50 border border-amber-200 text-amber-800 text-xs font-bold px-3 py-1.5 rounded-full shadow-sm">
@@ -111,15 +115,15 @@ export default function I765WSFormPage() {
                     <h2 className={styles.questionText}>Financial Information</h2>
                 </div>
                 <p className={styles.questionSubtext}>Please provide your current annual income and expenses.</p>
-                
+
                 <div className={styles.screenshotInputGroup}>
                     <div className={styles.screenshotInputWrapper}>
-                        <label className={styles.screenshotInputLabel}>My current annual income is: <span style={{color: '#f97316'}}>*</span></label>
+                        <label className={styles.screenshotInputLabel}>My current annual income is: <span style={{ color: '#f97316' }}>*</span></label>
                         <input type="text" name="currentAnnualIncome" value={formData.currentAnnualIncome} onChange={handleChange} className={styles.screenshotInput} placeholder="$" />
                         {errors.currentAnnualIncome && <div className="text-red-500 text-sm mt-1">{errors.currentAnnualIncome[0]}</div>}
                     </div>
                     <div className={styles.screenshotInputWrapper}>
-                        <label className={styles.screenshotInputLabel}>My current annual expenses are: <span style={{color: '#f97316'}}>*</span></label>
+                        <label className={styles.screenshotInputLabel}>My current annual expenses are: <span style={{ color: '#f97316' }}>*</span></label>
                         <input type="text" name="currentAnnualExpenses" value={formData.currentAnnualExpenses} onChange={handleChange} className={styles.screenshotInput} placeholder="$" />
                         {errors.currentAnnualExpenses && <div className="text-red-500 text-sm mt-1">{errors.currentAnnualExpenses[0]}</div>}
                     </div>

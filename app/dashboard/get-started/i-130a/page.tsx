@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import styles from '../form.module.css';
+import { getNextFormPath } from '../formsHelper';
 import api from '@/lib/api';
 
 export default function I130AFormPage() {
@@ -11,11 +12,11 @@ export default function I130AFormPage() {
     const [applicationId, setApplicationId] = useState<number | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
-    
+
     const [formData, setFormData] = useState({
         aNumber: '',
     });
-    
+
     const [errors, setErrors] = useState<Record<string, string[]>>({});
 
     useEffect(() => {
@@ -49,13 +50,16 @@ export default function I130AFormPage() {
     const handleNext = async (e: React.MouseEvent) => {
         e.preventDefault();
         if (!applicationId) return;
-        
+
         setIsSaving(true);
         setErrors({});
-        
+
         try {
             await api.post(`/applications/${applicationId}/i130a`, formData);
-            router.push('/dashboard/get-started/document-upload');
+            const apps = await api.get('/applications');
+            const latest = apps.data[0];
+            const next = getNextFormPath('/dashboard/get-started/i-130a', latest?.title || '');
+            router.push(next);
         } catch (error: any) {
             console.error("Validation failed", error);
             if (error.response && error.response.status === 422) {
@@ -90,7 +94,7 @@ export default function I130AFormPage() {
                 <div className="flex justify-between items-start">
                     <div>
                         <h1 className={styles.pageTitleText}>Spouse Beneficiary Information for {applicantName}</h1>
-                <p className={styles.pageSubtitleText}>Provide information about yourself (the spouse beneficiary).</p>
+                        <p className={styles.pageSubtitleText}>Provide information about yourself (the spouse beneficiary).</p>
                     </div>
                     {applicantName !== 'the Applicant' && (
                         <div className="bg-amber-50 border border-amber-200 text-amber-800 text-xs font-bold px-3 py-1.5 rounded-full shadow-sm">
@@ -110,7 +114,7 @@ export default function I130AFormPage() {
                     <h2 className={styles.questionText}>Information About You</h2>
                 </div>
                 <p className={styles.questionSubtext}>Please provide your Alien Registration Number.</p>
-                
+
                 <div className={styles.screenshotInputGroup}>
                     <div className={styles.screenshotInputWrapper}>
                         <label className={styles.screenshotInputLabel}>Alien Registration Number (A-Number) (if any)</label>
