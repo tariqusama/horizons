@@ -14,7 +14,9 @@ export default function DashboardChatPage() {
     const [messages, setMessages] = useState<Message[]>([]);
     const [newMessage, setNewMessage] = useState('');
     const [isLoading, setIsLoading] = useState(true);
+    const [isAppLoading, setIsAppLoading] = useState(true);
     const [isSending, setIsSending] = useState(false);
+    const [hasAssignedManager, setHasAssignedManager] = useState<boolean | null>(null);
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
     const fetchMessages = () => {
@@ -24,8 +26,27 @@ export default function DashboardChatPage() {
             .finally(() => setIsLoading(false));
     };
 
+    const fetchApplicationAssignment = () => {
+        api.get('/applications')
+            .then(res => {
+                const latest = res.data?.[0];
+                if (latest) {
+                    const assigned = Boolean(latest.manager_id || latest.manager?.id);
+                    setHasAssignedManager(assigned);
+                } else {
+                    setHasAssignedManager(false);
+                }
+            })
+            .catch(err => {
+                console.error('Failed to load application assignment', err);
+                setHasAssignedManager(false);
+            })
+            .finally(() => setIsAppLoading(false));
+    };
+
     useEffect(() => {
         fetchMessages();
+        fetchApplicationAssignment();
         // Poll for new messages every 5 seconds
         const interval = setInterval(fetchMessages, 5000);
         return () => clearInterval(interval);
@@ -39,6 +60,7 @@ export default function DashboardChatPage() {
     const handleSendMessage = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!newMessage.trim() || isSending) return;
+        if (hasAssignedManager === false) return;
 
         setIsSending(true);
         try {
@@ -67,8 +89,10 @@ export default function DashboardChatPage() {
             </div>
 
             <div className={styles.chatWindow}>
-                {isLoading ? (
+                {isLoading || isAppLoading ? (
                     <div className={styles.loader}>Loading messages...</div>
+                ) : hasAssignedManager === false ? (
+                    <div className={styles.loader}>A case manager has not been assigned to this application yet. Please check back shortly.</div>
                 ) : messages.length === 0 ? (
                     <div className={styles.loader}>No messages yet. Say hello to your case manager!</div>
                 ) : (
