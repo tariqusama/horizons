@@ -995,7 +995,7 @@ export default function AssignedCasesPage() {
             {selectedActionInfo && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/40 backdrop-blur-sm p-4">
                     <div className="relative w-full max-w-2xl overflow-hidden rounded-[28px] border border-white/20 bg-white/95 shadow-2xl shadow-slate-900/20 backdrop-blur-xl">
-                        <div className="absolute inset-x-0 top-0 h-2 bg-gradient-to-r from-sky-400 via-violet-500 to-fuchsia-500" />
+                        <div className="absolute inset-x-0 top-0 h-2 bg-gradient-to-r from-orange-400 via-orange-500 to-orange-600" />
 
                         <button
                             onClick={() => setSelectedActionInfo(null)}
@@ -1008,9 +1008,9 @@ export default function AssignedCasesPage() {
                             </svg>
                         </button>
 
-                        <div className="px-8 py-10 sm:px-10 sm:py-12">
+                        <div className="px-8 py-10 sm:px-10 sm:py-12 max-h-[85vh] overflow-y-auto hide-scrollbar">
                             <div className="mb-8 flex items-start gap-4">
-                                <div className="flex h-14 w-14 items-center justify-center rounded-3xl bg-sky-100 text-sky-700 shadow-sm">
+                                <div className="flex h-14 w-14 items-center justify-center rounded-3xl bg-orange-100 text-orange-700 shadow-sm">
                                     <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                         <path d="M12 12c2.21 0 4-1.79 4-4S14.21 4 12 4 8 5.79 8 8s1.79 4 4 4z" />
                                         <path d="M6 20c0-2.21 1.79-4 4-4h4c2.21 0 4 1.79 4 4" />
@@ -1069,13 +1069,54 @@ export default function AssignedCasesPage() {
                             {selectedActionInfo === 'Required documents checklist' && (
                                 <div className="space-y-4">
                                     <div className="rounded-3xl border border-slate-200 bg-slate-50 p-6 shadow-sm">
-                                        <p className="text-sm text-slate-600">Required documents depend on the selected service type: <span className="font-semibold text-slate-900">{selectedCase?.service_type || 'N/A'}</span></p>
+                                        <p className="text-sm font-semibold text-slate-900 mb-2">Service Type: {selectedCase?.service_type || 'N/A'}</p>
+                                        
+                                        {(() => {
+                                            const checklist = Object.values(CHECKLISTS).find(c => c.title === selectedCase?.service_type) || Object.values(CHECKLISTS)[0];
+                                            const uploadedNames = uploadedDocuments.map(doc => doc.name);
+                                            const allRequired = checklist?.sections.flatMap(s => s.documents).filter(d => d.required).map(d => d.name) || [];
+                                            
+                                            const completed = allRequired.filter(req => uploadedNames.includes(req));
+                                            const missing = allRequired.filter(req => !uploadedNames.includes(req));
+
+                                            return (
+                                                <div className="mt-4 space-y-6">
+                                                    <div>
+                                                        <h4 className="text-sm font-bold text-emerald-700 mb-2 flex items-center gap-2">
+                                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                                                            Completed Documents ({completed.length})
+                                                        </h4>
+                                                        <ul className="space-y-2">
+                                                            {completed.length > 0 ? completed.map((docName, idx) => (
+                                                                <li key={idx} className="text-sm text-slate-700 flex items-start gap-2">
+                                                                    <span className="text-emerald-500 mt-0.5">•</span> {docName}
+                                                                </li>
+                                                            )) : <li className="text-sm text-slate-500">No required documents uploaded yet.</li>}
+                                                        </ul>
+                                                    </div>
+                                                    
+                                                    <div>
+                                                        <h4 className="text-sm font-bold text-orange-600 mb-2 flex items-center gap-2">
+                                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                                                            Missing Required Documents ({missing.length})
+                                                        </h4>
+                                                        <ul className="space-y-2">
+                                                            {missing.length > 0 ? missing.map((docName, idx) => (
+                                                                <li key={idx} className="text-sm text-slate-700 flex items-start gap-2">
+                                                                    <span className="text-orange-500 mt-0.5">•</span> {docName}
+                                                                </li>
+                                                            )) : <li className="text-sm text-emerald-600">All required documents have been uploaded!</li>}
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            );
+                                        })()}
                                     </div>
                                     <button
-                                        className="w-full rounded-full bg-gradient-to-r from-sky-500 to-violet-500 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-sky-500/20 transition hover:brightness-110"
+                                        className="w-full rounded-full bg-gradient-to-r from-orange-500 to-orange-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-orange-500/20 transition hover:brightness-110"
                                         onClick={() => { setSelectedActionInfo(null); setActiveTab('Document Checklist'); }}
                                     >
-                                        Open Document Checklist
+                                        Open Full Document Checklist
                                     </button>
                                 </div>
                             )}
