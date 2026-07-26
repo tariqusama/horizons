@@ -37,6 +37,7 @@ export interface Application {
         file_path: string | null;
         created_at: string;
     }>;
+    form_data?: Record<string, any>;
     user?: {
         id: number;
         name: string;
@@ -145,7 +146,7 @@ export const updateCaseStatus = async (id: number, status: string): Promise<Appl
 
 export const updateApplication = async (
     id: number,
-    payload: Partial<Pick<Application, 'status' | 'progress' | 'next_step' | 'timeline' | 'title' | 'package_name' | 'subtitle' | 'amount' | 'paid_amount' | 'receipt_number' | 'is_escalated' | 'internal_notes'>> & { form_data?: any }
+    payload: Partial<Pick<Application, 'status' | 'progress' | 'next_step' | 'timeline' | 'title' | 'package_name' | 'subtitle' | 'amount' | 'paid_amount' | 'receipt_number' | 'is_escalated' | 'internal_notes' | 'form_data'>>
 ): Promise<Application> => {
     const response = await api.put(`/manager/applications/${id}`, payload);
     return response.data;
