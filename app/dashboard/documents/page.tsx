@@ -132,6 +132,8 @@ function PreviewModal({ doc, onClose }: PreviewModalProps) {
 
 export default function DashboardDocumentsPage() {
     const [documents, setDocuments] = useState<Document[]>([]);
+    const [activeChecklist, setActiveChecklist] = useState<any>(null);
+    const [uploadedDocs, setUploadedDocs] = useState<Document[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [uploadingId, setUploadingId] = useState<number | null>(null);
     const [previewDoc, setPreviewDoc] = useState<Document | null>(null);
@@ -148,6 +150,13 @@ export default function DashboardDocumentsPage() {
         { id: 8, name: 'Signed Statement', status: 'Missing', file_path: null },
     ];
 
+    const isMatch = (reqName: string, docName: string) => {
+        if (!docName || !reqName) return false;
+        const r = reqName.toLowerCase().replace(/[^a-z0-9]/g, '');
+        const d = docName.toLowerCase().replace(/[^a-z0-9]/g, '');
+        return r.includes(d) || d.includes(r) || (r.includes('greencard') && d.includes('permanentresident')) || (r.includes('photo') && d.includes('photo')) || (r.includes('statement') && d.includes('statement'));
+    };
+
     const fetchDocuments = () => {
         setIsLoading(true);
         Promise.all([
@@ -157,13 +166,13 @@ export default function DashboardDocumentsPage() {
             const apps = appsRes.data;
             const latestApp = apps.length > 0 ? apps[0] : null;
             let expectedDocs: Document[] = [];
-            const uploadedDocs = Array.isArray(docsRes.data) ? docsRes.data : [];
+            const fetchedUploadedDocs = Array.isArray(docsRes.data) ? docsRes.data : [];
+            setUploadedDocs(fetchedUploadedDocs);
 
             if (latestApp && latestApp.service_type) {
-                // We need to import CHECKLISTS but we can't easily dynamically require it if not imported.
-                // It's imported at the top now!
                 const checklistValues = Object.values(CHECKLISTS);
                 const matchingChecklist = checklistValues.find((c: any) => c.title === latestApp.service_type) || checklistValues[0];
+                setActiveChecklist(matchingChecklist);
                 
                 let tempId = 1000;
                 matchingChecklist.sections.forEach((section: any) => {
@@ -180,16 +189,9 @@ export default function DashboardDocumentsPage() {
                 expectedDocs = [...defaultChecklist];
             }
 
-            const isMatch = (reqName: string, docName: string) => {
-                if (!docName || !reqName) return false;
-                const r = reqName.toLowerCase().replace(/[^a-z0-9]/g, '');
-                const d = docName.toLowerCase().replace(/[^a-z0-9]/g, '');
-                return r.includes(d) || d.includes(r) || (r.includes('greencard') && d.includes('permanentresident')) || (r.includes('photo') && d.includes('photo')) || (r.includes('statement') && d.includes('statement'));
-            };
-
             const finalDocs = [...expectedDocs];
             
-            uploadedDocs.forEach((uploaded: Document) => {
+            fetchedUploadedDocs.forEach((uploaded: Document) => {
                 const matchIndex = finalDocs.findIndex(f => f.status === 'Missing' && isMatch(f.name, uploaded.name));
                 if (matchIndex !== -1) {
                     finalDocs[matchIndex] = uploaded;
@@ -241,6 +243,58 @@ export default function DashboardDocumentsPage() {
         return 'bg-[#EFF6FF] text-[#1D4ED8]';
     };
 
+    const renderDocumentRow = (item: any, isRequired: boolean) => (
+        <div key={item.id || item.name} className="grid grid-cols-12 items-center gap-4 px-6 py-5 text-sm text-[#5A6579] hover:bg-slate-50 transition-colors">
+            {/* Name + status sub-text */}
+            <div className="col-span-6">
+                <p className="font-semibold text-[#1B3A64]">{item.name}</p>
+                <div className="flex items-center gap-2 mt-1">
+                    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold tracking-wide uppercase ${isRequired ? 'bg-orange-100 text-orange-700' : 'bg-slate-100 text-slate-500'}`}>
+                        {isRequired ? 'Required' : 'Optional'}
+                    </span>
+                    <p className="text-xs text-slate-400">{item.status}</p>
+                </div>
+            </div>
+
+            {/* Badge */}
+            <div className="col-span-2">
+                <span className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${getBadgeClass(item.status)}`}>
+                    {item.status === 'Uploaded' ? 'Complete' : item.status === 'Missing' ? 'Action required' : 'Pending'}
+                </span>
+            </div>
+
+            {/* Preview button — only shown when uploaded */}
+            <div className="col-span-2 flex justify-center">
+                {item.status === 'Uploaded' && item.file_path ? (
+                    <button
+                        onClick={() => setPreviewDoc(item)}
+                        className="flex items-center gap-1.5 text-xs font-semibold text-blue-600 hover:text-white bg-blue-50 hover:bg-blue-600 border border-blue-200 hover:border-blue-600 px-3 py-1.5 rounded-xl transition-all"
+                    >
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+                        </svg>
+                        Preview
+                    </button>
+                ) : (
+                    <span className="text-xs text-slate-300">—</span>
+                )}
+            </div>
+
+            {/* Upload / Replace */}
+            <div className="col-span-2 text-right">
+                <button
+                    onClick={() => triggerUpload(item.id && item.id > 0 ? item.id : -1)}
+                    disabled={uploadingId === item.id}
+                    className={item.status !== 'Uploaded'
+                        ? 'rounded-full bg-gradient-to-b from-orange-500 to-orange-600 px-4 py-2 text-xs font-bold uppercase text-white transition-colors hover:from-orange-600 hover:to-orange-700 disabled:opacity-50'
+                        : 'rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-[#1B3A64] hover:bg-slate-50 transition-colors disabled:opacity-50'}
+                >
+                    {uploadingId === item.id ? '...' : item.status !== 'Uploaded' ? 'Upload' : 'Replace'}
+                </button>
+            </div>
+        </div>
+    );
+
     if (isLoading) return <div className="p-10 text-center text-slate-500 animate-pulse">Loading documents...</div>;
 
     return (
@@ -280,56 +334,59 @@ export default function DashboardDocumentsPage() {
                             <span className="col-span-2 text-center">Preview</span>
                             <span className="col-span-2 text-right">Action</span>
                         </div>
-                        <div className="divide-y divide-slate-200 bg-white">
-                            {documents.length === 0 ? (
-                                <div className="p-6 text-center text-[#5A6579]">No documents requested yet.</div>
-                            ) : documents.map((item) => (
-                                <div key={item.id} className="grid grid-cols-12 items-center gap-4 px-6 py-5 text-sm text-[#5A6579] hover:bg-slate-50 transition-colors">
-                                    {/* Name + status sub-text */}
-                                    <div className="col-span-6">
-                                        <p className="font-semibold text-[#1B3A64]">{item.name}</p>
-                                        <p className="mt-1 text-xs text-slate-400">{item.status}</p>
+                        {activeChecklist ? (
+                            <div className="bg-white">
+                                {activeChecklist.sections.map((section: any, sIdx: number) => (
+                                    <div key={sIdx}>
+                                        <div className="bg-slate-50 px-6 py-3 border-y border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between">
+                                            <p className="text-sm font-bold text-[#1B3A64] flex items-center gap-2">
+                                                <span className="w-5 h-5 rounded-full bg-gradient-to-b from-orange-500 to-orange-600 text-white flex items-center justify-center text-xs">{sIdx + 1}</span>
+                                                {section.title}
+                                            </p>
+                                            <p className="text-xs font-semibold text-[#5A6579] mt-2 sm:mt-0 ml-7 sm:ml-0 bg-white px-3 py-1 rounded-full border border-slate-200">
+                                                {section.documents.filter((d: any) => d.required).length} required • {section.documents.filter((d: any) => !d.required).length} optional
+                                            </p>
+                                        </div>
+                                        <div className="divide-y divide-slate-100">
+                                            {section.documents.map((reqDoc: any, dIdx: number) => {
+                                                const uploadedMatch = uploadedDocs.find(d => isMatch(reqDoc.name, d.name));
+                                                const item = uploadedMatch || { id: -Math.random(), name: reqDoc.name, status: 'Missing', file_path: null };
+                                                return renderDocumentRow(item, reqDoc.required);
+                                            })}
+                                        </div>
                                     </div>
+                                ))}
 
-                                    {/* Badge */}
-                                    <div className="col-span-2">
-                                        <span className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${getBadgeClass(item.status)}`}>
-                                            {item.status === 'Uploaded' ? 'Complete' : item.status === 'Missing' ? 'Action required' : 'Pending'}
-                                        </span>
-                                    </div>
-
-                                    {/* Preview button — only shown when uploaded */}
-                                    <div className="col-span-2 flex justify-center">
-                                        {item.status === 'Uploaded' && item.file_path ? (
-                                            <button
-                                                onClick={() => setPreviewDoc(item)}
-                                                className="flex items-center gap-1.5 text-xs font-semibold text-blue-600 hover:text-white bg-blue-50 hover:bg-blue-600 border border-blue-200 hover:border-blue-600 px-3 py-1.5 rounded-xl transition-all"
-                                            >
-                                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
-                                                </svg>
-                                                Preview
-                                            </button>
-                                        ) : (
-                                            <span className="text-xs text-slate-300">—</span>
-                                        )}
-                                    </div>
-
-                                    {/* Upload / Replace */}
-                                    <div className="col-span-2 text-right">
-                                        <button
-                                            onClick={() => triggerUpload(item.id)}
-                                            disabled={uploadingId === item.id}
-                                            className={item.status !== 'Uploaded'
-                                                ? 'rounded-full bg-gradient-to-b from-orange-500 to-orange-600 px-4 py-2 text-xs font-bold uppercase text-white transition-colors hover:from-orange-600 hover:to-orange-700 disabled:opacity-50'
-                                                : 'rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-[#1B3A64] hover:bg-slate-50 transition-colors disabled:opacity-50'}
-                                        >
-                                            {uploadingId === item.id ? '...' : item.status !== 'Uploaded' ? 'Upload' : 'Replace'}
-                                        </button>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
+                                {/* Extra Uploaded Documents that don't fit in any section */}
+                                {(() => {
+                                    const extraDocs = uploadedDocs.filter(d => {
+                                        return !activeChecklist.sections.some((sec: any) => sec.documents.some((reqDoc: any) => isMatch(reqDoc.name, d.name)));
+                                    });
+                                    if (extraDocs.length > 0) {
+                                        return (
+                                            <div>
+                                                <div className="bg-slate-50 px-6 py-3 border-y border-slate-200">
+                                                    <p className="text-sm font-bold text-[#1B3A64] flex items-center gap-2">
+                                                        <span className="w-5 h-5 rounded-full bg-gradient-to-b from-orange-500 to-orange-600 text-white flex items-center justify-center text-xs">{activeChecklist.sections.length + 1}</span>
+                                                        Additional Uploaded Documents
+                                                    </p>
+                                                </div>
+                                                <div className="divide-y divide-slate-100">
+                                                    {extraDocs.map((item) => renderDocumentRow(item, false))}
+                                                </div>
+                                            </div>
+                                        );
+                                    }
+                                    return null;
+                                })()}
+                            </div>
+                        ) : (
+                            <div className="divide-y divide-slate-200 bg-white">
+                                {documents.length === 0 ? (
+                                    <div className="p-6 text-center text-[#5A6579]">No documents requested yet.</div>
+                                ) : documents.map((item) => renderDocumentRow(item, true))}
+                            </div>
+                        )}
                     </div>
                 </div>
 
