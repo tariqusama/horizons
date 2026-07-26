@@ -68,6 +68,30 @@ export default function ApplicationPreviewPage() {
         return String(val);
     };
 
+    const getFirstFormRoute = () => {
+        try {
+            const keys = Object.keys(previewData || {}).filter(k => previewData[k]);
+            if (keys.length === 0) return '/dashboard/get-started';
+            const first = keys[0];
+            switch (first.toLowerCase()) {
+                case 'i90': return '/dashboard/get-started/i-90';
+                case 'g1145': return '/dashboard/get-started/g-1145';
+                case 'i130': return '/dashboard/get-started/i-130';
+                case 'i130a': return '/dashboard/get-started/i-130a';
+                case 'i485': return '/dashboard/get-started/i-485';
+                case 'i864': return '/dashboard/get-started/i-864';
+                case 'i751': return '/dashboard/get-started/i-751';
+                case 'i765': return '/dashboard/get-started/i-765';
+                case 'i765ws': return '/dashboard/get-started/i-765ws';
+                case 'i821d': return '/dashboard/get-started/i-821d';
+                case 'n400': return '/dashboard/get-started/n-400';
+                default: return '/dashboard/get-started';
+            }
+        } catch (e) {
+            return '/dashboard/get-started';
+        }
+    };
+
 
     return (
         <div className={styles.pageWrapper}>
@@ -226,12 +250,20 @@ export default function ApplicationPreviewPage() {
 
                 {/* Footer */}
                 <div className="pt-6 border-t border-slate-200 flex justify-between items-center">
-                    <button
-                        onClick={() => router.push(getPrevFormPath('/dashboard/get-started/preview', applicationTitle))}
-                        className="text-sm font-semibold text-slate-600 hover:text-slate-900 flex items-center gap-1.5"
-                    >
-                        ← Back to Forms
-                    </button>
+                    <div className="flex items-center gap-4">
+                        <button
+                            onClick={() => router.push(getFirstFormRoute())}
+                            className="text-sm font-semibold text-slate-600 hover:text-slate-900 flex items-center gap-1.5"
+                        >
+                            Open Full Form
+                        </button>
+                        <button
+                            onClick={() => router.push(getPrevFormPath('/dashboard/get-started/preview', applicationTitle))}
+                            className="text-sm font-semibold text-slate-600 hover:text-slate-900 flex items-center gap-1.5"
+                        >
+                            ← Back to Forms
+                        </button>
+                    </div>
                     <button
                         onClick={() => router.push('/dashboard/get-started/submission')}
                         className="bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white font-bold px-8 py-3 rounded-full shadow-lg shadow-blue-500/30 transition-all transform hover:-translate-y-0.5 active:translate-y-0 text-sm"
