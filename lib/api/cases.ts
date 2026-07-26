@@ -54,7 +54,6 @@ export interface Application {
         color: string;
         role?: string;
     };
-    documents?: any[];
 }
 
 export interface AssignmentRequest {
