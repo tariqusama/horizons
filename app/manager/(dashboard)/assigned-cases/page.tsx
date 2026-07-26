@@ -1040,86 +1040,132 @@ export default function AssignedCasesPage() {
             )}
 
             {selectedActionInfo && (
-                <div style={{
-                    position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-                    backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 9999,
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    backdropFilter: 'blur(3px)'
-                }}>
-                    <div style={{
-                        backgroundColor: 'white', borderRadius: '16px', padding: '32px',
-                        maxWidth: '500px', width: '90%', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
-                        animation: 'fadeIn 0.2s ease-out', position: 'relative'
-                    }}>
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/40 backdrop-blur-sm p-4">
+                    <div className="relative w-full max-w-2xl overflow-hidden rounded-[28px] border border-white/20 bg-white/95 shadow-2xl shadow-slate-900/20 backdrop-blur-xl">
+                        <div className="absolute inset-x-0 top-0 h-2 bg-gradient-to-r from-sky-400 via-violet-500 to-fuchsia-500" />
+
                         <button
                             onClick={() => setSelectedActionInfo(null)}
-                            style={{ position: 'absolute', top: '16px', right: '16px', background: 'none', border: 'none', cursor: 'pointer', color: '#6B7280' }}
+                            className="absolute right-4 top-4 inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/80 text-slate-500 shadow-sm ring-1 ring-slate-200 transition hover:bg-white hover:text-slate-700"
+                            aria-label="Close modal"
                         >
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <line x1="18" y1="6" x2="6" y2="18" />
+                                <line x1="6" y1="6" x2="18" y2="18" />
+                            </svg>
                         </button>
-                        <h3 style={{ margin: '0 0 20px 0', color: '#111827', fontSize: '1.25rem', fontWeight: 700 }}>{selectedActionInfo}</h3>
 
-                        {selectedActionInfo === 'View client profile' && (
-                            <div className="text-left text-sm text-[#5B6472] space-y-3">
-                                <p><strong className="text-[#101F38]">Name:</strong> {selectedCase?.user?.name || 'N/A'}</p>
-                                <p><strong className="text-[#101F38]">Email:</strong> {selectedCase?.user?.email || 'N/A'}</p>
-                                <p><strong className="text-[#101F38]">Phone:</strong> {selectedCase?.user?.phone || 'Not provided'}</p>
-                            </div>
-                        )}
-
-                        {selectedActionInfo === 'View submitted intake information' && (
-                            <div className="text-left text-sm text-[#5B6472]">
-                                <div className="p-4 bg-[#F7F5F0] rounded-xl border border-[#ECE9E2]">
-                                    <p className="italic">Intake information is currently being processed for this application.</p>
+                        <div className="px-8 py-10 sm:px-10 sm:py-12">
+                            <div className="mb-8 flex items-start gap-4">
+                                <div className="flex h-14 w-14 items-center justify-center rounded-3xl bg-sky-100 text-sky-700 shadow-sm">
+                                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                        <path d="M12 12c2.21 0 4-1.79 4-4S14.21 4 12 4 8 5.79 8 8s1.79 4 4 4z" />
+                                        <path d="M6 20c0-2.21 1.79-4 4-4h4c2.21 0 4 1.79 4 4" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 className="text-2xl font-semibold tracking-tight text-slate-900">{selectedActionInfo}</h3>
+                                    <p className="mt-2 text-sm text-slate-500">Quick access to the most important details for this case.</p>
                                 </div>
                             </div>
-                        )}
 
-                        {selectedActionInfo === 'View uploaded supporting documents' && (
-                            <div className="text-left text-sm text-[#5B6472]">
-                                {uploadedDocuments.length ? (
-                                    <ul className="list-disc pl-5 space-y-2">
-                                        {uploadedDocuments.map((doc) => (
-                                            <li key={doc.id}>
-                                                <span className="font-medium text-[#101F38]">{doc.name || doc.file_path?.split('/').pop() || 'Document'}</span>
-                                                <span className="text-xs ml-2 px-2 py-0.5 rounded-full bg-[#EAF3DE] text-[#3B6D11]">{doc.status}</span>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                ) : (
-                                    <div className="p-4 bg-[#F7F5F0] rounded-xl border border-[#ECE9E2]">
-                                        <p>No documents uploaded yet.</p>
+                            {selectedActionInfo === 'View client profile' && (
+                                <div className="grid gap-4 sm:grid-cols-2">
+                                    <div className="rounded-3xl border border-slate-200 bg-slate-50 p-5 shadow-sm">
+                                        <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-400">Name</p>
+                                        <p className="mt-3 text-base font-semibold text-slate-900">{selectedCase?.user?.name || 'N/A'}</p>
                                     </div>
-                                )}
-                            </div>
-                        )}
+                                    <div className="rounded-3xl border border-slate-200 bg-slate-50 p-5 shadow-sm">
+                                        <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-400">Email</p>
+                                        <p className="mt-3 text-base font-semibold text-slate-900">{selectedCase?.user?.email || 'N/A'}</p>
+                                    </div>
+                                    <div className="rounded-3xl border border-slate-200 bg-slate-50 p-5 shadow-sm sm:col-span-2">
+                                        <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-400">Phone</p>
+                                        <p className="mt-3 text-base font-semibold text-slate-900">{selectedCase?.user?.phone || 'Not provided'}</p>
+                                    </div>
+                                </div>
+                            )}
 
-                        {selectedActionInfo === 'Required documents checklist' && (
-                            <div className="text-left text-sm text-[#5B6472]">
-                                <p className="mb-4">Required documents depend on the selected service type: <strong className="text-[#101F38]">{selectedCase?.service_type || 'N/A'}</strong></p>
+                            {selectedActionInfo === 'View submitted intake information' && (
+                                <div className="rounded-[24px] border border-slate-200 bg-slate-50 p-6 shadow-sm">
+                                    <p className="text-sm leading-7 text-slate-600">Intake information is currently being processed for this application.</p>
+                                </div>
+                            )}
+
+                            {selectedActionInfo === 'View uploaded supporting documents' && (
+                                <div className="space-y-4">
+                                    {uploadedDocuments.length ? (
+                                        <ul className="space-y-3">
+                                            {uploadedDocuments.map((doc) => (
+                                                <li key={doc.id} className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm">
+                                                    <div className="flex items-center justify-between gap-4">
+                                                        <span className="font-medium text-slate-900">{doc.name || doc.file_path?.split('/').pop() || 'Document'}</span>
+                                                        <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">{doc.status}</span>
+                                                    </div>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    ) : (
+                                        <div className="rounded-[24px] border border-slate-200 bg-slate-50 p-6 shadow-sm">
+                                            <p className="text-sm text-slate-600">No documents uploaded yet.</p>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+
+                            {selectedActionInfo === 'Required documents checklist' && (
+                                <div className="space-y-4">
+                                    <div className="rounded-3xl border border-slate-200 bg-slate-50 p-6 shadow-sm">
+                                        <p className="text-sm text-slate-600">Required documents depend on the selected service type: <span className="font-semibold text-slate-900">{selectedCase?.service_type || 'N/A'}</span></p>
+                                    </div>
+                                    <button
+                                        className="w-full rounded-full bg-gradient-to-r from-sky-500 to-violet-500 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-sky-500/20 transition hover:brightness-110"
+                                        onClick={() => { setSelectedActionInfo(null); setActiveTab('Document Checklist'); }}
+                                    >
+                                        Open Document Checklist
+                                    </button>
+                                </div>
+                            )}
+
+                            {selectedActionInfo === 'View case timeline & status' && (
+                                <div className="grid gap-4 sm:grid-cols-2">
+                                    <div className="rounded-3xl border border-slate-200 bg-slate-50 p-5 shadow-sm">
+                                        <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-400">Current Status</p>
+                                        <p className="mt-3 text-base font-semibold text-slate-900">{selectedCase?.status || 'N/A'}</p>
+                                    </div>
+                                    <div className="rounded-3xl border border-slate-200 bg-slate-50 p-5 shadow-sm">
+                                        <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-400">Progress</p>
+                                        <p className="mt-3 text-base font-semibold text-slate-900">{selectedCase?.progress ?? 'N/A'}%</p>
+                                    </div>
+                                    <div className="sm:col-span-2 rounded-3xl border border-slate-200 bg-slate-50 p-5 shadow-sm">
+                                        <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-400">Created On</p>
+                                        <p className="mt-3 text-base font-semibold text-slate-900">{selectedCase?.created_at ? new Date(selectedCase.created_at).toLocaleDateString() : 'N/A'}</p>
+                                    </div>
+                                </div>
+                            )}
+
+                            {selectedActionInfo === 'View payment & service details' && (
+                                <div className="grid gap-4 sm:grid-cols-2">
+                                    <div className="rounded-3xl border border-slate-200 bg-slate-50 p-5 shadow-sm">
+                                        <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-400">Service Package</p>
+                                        <p className="mt-3 text-base font-semibold text-slate-900">{selectedCase?.title || selectedCase?.service_type || 'N/A'}</p>
+                                    </div>
+                                    <div className="rounded-3xl border border-slate-200 bg-slate-50 p-5 shadow-sm">
+                                        <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-400">Payment Status</p>
+                                        <p className="mt-3 text-base font-semibold text-emerald-700">Paid</p>
+                                    </div>
+                                </div>
+                            )}
+
+                            <div className="mt-8 flex justify-end">
                                 <button
-                                    className="w-full rounded-full border border-[#185FA5] text-[#185FA5] px-4 py-2 text-sm font-bold hover:bg-[#E6F1FB] transition-colors"
-                                    onClick={() => { setSelectedActionInfo(null); setActiveTab('Document Checklist'); }}
+                                    onClick={() => setSelectedActionInfo(null)}
+                                    className="rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
                                 >
-                                    Open Document Checklist Tab
+                                    Close
                                 </button>
                             </div>
-                        )}
-
-                        {selectedActionInfo === 'View case timeline & status' && (
-                            <div className="text-left text-sm text-[#5B6472] space-y-3">
-                                <p><strong className="text-[#101F38]">Current Status:</strong> {selectedCase?.status}</p>
-                                <p><strong className="text-[#101F38]">Progress:</strong> {selectedCase?.progress}%</p>
-                                <p><strong className="text-[#101F38]">Created On:</strong> {selectedCase?.created_at ? new Date(selectedCase.created_at).toLocaleDateString() : 'N/A'}</p>
-                            </div>
-                        )}
-
-                        {selectedActionInfo === 'View payment & service details' && (
-                            <div className="text-left text-sm text-[#5B6472] space-y-3">
-                                <p><strong className="text-[#101F38]">Service Package:</strong> {selectedCase?.title || selectedCase?.service_type}</p>
-                                <p><strong className="text-[#101F38]">Payment Status:</strong> <span className="text-[#3B6D11] font-semibold">Paid</span></p>
-                            </div>
-                        )}
+                        </div>
                     </div>
                 </div>
             )}
