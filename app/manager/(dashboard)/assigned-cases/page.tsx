@@ -1067,7 +1067,7 @@ export default function AssignedCasesPage() {
                             {selectedActionInfo === 'View uploaded supporting documents' && (
                                 <div className="space-y-4">
                                     {(() => {
-                                        const validDocs = uploadedDocuments.filter(doc => doc.file_path && doc.status !== 'Missing');
+                                        const validDocs = uploadedDocuments.filter(doc => !!doc.file_path);
                                         return validDocs.length ? (
                                             <ul className="space-y-3">
                                                 {validDocs.map((doc) => (
@@ -1102,8 +1102,8 @@ export default function AssignedCasesPage() {
                                         <p className="text-sm font-semibold text-slate-900 mb-2">Service Type: {selectedCase?.service_type || 'N/A'}</p>
                                         
                                         {(() => {
-                                            const completed = uploadedDocuments.filter(doc => doc.file_path && doc.status !== 'Missing').map(doc => doc.name);
-                                            const missing = uploadedDocuments.filter(doc => !doc.file_path || doc.status === 'Missing').map(doc => doc.name);
+                                            const completed = uploadedDocuments.filter(doc => !!doc.file_path).map(doc => doc.name);
+                                            const missing = uploadedDocuments.filter(doc => !doc.file_path).map(doc => doc.name);
 
                                             return (
                                                 <div className="mt-4 space-y-6">
