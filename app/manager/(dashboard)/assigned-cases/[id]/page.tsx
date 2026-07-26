@@ -13,6 +13,8 @@ export default function CaseReviewPage() {
     const { user } = useAuth();
     const [caseData, setCaseData] = useState<Application | null>(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [isApprovingCase, setIsApprovingCase] = useState(false);
+    const [isDenyingCase, setIsDenyingCase] = useState(false);
     const [isUpdating, setIsUpdating] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const [modalMessage, setModalMessage] = useState({ title: '', description: '', type: 'success' });
@@ -21,6 +23,10 @@ export default function CaseReviewPage() {
     const [showFormModal, setShowFormModal] = useState(false);
     const [editFormData, setEditFormData] = useState({ title: '', package_name: '', subtitle: '', amount: 0, paid_amount: 0, receipt_number: '', status: '', progress: '', next_step: '' });
     const [servicesList, setServicesList] = useState<Service[]>([]);
+
+    // Revision request modal state
+    const [showRevisionModal, setShowRevisionModal] = useState(false);
+    const [revisionNote, setRevisionNote] = useState('');
 
     useEffect(() => {
         if (!user || !id) return;
@@ -59,6 +65,54 @@ export default function CaseReviewPage() {
         loadData();
     }, [user, id]);
 
+    const handleApprove = async () => {
+        if (!caseData) return;
+        setIsApprovingCase(true);
+        try {
+            const payload: any = { status: 'Approved' };
+            if (managerNote.trim()) {
+                const timeline = Array.isArray(caseData.timeline) ? [...caseData.timeline] : [];
+                timeline.push({ id: 'note-' + Date.now(), author: user?.email || 'Manager', text: `Manager Note: ${managerNote}`, created_at: new Date().toISOString() });
+                payload.timeline = timeline;
+            }
+            const updatedCase = await updateApplication(caseData.id, payload);
+            setCaseData(updatedCase);
+            setManagerNote('');
+            setModalMessage({ title: 'Success!', description: 'Case approved successfully!', type: 'success' });
+            setShowModal(true);
+        } catch (err) {
+            console.error('Failed to approve case:', err);
+            setModalMessage({ title: 'Error', description: 'Failed to approve case.', type: 'error' });
+            setShowModal(true);
+        } finally {
+            setIsApprovingCase(false);
+        }
+    };
+
+    const handleDeny = async () => {
+        if (!caseData) return;
+        setIsDenyingCase(true);
+        try {
+            const payload: any = { status: 'Denied' };
+            if (managerNote.trim()) {
+                const timeline = Array.isArray(caseData.timeline) ? [...caseData.timeline] : [];
+                timeline.push({ id: 'note-' + Date.now(), author: user?.email || 'Manager', text: `Manager Note: ${managerNote}`, created_at: new Date().toISOString() });
+                payload.timeline = timeline;
+            }
+            const updatedCase = await updateApplication(caseData.id, payload);
+            setCaseData(updatedCase);
+            setManagerNote('');
+            setModalMessage({ title: 'Case Rejected', description: 'Case has been rejected.', type: 'error' });
+            setShowModal(true);
+        } catch (err) {
+            console.error('Failed to deny case:', err);
+            setModalMessage({ title: 'Error', description: 'Failed to reject case.', type: 'error' });
+            setShowModal(true);
+        } finally {
+            setIsDenyingCase(false);
+        }
+    };
+
     const handleUpdateStatus = async (newStatus: string) => {
         if (!caseData) return;
         setIsUpdating(true);
@@ -83,19 +137,48 @@ export default function CaseReviewPage() {
             if (newStatus === 'Approved') message = 'Case approved successfully!';
             if (newStatus === 'Denied') message = 'Case rejected.';
 
+            setModalMessage({ title: 'Success!', description: message, type: 'success' });
+            setShowModal(true);
+        } catch (err) {
+            console.error('Failed to update case status:', err);
+            setModalMessage({ title: 'Error', description: 'Failed to update case status.', type: 'error' });
+            setShowModal(true);
+        } finally {
+            setIsUpdating(false);
+        }
+    };
+
+    const handleSubmitRevision = async () => {
+        if (!caseData) return;
+        if (!revisionNote.trim()) {
+            alert('Please describe what revisions are needed before submitting.');
+            return;
+        }
+        setIsUpdating(true);
+        try {
+            const timeline = Array.isArray(caseData.timeline) ? [...caseData.timeline] : [];
+            timeline.push({
+                id: 'revision-' + Date.now(),
+                author: user?.email || 'Manager',
+                text: `Revision Requested: ${revisionNote}`,
+                created_at: new Date().toISOString()
+            });
+            const updatedCase = await updateApplication(caseData.id, {
+                status: 'Under Review',
+                timeline
+            });
+            setCaseData(updatedCase);
+            setRevisionNote('');
+            setShowRevisionModal(false);
             setModalMessage({
-                title: 'Success!',
-                description: message,
+                title: 'Revision Requested',
+                description: 'The client has been notified that revisions are needed. Case status set to Under Review.',
                 type: 'success'
             });
             setShowModal(true);
         } catch (err) {
-            console.error('Failed to update case status:', err);
-            setModalMessage({
-                title: 'Error',
-                description: 'Failed to update case status.',
-                type: 'error'
-            });
+            console.error('Failed to request revision:', err);
+            setModalMessage({ title: 'Error', description: 'Failed to send revision request.', type: 'error' });
             setShowModal(true);
         } finally {
             setIsUpdating(false);
@@ -172,10 +255,10 @@ export default function CaseReviewPage() {
                 </button>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
 
                 {/* Left Column: Details & Documents */}
-                <div className="lg:col-span-2 space-y-8">
+                <div className="lg:col-span-2 space-y-8" style={{position: 'relative', zIndex: 1}}>
 
                     {/* Case Details */}
                     <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
@@ -252,7 +335,7 @@ export default function CaseReviewPage() {
 
                 {/* Right Column: Processing Workflow */}
                 <div className="lg:col-span-1">
-                    <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 sticky top-[100px]">
+                    <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
                         <h2 className="text-lg font-bold text-gray-900 mb-6 border-b border-gray-100 pb-4">Review & Process</h2>
 
                         <div className="mb-6">
@@ -266,42 +349,47 @@ export default function CaseReviewPage() {
                         </div>
 
                         {caseData.status !== 'Approved' && caseData.status !== 'Completed' && (
-                            <div className="space-y-3">
+                            <div style={{display: 'flex', flexDirection: 'column', gap: '12px'}}>
+
+                                {/* ── Approve ── */}
                                 <button
-                                    onClick={() => handleUpdateStatus('Approved')}
-                                    disabled={isUpdating}
-                                    className="w-full flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 disabled:bg-green-300 text-white px-6 py-3.5 rounded-xl font-bold text-sm transition-colors shadow-sm"
+                                    type="button"
+                                    onClick={handleApprove}
+                                    disabled={isApprovingCase}
+                                    style={{width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', backgroundColor: isApprovingCase ? '#86efac' : '#16a34a', color: 'white', padding: '14px 24px', borderRadius: '12px', fontWeight: '700', fontSize: '14px', border: 'none', cursor: isApprovingCase ? 'not-allowed' : 'pointer'}}
                                 >
-                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
                                     </svg>
-                                    {isUpdating ? 'Updating...' : 'Approve & Process Further'}
+                                    {isApprovingCase ? 'Approving...' : 'Approve & Process Further'}
                                 </button>
 
+                                {/* ── Request Revisions ── */}
                                 <button
-                                    onClick={() => handleUpdateStatus('Under Review')}
-                                    disabled={isUpdating}
-                                    className="w-full flex items-center justify-center gap-2 bg-[#111827] hover:bg-gray-800 disabled:bg-gray-400 text-white px-6 py-3.5 rounded-xl font-bold text-sm transition-colors shadow-sm"
+                                    type="button"
+                                    onClick={() => setShowRevisionModal(true)}
+                                    style={{width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', backgroundColor: '#111827', color: 'white', padding: '14px 24px', borderRadius: '12px', fontWeight: '700', fontSize: '14px', border: 'none', cursor: 'pointer'}}
                                 >
-                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                        <path d="M2 12h4l2-9 5 18 3-10h4"></path>
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
                                     </svg>
                                     Request Revisions
                                 </button>
 
+                                {/* ── Reject ── */}
                                 <button
-                                    onClick={() => handleUpdateStatus('Denied')}
-                                    disabled={isUpdating}
-                                    className="w-full flex items-center justify-center gap-2 bg-white hover:bg-red-50 border border-red-200 text-red-600 px-6 py-3.5 rounded-xl font-bold text-sm transition-colors shadow-sm"
+                                    type="button"
+                                    onClick={handleDeny}
+                                    disabled={isDenyingCase}
+                                    style={{width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', backgroundColor: 'white', color: '#dc2626', padding: '14px 24px', borderRadius: '12px', fontWeight: '700', fontSize: '14px', border: '1px solid #fecaca', cursor: isDenyingCase ? 'not-allowed' : 'pointer'}}
                                 >
-                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                        <circle cx="12" cy="12" r="10"></circle>
-                                        <line x1="15" y1="9" x2="9" y2="15"></line>
-                                        <line x1="9" y1="9" x2="15" y2="15"></line>
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                        <circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>
                                     </svg>
-                                    Reject Case
+                                    {isDenyingCase ? 'Rejecting...' : 'Reject Case'}
                                 </button>
+
                             </div>
                         )}
 
@@ -314,6 +402,80 @@ export default function CaseReviewPage() {
                 </div>
 
             </div>
+
+            {/* ── Revision Request Modal ── */}
+            {showRevisionModal && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
+                    <div className="bg-white rounded-2xl max-w-lg w-full shadow-2xl overflow-hidden">
+                        {/* Header */}
+                        <div className="flex items-center gap-3 px-6 py-5 border-b border-slate-100">
+                            <div className="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 className="font-bold text-[#111827] text-base">Request Revisions</h3>
+                                <p className="text-xs text-slate-400 mt-0.5">Describe what changes the client needs to make</p>
+                            </div>
+                            <button
+                                onClick={() => { setShowRevisionModal(false); setRevisionNote(''); }}
+                                className="ml-auto w-8 h-8 flex items-center justify-center rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors"
+                            >
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                            </button>
+                        </div>
+
+                        {/* Body */}
+                        <div className="px-6 py-5 space-y-4">
+                            <div>
+                                <label className="block text-sm font-semibold text-[#111827] mb-2">
+                                    Revision Instructions <span className="text-red-500">*</span>
+                                </label>
+                                <textarea
+                                    value={revisionNote}
+                                    onChange={e => setRevisionNote(e.target.value)}
+                                    rows={5}
+                                    placeholder="Describe the specific changes the client needs to make. For example:&#10;• Passport copy is missing — please re-upload a clearer scan&#10;• Birth certificate translation is incomplete&#10;• Affidavit of support signature is missing"
+                                    className="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm text-[#111827] placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent resize-none"
+                                />
+                                <p className="text-xs text-slate-400 mt-1">{revisionNote.length} characters</p>
+                            </div>
+
+                            <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 flex gap-3">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" strokeWidth="2" className="mt-0.5 shrink-0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                                <p className="text-xs text-amber-700">
+                                    Submitting this will set the case status to <strong>Under Review</strong> and add a revision note visible to the client and admin.
+                                </p>
+                            </div>
+                        </div>
+
+                        {/* Footer */}
+                        <div className="flex gap-3 px-6 py-4 bg-slate-50 border-t border-slate-100">
+                            <button
+                                onClick={() => { setShowRevisionModal(false); setRevisionNote(''); }}
+                                disabled={isUpdating}
+                                className="flex-1 border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 px-4 py-2.5 rounded-xl font-semibold text-sm transition-colors"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={handleSubmitRevision}
+                                disabled={isUpdating || !revisionNote.trim()}
+                                className="flex-1 bg-[#111827] hover:bg-gray-800 disabled:bg-gray-300 text-white px-4 py-2.5 rounded-xl font-bold text-sm transition-colors flex items-center justify-center gap-2"
+                            >
+                                {isUpdating ? (
+                                    <svg className="animate-spin" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+                                ) : (
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                                )}
+                                {isUpdating ? 'Sending...' : 'Send Revision Request'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {showModal && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
