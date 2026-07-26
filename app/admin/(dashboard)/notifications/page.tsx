@@ -23,7 +23,23 @@ export default function NotificationsPage() {
         setLoading(true);
         try {
             const data = await getNotifications();
-            setNotifications(data);
+            // Filter notifications to only show: new user registrations, case approvals, and escalations to admin
+            const shouldShow = (n: Notification) => {
+                try {
+                    const d = typeof n.data === 'string' ? JSON.parse(n.data) : n.data;
+                    const title = (d?.title || '').toString().toLowerCase();
+                    const typeStr = (d?.type || n.type || '').toString().toLowerCase();
+                    const meta = (d?.meta || d?.message || '').toString().toLowerCase();
+                    const combined = `${title} ${typeStr} ${meta}`;
+                    const allowKeywords = ['register', 'registered', 'new user', 'user registration', 'approved', 'case approved', 'approved case', 'escalat', 'escalation', 'escalated', 'escalate'];
+                    return allowKeywords.some(kw => combined.includes(kw));
+                } catch (e) {
+                    return false;
+                }
+            };
+
+            const filtered = Array.isArray(data) ? data.filter(shouldShow) : [];
+            setNotifications(filtered);
         } catch (err) {
             console.error('Failed to load notifications', err);
         } finally { setLoading(false); }
