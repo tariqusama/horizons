@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import styles from '../form.module.css';
-import { getNextFormPath } from '../formsHelper';
+import { getNextFormPath, getPrevFormPath } from '../formsHelper';
 import api from '@/lib/api';
 
 export default function I765FormPage() {
@@ -16,6 +16,7 @@ export default function I765FormPage() {
     const [formData, setFormData] = useState({
         reason: '',
     });
+    const [applicationTitle, setApplicationTitle] = useState('');
 
     const [errors, setErrors] = useState<Record<string, string[]>>({});
 
@@ -26,6 +27,7 @@ export default function I765FormPage() {
                 const latest = res.data[0];
                 if (latest) {
                     setApplicationId(latest.id);
+                    setApplicationTitle(latest.title || '');
                     if (latest.form_data && latest.form_data.i765) {
                         setFormData({ ...formData, ...latest.form_data.i765 });
                     }
@@ -136,9 +138,9 @@ export default function I765FormPage() {
             </div>
 
             <div className={styles.footerScreenshot}>
-                <Link href="/dashboard/get-started" className={styles.btnTeal}>
+                <button onClick={() => { const prev = getPrevFormPath('/dashboard/get-started/i-765', applicationTitle); router.push(prev); }} className={styles.btnTeal}>
                     &#8592; Previous
-                </Link>
+                </button>
                 <button onClick={handleNext} disabled={isSaving} className={styles.btnTeal}>
                     {isSaving ? 'Saving...' : 'Save and Continue'}
                 </button>

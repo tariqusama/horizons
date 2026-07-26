@@ -50,3 +50,11 @@ export function getNextFormPath(currentPath: string, titleRaw: string): string {
     if (idx >= 0 && idx < list.length - 1) return list[idx + 1].path;
     return '/dashboard/get-started/document-upload';
 }
+
+export function getPrevFormPath(currentPath: string, titleRaw: string): string {
+    const list = getFormsList(titleRaw);
+    const idx = list.findIndex(f => f.path === currentPath);
+    if (idx > 0) return list[idx - 1].path;
+    // If current path is not in list or is first, go back to overview
+    return '/dashboard/get-started';
+}

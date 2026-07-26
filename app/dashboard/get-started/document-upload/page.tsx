@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import api from '@/lib/api';
 import styles from '../form.module.css';
+import { getPrevFormPath } from '../formsHelper';
 
 interface DocItem {
     key: string;
@@ -195,6 +196,7 @@ function DocumentUploadContent() {
     const [isUploading, setIsUploading] = useState<string | null>(null);
     const [uploads, setUploads] = useState<Record<string, boolean>>({});
     const [error, setError] = useState(false);
+    const [applicationTitle, setApplicationTitle] = useState('');
 
     useEffect(() => {
         const paramCode = searchParams.get('form')?.toLowerCase();
@@ -204,6 +206,7 @@ function DocumentUploadContent() {
             api.get('/applications')
                 .then(res => {
                     if (res.data && res.data[0]) {
+                        setApplicationTitle(res.data[0].title || '');
                         const title = (res.data[0].title || '').toLowerCase();
                         if (title.includes('130')) setFormCode('i-130');
                         else if (title.includes('485')) setFormCode('i-485');
@@ -214,7 +217,7 @@ function DocumentUploadContent() {
                         else setFormCode('i-90');
                     }
                 })
-                .catch(() => {});
+                .catch(() => { });
         }
     }, [searchParams]);
 
@@ -258,7 +261,7 @@ function DocumentUploadContent() {
                     });
                 }
             })
-            .catch(() => {});
+            .catch(() => { });
     }, []);
 
     const totalRequired = checklist.requiredKeys.length;
@@ -309,18 +312,18 @@ function DocumentUploadContent() {
     };
 
     const getIcon = (isUploaded: boolean) => (
-        isUploaded 
+        isUploaded
             ? <svg className={styles.statusIcon} style={{ color: '#10b981' }} width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
             : <svg className={styles.statusIcon} width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"></circle></svg>
     );
 
     return (
         <div className={styles.pageWrapper}>
-            <input 
-                type="file" 
-                ref={fileInputRef} 
-                style={{ display: 'none' }} 
-                onChange={handleFileChange} 
+            <input
+                type="file"
+                ref={fileInputRef}
+                style={{ display: 'none' }}
+                onChange={handleFileChange}
                 accept=".pdf,.jpg,.jpeg,.png"
             />
             <div className={styles.formSection}>
@@ -341,7 +344,7 @@ function DocumentUploadContent() {
                         <div className={styles.progressBar} style={{ width: `${progress}%`, transition: 'width 0.3s ease' }}></div>
                     </div>
                 </div>
-                
+
                 {error && (
                     <div style={{ backgroundColor: '#fef2f2', border: '1px solid #f87171', color: '#b91c1c', padding: '12px', borderRadius: '6px', marginBottom: '20px' }}>
                         Please upload all <strong>*Required</strong> documents before continuing.
@@ -368,10 +371,10 @@ function DocumentUploadContent() {
                                             )}
                                         </span>
                                     </div>
-                                    <button 
-                                        onClick={() => handleUploadClick(item.key)} 
+                                    <button
+                                        onClick={() => handleUploadClick(item.key)}
                                         disabled={isUploading === item.key}
-                                        className={styles.btnUpload} 
+                                        className={styles.btnUpload}
                                         style={{ backgroundColor: isUploaded ? '#f3f4f6' : '', color: isUploaded ? '#10b981' : '' }}
                                     >
                                         {isUploading === item.key ? 'Uploading...' : (isUploaded ? 'Uploaded' : 'Upload')}
@@ -383,9 +386,9 @@ function DocumentUploadContent() {
                 ))}
 
                 <div className={styles.footerScreenshot}>
-                    <Link href="/dashboard/get-started" className={styles.btnTeal}>
+                    <button onClick={() => { const prev = getPrevFormPath('/dashboard/get-started/document-upload', applicationTitle); router.push(prev); }} className={styles.btnTeal}>
                         &#8592; Previous
-                    </Link>
+                    </button>
                     <button onClick={handleNext} className={styles.btnTeal}>
                         Save and Continue
                     </button>

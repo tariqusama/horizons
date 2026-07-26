@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import styles from '../form.module.css';
 import api from '@/lib/api';
+import { getPrevFormPath } from '../formsHelper';
 
 export default function I821DFormPage() {
     const router = useRouter();
@@ -16,6 +17,7 @@ export default function I821DFormPage() {
         detention: '',
         dacaType: '',
     });
+    const [applicationTitle, setApplicationTitle] = useState('');
 
     const [errors, setErrors] = useState<Record<string, string[]>>({});
 
@@ -26,6 +28,7 @@ export default function I821DFormPage() {
                 const latest = res.data[0];
                 if (latest) {
                     setApplicationId(latest.id);
+                    setApplicationTitle(latest.title || '');
                     if (latest.form_data && latest.form_data.i821d) {
                         setFormData({ ...formData, ...latest.form_data.i821d });
                     }
@@ -190,9 +193,9 @@ export default function I821DFormPage() {
             </div>
 
             <div className={styles.footerScreenshot}>
-                <Link href="/dashboard/get-started" className={styles.btnTeal}>
+                <button onClick={async () => { const prev = getPrevFormPath('/dashboard/get-started/i-821d', applicationTitle); router.push(prev); }} className={styles.btnTeal}>
                     &#8592; Previous
-                </Link>
+                </button>
                 <button onClick={handleNext} disabled={isSaving} className={styles.btnTeal}>
                     {isSaving ? 'Saving...' : 'Save and Continue'}
                 </button>

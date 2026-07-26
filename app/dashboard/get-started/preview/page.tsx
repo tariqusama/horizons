@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import styles from '../form.module.css';
 import api from '@/lib/api';
+import { getPrevFormPath } from '../formsHelper';
 
 export default function ApplicationPreviewPage() {
     const router = useRouter();
@@ -34,6 +35,7 @@ export default function ApplicationPreviewPage() {
             middleName: 'dfdvcv'
         }
     });
+    const [applicationTitle, setApplicationTitle] = useState('');
 
     useEffect(() => {
         try {
@@ -55,9 +57,10 @@ export default function ApplicationPreviewPage() {
             .then(res => {
                 if (res.data && res.data[0] && res.data[0].form_data) {
                     setPreviewData(res.data[0].form_data);
+                    setApplicationTitle(res.data[0].title || '');
                 }
             })
-            .catch(() => {});
+            .catch(() => { });
     }, []);
 
     const renderFieldValue = (val: any) => {
@@ -65,13 +68,14 @@ export default function ApplicationPreviewPage() {
         return String(val);
     };
 
+
     return (
         <div className={styles.pageWrapper}>
             <div className="bg-white rounded-[20px] shadow-xl max-w-[800px] w-full mx-auto p-6 sm:p-10 my-4 border border-slate-100 relative">
                 {/* Header */}
                 <div className="flex items-center justify-between pb-4 border-b border-slate-200">
                     <h1 className="text-2xl sm:text-3xl font-bold text-slate-900">Application Preview</h1>
-                    <button 
+                    <button
                         onClick={() => router.push('/dashboard/get-started')}
                         className="text-slate-400 hover:text-slate-600 text-xl font-bold p-1 rounded-lg transition-colors"
                         aria-label="Close"
@@ -82,7 +86,7 @@ export default function ApplicationPreviewPage() {
 
                 {/* Body Content */}
                 <div className="py-6 space-y-8">
-                    
+
                     {/* I90 DATA */}
                     {previewData.i90 && (
                         <div>
@@ -90,7 +94,7 @@ export default function ApplicationPreviewPage() {
                                 <h2 className="text-xs font-bold uppercase tracking-wider text-purple-600">
                                     I90 DATA
                                 </h2>
-                                <Link 
+                                <Link
                                     href="/dashboard/get-started/i-90"
                                     className="text-xs font-semibold text-amber-600 hover:text-amber-700 bg-amber-50 hover:bg-amber-100 px-3 py-1 rounded-full transition-colors"
                                 >
@@ -193,7 +197,7 @@ export default function ApplicationPreviewPage() {
                                 <h2 className="text-xs font-bold uppercase tracking-wider text-purple-600">
                                     G1145 DATA
                                 </h2>
-                                <Link 
+                                <Link
                                     href="/dashboard/get-started/g-1145"
                                     className="text-xs font-semibold text-amber-600 hover:text-amber-700 bg-amber-50 hover:bg-amber-100 px-3 py-1 rounded-full transition-colors"
                                 >
@@ -222,12 +226,12 @@ export default function ApplicationPreviewPage() {
 
                 {/* Footer */}
                 <div className="pt-6 border-t border-slate-200 flex justify-between items-center">
-                    <Link 
-                        href="/dashboard/get-started"
+                    <button
+                        onClick={() => router.push(getPrevFormPath('/dashboard/get-started/preview', applicationTitle))}
                         className="text-sm font-semibold text-slate-600 hover:text-slate-900 flex items-center gap-1.5"
                     >
                         ← Back to Forms
-                    </Link>
+                    </button>
                     <button
                         onClick={() => router.push('/dashboard/get-started/submission')}
                         className="bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white font-bold px-8 py-3 rounded-full shadow-lg shadow-blue-500/30 transition-all transform hover:-translate-y-0.5 active:translate-y-0 text-sm"
