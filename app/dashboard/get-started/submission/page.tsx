@@ -92,12 +92,6 @@ export default function SubmissionPage() {
                     </div>
                 </div>
 
-                <ApplicationPreviewModal
-                    isOpen={isModalOpen}
-                    onClose={() => setIsModalOpen(false)}
-                    applicationId={appData?.id}
-                />
-
                 <hr className={styles.divider} />
 
                 {/* --- Acknowledgments --- */}
