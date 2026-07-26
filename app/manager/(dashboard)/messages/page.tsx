@@ -275,35 +275,55 @@ export default function ManagerMessagesPage() {
                                 <p className="text-sm text-[#8A8F98]">No messages in this conversation yet.</p>
                             ) : (
                                 messages.map((message) => (
-                                    <div key={message.id} className="rounded-3xl border border-[#ECE9E2] bg-[#F7F5F0] p-4">
-                                        <div className="mb-3 flex flex-wrap items-center gap-2">
-                                            <span className={`rounded-full px-2 py-1 text-[10px] font-semibold ${message.is_admin ? 'bg-[#DBEAFE] text-[#1D4ED8]' : 'bg-[#FEF3C7] text-[#B45309]'}`}>
-                                                {message.is_admin ? 'Manager' : 'Client'}
-                                            </span>
-                                            <span className="text-[10px] text-[#8A8F98]">
-                                                {new Date(message.created_at).toLocaleString()}
-                                            </span>
+                                    <div key={message.id} className={`flex w-full ${message.is_admin ? 'justify-end' : 'justify-start'}`}>
+                                        <div className={`max-w-[85%] p-4 ${message.is_admin ? 'bg-orange-500 text-white rounded-2xl rounded-br-sm' : 'bg-[#F7F5F0] border border-[#ECE9E2] text-[#101F38] rounded-2xl rounded-bl-sm'}`}>
+                                            <div className={`text-[10px] mb-1 font-semibold opacity-70 ${message.is_admin ? 'text-white' : 'text-[#5B6472]'}`}>
+                                                {message.is_admin ? 'Manager' : 'Client'} • {new Date(message.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                            </div>
+                                            <p className="text-sm">{message.message}</p>
                                         </div>
-                                        <p className="text-sm text-[#101F38]">{message.message}</p>
                                     </div>
                                 ))
                             )}
                         </div>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 relative">
+                            <button
+                                type="button"
+                                onClick={() => document.getElementById('file-upload-manager')?.click()}
+                                className="absolute left-3 p-2 text-gray-400 hover:text-gray-600 transition-colors"
+                            >
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
+                            </button>
+                            <input 
+                                type="file" 
+                                id="file-upload-manager" 
+                                className="hidden" 
+                                onChange={(e) => {
+                                    if (e.target.files && e.target.files[0]) {
+                                        setMessageDraft(prev => prev + (prev ? ' ' : '') + `[Attachment: ${e.target.files![0].name}] `);
+                                    }
+                                }}
+                            />
                             <input
                                 type="text"
                                 value={messageDraft}
                                 onChange={(e) => setMessageDraft(e.target.value)}
                                 onKeyDown={(e) => e.key === 'Enter' && handleSend()}
                                 placeholder="Type a message..."
-                                className="flex-1 rounded-full border border-[#ECE9E2] bg-[#F7F5F0] px-4 py-3 text-sm text-[#101F38] outline-none focus:border-orange-500 focus:bg-white"
+                                className="flex-1 rounded-full border border-[#ECE9E2] bg-[#F7F5F0] pl-12 pr-4 py-3 text-sm text-[#101F38] outline-none focus:border-orange-500 focus:bg-white"
                             />
                             <button
                                 onClick={handleSend}
                                 disabled={!messageDraft.trim() || isSending || !selectedCase}
-                                className="rounded-full bg-gradient-to-b from-orange-500 to-orange-600 px-5 py-3 text-sm font-semibold text-white hover:bg-[#D1644C] disabled:opacity-50"
+                                className="rounded-full bg-gradient-to-b from-orange-500 to-orange-600 px-5 py-3 text-sm font-semibold text-white hover:bg-[#D1644C] disabled:opacity-50 flex items-center gap-2"
                             >
                                 {isSending ? 'Sending...' : 'Send'}
+                                {!isSending && (
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M22 2L11 13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                        <path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                    </svg>
+                                )}
                             </button>
                         </div>
                     </div>

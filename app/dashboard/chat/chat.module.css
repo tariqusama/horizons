@@ -102,9 +102,34 @@
     flex-wrap: wrap;
 }
 
-.inputField {
+.inputWrapper {
     flex: 1;
-    padding: 16px 24px;
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.attachButton {
+    position: absolute;
+    left: 16px;
+    background: none;
+    border: none;
+    padding: 8px;
+    color: #8c98a9;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s;
+}
+
+.attachButton:hover {
+    color: #1B3A64;
+}
+
+.inputField {
+    width: 100%;
+    padding: 16px 24px 16px 52px;
     border-radius: 12px;
     border: 1px solid #e2e8f0;
     font-size: 16px;
