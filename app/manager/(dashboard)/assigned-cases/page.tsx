@@ -1166,47 +1166,91 @@ export default function AssignedCasesPage() {
                                 </div>
                             )}
 
-                            {selectedActionInfo === 'View submitted intake information' && (
-                                <div className="rounded-[24px] border border-slate-200 bg-slate-50 p-6 shadow-sm max-h-[400px] overflow-y-auto">
-                                    {!selectedCase?.form_data || Object.keys(selectedCase.form_data).length === 0 ? (
-                                        <div className="text-center py-8 flex-1 flex flex-col items-center justify-center">
-                                            <div className="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center text-slate-400 mb-3">
-                                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            {selectedActionInfo === 'View submitted intake information' && (() => {
+                                const formData = selectedCase?.form_data;
+                                const palette = [
+                                    { bg: 'linear-gradient(135deg,#fff7ed,#ffedd5)', border: '#fed7aa', label: '#c2410c', value: '#9a3412', dot: '#f97316' },
+                                    { bg: 'linear-gradient(135deg,#eff6ff,#dbeafe)', border: '#bfdbfe', label: '#1d4ed8', value: '#1e3a8a', dot: '#3b82f6' },
+                                    { bg: 'linear-gradient(135deg,#f0fdf4,#dcfce7)', border: '#bbf7d0', label: '#15803d', value: '#14532d', dot: '#22c55e' },
+                                    { bg: 'linear-gradient(135deg,#fdf4ff,#fae8ff)', border: '#e9d5ff', label: '#7e22ce', value: '#581c87', dot: '#a855f7' },
+                                    { bg: 'linear-gradient(135deg,#fff1f2,#ffe4e6)', border: '#fecdd3', label: '#be123c', value: '#881337', dot: '#f43f5e' },
+                                    { bg: 'linear-gradient(135deg,#f0fdfa,#ccfbf1)', border: '#99f6e4', label: '#0f766e', value: '#134e4a', dot: '#14b8a6' },
+                                ];
+                                if (!formData || Object.keys(formData).length === 0) {
+                                    return (
+                                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px 20px', gap: '16px' }}>
+                                            <div style={{ width: '64px', height: '64px', borderRadius: '20px', background: 'linear-gradient(135deg,#fff7ed,#ffedd5)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 12px rgba(249,115,22,0.15)' }}>
+                                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#f97316" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                                     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
                                                     <polyline points="14 2 14 8 20 8"></polyline>
                                                     <line x1="16" y1="13" x2="8" y2="13"></line>
                                                     <line x1="16" y1="17" x2="8" y2="17"></line>
-                                                    <polyline points="10 9 9 9 8 9"></polyline>
                                                 </svg>
                                             </div>
-                                            <h4 className="text-sm font-bold text-slate-900 mb-1">No Form Data</h4>
-                                            <p className="text-xs text-slate-500 max-w-[200px] mx-auto">There is no questionnaire data associated with this application yet.</p>
+                                            <div style={{ textAlign: 'center' }}>
+                                                <h4 style={{ margin: '0 0 6px', fontSize: '1rem', fontWeight: 800, color: '#0f172a' }}>No Intake Data Yet</h4>
+                                                <p style={{ margin: 0, fontSize: '0.8rem', color: '#94a3b8', maxWidth: '200px' }}>Questionnaire responses will appear here once the client submits.</p>
+                                            </div>
                                         </div>
-                                    ) : (
-                                        <div className="space-y-4">
-                                            {Object.entries(selectedCase.form_data).map(([key, val]) => (
-                                                <div key={key}>
-                                                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5">{key}</label>
-                                                    {typeof val === 'object' && val !== null && !Array.isArray(val) ? (
-                                                        <div className="grid grid-cols-1 gap-2">
-                                                            {Object.entries(val).map(([nestedKey, nestedVal]) => (
-                                                                <div key={nestedKey} className="w-full bg-white border border-slate-200 rounded-xl p-3 text-sm shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                                                                    <span className="font-bold text-slate-500 break-all sm:break-normal">{nestedKey}</span>
-                                                                    <span className="font-medium text-slate-900 text-right break-all sm:break-normal">{typeof nestedVal === 'object' && nestedVal !== null ? JSON.stringify(nestedVal) : String(nestedVal || '-')}</span>
-                                                                </div>
-                                                            ))}
-                                                        </div>
-                                                    ) : (
-                                                        <div className="w-full bg-white border border-slate-200 rounded-xl p-3 text-sm font-medium text-slate-900 shadow-sm whitespace-pre-wrap break-all sm:break-normal">
-                                                            {typeof val === 'object' && val !== null ? JSON.stringify(val, null, 2) : String(val)}
-                                                        </div>
-                                                    )}
+                                    );
+                                }
+                                return (
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', maxHeight: '420px', overflowY: 'auto', paddingRight: '4px' }}>
+                                        {Object.entries(formData).map(([sectionKey, sectionVal], sectionIdx) => {
+                                            const p = palette[sectionIdx % palette.length];
+                                            const isNested = typeof sectionVal === 'object' && sectionVal !== null && !Array.isArray(sectionVal);
+                                            const nestedEntries = isNested ? Object.entries(sectionVal as Record<string, any>) : null;
+                                            return (
+                                                <div key={sectionKey} style={{ borderRadius: '20px', overflow: 'hidden', border: `1.5px solid ${p.border}`, boxShadow: '0 4px 16px rgba(15,23,42,0.07)' }}>
+                                                    {/* Section header */}
+                                                    <div style={{ background: p.bg, padding: '14px 18px', display: 'flex', alignItems: 'center', gap: '10px', borderBottom: `1.5px solid ${p.border}` }}>
+                                                        <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: p.dot, flexShrink: 0, boxShadow: `0 0 6px ${p.dot}` }}></span>
+                                                        <span style={{ fontSize: '0.72rem', fontWeight: 800, letterSpacing: '0.1em', textTransform: 'uppercase', color: p.label }}>{sectionKey}</span>
+                                                        {nestedEntries && (
+                                                            <span style={{ marginLeft: 'auto', fontSize: '0.68rem', fontWeight: 700, background: 'rgba(255,255,255,0.7)', color: p.label, padding: '2px 10px', borderRadius: '20px', border: `1px solid ${p.border}` }}>
+                                                                {nestedEntries.length} fields
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                    {/* Fields */}
+                                                    <div style={{ background: '#ffffff' }}>
+                                                        {isNested && nestedEntries ? (
+                                                            nestedEntries.map(([fieldKey, fieldVal], fieldIdx) => {
+                                                                const isEmpty = fieldVal === null || fieldVal === undefined || String(fieldVal).trim() === '';
+                                                                return (
+                                                                    <div key={fieldKey} style={{
+                                                                        display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px',
+                                                                        padding: '12px 18px',
+                                                                        borderBottom: fieldIdx < nestedEntries.length - 1 ? '1px solid #f1f5f9' : 'none',
+                                                                        transition: 'background 0.15s',
+                                                                    }}>
+                                                                        <span style={{ fontSize: '0.78rem', fontWeight: 600, color: '#64748b', minWidth: '120px', flexShrink: 0 }}>{fieldKey}</span>
+                                                                        <span style={{
+                                                                            fontSize: '0.85rem', fontWeight: 700,
+                                                                            color: isEmpty ? '#cbd5e1' : '#0f172a',
+                                                                            textAlign: 'right', wordBreak: 'break-all',
+                                                                            background: isEmpty ? 'none' : p.bg,
+                                                                            padding: isEmpty ? '0' : '3px 12px',
+                                                                            borderRadius: '20px',
+                                                                            border: isEmpty ? 'none' : `1px solid ${p.border}`,
+                                                                        }}>
+                                                                            {isEmpty ? '—' : typeof fieldVal === 'object' ? JSON.stringify(fieldVal) : String(fieldVal)}
+                                                                        </span>
+                                                                    </div>
+                                                                );
+                                                            })
+                                                        ) : (
+                                                            <div style={{ padding: '14px 18px', fontSize: '0.875rem', fontWeight: 600, color: '#0f172a', wordBreak: 'break-all' }}>
+                                                                {typeof sectionVal === 'object' ? JSON.stringify(sectionVal, null, 2) : String(sectionVal)}
+                                                            </div>
+                                                        )}
+                                                    </div>
                                                 </div>
-                                            ))}
-                                        </div>
-                                    )}
-                                </div>
-                            )}
+                                            );
+                                        })}
+                                    </div>
+                                );
+                            })()}
 
                             {selectedActionInfo === 'View uploaded supporting documents' && (
                                 <div className="space-y-4">
