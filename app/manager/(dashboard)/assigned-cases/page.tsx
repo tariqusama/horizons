@@ -171,8 +171,8 @@ export default function AssignedCasesPage() {
         }
 
         const initialState: Record<string, boolean> = {};
-        currentChecklist.sections.forEach((section) => {
-            section.documents.forEach((document) => {
+        currentChecklist.sections.forEach((section: any) => {
+            section.documents.forEach((document: any) => {
                 initialState[document.name] = false;
             });
         });
@@ -701,7 +701,7 @@ export default function AssignedCasesPage() {
                             </div>
                             {currentChecklist && (
                                 <div className="rounded-full bg-[#F7F5F0] px-4 py-2 text-sm font-semibold text-[#101F38]">
-                                    {Object.values(checkedDocuments).filter(Boolean).length} of {currentChecklist.sections.reduce((total, section) => total + section.documents.length, 0)} items completed
+                                    {Object.values(checkedDocuments).filter(Boolean).length} of {currentChecklist.sections.reduce((total: any, section: any) => total + section.documents.length, 0)} items completed
                                 </div>
                             )}
                         </div>
@@ -712,24 +712,24 @@ export default function AssignedCasesPage() {
                                     <div
                                         className="h-full rounded-full bg-gradient-to-r from-orange-500 to-orange-600 transition-all"
                                         style={{
-                                            width: `${currentChecklist.sections.length ? Math.round((Object.values(checkedDocuments).filter(Boolean).length / currentChecklist.sections.reduce((total, section) => total + section.documents.length, 0)) * 100) : 0}%`,
+                                            width: `${currentChecklist.sections.length ? Math.round((Object.values(checkedDocuments).filter(Boolean).length / currentChecklist.sections.reduce((total: any, section: any) => total + section.documents.length, 0)) * 100) : 0}%`,
                                         }}
                                     />
                                 </div>
 
                                 <div className="space-y-6">
-                                    {currentChecklist.sections.map((section, sectionIndex) => (
+                                    {currentChecklist.sections.map((section: any, sectionIndex: number) => (
                                         <div key={section.title} className="rounded-2xl border border-[#ECE9E2] bg-[#F7F5F0] p-6">
                                             <div className="mb-4">
                                                 <p className="text-sm font-bold text-[#101F38] mb-2 flex items-center gap-2">
                                                     <span className="w-5 h-5 rounded-full bg-gradient-to-b from-orange-500 to-orange-600 text-white flex items-center justify-center text-xs">{sectionIndex + 1}</span>
                                                     {section.title}
                                                 </p>
-                                                <p className="text-xs text-[#5B6472]">{section.documents.filter((doc) => doc.required).length} required • {section.documents.filter((doc) => !doc.required).length} optional</p>
+                                                <p className="text-xs text-[#5B6472]">{section.documents.filter((doc: any) => doc.required).length} required • {section.documents.filter((doc: any) => !doc.required).length} optional</p>
                                             </div>
 
                                             <div className="space-y-3 pl-4">
-                                                {section.documents.map((document) => {
+                                                {section.documents.map((document: any) => {
                                                     const checked = Boolean(checkedDocuments[document.name]);
                                                     return (
                                                         <label key={document.name} className="flex items-start gap-3 rounded-3xl border border-transparent bg-white px-4 py-3 shadow-sm transition hover:border-[#ECE9E2]">

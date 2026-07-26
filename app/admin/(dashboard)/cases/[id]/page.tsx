@@ -19,6 +19,7 @@ export default function AdminCaseDetailPage() {
     const [showEditModal, setShowEditModal] = useState(false);
     const [showFormModal, setShowFormModal] = useState(false);
     const [editFormData, setEditFormData] = useState<any>({ title: '', package_name: '', subtitle: '', amount: 0, paid_amount: 0, receipt_number: '', status: '', progress: '', next_step: '' });
+    const [editFormJson, setEditFormJson] = useState<Record<string, any>>({});
 
     const getDocumentUrl = (path?: string | null) => {
         if (!path) return '#';
@@ -106,6 +107,25 @@ export default function AdminCaseDetailPage() {
         } catch (err) {
             console.error('Failed to update case details (admin):', err);
             setModalMessage({ title: 'Error', description: 'Failed to update case details.', type: 'error' });
+            setShowModal(true);
+        } finally {
+            setIsUpdating(false);
+        }
+    };
+
+    const handleFormSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!caseData) return;
+        setIsUpdating(true);
+        try {
+            const resp = await api.put(`/admin/applications/${caseData.id}`, { form_data: editFormJson });
+            setCaseData(resp.data);
+            setModalMessage({ title: 'Success!', description: 'Form data updated successfully.', type: 'success' });
+            setShowModal(true);
+            setShowFormModal(false);
+        } catch (err) {
+            console.error('Failed to update form data:', err);
+            setModalMessage({ title: 'Error', description: 'Failed to update form data.', type: 'error' });
             setShowModal(true);
         } finally {
             setIsUpdating(false);
@@ -229,7 +249,10 @@ export default function AdminCaseDetailPage() {
                                         <p className="text-xs text-gray-500">Filled digitally • {new Date(caseData.created_at).toLocaleDateString()}</p>
                                     </div>
                                 </div>
-                                <button onClick={() => setShowFormModal(true)} className="text-sm font-bold text-orange-500 hover:underline">View</button>
+                                <button onClick={() => {
+                                    setEditFormJson(caseData.form_data || {});
+                                    setShowFormModal(true);
+                                }} className="text-sm font-bold text-orange-500 hover:underline">View</button>
                             </div>
 
                             {Array.isArray(caseData.documents) && caseData.documents.length > 0 ? (
@@ -395,6 +418,69 @@ export default function AdminCaseDetailPage() {
                                     <button type="button" onClick={() => setShowEditModal(false)} className="px-6 py-2 rounded-xl bg-gray-100 text-gray-700 font-bold">Cancel</button>
                                     <button type="submit" disabled={isUpdating} className="px-6 py-2 rounded-xl bg-orange-600 text-white font-bold">{isUpdating ? 'Saving...' : 'Save Changes'}</button>
                                 </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+
+            {showFormModal && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#101F38]/60 p-4 backdrop-blur-md">
+                    <div className="bg-white rounded-3xl max-w-2xl w-full shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+                        <div className="flex items-center justify-between px-8 py-6 border-b border-gray-100 bg-gray-50/50">
+                            <div>
+                                <h3 className="text-2xl font-black text-gray-900">{caseData.title} Form Data</h3>
+                                <p className="text-sm font-medium text-gray-500 mt-1">Review and update submitted questionnaire responses.</p>
+                            </div>
+                            <button onClick={() => setShowFormModal(false)} className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-200 text-gray-500 transition-colors">✕</button>
+                        </div>
+                        
+                        <form onSubmit={handleFormSubmit} className="flex-1 overflow-y-auto px-8 py-6 flex flex-col">
+                            {Object.keys(editFormJson).length === 0 ? (
+                                <div className="text-center py-12 flex-1 flex flex-col items-center justify-center">
+                                    <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center text-gray-400 mb-4">
+                                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                            <polyline points="14 2 14 8 20 8"></polyline>
+                                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                                            <polyline points="10 9 9 9 8 9"></polyline>
+                                        </svg>
+                                    </div>
+                                    <h4 className="text-lg font-bold text-gray-900 mb-2">No Form Data</h4>
+                                    <p className="text-gray-500 max-w-sm">There is no questionnaire data associated with this application yet.</p>
+                                </div>
+                            ) : (
+                                <div className="space-y-4">
+                                    {Object.entries(editFormJson).map(([key, val]) => (
+                                        <div key={key}>
+                                            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">{key}</label>
+                                            {typeof val === 'string' && val.length > 50 ? (
+                                                <textarea
+                                                    value={val}
+                                                    onChange={(e) => setEditFormJson({ ...editFormJson, [key]: e.target.value })}
+                                                    className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3.5 text-sm font-medium text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all min-h-[100px]"
+                                                />
+                                            ) : (
+                                                <input
+                                                    type="text"
+                                                    value={String(val)}
+                                                    onChange={(e) => setEditFormJson({ ...editFormJson, [key]: e.target.value })}
+                                                    className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3.5 text-sm font-medium text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all"
+                                                />
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+
+                            <div className="flex items-center justify-end gap-3 mt-8 pt-6 border-t border-gray-100">
+                                <button type="button" onClick={() => setShowFormModal(false)} className="px-6 py-2 rounded-xl bg-gray-100 text-gray-700 font-bold">Cancel</button>
+                                {Object.keys(editFormJson).length > 0 && (
+                                    <button type="submit" disabled={isUpdating} className="px-6 py-2 rounded-xl bg-orange-600 text-white font-bold">
+                                        {isUpdating ? 'Saving...' : 'Save Form Data'}
+                                    </button>
+                                )}
                             </div>
                         </form>
                     </div>
