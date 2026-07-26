@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { getManagerAssignedCases, Application, updateApplication, getServices, Service } from '@/lib/api/cases';
+import { getStorageUrl } from '@/lib/api';
 
 export default function CaseReviewPage() {
     const params = useParams();
@@ -329,6 +330,28 @@ export default function CaseReviewPage() {
                                 </div>
                                 <button onClick={() => setShowFormModal(true)} className="text-sm font-bold text-orange-500 hover:underline">View</button>
                             </div>
+
+                            {/* Render Uploaded Documents */}
+                            {caseData.documents && caseData.documents.filter(doc => !!doc.file_path).map((doc) => (
+                                <div key={doc.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-xl border border-gray-100">
+                                    <div className="flex items-center space-x-4">
+                                        <div className="w-10 h-10 rounded-lg bg-orange-100 text-orange-600 flex items-center justify-center shrink-0">
+                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                                <polyline points="14 2 14 8 20 8"></polyline>
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <p className="text-sm font-bold text-gray-900">{doc.name || 'Uploaded Document'}</p>
+                                            <p className="text-xs text-gray-500">Uploaded • {new Date(doc.created_at).toLocaleDateString()}</p>
+                                        </div>
+                                    </div>
+                                    <a href={getStorageUrl(doc.file_path)} target="_blank" rel="noopener noreferrer" className="text-sm font-bold text-orange-500 hover:underline flex items-center gap-1">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                                        Preview
+                                    </a>
+                                </div>
+                            ))}
                         </div>
                     </div>
                 </div>

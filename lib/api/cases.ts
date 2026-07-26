@@ -30,6 +30,13 @@ export interface Application {
         text: string;
         created_at: string;
     }>;
+    documents?: Array<{
+        id: number;
+        name: string;
+        status: string;
+        file_path: string | null;
+        created_at: string;
+    }>;
     user?: {
         id: number;
         name: string;
