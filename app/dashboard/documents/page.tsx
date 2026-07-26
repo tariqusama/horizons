@@ -139,15 +139,17 @@ export default function DashboardDocumentsPage() {
     const [previewDoc, setPreviewDoc] = useState<Document | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
+    const [uploadingDocName, setUploadingDocName] = useState<string | null>(null);
+
     const defaultChecklist: Document[] = [
-        { id: 1, name: 'Passport photo page', status: 'Missing', file_path: null },
-        { id: 2, name: 'Birth certificate', status: 'Missing', file_path: null },
-        { id: 3, name: 'Proof of residency', status: 'Missing', file_path: null },
-        { id: 4, name: 'Medical exam report', status: 'Missing', file_path: null },
-        { id: 5, name: 'Affidavit of support', status: 'Missing', file_path: null },
-        { id: 6, name: 'Government Issued Photo ID', status: 'Missing', file_path: null },
-        { id: 7, name: 'Permanent Resident Card', status: 'Missing', file_path: null },
-        { id: 8, name: 'Signed Statement', status: 'Missing', file_path: null },
+        { id: -1, name: 'Passport photo page', status: 'Missing', file_path: null },
+        { id: -2, name: 'Birth certificate', status: 'Missing', file_path: null },
+        { id: -3, name: 'Proof of residency', status: 'Missing', file_path: null },
+        { id: -4, name: 'Medical exam report', status: 'Missing', file_path: null },
+        { id: -5, name: 'Affidavit of support', status: 'Missing', file_path: null },
+        { id: -6, name: 'Government Issued Photo ID', status: 'Missing', file_path: null },
+        { id: -7, name: 'Permanent Resident Card', status: 'Missing', file_path: null },
+        { id: -8, name: 'Signed Statement', status: 'Missing', file_path: null },
     ];
 
     const isMatch = (reqName: string, docName: string) => {
@@ -199,11 +201,11 @@ export default function DashboardDocumentsPage() {
                 if (matchingChecklist) {
                     setActiveChecklist(matchingChecklist);
                     
-                    let tempId = 1000;
+                    let tempId = -1000;
                     matchingChecklist.sections.forEach((section: any) => {
                         section.documents.forEach((d: any) => {
                             expectedDocs.push({
-                                id: tempId++,
+                                id: tempId--,
                                 name: d.name,
                                 status: 'Missing',
                                 file_path: null
@@ -239,8 +241,9 @@ export default function DashboardDocumentsPage() {
 
     useEffect(() => { fetchDocuments(); }, []);
 
-    const triggerUpload = (id: number) => {
+    const triggerUpload = (id: number, docName: string | null = null) => {
         setUploadingId(id);
+        setUploadingDocName(docName);
         fileInputRef.current?.click();
     };
 
@@ -253,7 +256,7 @@ export default function DashboardDocumentsPage() {
             if (uploadingId && uploadingId > 0) {
                 await api.post(`/documents/${uploadingId}/upload`, formData, { headers: { 'Content-Type': 'multipart/form-data' } });
             } else {
-                formData.append('name', file.name.replace(/\.[^/.]+$/, ""));
+                formData.append('name', uploadingDocName || file.name.replace(/\.[^/.]+$/, ""));
                 await api.post('/documents/upload', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
             }
             fetchDocuments();
@@ -311,7 +314,7 @@ export default function DashboardDocumentsPage() {
             {/* Upload / Replace */}
             <div className="col-span-2 text-right">
                 <button
-                    onClick={() => triggerUpload(item.id && item.id > 0 ? item.id : -1)}
+                    onClick={() => triggerUpload(item.id && item.id > 0 ? item.id : -1, item.status === 'Missing' ? item.name : null)}
                     disabled={uploadingId === item.id}
                     className={item.status !== 'Uploaded'
                         ? 'rounded-full bg-gradient-to-b from-orange-500 to-orange-600 px-4 py-2 text-xs font-bold uppercase text-white transition-colors hover:from-orange-600 hover:to-orange-700 disabled:opacity-50'
