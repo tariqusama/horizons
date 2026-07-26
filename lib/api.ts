@@ -23,6 +23,24 @@ export const initCsrf = async () => {
     });
 };
 
+/**
+ * Convert a Laravel storage path (e.g. "public/documents/file.png")
+ * to a fully qualified URL served by the backend, e.g.
+ * "http://127.0.0.1:8000/storage/documents/file.png"
+ *
+ * This is required because files are stored on the Laravel backend, NOT
+ * the Next.js frontend. Using a relative /storage/... URL would resolve
+ * to the wrong host (port 3000 instead of 8000).
+ */
+export const getStorageUrl = (path?: string | null): string => {
+    if (!path) return '#';
+    // Already a full URL
+    if (path.startsWith('http://') || path.startsWith('https://')) return path;
+    // Old format: "public/documents/file.png" → strip "public/" → "storage/documents/file.png"
+    const stripped = path.replace(/^public\//, '');
+    return `${BACKEND_URL}/storage/${stripped}`;
+};
+
 let inMemoryToken: string | null = null;
 
 const safeGetStorageItem = (key: string) => {
