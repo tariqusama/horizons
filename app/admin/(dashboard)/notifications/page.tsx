@@ -23,22 +23,34 @@ export default function NotificationsPage() {
         setLoading(true);
         try {
             const data = await getNotifications();
-            // Filter notifications to only show: new user registrations, case approvals, and escalations to admin
-            const shouldShow = (n: Notification) => {
-                try {
-                    const d = typeof n.data === 'string' ? JSON.parse(n.data) : n.data;
-                    const title = (d?.title || '').toString().toLowerCase();
-                    const typeStr = (d?.type || n.type || '').toString().toLowerCase();
-                    const meta = (d?.meta || d?.message || '').toString().toLowerCase();
-                    const combined = `${title} ${typeStr} ${meta}`;
-                    const allowKeywords = ['register', 'registered', 'new user', 'user registration', 'approved', 'case approved', 'approved case', 'escalat', 'escalation', 'escalated', 'escalate'];
-                    return allowKeywords.some(kw => combined.includes(kw));
-                } catch (e) {
-                    return false;
-                }
-            };
+            // Filter by exact notification class names (whitelist)
+            const allowedTypes = [
+                'App\\Notifications\\UserRegistered',
+                'App\\Notifications\\NewUserNotification',
+                'App\\Notifications\\CaseApprovedNotification',
+                'App\\Notifications\\CaseEscalatedNotification',
+                'App\\Notifications\\CaseAlert',
+                'App\\Notifications\\SystemAlert',
+                'App\\Notifications\\SecurityAlert'
+            ];
 
-            const filtered = Array.isArray(data) ? data.filter(shouldShow) : [];
+            const filtered = (Array.isArray(data) ? data : []).filter((n: Notification) => {
+                try {
+                    // Prefer the stored `type` (Laravel notification class name)
+                    if (typeof n.type === 'string' && allowedTypes.includes(n.type)) return true;
+                    // Fallback: check `data.type` field for semantic type names
+                    const d = typeof n.data === 'string' ? JSON.parse(n.data) : n.data;
+                    const dtype = (d?.type || '').toString();
+                    if (dtype) {
+                        const lowered = dtype.toLowerCase();
+                        if (['user', 'registration', 'registered', 'case', 'approved', 'escalation', 'escalated', 'escalate'].some(k => lowered.includes(k))) return true;
+                    }
+                } catch (e) {
+                    // ignore parse errors
+                }
+                return false;
+            });
+
             setNotifications(filtered);
         } catch (err) {
             console.error('Failed to load notifications', err);
