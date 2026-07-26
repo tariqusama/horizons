@@ -1188,7 +1188,7 @@ export default function AssignedCasesPage() {
                                                 <div key={key}>
                                                     <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5">{key}</label>
                                                     <div className="w-full bg-white border border-slate-200 rounded-xl p-3 text-sm font-medium text-slate-900 shadow-sm whitespace-pre-wrap">
-                                                        {typeof val === 'string' ? val : String(val)}
+                                                        {typeof val === 'object' && val !== null ? JSON.stringify(val, null, 2) : String(val)}
                                                     </div>
                                                 </div>
                                             ))}

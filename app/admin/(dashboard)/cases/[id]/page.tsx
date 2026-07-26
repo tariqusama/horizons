@@ -455,7 +455,20 @@ export default function AdminCaseDetailPage() {
                                     {Object.entries(editFormJson).map(([key, val]) => (
                                         <div key={key}>
                                             <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">{key}</label>
-                                            {typeof val === 'string' && val.length > 50 ? (
+                                            {typeof val === 'object' && val !== null ? (
+                                                <textarea
+                                                    value={JSON.stringify(val, null, 2)}
+                                                    onChange={(e) => {
+                                                        try {
+                                                            const parsed = JSON.parse(e.target.value);
+                                                            setEditFormJson({ ...editFormJson, [key]: parsed });
+                                                        } catch (err) {
+                                                            setEditFormJson({ ...editFormJson, [key]: e.target.value });
+                                                        }
+                                                    }}
+                                                    className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3.5 text-sm font-medium text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all min-h-[150px] font-mono text-xs"
+                                                />
+                                            ) : typeof val === 'string' && val.length > 50 ? (
                                                 <textarea
                                                     value={val}
                                                     onChange={(e) => setEditFormJson({ ...editFormJson, [key]: e.target.value })}
