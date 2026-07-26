@@ -758,7 +758,13 @@ export default function AssignedCasesPage() {
                                                                 </span>
                                                             </div>
                                                             {(() => {
-                                                                const uploadedMatch = uploadedDocuments.find(d => d.name === document.name && d.file_path);
+                                                                const isMatch = (reqName: string, docName: string) => {
+                                                                    if (!docName) return false;
+                                                                    const r = reqName.toLowerCase().replace(/[^a-z0-9]/g, '');
+                                                                    const d = docName.toLowerCase().replace(/[^a-z0-9]/g, '');
+                                                                    return r.includes(d) || d.includes(r) || (r.includes('greencard') && d.includes('permanentresident')) || (r.includes('photo') && d.includes('photo')) || (r.includes('statement') && d.includes('statement'));
+                                                                };
+                                                                const uploadedMatch = uploadedDocuments.find(d => isMatch(document.name, d.name) && d.file_path);
                                                                 if (uploadedMatch) {
                                                                     return (
                                                                         <a href={getStorageUrl(uploadedMatch.file_path)} target="_blank" rel="noopener noreferrer" className="ml-4 shrink-0 inline-flex items-center gap-1.5 rounded-full bg-orange-50 px-3 py-1.5 text-xs font-semibold text-orange-600 hover:bg-orange-100 hover:text-orange-700 transition-colors relative z-10" onClick={(e) => e.stopPropagation()}>
