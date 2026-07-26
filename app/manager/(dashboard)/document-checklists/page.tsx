@@ -7,7 +7,7 @@ const Icon = {
     check: (p: any) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>,
 };
 
-const CHECKLISTS = {
+export const CHECKLISTS = {
     spouse_abroad: {
         id: 'spouse_abroad',
         title: 'Application for Spouse Abroad',

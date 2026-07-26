@@ -135,8 +135,17 @@ export default function AdminLayoutClient({ children }: { children: React.ReactN
                 getNotifications()
             ]);
             setProfile(profileData);
-            setUnreadCount(notificationsData.filter(n => !n.read_at).length);
-            setNotifications(notificationsData);
+            
+            // Filter notifications based on user request
+            const allowedKeywords = ['new user', 'new case', 'case approved', 'assigned case approved'];
+            const filteredNotifications = notificationsData.filter((n) => {
+                const parsedData = typeof n.data === 'string' ? JSON.parse(n.data) : n.data;
+                const title = (parsedData?.title || '').toLowerCase();
+                return allowedKeywords.some(keyword => title.includes(keyword));
+            });
+
+            setUnreadCount(filteredNotifications.filter(n => !n.read_at).length);
+            setNotifications(filteredNotifications);
         } catch (err) {
             console.error('Failed to load layout data', err);
         }
@@ -234,7 +243,7 @@ export default function AdminLayoutClient({ children }: { children: React.ReactN
                                 <div className="px-5 py-3 border-b border-slate-200/50 flex justify-between items-center bg-white/50">
                                     <h3 className="font-semibold text-slate-900 text-[13px] sm:text-sm">Notifications</h3>
                                     <div className="flex items-center gap-3">
-                                        <button onClick={async () => { await markAsRead(); const data = await getNotifications(); setNotifications(data); setUnreadCount(data.filter(n => !n.read_at).length); }} className="text-[11px] sm:text-xs text-slate-600 hover:text-orange-600 font-medium">Mark all as read</button>
+                                        <button onClick={async () => { await markAsRead(); await fetchLayoutData(); }} className="text-[11px] sm:text-xs text-slate-600 hover:text-orange-600 font-medium">Mark all as read</button>
                                     </div>
                                 </div>
                                 <div className="max-h-[320px] overflow-y-auto">

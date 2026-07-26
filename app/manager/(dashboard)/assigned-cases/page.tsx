@@ -14,6 +14,7 @@ import {
     Application,
     DocumentPayload,
 } from '@/lib/api/cases';
+import { CHECKLISTS } from '../document-checklists/page';
 
 const Icon = {
     search: (p: any) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>,
@@ -85,6 +86,10 @@ const ESCALATION_REASONS = ['Legal complexity', 'Client request', 'Missing criti
 
 type ChatMessage = { id: string; from: 'staff' | 'client'; text: string; createdAt: string };
 type DocRequest = { id: string; documents: string; note: string; createdAt: string };
+type ChecklistDocument = { name: string; required: boolean };
+type ChecklistSection = { title: string; documents: ChecklistDocument[] };
+type ChecklistData = { id: string; title: string; forms: string[]; totalDocuments: number; sections: ChecklistSection[] };
+type ChecklistKey = keyof typeof CHECKLISTS;
 
 export default function AssignedCasesPage() {
     const { user } = useAuth();
@@ -116,6 +121,7 @@ export default function AssignedCasesPage() {
     const [docNote, setDocNote] = useState('');
     const [isSendingDocRequest, setIsSendingDocRequest] = useState(false);
     const [selectedActionInfo, setSelectedActionInfo] = useState<string | null>(null);
+    const [checkedDocuments, setCheckedDocuments] = useState<Record<string, boolean>>({});
 
     // Escalation (UI-only until an API is wired up)
     const [isReasonOpen, setIsReasonOpen] = useState(false);
@@ -133,6 +139,78 @@ export default function AssignedCasesPage() {
     const notes = Array.isArray(selectedCase?.internal_notes) ? selectedCase.internal_notes : [];
 
     const activeConversation = conversations.find((c) => c.id === activeConversationId) ?? conversations[0] ?? null;
+
+    const getChecklistKeyFromService = (serviceText: string): ChecklistKey | null => {
+        const normalized = serviceText.trim().toLowerCase();
+        if (!normalized) return null;
+
+        if (normalized.includes('spouse abroad') || normalized.includes('i-130a') || normalized.includes('spouse') && normalized.includes('abroad')) return 'spouse_abroad';
+        if (normalized.includes('parent abroad')) return 'parent_abroad';
+        if (normalized.includes('child abroad')) return 'child_abroad';
+        if (normalized.includes('sibling abroad')) return 'sibling_abroad';
+        if (normalized.includes('k-1') || normalized.includes('k1') || normalized.includes('fianc')) return 'k1_fiance';
+        if (normalized.includes('spouse aos') || normalized.includes('marriage-based adjustment') || (normalized.includes('adjustment') && normalized.includes('spouse'))) return 'spouse_aos';
+        if (normalized.includes('parent aos') || (normalized.includes('adjustment') && normalized.includes('parent'))) return 'parent_aos';
+        if (normalized.includes('child aos') || (normalized.includes('adjustment') && normalized.includes('child'))) return 'child_aos';
+        if (normalized.includes('i-90') || normalized.includes('replace permanent resident card') || normalized.includes('green card replacement')) return 'i90';
+        if (normalized.includes('i-751') || normalized.includes('remove conditions') || normalized.includes('conditions on residence')) return 'i751';
+        if (normalized.includes('daca') || normalized.includes('821d')) return 'daca';
+        if (normalized.includes('n-400') || normalized.includes('naturalization') || normalized.includes('citizenship')) return 'n400';
+
+        return null;
+    };
+
+    const currentChecklistKey = useMemo<ChecklistKey | null>(() => {
+        const serviceText = `${selectedCase?.title || ''} ${selectedCase?.service_type || ''}`;
+        return getChecklistKeyFromService(serviceText);
+    }, [selectedCase?.title, selectedCase?.service_type]);
+
+    const currentChecklist: ChecklistData | null = currentChecklistKey ? CHECKLISTS[currentChecklistKey] : null;
+    const applicationTypeLabel = currentChecklist?.title || selectedCase?.service_type || 'Not specified';
+
+    useEffect(() => {
+        if (!selectedCase || !currentChecklist) {
+            setCheckedDocuments({});
+            return;
+        }
+
+        const storageKey = `manager-checklist-${selectedCase.id}`;
+        try {
+            const stored = localStorage.getItem(storageKey);
+            if (stored) {
+                setCheckedDocuments(JSON.parse(stored));
+                return;
+            }
+        } catch (error) {
+            console.warn('Unable to read checklist state from localStorage', error);
+        }
+
+        const initialState: Record<string, boolean> = {};
+        currentChecklist.sections.forEach((section) => {
+            section.documents.forEach((document) => {
+                initialState[document.name] = false;
+            });
+        });
+
+        setCheckedDocuments(initialState);
+    }, [selectedCase?.id, currentChecklist]);
+
+    useEffect(() => {
+        if (!selectedCase) return;
+        const storageKey = `manager-checklist-${selectedCase.id}`;
+        try {
+            localStorage.setItem(storageKey, JSON.stringify(checkedDocuments));
+        } catch (error) {
+            console.warn('Unable to save checklist state to localStorage', error);
+        }
+    }, [selectedCase?.id, checkedDocuments]);
+
+    const toggleChecklistItem = (documentName: string) => {
+        setCheckedDocuments((current) => ({
+            ...current,
+            [documentName]: !current[documentName],
+        }));
+    };
 
     useEffect(() => {
         if (!user) return;
@@ -627,196 +705,71 @@ export default function AssignedCasesPage() {
 
                 {activeTab === 'Document Checklist' && (
                     <div>
-                        <h2 className="text-lg font-bold text-[#101F38] mb-4">Required Documents Checklist</h2>
-                        <p className="text-sm text-[#5B6472] font-medium mb-6">Application Type: {selectedCase?.service_type || 'Not specified'}</p>
-
-                        <div className="space-y-6">
-                            {/* Spouse Abroad Checklist */}
-                            <div className="rounded-2xl border border-[#ECE9E2] bg-[#F7F5F0] p-6">
-                                <div className="flex items-start justify-between mb-4">
-                                    <div>
-                                        <h3 className="text-base font-bold text-[#101F38]">Application for Spouse Abroad</h3>
-                                        <p className="text-xs text-[#5B6472] font-medium mt-1">Form I-130 + I-130A</p>
-                                    </div>
-                                    <span className="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-b from-orange-500 to-orange-600 text-white px-3 py-1 text-xs font-bold">
-                                        17 Documents
-                                    </span>
-                                </div>
-
-                                <p className="text-xs text-[#5B6472] font-medium mb-4">Forms Required: G-1145, I-130, I-130A</p>
-
-                                <div className="space-y-4">
-                                    {/* Petitioner Documents */}
-                                    <div>
-                                        <p className="text-sm font-bold text-[#101F38] mb-2 flex items-center gap-2">
-                                            <span className="w-5 h-5 rounded-full bg-gradient-to-b from-orange-500 to-orange-600 text-white flex items-center justify-center text-xs">1</span>
-                                            Petitioner Documents
-                                        </p>
-                                        <div className="space-y-2 pl-7">
-                                            <div className="flex items-start gap-3">
-                                                <input type="checkbox" className="mt-1 w-4 h-4 rounded border-[#ECE9E2] accent-[#E3755D]" defaultChecked={false} />
-                                                <div>
-                                                    <p className="text-sm text-[#101F38]">Proof of U.S. citizenship OR green card (front and back)</p>
-                                                    <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-[#E24B4A]/10 text-[#E24B4A] text-xs font-semibold mt-1">Required</span>
-                                                </div>
-                                            </div>
-                                            <div className="flex items-start gap-3">
-                                                <input type="checkbox" className="mt-1 w-4 h-4 rounded border-[#ECE9E2] accent-[#E3755D]" defaultChecked={false} />
-                                                <div>
-                                                    <p className="text-sm text-[#101F38]">Government-issued photo ID (passport, driver's license, etc.)</p>
-                                                    <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-[#E24B4A]/10 text-[#E24B4A] text-xs font-semibold mt-1">Required</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {/* Beneficiary Documents */}
-                                    <div>
-                                        <p className="text-sm font-bold text-[#101F38] mb-2 flex items-center gap-2">
-                                            <span className="w-5 h-5 rounded-full bg-gradient-to-b from-orange-500 to-orange-600 text-white flex items-center justify-center text-xs">2</span>
-                                            Beneficiary (Spouse) Documents
-                                        </p>
-                                        <div className="space-y-2 pl-7">
-                                            <div className="flex items-start gap-3">
-                                                <input type="checkbox" className="mt-1 w-4 h-4 rounded border-[#ECE9E2] accent-[#E3755D]" defaultChecked={false} />
-                                                <div>
-                                                    <p className="text-sm text-[#101F38]">Birth certificate (certified translation if not in English)</p>
-                                                    <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-[#E24B4A]/10 text-[#E24B4A] text-xs font-semibold mt-1">Required</span>
-                                                </div>
-                                            </div>
-                                            <div className="flex items-start gap-3">
-                                                <input type="checkbox" className="mt-1 w-4 h-4 rounded border-[#ECE9E2] accent-[#E3755D]" defaultChecked={false} />
-                                                <div>
-                                                    <p className="text-sm text-[#101F38]">Passport biographic page</p>
-                                                    <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-[#E24B4A]/10 text-[#E24B4A] text-xs font-semibold mt-1">Required</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {/* Marriage & Relationship Evidence */}
-                                    <div>
-                                        <p className="text-sm font-bold text-[#101F38] mb-2 flex items-center gap-2">
-                                            <span className="w-5 h-5 rounded-full bg-gradient-to-b from-orange-500 to-orange-600 text-white flex items-center justify-center text-xs">3</span>
-                                            Marriage & Relationship Evidence
-                                        </p>
-                                        <div className="space-y-2 pl-7">
-                                            <div className="flex items-start gap-3">
-                                                <input type="checkbox" className="mt-1 w-4 h-4 rounded border-[#ECE9E2] accent-[#E3755D]" defaultChecked={false} />
-                                                <div>
-                                                    <p className="text-sm text-[#101F38]">Marriage certificate (original or certified copy)</p>
-                                                    <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-[#E24B4A]/10 text-[#E24B4A] text-xs font-semibold mt-1">Required</span>
-                                                </div>
-                                            </div>
-                                            <div className="flex items-start gap-3">
-                                                <input type="checkbox" className="mt-1 w-4 h-4 rounded border-[#ECE9E2] accent-[#E3755D]" defaultChecked={false} />
-                                                <div>
-                                                    <p className="text-sm text-[#101F38]">Proof of termination of all prior marriages (if applicable)</p>
-                                                    <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-gray-100 text-gray-600 text-xs font-semibold mt-1">Optional</span>
-                                                </div>
-                                            </div>
-                                            <div className="flex items-start gap-3">
-                                                <input type="checkbox" className="mt-1 w-4 h-4 rounded border-[#ECE9E2] accent-[#E3755D]" defaultChecked={false} />
-                                                <div>
-                                                    <p className="text-sm text-[#101F38]">Photos together over time, labeled with dates/locations</p>
-                                                    <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-[#E24B4A]/10 text-[#E24B4A] text-xs font-semibold mt-1">Required</span>
-                                                </div>
-                                            </div>
-                                            <div className="flex items-start gap-3">
-                                                <input type="checkbox" className="mt-1 w-4 h-4 rounded border-[#ECE9E2] accent-[#E3755D]" defaultChecked={false} />
-                                                <div>
-                                                    <p className="text-sm text-[#101F38]">Birth certificates of children born to the marriage (if any)</p>
-                                                    <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-gray-100 text-gray-600 text-xs font-semibold mt-1">Optional</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {/* At Least 5 of Following */}
-                                    <div>
-                                        <p className="text-sm font-bold text-[#101F38] mb-2 flex items-center gap-2">
-                                            <span className="w-5 h-5 rounded-full bg-gradient-to-b from-orange-500 to-orange-600 text-white flex items-center justify-center text-xs">4</span>
-                                            At Least Five (5) of the Following
-                                        </p>
-                                        <div className="space-y-2 pl-7">
-                                            <div className="flex items-start gap-3">
-                                                <input type="checkbox" className="mt-1 w-4 h-4 rounded border-[#ECE9E2] accent-[#E3755D]" defaultChecked={false} />
-                                                <div>
-                                                    <p className="text-sm text-[#101F38]">Proof of ongoing relationship (money transfers, shared accounts, etc.)</p>
-                                                    <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-gray-100 text-gray-600 text-xs font-semibold mt-1">Pick 5+</span>
-                                                </div>
-                                            </div>
-                                            <div className="flex items-start gap-3">
-                                                <input type="checkbox" className="mt-1 w-4 h-4 rounded border-[#ECE9E2] accent-[#E3755D]" defaultChecked={false} />
-                                                <div>
-                                                    <p className="text-sm text-[#101F38]">Wedding souvenir / invitation</p>
-                                                    <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-gray-100 text-gray-600 text-xs font-semibold mt-1">Pick 5+</span>
-                                                </div>
-                                            </div>
-                                            <div className="flex items-start gap-3">
-                                                <input type="checkbox" className="mt-1 w-4 h-4 rounded border-[#ECE9E2] accent-[#E3755D]" defaultChecked={false} />
-                                                <div>
-                                                    <p className="text-sm text-[#101F38]">Wedding rings and/or wedding venue booking receipts</p>
-                                                    <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-gray-100 text-gray-600 text-xs font-semibold mt-1">Pick 5+</span>
-                                                </div>
-                                            </div>
-                                            <div className="flex items-start gap-3">
-                                                <input type="checkbox" className="mt-1 w-4 h-4 rounded border-[#ECE9E2] accent-[#E3755D]" defaultChecked={false} />
-                                                <div>
-                                                    <p className="text-sm text-[#101F38]">Insurance policies naming each other (health, life)</p>
-                                                    <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-gray-100 text-gray-600 text-xs font-semibold mt-1">Pick 5+</span>
-                                                </div>
-                                            </div>
-                                            <div className="flex items-start gap-3">
-                                                <input type="checkbox" className="mt-1 w-4 h-4 rounded border-[#ECE9E2] accent-[#E3755D]" defaultChecked={false} />
-                                                <div>
-                                                    <p className="text-sm text-[#101F38]">Notarized affidavits from family/friends (at least 2 letters)</p>
-                                                    <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-gray-100 text-gray-600 text-xs font-semibold mt-1">Pick 5+</span>
-                                                </div>
-                                            </div>
-                                            <div className="flex items-start gap-3">
-                                                <input type="checkbox" className="mt-1 w-4 h-4 rounded border-[#ECE9E2] accent-[#E3755D]" defaultChecked={false} />
-                                                <div>
-                                                    <p className="text-sm text-[#101F38]">Travel records (flight itineraries, boarding passes, hotel bookings)</p>
-                                                    <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-gray-100 text-gray-600 text-xs font-semibold mt-1">Pick 5+</span>
-                                                </div>
-                                            </div>
-                                            <div className="flex items-start gap-3">
-                                                <input type="checkbox" className="mt-1 w-4 h-4 rounded border-[#ECE9E2] accent-[#E3755D]" defaultChecked={false} />
-                                                <div>
-                                                    <p className="text-sm text-[#101F38]">Social media evidence (posts, comments, tagged photos)</p>
-                                                    <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-gray-100 text-gray-600 text-xs font-semibold mt-1">Pick 5+</span>
-                                                </div>
-                                            </div>
-                                            <div className="flex items-start gap-3">
-                                                <input type="checkbox" className="mt-1 w-4 h-4 rounded border-[#ECE9E2] accent-[#E3755D]" defaultChecked={false} />
-                                                <div>
-                                                    <p className="text-sm text-[#101F38]">Correspondence (emails, chats, SMS, call records)</p>
-                                                    <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-gray-100 text-gray-600 text-xs font-semibold mt-1">Pick 5+</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {/* Additional Documents */}
-                                    <div>
-                                        <p className="text-sm font-bold text-[#101F38] mb-2 flex items-center gap-2">
-                                            <span className="w-5 h-5 rounded-full bg-gradient-to-b from-orange-500 to-orange-600 text-white flex items-center justify-center text-xs">5</span>
-                                            Any Other Additional Documents
-                                        </p>
-                                        <div className="space-y-2 pl-7">
-                                            <div className="flex items-start gap-3">
-                                                <input type="checkbox" className="mt-1 w-4 h-4 rounded border-[#ECE9E2] accent-[#E3755D]" defaultChecked={false} />
-                                                <div>
-                                                    <p className="text-sm text-[#101F38]">Marriage certificate, divorce decree, adoption decree, or court order for name changes (if applicable)</p>
-                                                    <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-gray-100 text-gray-600 text-xs font-semibold mt-1">Optional</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                        <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                            <div>
+                                <h2 className="text-lg font-bold text-[#101F38] mb-2">Required Documents Checklist</h2>
+                                <p className="text-sm text-[#5B6472] font-medium">Application Type: {applicationTypeLabel}</p>
                             </div>
+                            {currentChecklist && (
+                                <div className="rounded-full bg-[#F7F5F0] px-4 py-2 text-sm font-semibold text-[#101F38]">
+                                    {Object.values(checkedDocuments).filter(Boolean).length} of {currentChecklist.sections.reduce((total, section) => total + section.documents.length, 0)} items completed
+                                </div>
+                            )}
                         </div>
+
+                        {currentChecklist ? (
+                            <>
+                                <div className="mb-6 h-2 w-full overflow-hidden rounded-full bg-[#ECE9E2]">
+                                    <div
+                                        className="h-full rounded-full bg-gradient-to-r from-orange-500 to-orange-600 transition-all"
+                                        style={{
+                                            width: `${currentChecklist.sections.length ? Math.round((Object.values(checkedDocuments).filter(Boolean).length / currentChecklist.sections.reduce((total, section) => total + section.documents.length, 0)) * 100) : 0}%`,
+                                        }}
+                                    />
+                                </div>
+
+                                <div className="space-y-6">
+                                    {currentChecklist.sections.map((section, sectionIndex) => (
+                                        <div key={section.title} className="rounded-2xl border border-[#ECE9E2] bg-[#F7F5F0] p-6">
+                                            <div className="mb-4">
+                                                <p className="text-sm font-bold text-[#101F38] mb-2 flex items-center gap-2">
+                                                    <span className="w-5 h-5 rounded-full bg-gradient-to-b from-orange-500 to-orange-600 text-white flex items-center justify-center text-xs">{sectionIndex + 1}</span>
+                                                    {section.title}
+                                                </p>
+                                                <p className="text-xs text-[#5B6472]">{section.documents.filter((doc) => doc.required).length} required • {section.documents.filter((doc) => !doc.required).length} optional</p>
+                                            </div>
+
+                                            <div className="space-y-3 pl-4">
+                                                {section.documents.map((document) => {
+                                                    const checked = Boolean(checkedDocuments[document.name]);
+                                                    return (
+                                                        <label key={document.name} className="flex items-start gap-3 rounded-3xl border border-transparent bg-white px-4 py-3 shadow-sm transition hover:border-[#ECE9E2]">
+                                                            <input
+                                                                type="checkbox"
+                                                                checked={checked}
+                                                                onChange={() => toggleChecklistItem(document.name)}
+                                                                className="mt-1 h-4 w-4 rounded border-[#ECE9E2] accent-[#E3755D]"
+                                                            />
+                                                            <div className="flex-1">
+                                                                <p className="text-sm text-[#101F38]">{document.name}</p>
+                                                                <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold mt-1 ${document.required ? 'bg-[#E24B4A]/10 text-[#E24B4A]' : 'bg-gray-100 text-gray-600'}`}>
+                                                                    {document.required ? 'Required' : 'Optional'}
+                                                                </span>
+                                                            </div>
+                                                        </label>
+                                                    );
+                                                })}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </>
+                        ) : (
+                            <div className="rounded-2xl border border-orange-200 bg-orange-50 p-6">
+                                <p className="text-sm text-orange-700 font-medium mb-2">Unable to load a document checklist for this application type.</p>
+                                <p className="text-sm text-[#5B6472]">If this package is not recognized, confirm the service type with the client or use the full manager checklist library.</p>
+                            </div>
+                        )}
                     </div>
                 )}
 
