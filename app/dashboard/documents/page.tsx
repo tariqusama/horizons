@@ -169,22 +169,50 @@ export default function DashboardDocumentsPage() {
             const fetchedUploadedDocs = Array.isArray(docsRes.data) ? docsRes.data : [];
             setUploadedDocs(fetchedUploadedDocs);
 
+            const getChecklistKeyFromService = (serviceText: string) => {
+                const normalized = serviceText.trim().toLowerCase();
+                if (!normalized) return null;
+
+                if (normalized.includes('spouse abroad') || normalized.includes('i-130a') || (normalized.includes('spouse') && normalized.includes('abroad'))) return 'spouse_abroad';
+                if (normalized.includes('parent abroad')) return 'parent_abroad';
+                if (normalized.includes('child abroad')) return 'child_abroad';
+                if (normalized.includes('sibling abroad')) return 'sibling_abroad';
+                if (normalized.includes('k-1') || normalized.includes('k1') || normalized.includes('fianc')) return 'k1_fiance';
+                if (normalized.includes('spouse aos') || normalized.includes('marriage-based adjustment') || (normalized.includes('adjustment') && normalized.includes('spouse'))) return 'spouse_aos';
+                if (normalized.includes('parent aos') || (normalized.includes('adjustment') && normalized.includes('parent'))) return 'parent_aos';
+                if (normalized.includes('child aos') || (normalized.includes('adjustment') && normalized.includes('child'))) return 'child_aos';
+                if (normalized.includes('i-90') || normalized.includes('replace permanent resident card') || normalized.includes('green card replacement')) return 'i90';
+                if (normalized.includes('i-751') || normalized.includes('remove conditions') || normalized.includes('conditions on residence')) return 'i751';
+                if (normalized.includes('daca') || normalized.includes('821d')) return 'daca_renewal';
+                if (normalized.includes('n-400') || normalized.includes('naturalization') || normalized.includes('citizenship')) return 'n400';
+
+                return null;
+            };
+
             if (latestApp && latestApp.service_type) {
-                const checklistValues = Object.values(CHECKLISTS);
-                const matchingChecklist = checklistValues.find((c: any) => c.title === latestApp.service_type) || checklistValues[0];
-                setActiveChecklist(matchingChecklist);
+                const serviceText = `${latestApp.title || ''} ${latestApp.service_type || ''}`;
+                const checklistKey = getChecklistKeyFromService(serviceText);
                 
-                let tempId = 1000;
-                matchingChecklist.sections.forEach((section: any) => {
-                    section.documents.forEach((d: any) => {
-                        expectedDocs.push({
-                            id: tempId++,
-                            name: d.name,
-                            status: 'Missing',
-                            file_path: null
+                // Note: CHECKLISTS is an object where keys are the checklist IDs (like 'daca_renewal')
+                const matchingChecklist = checklistKey ? (CHECKLISTS as any)[checklistKey] : null;
+                
+                if (matchingChecklist) {
+                    setActiveChecklist(matchingChecklist);
+                    
+                    let tempId = 1000;
+                    matchingChecklist.sections.forEach((section: any) => {
+                        section.documents.forEach((d: any) => {
+                            expectedDocs.push({
+                                id: tempId++,
+                                name: d.name,
+                                status: 'Missing',
+                                file_path: null
+                            });
                         });
                     });
-                });
+                } else {
+                    expectedDocs = [...defaultChecklist];
+                }
             } else {
                 expectedDocs = [...defaultChecklist];
             }
