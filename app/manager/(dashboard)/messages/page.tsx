@@ -280,7 +280,21 @@ export default function ManagerMessagesPage() {
                                             <div className={`text-[10px] mb-1 font-semibold opacity-70 ${message.is_admin ? 'text-white' : 'text-[#5B6472]'}`}>
                                                 {message.is_admin ? 'Manager' : 'Client'} • {new Date(message.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                             </div>
-                                            <p className="text-sm">{message.message}</p>
+                                            <div className="text-sm whitespace-pre-wrap">
+                                                {message.message.split(/\[Attachment:\s*(.+?)\]/g).map((part, i) => {
+                                                    if (i % 2 === 0) {
+                                                        return part ? <span key={i}>{part}</span> : null;
+                                                    } else {
+                                                        const filename = part;
+                                                        return (
+                                                            <a key={i} href="#" onClick={(e) => { e.preventDefault(); alert('Downloading ' + filename); }} className={`mt-1.5 flex items-center gap-2 rounded-lg p-2.5 text-sm font-medium transition-colors border max-w-full ${message.is_admin ? 'bg-orange-600/20 border-orange-400 hover:bg-orange-600/30 text-white' : 'bg-white border-[#ECE9E2] hover:bg-gray-50 text-[#101F38]'}`}>
+                                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`shrink-0 ${message.is_admin ? 'text-orange-200' : 'text-orange-500'}`}><path d="M4 6h16" /><path d="M4 12h16" /><path d="M4 18h10" /></svg>
+                                                                <span className="truncate">{filename}</span>
+                                                            </a>
+                                                        );
+                                                    }
+                                                })}
+                                            </div>
                                         </div>
                                     </div>
                                 ))

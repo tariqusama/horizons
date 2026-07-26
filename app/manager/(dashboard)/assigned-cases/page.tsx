@@ -664,7 +664,21 @@ export default function AssignedCasesPage() {
                                                 <div className={`text-[10px] mb-1 font-semibold opacity-70 ${m.from === 'staff' ? 'text-white' : 'text-[#5B6472]'}`}>
                                                     {m.from === 'staff' ? 'Manager' : 'Client'}
                                                 </div>
-                                                <p className="text-sm">{m.text}</p>
+                                                <div className="text-sm whitespace-pre-wrap">
+                                                    {m.text.split(/\[Attachment:\s*(.+?)\]/g).map((part, i) => {
+                                                        if (i % 2 === 0) {
+                                                            return part ? <span key={i}>{part}</span> : null;
+                                                        } else {
+                                                            const filename = part;
+                                                            return (
+                                                                <a key={i} href="#" onClick={(e) => { e.preventDefault(); alert('Downloading ' + filename); }} className={`mt-1.5 flex items-center gap-2 rounded-lg p-2.5 text-sm font-medium transition-colors border max-w-full ${m.from === 'staff' ? 'bg-orange-600/20 border-orange-400 hover:bg-orange-600/30 text-white' : 'bg-white border-[#ECE9E2] hover:bg-gray-50 text-[#101F38]'}`}>
+                                                                    <Icon.fileText width={16} height={16} className={m.from === 'staff' ? 'text-orange-200 shrink-0' : 'text-orange-500 shrink-0'} />
+                                                                    <span className="truncate">{filename}</span>
+                                                                </a>
+                                                            );
+                                                        }
+                                                    })}
+                                                </div>
                                                 <p className={`text-[10px] font-medium mt-1 ${m.from === 'staff' ? 'text-orange-200' : 'text-[#8A8F98]'}`}>
                                                     {new Date(m.createdAt).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}
                                                 </p>

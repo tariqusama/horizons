@@ -100,7 +100,19 @@ export default function DashboardChatPage() {
                         <div key={msg.id} className={`${styles.messageRow} ${msg.is_admin ? styles.messageRowAdmin : styles.messageRowUser}`}>
                             <div>
                                 <div className={`${styles.messageBubble} ${msg.is_admin ? styles.messageBubbleAdmin : styles.messageBubbleUser}`}>
-                                    {msg.message}
+                                    {msg.message.split(/\[Attachment:\s*(.+?)\]/g).map((part, i) => {
+                                        if (i % 2 === 0) {
+                                            return part ? <span key={i} className="whitespace-pre-wrap">{part}</span> : null;
+                                        } else {
+                                            const filename = part;
+                                            return (
+                                                <a key={i} href="#" onClick={(e) => { e.preventDefault(); alert('Downloading ' + filename); }} className="mt-1.5 flex items-center gap-2 rounded-lg p-2.5 text-sm font-medium transition-colors border max-w-full bg-white/10 hover:bg-white/20 border-white/20 text-current">
+                                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0"><path d="M4 6h16" /><path d="M4 12h16" /><path d="M4 18h10" /></svg>
+                                                    <span className="truncate">{filename}</span>
+                                                </a>
+                                            );
+                                        }
+                                    })}
                                 </div>
                                 <div className={styles.messageTime}>
                                     {msg.is_admin ? 'Case Manager' : 'You'} • {formatTime(msg.created_at)}
