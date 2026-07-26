@@ -1000,48 +1000,168 @@ export default function AssignedCasesPage() {
             )}
 
             {selectedActionInfo && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/40 backdrop-blur-sm p-4">
-                    <div className="relative w-full max-w-2xl overflow-hidden rounded-[28px] border border-white/20 bg-white/95 shadow-2xl shadow-slate-900/20 backdrop-blur-xl">
-                        <div className="absolute inset-x-0 top-0 h-2 bg-gradient-to-r from-orange-400 via-orange-500 to-orange-600" />
+                <div
+                    className="fixed inset-0 z-50 flex items-center justify-center p-4"
+                    style={{ background: 'linear-gradient(135deg, rgba(15,23,42,0.75) 0%, rgba(30,41,59,0.70) 100%)', backdropFilter: 'blur(18px)' }}
+                >
+                    {/* Modal card */}
+                    <div
+                        className="relative w-full max-w-2xl overflow-hidden"
+                        style={{
+                            borderRadius: '28px',
+                            background: 'linear-gradient(160deg, #ffffff 0%, #f8fafc 100%)',
+                            boxShadow: '0 32px 80px rgba(15,23,42,0.28), 0 0 0 1px rgba(255,255,255,0.6) inset',
+                            animation: 'modalPop 0.35s cubic-bezier(0.34,1.56,0.64,1) both'
+                        }}
+                    >
+                        <style>{`
+                            @keyframes modalPop {
+                                from { opacity: 0; transform: scale(0.88) translateY(24px); }
+                                to   { opacity: 1; transform: scale(1) translateY(0); }
+                            }
+                            @keyframes shimmer {
+                                0%   { background-position: -200% center; }
+                                100% { background-position:  200% center; }
+                            }
+                            @keyframes pulseRing {
+                                0%,100% { box-shadow: 0 0 0 0 rgba(249,115,22,0.45); }
+                                50%      { box-shadow: 0 0 0 10px rgba(249,115,22,0); }
+                            }
+                            .modal-info-card {
+                                transition: transform 0.2s ease, box-shadow 0.2s ease;
+                            }
+                            .modal-info-card:hover {
+                                transform: translateY(-2px);
+                                box-shadow: 0 12px 32px rgba(15,23,42,0.10);
+                            }
+                        `}</style>
 
+                        {/* Animated gradient header bar */}
+                        <div style={{
+                            height: '5px',
+                            background: 'linear-gradient(90deg, #f97316, #fb923c, #fdba74, #fb923c, #f97316)',
+                            backgroundSize: '200% auto',
+                            animation: 'shimmer 3s linear infinite'
+                        }} />
+
+                        {/* Decorative orbs */}
+                        <div style={{ position: 'absolute', top: '-40px', right: '-40px', width: '180px', height: '180px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(251,146,60,0.12) 0%, transparent 70%)', pointerEvents: 'none' }} />
+                        <div style={{ position: 'absolute', bottom: '-30px', left: '-30px', width: '140px', height: '140px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(99,102,241,0.08) 0%, transparent 70%)', pointerEvents: 'none' }} />
+
+                        {/* Close button */}
                         <button
                             onClick={() => setSelectedActionInfo(null)}
-                            className="absolute right-4 top-4 inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/80 text-slate-500 shadow-sm ring-1 ring-slate-200 transition hover:bg-white hover:text-slate-700"
                             aria-label="Close modal"
+                            style={{
+                                position: 'absolute', top: '18px', right: '18px',
+                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                width: '38px', height: '38px', borderRadius: '50%',
+                                background: 'rgba(241,245,249,0.9)',
+                                border: '1px solid rgba(226,232,240,0.8)',
+                                color: '#64748b', cursor: 'pointer',
+                                transition: 'all 0.2s ease',
+                                boxShadow: '0 2px 8px rgba(15,23,42,0.08)'
+                            }}
+                            onMouseOver={e => { (e.currentTarget as HTMLButtonElement).style.background = '#f1f5f9'; (e.currentTarget as HTMLButtonElement).style.color = '#0f172a'; (e.currentTarget as HTMLButtonElement).style.transform = 'rotate(90deg)'; }}
+                            onMouseOut={e => { (e.currentTarget as HTMLButtonElement).style.background = 'rgba(241,245,249,0.9)'; (e.currentTarget as HTMLButtonElement).style.color = '#64748b'; (e.currentTarget as HTMLButtonElement).style.transform = 'rotate(0deg)'; }}
                         >
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                <line x1="18" y1="6" x2="6" y2="18" />
-                                <line x1="6" y1="6" x2="18" y2="18" />
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
                             </svg>
                         </button>
 
-                        <div className="px-8 py-10 sm:px-10 sm:py-12 max-h-[85vh] overflow-y-auto hide-scrollbar">
-                            <div className="mb-8 flex items-start gap-4">
-                                <div className="flex h-14 w-14 items-center justify-center rounded-3xl bg-orange-100 text-orange-700 shadow-sm">
-                                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <div className="max-h-[85vh] overflow-y-auto hide-scrollbar" style={{ padding: '36px 40px 32px' }}>
+                            {/* Header */}
+                            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '18px', marginBottom: '32px' }}>
+                                <div style={{
+                                    flexShrink: 0, width: '60px', height: '60px', borderRadius: '18px',
+                                    background: 'linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%)',
+                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                    color: '#ea580c', animation: 'pulseRing 2.4s ease-in-out infinite',
+                                    boxShadow: '0 4px 16px rgba(249,115,22,0.18), 0 0 0 1px rgba(249,115,22,0.12)'
+                                }}>
+                                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                                         <path d="M12 12c2.21 0 4-1.79 4-4S14.21 4 12 4 8 5.79 8 8s1.79 4 4 4z" />
                                         <path d="M6 20c0-2.21 1.79-4 4-4h4c2.21 0 4 1.79 4 4" />
                                     </svg>
                                 </div>
                                 <div>
-                                    <h3 className="text-2xl font-semibold tracking-tight text-slate-900">{selectedActionInfo}</h3>
-                                    <p className="mt-2 text-sm text-slate-500">Quick access to the most important details for this case.</p>
+                                    <h3 style={{ margin: 0, fontSize: '1.35rem', fontWeight: 700, color: '#0f172a', letterSpacing: '-0.02em', lineHeight: 1.2 }}>{selectedActionInfo}</h3>
+                                    <p style={{ margin: '6px 0 0', fontSize: '0.85rem', color: '#94a3b8', lineHeight: 1.5 }}>Quick access to the most important details for this case.</p>
                                 </div>
                             </div>
 
                             {selectedActionInfo === 'View client profile' && (
-                                <div className="grid gap-4 sm:grid-cols-2">
-                                    <div className="rounded-3xl border border-slate-200 bg-slate-50 p-5 shadow-sm">
-                                        <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-400">Name</p>
-                                        <p className="mt-3 text-base font-semibold text-slate-900">{selectedCase?.user?.name || 'N/A'}</p>
+                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
+                                    {/* Name card */}
+                                    <div className="modal-info-card" style={{
+                                        gridColumn: '1', borderRadius: '18px', padding: '20px',
+                                        background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)',
+                                        border: '1px solid rgba(226,232,240,0.8)',
+                                        boxShadow: '0 2px 12px rgba(15,23,42,0.06)'
+                                    }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
+                                            <span style={{
+                                                width: '28px', height: '28px', borderRadius: '8px',
+                                                background: 'linear-gradient(135deg, #dbeafe, #bfdbfe)',
+                                                display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0
+                                            }}>
+                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+                                                </svg>
+                                            </span>
+                                            <span style={{ fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#94a3b8' }}>Name</span>
+                                        </div>
+                                        <p style={{ margin: 0, fontSize: '1rem', fontWeight: 700, color: '#0f172a' }}>{selectedCase?.user?.name || 'N/A'}</p>
                                     </div>
-                                    <div className="rounded-3xl border border-slate-200 bg-slate-50 p-5 shadow-sm">
-                                        <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-400">Email</p>
-                                        <p className="mt-3 text-base font-semibold text-slate-900">{selectedCase?.user?.email || 'N/A'}</p>
+                                    {/* Email card */}
+                                    <div className="modal-info-card" style={{
+                                        gridColumn: '2', borderRadius: '18px', padding: '20px',
+                                        background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)',
+                                        border: '1px solid rgba(226,232,240,0.8)',
+                                        boxShadow: '0 2px 12px rgba(15,23,42,0.06)'
+                                    }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
+                                            <span style={{
+                                                width: '28px', height: '28px', borderRadius: '8px',
+                                                background: 'linear-gradient(135deg, #d1fae5, #a7f3d0)',
+                                                display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0
+                                            }}>
+                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#059669" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>
+                                                </svg>
+                                            </span>
+                                            <span style={{ fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#94a3b8' }}>Email</span>
+                                        </div>
+                                        <p style={{ margin: 0, fontSize: '0.9rem', fontWeight: 600, color: '#0f172a', wordBreak: 'break-all' }}>{selectedCase?.user?.email || 'N/A'}</p>
                                     </div>
-                                    <div className="rounded-3xl border border-slate-200 bg-slate-50 p-5 shadow-sm sm:col-span-2">
-                                        <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-400">Phone</p>
-                                        <p className="mt-3 text-base font-semibold text-slate-900">{selectedCase?.user?.phone || 'Not provided'}</p>
+                                    {/* Phone card */}
+                                    <div className="modal-info-card" style={{
+                                        gridColumn: '1 / -1', borderRadius: '18px', padding: '20px',
+                                        background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)',
+                                        border: '1px solid rgba(226,232,240,0.8)',
+                                        boxShadow: '0 2px 12px rgba(15,23,42,0.06)'
+                                    }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
+                                            <span style={{
+                                                width: '28px', height: '28px', borderRadius: '8px',
+                                                background: 'linear-gradient(135deg, #ede9fe, #ddd6fe)',
+                                                display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0
+                                            }}>
+                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.4 2 2 0 0 1 3.58 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.16 6.16l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                                                </svg>
+                                            </span>
+                                            <span style={{ fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#94a3b8' }}>Phone</span>
+                                        </div>
+                                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                            <p style={{ margin: 0, fontSize: '1rem', fontWeight: 700, color: selectedCase?.user?.phone ? '#0f172a' : '#94a3b8' }}>
+                                                {selectedCase?.user?.phone || 'Not provided'}
+                                            </p>
+                                            {!selectedCase?.user?.phone && (
+                                                <span style={{ fontSize: '0.72rem', fontWeight: 600, background: 'linear-gradient(135deg, #fef3c7, #fde68a)', color: '#92400e', padding: '3px 10px', borderRadius: '20px', border: '1px solid rgba(251,191,36,0.3)' }}>Missing</span>
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
                             )}
@@ -1165,12 +1285,36 @@ export default function AssignedCasesPage() {
                                 </div>
                             )}
 
-                            <div className="mt-8 flex justify-end">
+                            {/* Footer */}
+                            <div style={{ marginTop: '32px', display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
                                 <button
                                     onClick={() => setSelectedActionInfo(null)}
-                                    className="rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+                                    style={{
+                                        padding: '10px 24px', borderRadius: '50px',
+                                        background: 'transparent',
+                                        border: '1.5px solid #e2e8f0',
+                                        fontSize: '0.875rem', fontWeight: 600, color: '#64748b',
+                                        cursor: 'pointer', transition: 'all 0.2s ease'
+                                    }}
+                                    onMouseOver={e => { (e.currentTarget as HTMLButtonElement).style.background = '#f8fafc'; (e.currentTarget as HTMLButtonElement).style.color = '#0f172a'; }}
+                                    onMouseOut={e => { (e.currentTarget as HTMLButtonElement).style.background = 'transparent'; (e.currentTarget as HTMLButtonElement).style.color = '#64748b'; }}
                                 >
-                                    Close
+                                    Dismiss
+                                </button>
+                                <button
+                                    onClick={() => setSelectedActionInfo(null)}
+                                    style={{
+                                        padding: '10px 28px', borderRadius: '50px',
+                                        background: 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)',
+                                        border: 'none',
+                                        fontSize: '0.875rem', fontWeight: 700, color: '#fff',
+                                        cursor: 'pointer', transition: 'all 0.2s ease',
+                                        boxShadow: '0 6px 20px rgba(234,88,12,0.35)'
+                                    }}
+                                    onMouseOver={e => { (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(-1px)'; (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 10px 28px rgba(234,88,12,0.45)'; }}
+                                    onMouseOut={e => { (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(0)'; (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 6px 20px rgba(234,88,12,0.35)'; }}
+                                >
+                                    Done
                                 </button>
                             </div>
                         </div>
