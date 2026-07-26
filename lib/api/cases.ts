@@ -145,7 +145,7 @@ export const updateCaseStatus = async (id: number, status: string): Promise<Appl
 
 export const updateApplication = async (
     id: number,
-    payload: Partial<Pick<Application, 'status' | 'progress' | 'next_step' | 'timeline' | 'title' | 'package_name' | 'subtitle' | 'amount' | 'paid_amount' | 'receipt_number' | 'is_escalated' | 'internal_notes'>>
+    payload: Partial<Pick<Application, 'status' | 'progress' | 'next_step' | 'timeline' | 'title' | 'package_name' | 'subtitle' | 'amount' | 'paid_amount' | 'receipt_number' | 'is_escalated' | 'internal_notes'>> & { form_data?: any }
 ): Promise<Application> => {
     const response = await api.put(`/manager/applications/${id}`, payload);
     return response.data;
