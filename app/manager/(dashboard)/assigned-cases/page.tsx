@@ -1187,9 +1187,20 @@ export default function AssignedCasesPage() {
                                             {Object.entries(selectedCase.form_data).map(([key, val]) => (
                                                 <div key={key}>
                                                     <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5">{key}</label>
-                                                    <div className="w-full bg-white border border-slate-200 rounded-xl p-3 text-sm font-medium text-slate-900 shadow-sm whitespace-pre-wrap">
-                                                        {typeof val === 'object' && val !== null ? JSON.stringify(val, null, 2) : String(val)}
-                                                    </div>
+                                                    {typeof val === 'object' && val !== null && !Array.isArray(val) ? (
+                                                        <div className="grid grid-cols-1 gap-2">
+                                                            {Object.entries(val).map(([nestedKey, nestedVal]) => (
+                                                                <div key={nestedKey} className="w-full bg-white border border-slate-200 rounded-xl p-3 text-sm shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                                                                    <span className="font-bold text-slate-500 break-all sm:break-normal">{nestedKey}</span>
+                                                                    <span className="font-medium text-slate-900 text-right break-all sm:break-normal">{typeof nestedVal === 'object' && nestedVal !== null ? JSON.stringify(nestedVal) : String(nestedVal || '-')}</span>
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                    ) : (
+                                                        <div className="w-full bg-white border border-slate-200 rounded-xl p-3 text-sm font-medium text-slate-900 shadow-sm whitespace-pre-wrap break-all sm:break-normal">
+                                                            {typeof val === 'object' && val !== null ? JSON.stringify(val, null, 2) : String(val)}
+                                                        </div>
+                                                    )}
                                                 </div>
                                             ))}
                                         </div>
