@@ -1,7 +1,7 @@
 'use client';
 import React, { useEffect, useState, useRef } from "react";
 import api, { getStorageUrl } from "@/lib/api";
-
+import { CHECKLISTS } from "../../manager/(dashboard)/document-checklists/page";
 interface Document {
     id: number;
     name: string;
@@ -150,16 +150,61 @@ export default function DashboardDocumentsPage() {
 
     const fetchDocuments = () => {
         setIsLoading(true);
-        api.get('/documents')
-            .then(res => {
-                if (Array.isArray(res.data) && res.data.length > 0) {
-                    setDocuments(res.data);
+        Promise.all([
+            api.get('/applications'),
+            api.get('/documents')
+        ]).then(([appsRes, docsRes]) => {
+            const apps = appsRes.data;
+            const latestApp = apps.length > 0 ? apps[0] : null;
+            let expectedDocs: Document[] = [];
+            const uploadedDocs = Array.isArray(docsRes.data) ? docsRes.data : [];
+
+            if (latestApp && latestApp.service_type) {
+                // We need to import CHECKLISTS but we can't easily dynamically require it if not imported.
+                // It's imported at the top now!
+                const checklistValues = Object.values(CHECKLISTS);
+                const matchingChecklist = checklistValues.find((c: any) => c.title === latestApp.service_type) || checklistValues[0];
+                
+                let tempId = 1000;
+                matchingChecklist.sections.forEach((section: any) => {
+                    section.documents.forEach((d: any) => {
+                        expectedDocs.push({
+                            id: tempId++,
+                            name: d.name,
+                            status: 'Missing',
+                            file_path: null
+                        });
+                    });
+                });
+            } else {
+                expectedDocs = [...defaultChecklist];
+            }
+
+            const isMatch = (reqName: string, docName: string) => {
+                if (!docName || !reqName) return false;
+                const r = reqName.toLowerCase().replace(/[^a-z0-9]/g, '');
+                const d = docName.toLowerCase().replace(/[^a-z0-9]/g, '');
+                return r.includes(d) || d.includes(r) || (r.includes('greencard') && d.includes('permanentresident')) || (r.includes('photo') && d.includes('photo')) || (r.includes('statement') && d.includes('statement'));
+            };
+
+            const finalDocs = [...expectedDocs];
+            
+            uploadedDocs.forEach((uploaded: Document) => {
+                const matchIndex = finalDocs.findIndex(f => f.status === 'Missing' && isMatch(f.name, uploaded.name));
+                if (matchIndex !== -1) {
+                    finalDocs[matchIndex] = uploaded;
                 } else {
-                    setDocuments(defaultChecklist);
+                    finalDocs.push(uploaded);
                 }
-            })
-            .catch(() => setDocuments(defaultChecklist))
-            .finally(() => setIsLoading(false));
+            });
+
+            setDocuments(finalDocs);
+        }).catch(err => {
+            console.error('Failed to fetch documents or applications', err);
+            setDocuments(defaultChecklist);
+        }).finally(() => {
+            setIsLoading(false);
+        });
     };
 
     useEffect(() => { fetchDocuments(); }, []);
