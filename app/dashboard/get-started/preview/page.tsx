@@ -5,54 +5,14 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import styles from '../form.module.css';
 import api from '@/lib/api';
-import { getPrevFormPath } from '../formsHelper';
+import { getFormsList, getPrevFormPath } from '../formsHelper';
 
 export default function ApplicationPreviewPage() {
     const router = useRouter();
-    const [previewData, setPreviewData] = useState<any>({
-        i90: {
-            dob: '2026-07-26',
-            ssn: 'dfdf4534',
-            gender: 'Female',
-            aNumber: 'sdadsfr453653',
-            lastName: 'Shafique',
-            firstName: 'Shehryar',
-            middleName: 'dfdvcv',
-            otherNames: 'Yes',
-            countryOfBirth: 'United Kingdom',
-            dateOfAdmission: '2026-07-20',
-            fatherFirstName: 'dfdsfd',
-            motherFirstName: 'dsfsd',
-            classOfAdmission: 'dsfsd',
-            uscisOnlineAccount: 'dfdcvfgfdg',
-            portOfAdmissionCity: 'Islamabad',
-            countryOfCitizenship: 'United Kingdom',
-            portOfAdmissionState: 'dffgdfg'
-        },
-        g1145: {
-            lastName: 'Shafique',
-            firstName: 'Shehryar',
-            middleName: 'dfdvcv'
-        }
-    });
+    const [previewData, setPreviewData] = useState<any>({});
     const [applicationTitle, setApplicationTitle] = useState('');
 
     useEffect(() => {
-        try {
-            const savedI90 = localStorage.getItem('horizon_i90_data');
-            const savedG1145 = localStorage.getItem('horizon_g1145_data');
-            const savedI130 = localStorage.getItem('horizon_i130_data');
-
-            setPreviewData((prev: any) => ({
-                ...prev,
-                ...(savedI90 ? { i90: JSON.parse(savedI90) } : {}),
-                ...(savedG1145 ? { g1145: JSON.parse(savedG1145) } : {}),
-                ...(savedI130 ? { i130: JSON.parse(savedI130) } : {})
-            }));
-        } catch (e) {
-            console.error("Error reading saved preview data", e);
-        }
-
         api.get('/applications')
             .then(res => {
                 if (res.data && res.data[0] && res.data[0].form_data) {
@@ -69,6 +29,9 @@ export default function ApplicationPreviewPage() {
     };
 
     const getFirstFormRoute = () => {
+        const firstForm = getFormsList(applicationTitle, { allowFallback: false })[0];
+        if (firstForm) return firstForm.path;
+
         try {
             const keys = Object.keys(previewData || {}).filter(k => previewData[k]);
             if (keys.length === 0) return '/dashboard/get-started';

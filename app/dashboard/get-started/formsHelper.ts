@@ -1,7 +1,9 @@
 export type FormEntry = { path: string; code: string; name: string };
 
-export function getFormsList(titleRaw: string): FormEntry[] {
-    const title = (titleRaw || '').toLowerCase();
+export function getFormsList(titleRaw: string, options?: { allowFallback?: boolean }): FormEntry[] {
+    const title = (titleRaw || '').toLowerCase().trim();
+    const allowFallback = options?.allowFallback !== false;
+
     if (title.includes('replace') || title.includes('i-90') || title.includes('green card')) {
         return [
             { path: '/dashboard/get-started/i-90', code: 'i-90', name: 'Form I-90 (Green Card)' },
@@ -36,7 +38,11 @@ export function getFormsList(titleRaw: string): FormEntry[] {
             { path: '/dashboard/get-started/g-1145', code: 'g-1145', name: 'Form G-1145 (e-Notification)' }
         ];
     }
-    // Default
+
+    if (!allowFallback) {
+        return [];
+    }
+
     return [
         { path: '/dashboard/get-started/i-130', code: 'i-130', name: 'Form I-130 (Petition)' },
         { path: '/dashboard/get-started/i-130a', code: 'i-130a', name: 'Form I-130A (Spouse Supp.)' },
@@ -45,14 +51,14 @@ export function getFormsList(titleRaw: string): FormEntry[] {
 }
 
 export function getNextFormPath(currentPath: string, titleRaw: string): string {
-    const list = getFormsList(titleRaw);
+    const list = getFormsList(titleRaw, { allowFallback: false });
     const idx = list.findIndex(f => f.path === currentPath);
     if (idx >= 0 && idx < list.length - 1) return list[idx + 1].path;
     return '/dashboard/get-started/document-upload';
 }
 
 export function getPrevFormPath(currentPath: string, titleRaw: string): string {
-    const list = getFormsList(titleRaw);
+    const list = getFormsList(titleRaw, { allowFallback: false });
     const idx = list.findIndex(f => f.path === currentPath);
     if (idx > 0) return list[idx - 1].path;
     // If current path is not in list or is first, go back to overview
