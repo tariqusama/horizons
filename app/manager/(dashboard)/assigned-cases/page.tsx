@@ -1081,7 +1081,7 @@ export default function AssignedCasesPage() {
                                     <ul className="list-disc pl-5 space-y-2">
                                         {uploadedDocuments.map((doc) => (
                                             <li key={doc.id}>
-                                                <span className="font-medium text-[#101F38]">{doc.name || doc.file_path.split('/').pop()}</span>
+                                                <span className="font-medium text-[#101F38]">{doc.name || doc.file_path?.split('/').pop() || 'Document'}</span>
                                                 <span className="text-xs ml-2 px-2 py-0.5 rounded-full bg-[#EAF3DE] text-[#3B6D11]">{doc.status}</span>
                                             </li>
                                         ))}

@@ -20,6 +20,17 @@ export default function AdminCaseDetailPage() {
     const [showFormModal, setShowFormModal] = useState(false);
     const [editFormData, setEditFormData] = useState<any>({ title: '', package_name: '', subtitle: '', amount: 0, paid_amount: 0, receipt_number: '', status: '', progress: '', next_step: '' });
 
+    const getDocumentUrl = (path?: string | null) => {
+        if (!path) return '#';
+        if (path.startsWith('public/')) {
+            return `/${path.replace(/^public\//, 'storage/')}`;
+        }
+        if (path.startsWith('/')) {
+            return path;
+        }
+        return `/${path}`;
+    };
+
     useEffect(() => {
         if (!user || !id) return;
 
@@ -238,7 +249,7 @@ export default function AdminCaseDetailPage() {
                                         </div>
                                         <div className="text-sm text-gray-500">
                                             {doc.file_path ? (
-                                                <a href={doc.file_path} target="_blank" rel="noreferrer" className="text-orange-500 hover:underline">Open</a>
+                                                <a href={getDocumentUrl(doc.file_path)} target="_blank" rel="noreferrer" className="text-orange-500 hover:underline">Open</a>
                                             ) : (
                                                 <span className="italic text-gray-400">No file uploaded</span>
                                             )}
