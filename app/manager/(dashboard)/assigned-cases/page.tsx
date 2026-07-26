@@ -14,6 +14,7 @@ import {
     Application,
     DocumentPayload,
 } from '@/lib/api/cases';
+import { getStorageUrl } from '@/lib/api';
 import { CHECKLISTS } from '../document-checklists/page';
 
 const Icon = {
@@ -756,6 +757,18 @@ export default function AssignedCasesPage() {
                                                                     {document.required ? 'Required' : 'Optional'}
                                                                 </span>
                                                             </div>
+                                                            {(() => {
+                                                                const uploadedMatch = uploadedDocuments.find(d => d.name === document.name && d.file_path);
+                                                                if (uploadedMatch) {
+                                                                    return (
+                                                                        <a href={getStorageUrl(uploadedMatch.file_path)} target="_blank" rel="noopener noreferrer" className="ml-4 shrink-0 inline-flex items-center gap-1.5 rounded-full bg-orange-50 px-3 py-1.5 text-xs font-semibold text-orange-600 hover:bg-orange-100 hover:text-orange-700 transition-colors relative z-10" onClick={(e) => e.stopPropagation()}>
+                                                                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                                                                            Preview
+                                                                        </a>
+                                                                    );
+                                                                }
+                                                                return null;
+                                                            })()}
                                                         </label>
                                                     );
                                                 })}
@@ -1047,22 +1060,33 @@ export default function AssignedCasesPage() {
 
                             {selectedActionInfo === 'View uploaded supporting documents' && (
                                 <div className="space-y-4">
-                                    {uploadedDocuments.length ? (
-                                        <ul className="space-y-3">
-                                            {uploadedDocuments.map((doc) => (
-                                                <li key={doc.id} className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm">
-                                                    <div className="flex items-center justify-between gap-4">
-                                                        <span className="font-medium text-slate-900">{doc.name || doc.file_path?.split('/').pop() || 'Document'}</span>
-                                                        <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">{doc.status}</span>
-                                                    </div>
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    ) : (
-                                        <div className="rounded-[24px] border border-slate-200 bg-slate-50 p-6 shadow-sm">
-                                            <p className="text-sm text-slate-600">No documents uploaded yet.</p>
-                                        </div>
-                                    )}
+                                    {(() => {
+                                        const validDocs = uploadedDocuments.filter(doc => doc.file_path && doc.status !== 'Missing');
+                                        return validDocs.length ? (
+                                            <ul className="space-y-3">
+                                                {validDocs.map((doc) => (
+                                                    <li key={doc.id} className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm">
+                                                        <div className="flex items-center justify-between gap-4">
+                                                            <div className="flex items-center gap-3">
+                                                                <span className="font-medium text-slate-900">{doc.name || doc.file_path?.split('/').pop() || 'Document'}</span>
+                                                                <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">{doc.status}</span>
+                                                            </div>
+                                                            {doc.file_path && (
+                                                                <a href={getStorageUrl(doc.file_path)} target="_blank" rel="noopener noreferrer" className="text-sm font-semibold text-orange-600 hover:text-orange-700 flex items-center gap-1 bg-orange-50 px-3 py-1.5 rounded-full transition-colors hover:bg-orange-100">
+                                                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                                                                    Preview
+                                                                </a>
+                                                            )}
+                                                        </div>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        ) : (
+                                            <div className="rounded-[24px] border border-slate-200 bg-slate-50 p-6 shadow-sm">
+                                                <p className="text-sm text-slate-600">No documents uploaded yet.</p>
+                                            </div>
+                                        );
+                                    })()}
                                 </div>
                             )}
 
@@ -1072,12 +1096,8 @@ export default function AssignedCasesPage() {
                                         <p className="text-sm font-semibold text-slate-900 mb-2">Service Type: {selectedCase?.service_type || 'N/A'}</p>
                                         
                                         {(() => {
-                                            const checklist = Object.values(CHECKLISTS).find(c => c.title === selectedCase?.service_type) || Object.values(CHECKLISTS)[0];
-                                            const uploadedNames = uploadedDocuments.map(doc => doc.name);
-                                            const allRequired = checklist?.sections.flatMap(s => s.documents).filter(d => d.required).map(d => d.name) || [];
-                                            
-                                            const completed = allRequired.filter(req => uploadedNames.includes(req));
-                                            const missing = allRequired.filter(req => !uploadedNames.includes(req));
+                                            const completed = uploadedDocuments.filter(doc => doc.file_path && doc.status !== 'Missing').map(doc => doc.name);
+                                            const missing = uploadedDocuments.filter(doc => !doc.file_path || doc.status === 'Missing').map(doc => doc.name);
 
                                             return (
                                                 <div className="mt-4 space-y-6">
