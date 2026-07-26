@@ -659,11 +659,16 @@ export default function AssignedCasesPage() {
                                         <p className="text-xs text-[#8A8F98] font-medium text-center pt-16">No messages yet. Start the conversation below.</p>
                                     )}
                                     {(activeConversation?.messages ?? []).map((m) => (
-                                        <div key={m.id} className="inline-block max-w-[70%] rounded-2xl border border-[#ECE9E2] bg-[#F7F5F0] px-4 py-2.5">
-                                            <p className="text-sm text-[#101F38]">{m.text}</p>
-                                            <p className="text-[10px] text-[#8A8F98] font-medium mt-1">
-                                                {new Date(m.createdAt).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}
-                                            </p>
+                                        <div key={m.id} className={`flex w-full ${m.from === 'staff' ? 'justify-end' : 'justify-start'}`}>
+                                            <div className={`inline-block max-w-[70%] rounded-2xl px-4 py-2.5 ${m.from === 'staff' ? 'bg-orange-500 text-white rounded-br-sm' : 'border border-[#ECE9E2] bg-[#F7F5F0] text-[#101F38] rounded-bl-sm'}`}>
+                                                <div className={`text-[10px] mb-1 font-semibold opacity-70 ${m.from === 'staff' ? 'text-white' : 'text-[#5B6472]'}`}>
+                                                    {m.from === 'staff' ? 'Manager' : 'Client'}
+                                                </div>
+                                                <p className="text-sm">{m.text}</p>
+                                                <p className={`text-[10px] font-medium mt-1 ${m.from === 'staff' ? 'text-orange-200' : 'text-[#8A8F98]'}`}>
+                                                    {new Date(m.createdAt).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}
+                                                </p>
+                                            </div>
                                         </div>
                                     ))}
                                 </div>
@@ -676,7 +681,21 @@ export default function AssignedCasesPage() {
                                         placeholder="Type a message..."
                                         className="flex-1 bg-[#F7F5F0] rounded-full border border-[#ECE9E2] px-4 py-2.5 text-sm text-[#101F38] outline-none focus:border-orange-500"
                                     />
-                                    <button className="text-[#8A8F98] hover:text-[#101F38] transition-colors shrink-0 p-2">
+                                    <input 
+                                        type="file" 
+                                        id="file-upload-assigned" 
+                                        className="hidden" 
+                                        onChange={(e) => {
+                                            if (e.target.files && e.target.files[0]) {
+                                                setMessageDraft(prev => prev + (prev ? ' ' : '') + `[Attachment: ${e.target.files![0].name}] `);
+                                            }
+                                        }}
+                                    />
+                                    <button 
+                                        type="button"
+                                        onClick={() => document.getElementById('file-upload-assigned')?.click()}
+                                        className="text-[#8A8F98] hover:text-[#101F38] transition-colors shrink-0 p-2"
+                                    >
                                         <Icon.paperclip width={17} height={17} />
                                     </button>
                                     <button
