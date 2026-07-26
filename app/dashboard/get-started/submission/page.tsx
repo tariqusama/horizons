@@ -5,14 +5,12 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import styles from '../form.module.css';
 import api from '@/lib/api';
-import ApplicationPreviewModal from '@/app/components/ApplicationPreviewModal';
 
 export default function SubmissionPage() {
     const router = useRouter();
     const [agreed, setAgreed] = useState(false);
     const [error, setError] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [isModalOpen, setIsModalOpen] = useState(false);
     const [appData, setAppData] = useState<any>(null);
 
     useEffect(() => {
@@ -29,15 +27,15 @@ export default function SubmissionPage() {
 
     const handleSubmit = async (e: React.MouseEvent) => {
         e.preventDefault();
-        
+
         if (!agreed) {
             setError(true);
             return;
         }
-        
+
         setError(false);
         setIsSubmitting(true);
-        
+
         try {
             if (appData && appData.id) {
                 await api.post(`/applications/${appData.id}/submit`);
@@ -63,14 +61,14 @@ export default function SubmissionPage() {
                 <p className={styles.sectionDesc}>
                     Please review your provided information and uploaded documents before finalizing your submission.
                 </p>
-                
+
                 <div className={styles.reviewContainer}>
                     <div className={styles.reviewBlock}>
                         <div className={styles.reviewHeader}>
                             <h3 className={styles.reviewTitle}>Forms & Questionnaires</h3>
                             <div style={{ display: 'flex', gap: '0.5rem' }}>
-                                <button 
-                                    onClick={(e) => { e.preventDefault(); setIsModalOpen(true); }}
+                                <button
+                                    onClick={(e) => { e.preventDefault(); router.push('/dashboard/get-started/preview'); }}
                                     className="bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs px-3 py-1.5 rounded-full transition-colors shadow-sm"
                                 >
                                     Preview Data
@@ -94,10 +92,10 @@ export default function SubmissionPage() {
                     </div>
                 </div>
 
-                <ApplicationPreviewModal 
-                    isOpen={isModalOpen} 
-                    onClose={() => setIsModalOpen(false)} 
-                    applicationId={appData?.id} 
+                <ApplicationPreviewModal
+                    isOpen={isModalOpen}
+                    onClose={() => setIsModalOpen(false)}
+                    applicationId={appData?.id}
                 />
 
                 <hr className={styles.divider} />
@@ -151,14 +149,14 @@ export default function SubmissionPage() {
                     ) : (
                         <div className={styles.agreementRow}>
                             <label className={styles.agreementLabel} style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', cursor: 'pointer' }}>
-                                <input 
-                                    type="checkbox" 
-                                    name="agreement" 
-                                    checked={agreed} 
+                                <input
+                                    type="checkbox"
+                                    name="agreement"
+                                    checked={agreed}
                                     onChange={(e) => {
                                         setAgreed(e.target.checked);
                                         if (e.target.checked) setError(false);
-                                    }} 
+                                    }}
                                     style={{ marginTop: '4px' }}
                                 />
                                 <span style={{ color: error ? '#ef4444' : 'inherit' }}>
@@ -168,18 +166,18 @@ export default function SubmissionPage() {
                             {error && <p style={{ color: '#ef4444', fontSize: '14px', marginTop: '8px', marginLeft: '24px' }}>You must agree to the terms before submitting.</p>}
                         </div>
                     )}
-                    
+
                     <div style={{ display: 'flex', gap: '1rem' }}>
-                        <button 
-                            onClick={(e) => { e.preventDefault(); setIsModalOpen(true); }}
+                        <button
+                            onClick={(e) => { e.preventDefault(); router.push('/dashboard/get-started/preview'); }}
                             className={styles.btnUpload}
                             style={{ flex: 1, justifyContent: 'center', padding: '1rem', fontSize: '1.05rem', borderRadius: '9999px' }}
                         >
                             View Application Form
                         </button>
                         {(!appData || !['submitted', 'completed', 'review'].includes(appData.status?.toLowerCase())) ? (
-                            <button 
-                                onClick={handleSubmit} 
+                            <button
+                                onClick={handleSubmit}
                                 className={styles.btnSubmit}
                                 disabled={isSubmitting}
                                 style={{ flex: 1, border: 'none', cursor: 'pointer', opacity: isSubmitting ? 0.7 : 1 }}
@@ -187,7 +185,7 @@ export default function SubmissionPage() {
                                 {isSubmitting ? 'Submitting...' : 'Submit Application'}
                             </button>
                         ) : (
-                            <button 
+                            <button
                                 onClick={() => router.push('/dashboard')}
                                 className={styles.btnSubmit}
                                 style={{ flex: 1, border: 'none', cursor: 'pointer', background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)', boxShadow: '0 4px 14px rgba(59, 130, 246, 0.4)' }}
@@ -199,53 +197,7 @@ export default function SubmissionPage() {
                 </div>
             </div>
 
-            {/* Application Preview Modal */}
-            {isModalOpen && (
-                <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', zIndex: 9999, padding: '4rem 1rem', overflowY: 'auto' }}>
-                    <div style={{ background: '#fff', borderRadius: '1rem', width: '100%', maxWidth: '800px', padding: '2rem', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)', margin: 'auto' }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', borderBottom: '1px solid #e2e8f0', paddingBottom: '1rem' }}>
-                            <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#0f172a', margin: 0 }}>Application Preview</h2>
-                            <button onClick={() => setIsModalOpen(false)} style={{ background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer', color: '#64748b' }}>&times;</button>
-                        </div>
-                        
-                        {appData && appData.form_data ? (
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-                                {Object.keys(appData.form_data).map(formKey => (
-                                    <div key={formKey}>
-                                        <h3 style={{ textTransform: 'uppercase', color: '#8b5cf6', fontSize: '0.85rem', fontWeight: 700, letterSpacing: '0.05em', marginBottom: '0.75rem' }}>{formKey.toUpperCase()} Data</h3>
-                                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', background: '#f8fafc', padding: '1.5rem', borderRadius: '0.75rem', border: '1px solid #e2e8f0' }}>
-                                            {Object.entries(appData.form_data[formKey]).map(([field, value]) => {
-                                                let displayValue = '-';
-                                                if (value !== null && value !== undefined && value !== '') {
-                                                    if (typeof value === 'boolean') displayValue = value ? 'Yes' : 'No';
-                                                    else if (typeof value === 'object') {
-                                                        if (Array.isArray(value)) displayValue = value.join(', ');
-                                                        else displayValue = Object.entries(value).filter(([k,v]) => v).map(([k, v]) => `${k.replace(/([A-Z])/g, ' $1').trim()}: ${v}`).join(' | ');
-                                                    } else {
-                                                        displayValue = String(value);
-                                                    }
-                                                }
-                                                return (
-                                                    <div key={field} style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-                                                        <span style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: 600, textTransform: 'uppercase' }}>{field.replace(/([A-Z])/g, ' $1').trim()}</span>
-                                                        <span style={{ fontSize: '0.95rem', color: '#0f172a', fontWeight: 500 }}>{displayValue || '-'}</span>
-                                                    </div>
-                                                );
-                                            })}
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        ) : (
-                            <p style={{ color: '#64748b' }}>No application data found.</p>
-                        )}
-                        
-                        <div style={{ marginTop: '2rem', display: 'flex', justifyContent: 'flex-end' }}>
-                            <button onClick={() => setIsModalOpen(false)} className={styles.btnSubmit} style={{ padding: '0.75rem 2rem' }}>Close Preview</button>
-                        </div>
-                    </div>
-                </div>
-            )}
+            {/* Application preview now opens in a dedicated page instead of a modal */}
         </div>
     );
 }
