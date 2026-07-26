@@ -1,13 +1,8 @@
 'use client';
 import React, { useEffect, useState, useRef } from "react";
 import api, { getStorageUrl } from "@/lib/api";
-import { CHECKLISTS } from "../../manager/(dashboard)/document-checklists/page";
-interface Document {
-    id: number;
-    name: string;
-    status: string;
-    file_path: string | null;
-}
+import { getChecklists } from '@/lib/api/cases';
+import { Document, resolveDocuments, defaultChecklist, isMatch, getChecklistKeyFromService } from '@/lib/utils/documentHelper';
 
 interface PreviewModalProps {
     doc: Document;
@@ -45,15 +40,15 @@ function PreviewModal({ doc, onClose }: PreviewModalProps) {
                         <div className="w-9 h-9 rounded-xl flex items-center justify-center bg-blue-50">
                             {isImage ? (
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="2">
-                                    <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/>
+                                    <rect x="3" y="3" width="18" height="18" rx="2" /><circle cx="8.5" cy="8.5" r="1.5" /><path d="M21 15l-5-5L5 21" />
                                 </svg>
                             ) : isPdf ? (
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2">
-                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M9 13h6M9 17h4"/>
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" /><path d="M9 13h6M9 17h4" />
                                 </svg>
                             ) : (
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2">
-                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" />
                                 </svg>
                             )}
                         </div>
@@ -71,7 +66,7 @@ function PreviewModal({ doc, onClose }: PreviewModalProps) {
                             className="flex items-center gap-1.5 text-xs font-semibold text-slate-600 hover:text-blue-600 bg-slate-100 hover:bg-blue-50 px-3 py-2 rounded-xl transition-colors"
                         >
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" />
                             </svg>
                             Download
                         </a>
@@ -82,7 +77,7 @@ function PreviewModal({ doc, onClose }: PreviewModalProps) {
                             className="flex items-center gap-1.5 text-xs font-semibold text-white bg-gradient-to-r from-blue-500 to-blue-700 px-3 py-2 rounded-xl transition-colors hover:from-blue-600 hover:to-blue-800"
                         >
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
+                                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /><polyline points="15 3 21 3 21 9" /><line x1="10" y1="14" x2="21" y2="3" />
                             </svg>
                             Open in New Tab
                         </a>
@@ -91,7 +86,7 @@ function PreviewModal({ doc, onClose }: PreviewModalProps) {
                             className="ml-1 w-8 h-8 flex items-center justify-center rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
                         >
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                                <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                                <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
                             </svg>
                         </button>
                     </div>
@@ -117,7 +112,7 @@ function PreviewModal({ doc, onClose }: PreviewModalProps) {
                         <div className="text-center py-16">
                             <div className="w-20 h-20 rounded-2xl bg-slate-100 flex items-center justify-center mx-auto mb-4">
                                 <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="1.5">
-                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" />
                                 </svg>
                             </div>
                             <p className="text-slate-600 font-semibold">Preview not available for this file type</p>
@@ -141,99 +136,40 @@ export default function DashboardDocumentsPage() {
 
     const [uploadingDocName, setUploadingDocName] = useState<string | null>(null);
 
-    const defaultChecklist: Document[] = [
-        { id: -1, name: 'Passport photo page', status: 'Missing', file_path: null },
-        { id: -2, name: 'Birth certificate', status: 'Missing', file_path: null },
-        { id: -3, name: 'Proof of residency', status: 'Missing', file_path: null },
-        { id: -4, name: 'Medical exam report', status: 'Missing', file_path: null },
-        { id: -5, name: 'Affidavit of support', status: 'Missing', file_path: null },
-        { id: -6, name: 'Government Issued Photo ID', status: 'Missing', file_path: null },
-        { id: -7, name: 'Permanent Resident Card', status: 'Missing', file_path: null },
-        { id: -8, name: 'Signed Statement', status: 'Missing', file_path: null },
-    ];
 
-    const isMatch = (reqName: string, docName: string) => {
-        if (!docName || !reqName) return false;
-        const r = reqName.toLowerCase().replace(/[^a-z0-9]/g, '');
-        const d = docName.toLowerCase().replace(/[^a-z0-9]/g, '');
-        return r.includes(d) || d.includes(r) || (r.includes('greencard') && d.includes('permanentresident')) || (r.includes('photo') && d.includes('photo')) || (r.includes('statement') && d.includes('statement'));
-    };
 
     const fetchDocuments = () => {
         setIsLoading(true);
         Promise.all([
             api.get('/applications'),
-            api.get('/documents')
-        ]).then(([appsRes, docsRes]) => {
+            api.get('/documents'),
+            getChecklists()
+        ]).then(([appsRes, docsRes, checklistsData]) => {
             const apps = appsRes.data;
             const latestApp = apps.length > 0 ? apps[0] : null;
-            let expectedDocs: Document[] = [];
             const fetchedUploadedDocs = Array.isArray(docsRes.data) ? docsRes.data : [];
             setUploadedDocs(fetchedUploadedDocs);
 
-            const getChecklistKeyFromService = (serviceText: string) => {
-                const normalized = serviceText.trim().toLowerCase();
-                if (!normalized) return null;
-
-                if (normalized.includes('spouse abroad') || normalized.includes('i-130a') || (normalized.includes('spouse') && normalized.includes('abroad'))) return 'spouse_abroad';
-                if (normalized.includes('parent abroad')) return 'parent_abroad';
-                if (normalized.includes('child abroad')) return 'child_abroad';
-                if (normalized.includes('sibling abroad')) return 'sibling_abroad';
-                if (normalized.includes('k-1') || normalized.includes('k1') || normalized.includes('fianc')) return 'k1_fiance';
-                if (normalized.includes('spouse aos') || normalized.includes('marriage-based adjustment') || (normalized.includes('adjustment') && normalized.includes('spouse'))) return 'spouse_aos';
-                if (normalized.includes('parent aos') || (normalized.includes('adjustment') && normalized.includes('parent'))) return 'parent_aos';
-                if (normalized.includes('child aos') || (normalized.includes('adjustment') && normalized.includes('child'))) return 'child_aos';
-                if (normalized.includes('i-90') || normalized.includes('replace permanent resident card') || normalized.includes('green card replacement')) return 'i90';
-                if (normalized.includes('i-751') || normalized.includes('remove conditions') || normalized.includes('conditions on residence')) return 'i751';
-                if (normalized.includes('daca') || normalized.includes('821d')) return 'daca_renewal';
-                if (normalized.includes('n-400') || normalized.includes('naturalization') || normalized.includes('citizenship')) return 'n400';
-
-                return null;
-            };
-
-            if (latestApp && latestApp.service_type) {
+            // Resolve the active checklist (same logic as the form's generateFormChecklist)
+            if (latestApp) {
                 const serviceText = `${latestApp.title || ''} ${latestApp.service_type || ''}`;
                 const checklistKey = getChecklistKeyFromService(serviceText);
-                
-                // Note: CHECKLISTS is an object where keys are the checklist IDs (like 'daca_renewal')
-                const matchingChecklist = checklistKey ? (CHECKLISTS as any)[checklistKey] : null;
-                
+                const matchingChecklist = checklistKey ? checklistsData[checklistKey] : null;
                 if (matchingChecklist) {
                     setActiveChecklist(matchingChecklist);
-                    
-                    let tempId = -1000;
-                    matchingChecklist.sections.forEach((section: any) => {
-                        section.documents.forEach((d: any) => {
-                            expectedDocs.push({
-                                id: tempId--,
-                                name: d.name,
-                                status: 'Missing',
-                                file_path: null
-                            });
-                        });
-                    });
                 } else {
-                    expectedDocs = [...defaultChecklist];
+                    setActiveChecklist(null);
                 }
             } else {
-                expectedDocs = [...defaultChecklist];
+                setActiveChecklist(null);
             }
 
-            const finalDocs = [...expectedDocs];
-            
-            fetchedUploadedDocs.forEach((uploaded: Document) => {
-                const matchIndex = finalDocs.findIndex(f => f.status === 'Missing' && isMatch(f.name, uploaded.name));
-                if (matchIndex !== -1) {
-                    finalDocs[matchIndex] = uploaded;
-                } else {
-                    finalDocs.push(uploaded);
-                }
-            });
-
+            const finalDocs = resolveDocuments(latestApp, checklistsData, fetchedUploadedDocs);
             setDocuments(finalDocs);
         }).catch(err => {
             console.error('Failed to fetch documents or applications', err);
             setDocuments(defaultChecklist);
+            setActiveChecklist(null);
         }).finally(() => {
             setIsLoading(false);
         });
@@ -302,7 +238,7 @@ export default function DashboardDocumentsPage() {
                         className="flex items-center gap-1.5 text-xs font-semibold text-blue-600 hover:text-white bg-blue-50 hover:bg-blue-600 border border-blue-200 hover:border-blue-600 px-3 py-1.5 rounded-xl transition-all"
                     >
                         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" />
                         </svg>
                         Preview
                     </button>
@@ -415,7 +351,7 @@ export default function DashboardDocumentsPage() {
                             <div className="divide-y divide-slate-200 bg-white">
                                 {documents.length === 0 ? (
                                     <div className="p-6 text-center text-[#5A6579]">No documents requested yet.</div>
-                                ) : documents.map((item) => renderDocumentRow(item, true))}
+                                ) : documents.map((item) => renderDocumentRow(item, item.required === true))}
                             </div>
                         )}
                     </div>
@@ -426,16 +362,16 @@ export default function DashboardDocumentsPage() {
                         <p className="text-sm uppercase tracking-[0.28em] text-orange-500">Upload reminders</p>
                         <h2 className="mt-4 text-2xl font-black text-[#1B3A64]">Documents still needed</h2>
                         <ul className="mt-6 space-y-4 text-sm leading-7 text-[#5A6579]">
-                            {documents.filter(d => d.status !== 'Uploaded').slice(0, 3).map(d => (
+                            {documents.filter(d => d.status !== 'Uploaded' && d.required === true).slice(0, 3).map(d => (
                                 <li key={d.id} className="flex items-center gap-3">
                                     <span className="inline-flex h-3 w-3 rounded-full bg-gradient-to-b from-orange-500 to-orange-600" />
                                     {d.name}
                                 </li>
                             ))}
-                            {documents.filter(d => d.status !== 'Uploaded').length === 0 && (
+                            {documents.filter(d => d.status !== 'Uploaded' && d.required === true).length === 0 && (
                                 <li className="flex items-center gap-3 text-emerald-600 font-semibold">
                                     <span className="inline-flex h-3 w-3 rounded-full bg-emerald-500" />
-                                    All documents uploaded!
+                                    All required documents uploaded!
                                 </li>
                             )}
                         </ul>

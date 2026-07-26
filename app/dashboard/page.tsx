@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import api from '@/lib/api';
 import ApplicationSelectionModal from "@/app/components/ApplicationSelectionModal";
+import { getChecklists } from '@/lib/api/cases';
+import { resolveDocuments } from '@/lib/utils/documentHelper';
 
 const getPlanPrice = (title: string, subtitle: string) => {
     if (!title || !subtitle) return '--';
@@ -142,14 +144,20 @@ export default function DashboardPage() {
                     }
                 }
 
-                const [appsRes, docsRes, messagesRes] = await Promise.all([
+                const [appsRes, docsRes, messagesRes, checklistsData] = await Promise.all([
                     api.get('/applications'),
                     api.get('/documents'),
                     api.get('/messages'),
+                    getChecklists()
                 ]);
 
-                setApplications(appsRes.data || []);
-                setDocuments(docsRes.data || []);
+                const apps = appsRes.data || [];
+                const latestApp = apps.length > 0 ? apps[0] : null;
+                const fetchedUploadedDocs = Array.isArray(docsRes.data) ? docsRes.data : [];
+                const finalDocs = resolveDocuments(latestApp, checklistsData, fetchedUploadedDocs);
+
+                setApplications(apps);
+                setDocuments(finalDocs);
                 setMessages(messagesRes.data || []);
             } catch (error) {
                 console.error('Failed to load dashboard metrics', error);

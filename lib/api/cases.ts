@@ -188,3 +188,8 @@ export const getServices = async (): Promise<Service[]> => {
     const response = await api.get('/services');
     return response.data;
 };
+
+export const getChecklists = async (): Promise<Record<string, any>> => {
+    const response = await api.get('/checklists');
+    return response.data;
+};

@@ -385,62 +385,7 @@ export default function RevenueDashboardPage() {
                     </div>
                     <div className="p-6 pt-0">
                         <div className="space-y-4">
-                            {[
-                                {
-                                    rank: 1,
-                                    name: 'David Kim',
-                                    role: 'case manager',
-                                    completed: 55,
-                                    active: 7,
-                                    avg: '13d avg',
-                                    percent: 70,
-                                },
-                                {
-                                    rank: 2,
-                                    name: 'Emily Davis',
-                                    role: 'case manager',
-                                    completed: 52,
-                                    active: 6,
-                                    avg: '12d avg',
-                                    percent: 60,
-                                },
-                                {
-                                    rank: 3,
-                                    name: 'Alex Rodriguez',
-                                    role: 'case manager',
-                                    completed: 48,
-                                    active: 4,
-                                    avg: '11d avg',
-                                    percent: 40,
-                                },
-                                {
-                                    rank: 4,
-                                    name: 'Sarah Johnson',
-                                    role: 'immigration attorney',
-                                    completed: 45,
-                                    active: 8,
-                                    avg: '14d avg',
-                                    percent: 80,
-                                },
-                                {
-                                    rank: 5,
-                                    name: 'Lisa Wang',
-                                    role: 'immigration attorney',
-                                    completed: 42,
-                                    active: 9,
-                                    avg: '15d avg',
-                                    percent: 90,
-                                },
-                                {
-                                    rank: 6,
-                                    name: 'Mike Chen',
-                                    role: 'immigration attorney',
-                                    completed: 38,
-                                    active: 12,
-                                    avg: '16d avg',
-                                    percent: 120,
-                                },
-                            ].map((person) => (
+                            {(revenueData?.leaderboard || []).map((person) => (
                                 <div key={person.rank} className="flex items-center gap-4">
                                     <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary font-bold">
                                         {person.rank}

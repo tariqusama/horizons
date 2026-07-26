@@ -3,24 +3,18 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
 import { getManagerAssignedCases, Application } from '@/lib/api/cases';
-import { getNotifications, Notification } from '@/lib/api/notifications';
 
 export default function ManagerDashboardPage() {
     const { user } = useAuth();
     const [cases, setCases] = useState<Application[]>([]);
-    const [notifications, setNotifications] = useState<Notification[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         if (!user) return;
         const loadData = async () => {
             try {
-                const [assignedCases, allNotifs] = await Promise.all([
-                    getManagerAssignedCases(),
-                    getNotifications()
-                ]);
+                const assignedCases = await getManagerAssignedCases();
                 setCases(assignedCases);
-                setNotifications(allNotifs.slice(0, 5)); // show recent 5
             } catch (err) {
                 console.error('Failed to fetch manager dashboard data:', err);
             } finally {
@@ -119,9 +113,9 @@ export default function ManagerDashboardPage() {
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="w-full">
                 {/* Priority Cases */}
-                <div className="lg:col-span-2 bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden flex flex-col">
+                <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden flex flex-col">
                     <div className="px-6 py-5 border-b border-gray-200 flex justify-between items-center bg-gray-50/50">
                         <h2 className="font-bold text-gray-900 text-lg">Your Priority Cases</h2>
                         <Link href="/manager/assigned-cases" className="text-sm text-orange-500 font-semibold hover:underline">View All Assigned</Link>
@@ -168,45 +162,6 @@ export default function ManagerDashboardPage() {
                                     ))}
                                 </tbody>
                             </table>
-                        )}
-                    </div>
-                </div>
-
-                {/* Notifications Panel */}
-                <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden flex flex-col">
-                    <div className="px-6 py-5 border-b border-gray-200 bg-gray-50/50">
-                        <h2 className="font-bold text-gray-900 text-lg">Recent Updates</h2>
-                    </div>
-                    <div className="flex-1 p-6 space-y-6 overflow-y-auto">
-                        {notifications.length === 0 ? (
-                            <div className="text-gray-500 text-sm text-center">No recent notifications.</div>
-                        ) : (
-                            notifications.map(n => {
-                                const IconComp = (p: any) => (
-                                    <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" dangerouslySetInnerHTML={{ __html: n.data.icon }} />
-                                );
-                                return (
-                                    <div key={n.id} className="flex gap-4">
-                                        <div
-                                            className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 mt-1"
-                                            style={{ backgroundColor: n.data.bg || '#F3F4F6', color: n.data.color || '#374151' }}
-                                        >
-                                            {n.data.icon ? <IconComp width={16} height={16} /> : (
-                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                                    <circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" />
-                                                </svg>
-                                            )}
-                                        </div>
-                                        <div>
-                                            <p className="text-sm font-bold text-gray-900">{n.data.title || 'Notification'}</p>
-                                            <p className="text-xs text-gray-500 mt-1">{n.data.text || 'You have a new update.'}</p>
-                                            <span className="text-[10px] font-bold text-gray-400 mt-2 block uppercase tracking-wider">
-                                                {new Date(n.created_at).toLocaleDateString()}
-                                            </span>
-                                        </div>
-                                    </div>
-                                );
-                            })
                         )}
                     </div>
                 </div>

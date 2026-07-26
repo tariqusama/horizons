@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import styles from "./get-started.module.css";
 import { useAuth } from "@/contexts/AuthContext";
 import api from "@/lib/api";
+import { getChecklists } from "@/lib/api/cases";
+import { getChecklistKeyFromService } from "@/lib/utils/documentHelper";
 
 export default function GetStartedPage() {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -14,12 +16,16 @@ export default function GetStartedPage() {
     const { user } = useAuth();
     const [isLoading, setIsLoading] = useState(true);
     const [application, setApplication] = useState<any>(null);
+    const [checklist, setChecklist] = useState<any>(null);
 
     useEffect(() => {
         const checkStatus = async () => {
             try {
-                const res = await api.get('/applications');
-                const apps = res.data || [];
+                const [appsRes, checklistsData] = await Promise.all([
+                    api.get('/applications'),
+                    getChecklists()
+                ]);
+                const apps = appsRes.data || [];
                 const latest = apps[0];
                 if (!latest) {
                     router.push('/dashboard');
@@ -31,6 +37,13 @@ export default function GetStartedPage() {
                     return;
                 }
                 setApplication(latest);
+
+                // Load matching checklist from DB
+                const serviceText = `${latest.title || ''} ${latest.service_type || ''}`;
+                const checklistKey = getChecklistKeyFromService(serviceText);
+                if (checklistKey && checklistsData[checklistKey]) {
+                    setChecklist(checklistsData[checklistKey]);
+                }
             } catch (error) {
                 console.error(error);
                 router.push('/dashboard');
@@ -95,30 +108,16 @@ export default function GetStartedPage() {
         );
     }
 
-    const getPackageDescription = () => {
-        if (!application?.title) return "renewing or replacing your existing Permanent Resident Card (Green Card)";
-        const title = application.title.toLowerCase();
-        if (title.includes('n-400') || title.includes('naturalization') || title.includes('citizenship')) return "your US Naturalization / Citizenship";
-        if (title.includes('fiancé') || title.includes('fiance') || title.includes('spouse') || title.includes('relative')) return "bringing a fiancé(e), spouse, or relative to the U.S.";
-        if (title.includes('daca') || title.includes('821d')) return "your DACA (Deferred Action for Childhood Arrivals)";
-        return "renewing or replacing your existing Permanent Resident Card (Green Card)";
-    };
-
-    const getIncludedForms = () => {
-        if (!application?.title) return "I-90, G-1145";
-        const title = application.title.toLowerCase();
-        if (title.includes('n-400') || title.includes('naturalization') || title.includes('citizenship')) return "N-400, G-1145";
-        if (title.includes('fiancé') || title.includes('fiance') || title.includes('spouse') || title.includes('relative')) return "I-130, I-130A, G-1145";
-        if (title.includes('daca') || title.includes('821d')) return "I-821D, I-765, I-765WS, G-1145";
-        return "I-90, G-1145";
-    };
+    // Pull description and forms from DB checklist; fallback to safe defaults
+    const packageDescription = checklist?.description || application?.title || 'processing your immigration application';
+    const includedForms = checklist?.forms ? (checklist.forms as string[]).join(', ') : 'G-1145';
 
     return (
         <div className={styles.pageWrapper}>
             <div className={styles.heroCard}>
                 <div className={styles.heroText}>
                     <h1 className={styles.heroTitle}>{application?.title || 'Green Card Renewal / Replacement'}</h1>
-                    <p className={styles.heroSubtitle}>{application?.package_name || `Form ${getIncludedForms().split(',')[0]} with G-1145 e-Notification`}</p>
+                    <p className={styles.heroSubtitle}>{application?.package_name || checklist?.subtitle || `Form ${includedForms.split(',')[0]} with G-1145 e-Notification`}</p>
                 </div>
             </div>
 
@@ -143,10 +142,10 @@ export default function GetStartedPage() {
                     <h3>Application Confirmation</h3>
                 </div>
                 <p className={styles.confirmationText}>
-                    Can you confirm this package is for {getPackageDescription()}?
+                    Can you confirm this package is for {packageDescription}?
                 </p>
                 <p className={styles.noteText}>
-                    This package includes: {getIncludedForms()}.
+                    This package includes: {includedForms}.
                 </p>
                 <div className={styles.buttonRow}>
                     <button className={styles.buttonPrimary} onClick={handleConfirm}>

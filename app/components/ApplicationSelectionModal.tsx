@@ -97,6 +97,7 @@ const CheckoutForm = ({ selectedSubPlan, selectedTier, handleClose, getSelectedA
                 amount,
                 plan: planDescription,
                 goal: selectedSubPlan.subtitle || selectedSubPlan.title,
+                package_name: selectedSubPlan.title,
             });
 
             alert('Payment successful! Your application has been submitted.');

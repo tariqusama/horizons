@@ -32,6 +32,15 @@ export interface RevenueData {
         pending_payments: number;
         conversion_rate: number;
     };
+    leaderboard: {
+        rank: number;
+        name: string;
+        role: string;
+        completed: number;
+        active: number;
+        avg: string;
+        percent: number;
+    }[];
 }
 
 export const getRevenueData = async (): Promise<RevenueData> => {

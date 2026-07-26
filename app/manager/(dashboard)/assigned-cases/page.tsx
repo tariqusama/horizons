@@ -13,9 +13,10 @@ import {
     escalateApplication,
     Application,
     DocumentPayload,
+    getChecklists,
 } from '@/lib/api/cases';
 import { getStorageUrl } from '@/lib/api';
-import { CHECKLISTS } from '../document-checklists/page';
+import { getChecklistKeyFromService } from '@/lib/utils/documentHelper';
 
 const Icon = {
     search: (p: any) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>,
@@ -90,7 +91,7 @@ type DocRequest = { id: string; documents: string; note: string; createdAt: stri
 type ChecklistDocument = { name: string; required: boolean };
 type ChecklistSection = { title: string; documents: ChecklistDocument[] };
 type ChecklistData = { id: string; title: string; forms: string[]; totalDocuments: number; sections: ChecklistSection[] };
-type ChecklistKey = keyof typeof CHECKLISTS;
+type ChecklistKey = string;
 
 export default function AssignedCasesPage() {
     const { user } = useAuth();
@@ -101,6 +102,7 @@ export default function AssignedCasesPage() {
     const [selectedCaseId, setSelectedCaseId] = useState<number | null>(null);
     const [uploadedDocuments, setUploadedDocuments] = useState<DocumentPayload[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [checklistsData, setChecklistsData] = useState<Record<string, any>>({});
     const [isLoadingDocuments, setIsLoadingDocuments] = useState(false);
     const [activeTab, setActiveTab] = useState<TabLabel>('Internal Case Notes');
     const [newNote, setNewNote] = useState('');
@@ -141,32 +143,14 @@ export default function AssignedCasesPage() {
 
     const activeConversation = conversations.find((c) => c.id === activeConversationId) ?? conversations[0] ?? null;
 
-    const getChecklistKeyFromService = (serviceText: string): ChecklistKey | null => {
-        const normalized = serviceText.trim().toLowerCase();
-        if (!normalized) return null;
-
-        if (normalized.includes('spouse abroad') || normalized.includes('i-130a') || normalized.includes('spouse') && normalized.includes('abroad')) return 'spouse_abroad';
-        if (normalized.includes('parent abroad')) return 'parent_abroad';
-        if (normalized.includes('child abroad')) return 'child_abroad';
-        if (normalized.includes('sibling abroad')) return 'sibling_abroad';
-        if (normalized.includes('k-1') || normalized.includes('k1') || normalized.includes('fianc')) return 'k1_fiance';
-        if (normalized.includes('spouse aos') || normalized.includes('marriage-based adjustment') || (normalized.includes('adjustment') && normalized.includes('spouse'))) return 'spouse_aos';
-        if (normalized.includes('parent aos') || (normalized.includes('adjustment') && normalized.includes('parent'))) return 'parent_aos';
-        if (normalized.includes('child aos') || (normalized.includes('adjustment') && normalized.includes('child'))) return 'child_aos';
-        if (normalized.includes('i-90') || normalized.includes('replace permanent resident card') || normalized.includes('green card replacement')) return 'i90';
-        if (normalized.includes('i-751') || normalized.includes('remove conditions') || normalized.includes('conditions on residence')) return 'i751';
-        if (normalized.includes('daca') || normalized.includes('821d')) return 'daca';
-        if (normalized.includes('n-400') || normalized.includes('naturalization') || normalized.includes('citizenship')) return 'n400';
-
-        return null;
-    };
+    // getChecklistKeyFromService is now imported from @/lib/utils/documentHelper
 
     const currentChecklistKey = useMemo<ChecklistKey | null>(() => {
         const serviceText = `${selectedCase?.title || ''} ${selectedCase?.service_type || ''}`;
         return getChecklistKeyFromService(serviceText);
     }, [selectedCase?.title, selectedCase?.service_type]);
 
-    const currentChecklist: ChecklistData | null = currentChecklistKey ? CHECKLISTS[currentChecklistKey] : null;
+    const currentChecklist = currentChecklistKey ? checklistsData[currentChecklistKey] : null;
     const applicationTypeLabel = currentChecklist?.title || selectedCase?.service_type || 'Not specified';
 
     useEffect(() => {
@@ -218,10 +202,14 @@ export default function AssignedCasesPage() {
 
         const loadData = async () => {
             try {
-                const myCases = await getManagerAssignedCases();
+                const [myCases, checks] = await Promise.all([
+                    getManagerAssignedCases(),
+                    getChecklists()
+                ]);
                 setCases(myCases);
+                setChecklistsData(checks);
             } catch (err) {
-                console.error('Failed to fetch assigned cases:', err);
+                console.error('Failed to fetch assigned cases or checklists:', err);
             } finally {
                 setIsLoading(false);
             }
