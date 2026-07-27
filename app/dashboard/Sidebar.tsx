@@ -51,65 +51,43 @@ export default function Sidebar({ isOpen = false, onClose }: SidebarProps) {
                 <div className={styles.navSection}>
                     <div className={styles.navSectionTitle}>MAIN</div>
 
-                    {/* Step 1 */}
-                    <Link
-                        href="/dashboard/get-started"
-                        onClick={onClose}
-                        className={pathname === '/dashboard/get-started' ? styles.flowNavItemActive : styles.flowNavItem}
-                    >
-                        1. Start Application
-                    </Link>
+                    {/* Forms Steps */}
+                    {formsList.map((form, fIdx) => {
+                        const isSubActive = pathname === form.path;
+                        const normalizedCode = form.code.replace(/-/g, '').toLowerCase();
+                        const isCompleted = completedForms.includes(normalizedCode);
+                        return (
+                            <Link
+                                key={fIdx}
+                                href={form.path}
+                                onClick={onClose}
+                                className={`flex items-center justify-between px-4 py-3 rounded-[1rem] transition-colors mb-2 font-bold text-[0.95rem] ${isSubActive
+                                    ? 'bg-[#2563EB] text-white shadow-sm'
+                                    : 'text-[#475569] hover:bg-[#f8fafc]'
+                                    }`}
+                            >
+                                <span>Step {fIdx + 1}</span>
+                                <span className={isSubActive ? 'text-white font-bold' : isCompleted ? 'text-emerald-500 font-bold' : 'text-transparent'}>✓</span>
+                            </Link>
+                        );
+                    })}
 
-                    {/* Step 2: Required Forms */}
-                    <div>
-                        <Link
-                            href={formsList[0]?.path || '/dashboard/get-started'}
-                            onClick={onClose}
-                            className={isFormRouteActive ? styles.flowNavItemActive : styles.flowNavItem}
-                        >
-                            2. Required Forms
-                        </Link>
-
-                        {/* Nested Sub-Forms List */}
-                        <div className="pl-4 pr-1 py-1 space-y-1 mb-2">
-                            {formsList.map((form, fIdx) => {
-                                const isSubActive = pathname === form.path;
-                                const normalizedCode = form.code.replace(/-/g, '').toLowerCase();
-                                const isCompleted = completedForms.includes(normalizedCode);
-                                return (
-                                    <Link
-                                        key={fIdx}
-                                        href={form.path}
-                                        onClick={onClose}
-                                        className={`flex items-center justify-between text-xs font-semibold px-3 py-2 rounded-lg transition-colors ${isSubActive
-                                            ? 'bg-blue-600 text-white font-bold shadow-sm'
-                                            : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
-                                            }`}
-                                    >
-                                        <span>{form.name}</span>
-                                        <span className={isSubActive ? 'text-white' : isCompleted ? 'text-emerald-600' : 'text-transparent'}>✓</span>
-                                    </Link>
-                                );
-                            })}
-                        </div>
-                    </div>
-
-                    {/* Step 3: Document Upload */}
+                    {/* Step: Document Upload */}
                     <Link
                         href="/dashboard/get-started/document-upload"
                         onClick={onClose}
                         className={pathname === '/dashboard/get-started/document-upload' ? styles.flowNavItemActive : styles.flowNavItem}
                     >
-                        3. Document Upload
+                        {formsList.length + 1}. Document Upload
                     </Link>
 
-                    {/* Step 4: Submission */}
+                    {/* Step: Submission */}
                     <Link
                         href="/dashboard/get-started/submission"
                         onClick={onClose}
                         className={pathname === '/dashboard/get-started/submission' ? styles.flowNavItemActive : styles.flowNavItem}
                     >
-                        4. Submission
+                        {formsList.length + 2}. Submission
                     </Link>
                 </div>
             ) : (
