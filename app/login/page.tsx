@@ -20,9 +20,9 @@ export default function LoginPage() {
     setError('');
     setIsLoggingIn(true);
     try {
-      await login({ email, password });
+      await login({ email, password }, 'normal');
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to login');
+      setError(err.response?.data?.message || err.message || 'Failed to login');
     } finally {
       setIsLoggingIn(false);
     }

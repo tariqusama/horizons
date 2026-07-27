@@ -19,9 +19,9 @@ export default function AdminLoginPage() {
     setError('');
     setIsLoggingIn(true);
     try {
-      await login({ email, password });
+      await login({ email, password }, 'admin');
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Login failed. Please check credentials.');
+      setError(err.response?.data?.message || err.message || 'Login failed. Please check credentials.');
     } finally {
       setIsLoggingIn(false);
     }

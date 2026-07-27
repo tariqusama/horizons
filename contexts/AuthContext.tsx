@@ -22,7 +22,7 @@ interface User {
 interface AuthContextType {
     user: User | null;
     isLoading: boolean;
-    login: (data: any) => Promise<void>;
+    login: (data: any, portal?: 'admin' | 'normal' | 'all') => Promise<void>;
     register: (data: any, skipRedirect?: boolean) => Promise<void>;
     logout: () => Promise<void>;
     checkAuth: () => Promise<void>;
@@ -101,10 +101,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         checkAuth();
     }, []);
 
-    const login = async (data: any) => {
+    const login = async (data: any, portal: 'admin' | 'normal' | 'all' = 'all') => {
         await initCsrf();
         const res = await api.post('/login', data);
         const user = res.data.user ?? res.data;
+        
+        const normalizedRole = (user.role || '').toString().trim().toLowerCase();
+        const isAdminRole = normalizedRole.includes('admin') || 
+                            normalizedRole.includes('manager') || 
+                            normalizedRole.includes('attorney') || 
+                            normalizedRole.includes('paralegal') || 
+                            normalizedRole.includes('practitioner') ||
+                            normalizedRole.includes('pationer') ||
+                            normalizedRole.includes('printing');
+
+        if (portal === 'admin' && !isAdminRole) {
+            await api.post('/logout').catch(() => {});
+            throw new Error('Unauthorized: This portal is restricted to staff and administrators.');
+        }
+
+        if (portal === 'normal' && isAdminRole) {
+            await api.post('/logout').catch(() => {});
+            throw new Error('Please use the Admin Sign In portal.');
+        }
+
         if (res.data.token) {
             setAuthToken(res.data.token);
         }
