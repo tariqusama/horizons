@@ -8,6 +8,7 @@ interface Message {
     message: string;
     is_admin: boolean;
     created_at: string;
+    attachment_path?: string;
 }
 
 export default function DashboardChatPage() {
@@ -16,6 +17,7 @@ export default function DashboardChatPage() {
     const [isLoading, setIsLoading] = useState(true);
     const [isAppLoading, setIsAppLoading] = useState(true);
     const [isSending, setIsSending] = useState(false);
+    const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [hasAssignedManager, setHasAssignedManager] = useState<boolean | null>(null);
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -59,14 +61,25 @@ export default function DashboardChatPage() {
 
     const handleSendMessage = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!newMessage.trim() || isSending) return;
+        if ((!newMessage.trim() && !selectedFile) || isSending) return;
         if (hasAssignedManager === false) return;
 
         setIsSending(true);
         try {
-            const res = await api.post('/messages', { message: newMessage });
+            let res;
+            if (selectedFile) {
+                const formData = new FormData();
+                formData.append('message', newMessage);
+                formData.append('file', selectedFile);
+                res = await api.post('/messages', formData, {
+                    headers: { 'Content-Type': 'multipart/form-data' },
+                });
+            } else {
+                res = await api.post('/messages', { message: newMessage });
+            }
             setMessages(prev => [...prev, res.data]);
             setNewMessage('');
+            setSelectedFile(null);
         } catch (err) {
             console.error('Failed to send message:', err);
         } finally {
@@ -106,7 +119,7 @@ export default function DashboardChatPage() {
                                         } else {
                                             const filename = part;
                                             return (
-                                                <a key={i} href="#" onClick={(e) => { e.preventDefault(); alert('Downloading ' + filename); }} className="mt-1.5 flex items-center gap-2 rounded-lg p-2.5 text-sm font-medium transition-colors border max-w-full bg-white/10 hover:bg-white/20 border-white/20 text-current">
+                                                <a key={i} href={msg.attachment_path ? `${api.defaults.baseURL?.replace('/api', '')}/storage/${msg.attachment_path}` : '#'} target={msg.attachment_path ? "_blank" : "_self"} download={msg.attachment_path ? filename : undefined} onClick={(e) => { if(!msg.attachment_path) { e.preventDefault(); alert('Downloading ' + filename); } }} className="mt-1.5 flex items-center gap-2 rounded-lg p-2.5 text-sm font-medium transition-colors border max-w-full bg-white/10 hover:bg-white/20 border-white/20 text-current">
                                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0"><path d="M4 6h16" /><path d="M4 12h16" /><path d="M4 18h10" /></svg>
                                                     <span className="truncate">{filename}</span>
                                                 </a>
@@ -141,6 +154,7 @@ export default function DashboardChatPage() {
                             style={{ display: 'none' }}
                             onChange={(e) => {
                                 if (e.target.files && e.target.files[0]) {
+                                    setSelectedFile(e.target.files[0]);
                                     setNewMessage(prev => prev + (prev ? ' ' : '') + `[Attachment: ${e.target.files![0].name}] `);
                                 }
                             }}
@@ -154,7 +168,19 @@ export default function DashboardChatPage() {
                             disabled={isSending}
                         />
                     </div>
-                    <button type="submit" className={styles.sendButton} disabled={!newMessage.trim() || isSending}>
+                    {selectedFile && (
+                        <div className="absolute bottom-[calc(100%+10px)] left-0 bg-white border border-[#ECE9E2] rounded-lg px-3 py-2 flex items-center gap-2 text-sm text-[#101F38] shadow-sm">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-orange-500"><path d="M4 6h16" /><path d="M4 12h16" /><path d="M4 18h10" /></svg>
+                            <span className="truncate max-w-[200px]">{selectedFile.name}</span>
+                            <button type="button" onClick={() => {
+                                setSelectedFile(null);
+                                setNewMessage(prev => prev.replace(`[Attachment: ${selectedFile.name}] `, '').replace(`[Attachment: ${selectedFile.name}]`, ''));
+                            }} className="ml-1 text-[#8A8F98] hover:text-[#E24B4A]">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+                            </button>
+                        </div>
+                    )}
+                    <button type="submit" className={styles.sendButton} disabled={(!newMessage.trim() && !selectedFile) || isSending}>
                         <span>{isSending ? 'Sending...' : 'Send'}</span>
                         {!isSending && (
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

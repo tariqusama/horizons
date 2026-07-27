@@ -157,9 +157,21 @@ export const getManagerMessages = async (applicationId: number): Promise<Message
     return response.data;
 };
 
-export const sendManagerMessage = async (applicationId: number, message: string): Promise<MessagePayload> => {
-    const response = await api.post(`/manager/applications/${applicationId}/messages`, { message });
-    return response.data;
+export const sendManagerMessage = async (applicationId: number, message: string, file?: File | null): Promise<MessagePayload> => {
+    if (file) {
+        const formData = new FormData();
+        formData.append('message', message);
+        formData.append('file', file);
+        const response = await api.post(`/manager/applications/${applicationId}/messages`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
+        return response.data;
+    } else {
+        const response = await api.post(`/manager/applications/${applicationId}/messages`, { message });
+        return response.data;
+    }
 };
 
 export const getManagerDocuments = async (applicationId: number): Promise<DocumentPayload[]> => {

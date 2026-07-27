@@ -86,7 +86,7 @@ type TabLabel = (typeof TABS)[number];
 
 const ESCALATION_REASONS = ['Legal complexity', 'Client request', 'Missing critical documents', 'Approaching deadline', 'Other'];
 
-type ChatMessage = { id: string; from: 'staff' | 'client'; text: string; createdAt: string };
+type ChatMessage = { id: string; from: 'staff' | 'client'; text: string; createdAt: string; attachmentPath?: string };
 type DocRequest = { id: string; documents: string; note: string; createdAt: string };
 type ChecklistDocument = { name: string; required: boolean };
 type ChecklistSection = { title: string; documents: ChecklistDocument[] };
@@ -115,6 +115,7 @@ export default function AssignedCasesPage() {
     const [activeConversationId, setActiveConversationId] = useState<string | null>(null);
     const [messageDraft, setMessageDraft] = useState('');
     const [isSendingMessage, setIsSendingMessage] = useState(false);
+    const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
     // Request additional documents (UI-only until an API is wired up)
     const [docRequests, setDocRequests] = useState<DocRequest[]>([]);
@@ -260,6 +261,7 @@ export default function AssignedCasesPage() {
                         from,
                         text: message.message,
                         createdAt: message.created_at,
+                        attachmentPath: message.attachment_path,
                     };
                 });
 
@@ -312,21 +314,23 @@ export default function AssignedCasesPage() {
     };
 
     const handleSendMessage = async () => {
-        if (!selectedCase || !activeConversation || !messageDraft.trim()) return;
+        if (!selectedCase || !activeConversation || (!messageDraft.trim() && !selectedFile)) return;
 
         setIsSendingMessage(true);
         try {
-            const savedMessage = await sendManagerMessage(selectedCase.id, messageDraft.trim());
+            const savedMessage = await sendManagerMessage(selectedCase.id, messageDraft.trim(), selectedFile);
             const message: ChatMessage = {
                 id: String(savedMessage.id),
                 from: 'staff',
                 text: savedMessage.message,
                 createdAt: savedMessage.created_at,
+                attachmentPath: savedMessage.attachment_path,
             };
             setConversations((prev) =>
                 prev.map((c) => (c.id === activeConversation.id ? { ...c, messages: [...c.messages, message] } : c))
             );
             setMessageDraft('');
+            setSelectedFile(null);
         } catch (err) {
             console.error('Unable to send message:', err);
             alert('Unable to send message. Please try again.');
@@ -671,7 +675,7 @@ export default function AssignedCasesPage() {
                                                         } else {
                                                             const filename = part;
                                                             return (
-                                                                <a key={i} href="#" onClick={(e) => { e.preventDefault(); alert('Downloading ' + filename); }} className={`mt-1.5 flex items-center gap-2 rounded-lg p-2.5 text-sm font-medium transition-colors border max-w-full ${m.from === 'staff' ? 'bg-orange-600/20 border-orange-400 hover:bg-orange-600/30 text-white' : 'bg-white border-[#ECE9E2] hover:bg-gray-50 text-[#101F38]'}`}>
+                                                                <a key={i} href={m.attachmentPath ? getStorageUrl(m.attachmentPath) : '#'} target={m.attachmentPath ? "_blank" : "_self"} download={m.attachmentPath ? filename : undefined} onClick={(e) => { if (!m.attachmentPath) { e.preventDefault(); alert('Downloading ' + filename); } }} className={`mt-1.5 flex items-center gap-2 rounded-lg p-2.5 text-sm font-medium transition-colors border max-w-full ${m.from === 'staff' ? 'bg-orange-600/20 border-orange-400 hover:bg-orange-600/30 text-white' : 'bg-white border-[#ECE9E2] hover:bg-gray-50 text-[#101F38]'}`}>
                                                                     <Icon.fileText width={16} height={16} className={m.from === 'staff' ? 'text-orange-200 shrink-0' : 'text-orange-500 shrink-0'} />
                                                                     <span className="truncate">{filename}</span>
                                                                 </a>
@@ -701,6 +705,7 @@ export default function AssignedCasesPage() {
                                         className="hidden" 
                                         onChange={(e) => {
                                             if (e.target.files && e.target.files[0]) {
+                                                setSelectedFile(e.target.files[0]);
                                                 setMessageDraft(prev => prev + (prev ? ' ' : '') + `[Attachment: ${e.target.files![0].name}] `);
                                             }
                                         }}
@@ -708,13 +713,14 @@ export default function AssignedCasesPage() {
                                     <button 
                                         type="button"
                                         onClick={() => document.getElementById('file-upload-assigned')?.click()}
-                                        className="text-[#8A8F98] hover:text-[#101F38] transition-colors shrink-0 p-2"
+                                        className="text-[#8A8F98] hover:text-[#101F38] transition-colors shrink-0 p-2 relative"
                                     >
                                         <Icon.paperclip width={17} height={17} />
+                                        {selectedFile && <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-orange-500 border border-white"></span>}
                                     </button>
                                     <button
                                         onClick={handleSendMessage}
-                                        disabled={!messageDraft.trim() || isSendingMessage}
+                                        disabled={(!messageDraft.trim() && !selectedFile) || isSendingMessage}
                                         className="w-9 h-9 rounded-full bg-gradient-to-b from-orange-500 to-orange-600 text-white flex items-center justify-center shrink-0 hover:bg-[#D1644C] transition-colors disabled:opacity-50"
                                     >
                                         {isSendingMessage ? <span className="text-xs">…</span> : <Icon.send width={15} height={15} />}

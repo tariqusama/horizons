@@ -2,6 +2,7 @@
 
 import React, { useEffect, useMemo, useState } from 'react';
 import { getManagerAssignedCases, getManagerMessages, sendManagerMessage, Application, MessagePayload } from '@/lib/api/cases';
+import { getStorageUrl } from '@/lib/api';
 
 const STATUS_OPTIONS = ['All', 'Open', 'In Progress', 'Resolved'] as const;
 const PRIORITY_OPTIONS = ['All Priorities', 'High', 'Medium', 'Low'] as const;
@@ -37,6 +38,7 @@ export default function ManagerMessagesPage() {
     const [isLoadingMessages, setIsLoadingMessages] = useState(false);
     const [messageDraft, setMessageDraft] = useState('');
     const [isSending, setIsSending] = useState(false);
+    const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [searchQuery, setSearchQuery] = useState('');
     const [statusFilter, setStatusFilter] = useState<StatusOption>('All');
     const [priorityFilter, setPriorityFilter] = useState<PriorityOption>('All Priorities');
@@ -132,12 +134,13 @@ export default function ManagerMessagesPage() {
     const openTickets = totalTickets - resolvedTickets - inProgressTickets;
 
     const handleSend = async () => {
-        if (!selectedCase || !messageDraft.trim()) return;
+        if (!selectedCase || (!messageDraft.trim() && !selectedFile)) return;
         setIsSending(true);
         try {
-            const saved = await sendManagerMessage(selectedCase.id, messageDraft.trim());
+            const saved = await sendManagerMessage(selectedCase.id, messageDraft.trim(), selectedFile);
             setMessages((prev) => [...prev, saved]);
             setMessageDraft('');
+            setSelectedFile(null);
         } catch (err) {
             console.error('Unable to send message', err);
         } finally {
@@ -287,7 +290,7 @@ export default function ManagerMessagesPage() {
                                                     } else {
                                                         const filename = part;
                                                         return (
-                                                            <a key={i} href="#" onClick={(e) => { e.preventDefault(); alert('Downloading ' + filename); }} className={`mt-1.5 flex items-center gap-2 rounded-lg p-2.5 text-sm font-medium transition-colors border max-w-full ${message.is_admin ? 'bg-orange-600/20 border-orange-400 hover:bg-orange-600/30 text-white' : 'bg-white border-[#ECE9E2] hover:bg-gray-50 text-[#101F38]'}`}>
+                                                            <a key={i} href={message.attachment_path ? getStorageUrl(message.attachment_path) : '#'} target={message.attachment_path ? "_blank" : "_self"} download={message.attachment_path ? filename : undefined} onClick={(e) => { if(!message.attachment_path) { e.preventDefault(); alert('Downloading ' + filename); } }} className={`mt-1.5 flex items-center gap-2 rounded-lg p-2.5 text-sm font-medium transition-colors border max-w-full ${message.is_admin ? 'bg-orange-600/20 border-orange-400 hover:bg-orange-600/30 text-white' : 'bg-white border-[#ECE9E2] hover:bg-gray-50 text-[#101F38]'}`}>
                                                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`shrink-0 ${message.is_admin ? 'text-orange-200' : 'text-orange-500'}`}><path d="M4 6h16" /><path d="M4 12h16" /><path d="M4 18h10" /></svg>
                                                                 <span className="truncate">{filename}</span>
                                                             </a>
@@ -314,10 +317,23 @@ export default function ManagerMessagesPage() {
                                 className="hidden" 
                                 onChange={(e) => {
                                     if (e.target.files && e.target.files[0]) {
+                                        setSelectedFile(e.target.files[0]);
                                         setMessageDraft(prev => prev + (prev ? ' ' : '') + `[Attachment: ${e.target.files![0].name}] `);
                                     }
                                 }}
                             />
+                            {selectedFile && (
+                                <div className="absolute bottom-[110%] left-3 bg-white border border-[#ECE9E2] rounded-lg px-3 py-2 flex items-center gap-2 text-sm text-[#101F38] shadow-sm whitespace-nowrap z-10">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-orange-500 shrink-0"><path d="M4 6h16" /><path d="M4 12h16" /><path d="M4 18h10" /></svg>
+                                    <span className="truncate max-w-[150px]">{selectedFile.name}</span>
+                                    <button type="button" onClick={() => {
+                                        setSelectedFile(null);
+                                        setMessageDraft(prev => prev.replace(`[Attachment: ${selectedFile.name}] `, '').replace(`[Attachment: ${selectedFile.name}]`, ''));
+                                    }} className="ml-1 text-[#8A8F98] hover:text-[#E24B4A] shrink-0">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+                                    </button>
+                                </div>
+                            )}
                             <input
                                 type="text"
                                 value={messageDraft}
@@ -328,7 +344,7 @@ export default function ManagerMessagesPage() {
                             />
                             <button
                                 onClick={handleSend}
-                                disabled={!messageDraft.trim() || isSending || !selectedCase}
+                                disabled={(!messageDraft.trim() && !selectedFile) || isSending || !selectedCase}
                                 className="rounded-full bg-gradient-to-b from-orange-500 to-orange-600 px-5 py-3 text-sm font-semibold text-white hover:bg-[#D1644C] disabled:opacity-50 flex items-center gap-2"
                             >
                                 {isSending ? 'Sending...' : 'Send'}
