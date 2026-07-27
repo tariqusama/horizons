@@ -154,3 +154,30 @@ export const generateFormChecklist = (latestApp: any, checklistsData: any): Form
         groups
     };
 };
+
+export const forceDownload = async (e: React.MouseEvent<HTMLAnchorElement>, url: string, filename: string) => {
+    e.preventDefault();
+    try {
+        let safeFilename = filename || 'document';
+        const urlWithoutQuery = url.split('?')[0].split('#')[0];
+        const ext = urlWithoutQuery.includes('.') ? urlWithoutQuery.split('.').pop()?.toLowerCase() || '' : '';
+        if (ext && !safeFilename.toLowerCase().endsWith(`.${ext}`)) {
+            safeFilename += `.${ext}`;
+        }
+        // Sanitize filename
+        safeFilename = safeFilename.replace(/[^a-zA-Z0-9.-_ ]/g, '');
+        
+        const downloadUrl = `/api/download?url=${encodeURIComponent(url)}&filename=${encodeURIComponent(safeFilename)}`;
+        // Forcing download using a hidden iframe is a clean way that doesn't navigate away or pop up a blocked window
+        const iframe = document.createElement('iframe');
+        iframe.style.display = 'none';
+        iframe.src = downloadUrl;
+        document.body.appendChild(iframe);
+        setTimeout(() => {
+            document.body.removeChild(iframe);
+        }, 5000);
+    } catch (error) {
+        console.error('Download failed:', error);
+        window.open(url, '_blank');
+    }
+};

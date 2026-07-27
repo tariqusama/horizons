@@ -20,6 +20,30 @@ function PreviewModal({ doc, onClose }: PreviewModalProps) {
         if (e.target === e.currentTarget) onClose();
     };
 
+    const handleDownload = async (e: React.MouseEvent<HTMLAnchorElement>) => {
+        e.preventDefault();
+        try {
+            let filename = doc.name || 'document';
+            // Ensure filename has the correct extension
+            if (ext && !filename.toLowerCase().endsWith(`.${ext}`)) {
+                filename += `.${ext}`;
+            }
+            // Sanitize filename to prevent issues with special characters
+            filename = filename.replace(/[^a-zA-Z0-9.-_ ]/g, '');
+            const downloadUrl = `/api/download?url=${encodeURIComponent(url)}&filename=${encodeURIComponent(filename)}`;
+            const iframe = document.createElement('iframe');
+            iframe.style.display = 'none';
+            iframe.src = downloadUrl;
+            document.body.appendChild(iframe);
+            setTimeout(() => {
+                document.body.removeChild(iframe);
+            }, 5000);
+        } catch (error) {
+            console.error('Download failed:', error);
+            window.open(url, '_blank');
+        }
+    };
+
     // Close on Escape
     useEffect(() => {
         const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
@@ -62,7 +86,7 @@ function PreviewModal({ doc, onClose }: PreviewModalProps) {
                             href={url}
                             target="_blank"
                             rel="noreferrer"
-                            download
+                            onClick={handleDownload}
                             className="flex items-center gap-1.5 text-xs font-semibold text-slate-600 hover:text-blue-600 bg-slate-100 hover:bg-blue-50 px-3 py-2 rounded-xl transition-colors"
                         >
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
