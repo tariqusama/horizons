@@ -81,6 +81,8 @@ export interface MessagePayload {
     message: string;
     is_admin: boolean;
     created_at: string;
+    attachment_path?: string;
+    attachment_name?: string;
 }
 
 export interface DocumentPayload {
