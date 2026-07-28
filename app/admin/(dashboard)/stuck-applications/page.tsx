@@ -127,9 +127,9 @@ function StatusPill({ status }: { status: string }) {
 function CaseRow({ item }: { item: CaseItem }) {
     return (
         <div className="group relative overflow-hidden rounded-xl p-4 border border-slate-200 bg-slate-50 hover:border-orange-400 hover:bg-[#FFF9F5] transition-all duration-300">
-            <div className="flex items-start justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
                 <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-3">
+                    <div className="flex items-center flex-wrap gap-2 mb-3">
                         <h4 className="font-semibold text-base text-slate-800 group-hover:text-orange-500 transition-colors">{item.caseName}</h4>
                         <div className="inline-flex items-center rounded-full font-semibold text-[10px] px-2 py-0.5 bg-[#FF4B4B] text-white">
                             {item.caseType}
@@ -162,7 +162,7 @@ function CaseRow({ item }: { item: CaseItem }) {
                         <span className="text-sm font-semibold text-orange-500 min-w-[35px]">{item.progressPct}%</span>
                     </div>
                 </div>
-                <div className="flex items-center gap-3 ml-4 flex-shrink-0">
+                <div className="flex items-center gap-3 flex-shrink-0">
                     <StatusPill status={item.status} />
                     <Link href={`/manager/assigned-cases/${item.id}`} className="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-semibold ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-slate-200 bg-white h-8 rounded-lg px-4 hover:bg-slate-50 text-slate-700 transition-colors">
                         View
@@ -176,7 +176,7 @@ function CaseRow({ item }: { item: CaseItem }) {
 function GroupSection({ group, groupIcon }: { group: Group; groupIcon: React.ReactNode }) {
     return (
         <div className="rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden">
-            <div className="flex items-start justify-between p-5 border-b border-slate-50/0">
+            <div className="flex flex-col sm:flex-row sm:items-start justify-between p-5 border-b border-slate-50/0 gap-4">
                 <div className="flex items-start gap-3">
                     <div className="mt-0.5 rounded-full bg-[#FFF4E5] p-2 text-[#FFB020]">
                         {groupIcon}
@@ -374,7 +374,7 @@ export default function AdminStuckApplicationsPage() {
 
             <div className="space-y-6">
                 {/* Stat Cards */}
-                <div className="grid gap-4 md:grid-cols-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     {statCards.map((stat, idx) => (
                         <div key={stat.label} className={`rounded-lg border-2 ${stat.borderColor} ${stat.bgColor} relative overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 animate-fade-in hover:scale-[1.02]`} style={{ animationDelay: `${idx * 100}ms` }}>
                             <div className="p-6 flex flex-row items-center justify-between space-y-0 pb-2 relative z-10">

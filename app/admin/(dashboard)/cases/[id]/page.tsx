@@ -160,9 +160,9 @@ export default function AdminCaseDetailPage() {
                 <span className="text-gray-900">Case #{caseData.receipt_number || caseData.id}</span>
             </div>
 
-            <div className="flex justify-between items-start mb-8">
+            <div className="flex flex-col sm:flex-row justify-between items-start gap-4 mb-8">
                 <div>
-                    <h1 className="text-3xl font-black text-gray-900 flex items-center gap-4">
+                    <h1 className="text-2xl sm:text-3xl font-black text-gray-900 flex flex-wrap items-center gap-2 sm:gap-4">
                         Review Case: #{caseData.receipt_number || caseData.id}
                         <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-bold tracking-wide uppercase ${caseData.status === 'Approved' ? 'bg-green-100 text-green-800' :
                             caseData.status === 'Pending' ? 'bg-yellow-100 text-yellow-800' :
@@ -176,7 +176,7 @@ export default function AdminCaseDetailPage() {
                 </div>
                 <button
                     onClick={() => setShowEditModal(true)}
-                    className="bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 hover:text-gray-900 px-4 py-2 rounded-xl font-bold text-sm transition-colors shadow-sm"
+                    className="w-full sm:w-auto bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 hover:text-gray-900 px-4 py-2 rounded-xl font-bold text-sm transition-colors shadow-sm"
                 >
                     Edit Case
                 </button>
@@ -189,7 +189,7 @@ export default function AdminCaseDetailPage() {
                             <h2 className="text-lg font-bold text-gray-900">Case & Applicant Information</h2>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-6">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                             <div>
                                 <p className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Full Name</p>
                                 <p className="text-sm font-semibold text-gray-900">{caseData.user?.name}</p>
@@ -233,7 +233,7 @@ export default function AdminCaseDetailPage() {
                         <h2 className="text-lg font-bold text-gray-900 mb-6 border-b border-gray-100 pb-4">Submitted Documents</h2>
 
                         <div className="space-y-4">
-                            <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl border border-gray-100">
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-gray-50 rounded-xl border border-gray-100 gap-4">
                                 <div className="flex items-center space-x-4">
                                     <div className="w-10 h-10 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center shrink-0">
                                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -257,7 +257,7 @@ export default function AdminCaseDetailPage() {
 
                             {Array.isArray(caseData.documents) && caseData.documents.length > 0 ? (
                                 caseData.documents.map((doc: any) => (
-                                    <div key={doc.id} className="flex items-center justify-between p-4 bg-white rounded-xl border border-gray-100">
+                                    <div key={doc.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-white rounded-xl border border-gray-100 gap-4">
                                         <div className="flex items-center gap-4">
                                             <div className="w-10 h-10 rounded-lg bg-gray-50 flex items-center justify-center text-gray-600">
                                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h11"></path><polyline points="17 2 17 8 23 8"></polyline></svg>

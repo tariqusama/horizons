@@ -170,7 +170,7 @@ export default function AdminControlCenterPage() {
 
                 {/* Tabs */}
                 <div dir="ltr" data-orientation="horizontal" className="space-y-6">
-                    <div role="tablist" aria-orientation="horizontal" className="h-10 items-center justify-center text-slate-500 grid w-full grid-cols-4 bg-slate-100/30 p-1 rounded-xl" tabIndex={0}>
+                    <div role="tablist" aria-orientation="horizontal" className="items-center justify-center text-slate-500 grid w-full grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-1 bg-slate-100/30 p-1 rounded-xl" tabIndex={0}>
                         {TABS.map(tab => (
                             <button
                                 key={tab}
@@ -204,7 +204,7 @@ export default function AdminControlCenterPage() {
                                                         <span className="font-semibold capitalize text-lg text-slate-900">{review.name}</span>
                                                         <div className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold bg-slate-500/10 text-slate-700 border-slate-500/20">{review.count} reviews</div>
                                                     </div>
-                                                    <div className="grid grid-cols-3 gap-3 mb-3">
+                                                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-3">
                                                         <div className="flex items-center gap-2 p-2 rounded-lg bg-green-500/10">
                                                             <Icon.check width={16} height={16} className="text-green-500 shrink-0" />
                                                             <div className="flex flex-col">
