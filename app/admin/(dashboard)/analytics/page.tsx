@@ -10,13 +10,14 @@ export default function AdminAnalyticsPage() {
     const [data, setData] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+    const [period, setPeriod] = useState<'30days' | 'quarter' | 'year'>('year');
 
     useEffect(() => {
         const fetchAnalytics = async () => {
             setLoading(true);
             setError('');
             try {
-                const analyticsData = await getAnalyticsData();
+                const analyticsData = await getAnalyticsData(period);
                 setData(analyticsData);
             } catch (err: any) {
                 console.error('Failed to load analytics', err);
@@ -26,7 +27,41 @@ export default function AdminAnalyticsPage() {
             }
         };
         fetchAnalytics();
-    }, []);
+    }, [period]);
+
+    const handleExport = () => {
+        if (!data) return;
+        
+        // Simple CSV generation
+        let csv = "Category,Value\n";
+        
+        const totalRev = data.total_revenue ?? (Array.isArray(data?.monthly_revenue) ? data.monthly_revenue.reduce((sum: number, item: any) => sum + item.revenue, 0) : 0);
+        csv += `Total Revenue (Period: ${period}),${totalRev}\n`;
+        csv += `Services Tracked,${Array.isArray(data?.case_distribution) ? data.case_distribution.length : 0}\n\n`;
+        
+        csv += "Case Distribution,Count\n";
+        if (Array.isArray(data?.case_distribution)) {
+            data.case_distribution.forEach((item: any) => {
+                csv += `${item.name},${item.count}\n`;
+            });
+        }
+        
+        csv += "\nAverage Processing Times,Months\n";
+        if (Array.isArray(data?.processing_times)) {
+            data.processing_times.forEach((item: any) => {
+                csv += `${item.service_name},${item.avg_months}\n`;
+            });
+        }
+
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.setAttribute('href', url);
+        a.setAttribute('download', `analytics_report_${period}.csv`);
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    };
 
     const monthlyRevenue = Array.isArray(data?.monthly_revenue) ? data.monthly_revenue : [];
     const maxRevenue = monthlyRevenue.length ? Math.max(...monthlyRevenue.map((m: any) => m.revenue), 1) : 100;
@@ -34,7 +69,7 @@ export default function AdminAnalyticsPage() {
         (v) => '$' + (v >= 1000 ? (v / 1000).toFixed(1) + 'k' : v.toFixed(0))
     );
 
-    const totalRevenue = monthlyRevenue.reduce((sum: number, item: any) => sum + item.revenue, 0);
+    const totalRevenue = data?.total_revenue ?? monthlyRevenue.reduce((sum: number, item: any) => sum + item.revenue, 0);
     const caseDistribution = Array.isArray(data?.case_distribution) ? data.case_distribution : [];
     const processingTimes = Array.isArray(data?.processing_times) ? data.processing_times : [];
 
@@ -46,9 +81,24 @@ export default function AdminAnalyticsPage() {
                     <p className="text-gray-500 mt-2 font-medium">Insights into agency performance, revenue, and case processing times.</p>
                 </div>
                 <div className="flex items-center space-x-2 bg-white border border-gray-200 rounded-lg p-1 shadow-sm">
-                    <button className="px-4 py-1.5 rounded-md bg-gray-100 text-gray-900 font-bold text-sm">30 Days</button>
-                    <button className="px-4 py-1.5 rounded-md text-gray-500 font-bold text-sm hover:text-gray-900 transition-colors">Quarter</button>
-                    <button className="px-4 py-1.5 rounded-md text-gray-500 font-bold text-sm hover:text-gray-900 transition-colors">Year</button>
+                    <button 
+                        onClick={() => setPeriod('30days')}
+                        className={`px-4 py-1.5 rounded-md font-bold text-sm transition-colors ${period === '30days' ? 'bg-gray-100 text-gray-900' : 'text-gray-500 hover:text-gray-900'}`}
+                    >
+                        30 Days
+                    </button>
+                    <button 
+                        onClick={() => setPeriod('quarter')}
+                        className={`px-4 py-1.5 rounded-md font-bold text-sm transition-colors ${period === 'quarter' ? 'bg-gray-100 text-gray-900' : 'text-gray-500 hover:text-gray-900'}`}
+                    >
+                        Quarter
+                    </button>
+                    <button 
+                        onClick={() => setPeriod('year')}
+                        className={`px-4 py-1.5 rounded-md font-bold text-sm transition-colors ${period === 'year' ? 'bg-gray-100 text-gray-900' : 'text-gray-500 hover:text-gray-900'}`}
+                    >
+                        Year
+                    </button>
                 </div>
             </div>
 
@@ -79,7 +129,7 @@ export default function AdminAnalyticsPage() {
                                 <h2 className="font-bold text-gray-900 text-lg">Revenue Overview</h2>
                                 <p className="text-sm text-gray-500">Monthly revenue for the past year.</p>
                             </div>
-                            <button className="text-sm font-bold text-orange-500 hover:text-orange-600 flex items-center">
+                            <button onClick={handleExport} className="text-sm font-bold text-orange-500 hover:text-orange-600 flex items-center">
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="mr-1.5">
                                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                                     <polyline points="7 10 12 15 17 10"></polyline>

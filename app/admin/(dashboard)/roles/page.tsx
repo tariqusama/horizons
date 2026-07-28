@@ -48,14 +48,25 @@ export default function AdminRolesPage() {
         }
     };
 
-    const assignments = users.filter(u => u.role !== 'Client' && u.role !== 'Read-Only Viewer').map(u => ({
-        id: u.id,
-        user: u.name,
-        email: u.email,
-        role: u.role,
-        assigned: new Date(u.created_at).toLocaleDateString(),
-        status: u.status
-    }));
+    const assignments = users.filter(u => {
+        const r = (u.role || '').toLowerCase();
+        return r !== 'client' && r !== 'read-only viewer' && r !== '';
+    }).map(u => {
+        const r = (u.role || '').toLowerCase();
+        let normalizedRole = "Case Manager";
+        if (r.includes('admin')) normalizedRole = "Super Admin";
+        else if (r.includes('attorney')) normalizedRole = "Immigration Attorney";
+        else if (r.includes('paralegal')) normalizedRole = "Paralegal";
+
+        return {
+            id: u.id,
+            user: u.name,
+            email: u.email,
+            role: normalizedRole,
+            assigned: new Date(u.created_at).toLocaleDateString(),
+            status: u.status || 'Active'
+        };
+    });
 
     const roleStats = [
         { name: "Super Admin", count: assignments.filter(a => a.role === "Super Admin").length },

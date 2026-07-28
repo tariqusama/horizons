@@ -8,6 +8,8 @@ export default function AnalyticsPage() {
     const [cases, setCases] = useState<Application[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
+    const [period, setPeriod] = useState<'30days' | 'quarter' | 'year'>('year');
+
     useEffect(() => {
         if (!user) return;
         const loadData = async () => {
@@ -31,14 +33,24 @@ export default function AnalyticsPage() {
         );
     }
 
-    const totalCases = cases.length;
-    const approvedCases = cases.filter(c => c.status === 'Approved').length;
+    const filteredCases = cases.filter(c => {
+        if (period === 'year') return true;
+        const createdAt = new Date(c.created_at);
+        const now = new Date();
+        const daysDiff = (now.getTime() - createdAt.getTime()) / (1000 * 3600 * 24);
+        if (period === '30days') return daysDiff <= 30;
+        if (period === 'quarter') return daysDiff <= 90;
+        return true;
+    });
+
+    const totalCases = filteredCases.length;
+    const approvedCases = filteredCases.filter(c => c.status === 'Approved').length;
     const approvalRate = totalCases > 0 ? ((approvedCases / totalCases) * 100).toFixed(1) : '0.0';
 
-    const handledCases = cases.filter(c => c.status === 'Approved' || c.status === 'Completed').length;
+    const handledCases = filteredCases.filter(c => c.status === 'Approved' || c.status === 'Completed').length;
 
     // Calculate Cases by Type
-    const casesByType = cases.reduce((acc, c) => {
+    const casesByType = filteredCases.reduce((acc, c) => {
         const type = c.title || 'Other';
         acc[type] = (acc[type] || 0) + 1;
         return acc;
@@ -50,7 +62,7 @@ export default function AnalyticsPage() {
         .slice(0, 4);
 
     let avgProcessingTime = '0.0';
-    const processedCasesArr = cases.filter(c => c.status === 'Approved' || c.status === 'Completed');
+    const processedCasesArr = filteredCases.filter(c => c.status === 'Approved' || c.status === 'Completed');
     if (processedCasesArr.length > 0) {
         const totalDays = processedCasesArr.reduce((sum, c) => {
             const start = new Date(c.created_at).getTime();
@@ -82,6 +94,28 @@ export default function AnalyticsPage() {
     });
     const maxVolume = Math.max(...volumeData.map(v => v.count), 1);
 
+    const handleExport = () => {
+        let csv = "Category,Value\n";
+        csv += `Period,${period}\n`;
+        csv += `Total Cases Handled,${handledCases}\n`;
+        csv += `Average Processing Time (days),${avgProcessingTime}\n`;
+        csv += `Approval Rate (%),${approvalRate}\n\n`;
+        
+        csv += "Case Type,Count\n";
+        Object.entries(casesByType).forEach(([type, count]) => {
+            csv += `${type},${count}\n`;
+        });
+
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.setAttribute('href', url);
+        a.setAttribute('download', `manager_analytics_${period}.csv`);
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    };
+
     return (
         <div className="max-w-[1200px] mx-auto w-full pb-12">
             <div className="flex justify-between items-end mb-8">
@@ -90,10 +124,16 @@ export default function AnalyticsPage() {
                     <p className="text-gray-500 mt-2 font-medium">Performance metrics and case processing statistics.</p>
                 </div>
                 <div className="flex space-x-2">
-                    <button className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-semibold text-gray-700 shadow-sm hover:bg-gray-50">
-                        This Month
-                    </button>
-                    <button className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-semibold text-gray-700 shadow-sm hover:bg-gray-50 flex items-center gap-2">
+                    <select 
+                        value={period}
+                        onChange={(e) => setPeriod(e.target.value as any)}
+                        className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-semibold text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none"
+                    >
+                        <option value="30days">Last 30 Days</option>
+                        <option value="quarter">Last Quarter</option>
+                        <option value="year">Last Year</option>
+                    </select>
+                    <button onClick={handleExport} className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-semibold text-gray-700 shadow-sm hover:bg-gray-50 flex items-center gap-2">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                             <polyline points="7 10 12 15 17 10"></polyline>

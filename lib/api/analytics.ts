@@ -10,8 +10,8 @@ export const getRecentActivity = async () => {
     return response.data;
 };
 
-export const getAnalyticsData = async () => {
-    const response = await api.get('/admin/analytics/data', { params: { _t: new Date().getTime() } });
+export const getAnalyticsData = async (period: string = 'year') => {
+    const response = await api.get('/admin/analytics/data', { params: { period, _t: new Date().getTime() } });
     return response.data;
 };
 
