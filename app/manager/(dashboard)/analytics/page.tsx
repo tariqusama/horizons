@@ -13,7 +13,7 @@ export default function AnalyticsPage() {
         const loadData = async () => {
             try {
                 const myCases = await getManagerAssignedCases();
-                setCases(myCases);
+                setCases(Array.isArray(myCases) ? myCases : []);
             } catch (err) {
                 console.error('Failed to fetch analytics cases:', err);
             } finally {

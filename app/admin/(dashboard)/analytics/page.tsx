@@ -28,15 +28,15 @@ export default function AdminAnalyticsPage() {
         fetchAnalytics();
     }, []);
 
-    const monthlyRevenue = data?.monthly_revenue ?? [];
+    const monthlyRevenue = Array.isArray(data?.monthly_revenue) ? data.monthly_revenue : [];
     const maxRevenue = monthlyRevenue.length ? Math.max(...monthlyRevenue.map((m: any) => m.revenue), 1) : 100;
     const yLabels = [maxRevenue, maxRevenue * 0.75, maxRevenue * 0.5, maxRevenue * 0.25, 0].map(
         (v) => '$' + (v >= 1000 ? (v / 1000).toFixed(1) + 'k' : v.toFixed(0))
     );
 
     const totalRevenue = monthlyRevenue.reduce((sum: number, item: any) => sum + item.revenue, 0);
-    const caseDistribution = data?.case_distribution ?? [];
-    const processingTimes = data?.processing_times ?? [];
+    const caseDistribution = Array.isArray(data?.case_distribution) ? data.case_distribution : [];
+    const processingTimes = Array.isArray(data?.processing_times) ? data.processing_times : [];
 
     return (
         <div className="max-w-[1200px] mx-auto w-full pb-12">

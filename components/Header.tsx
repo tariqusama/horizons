@@ -25,7 +25,7 @@ export default function Header({ isDashboard = false }: { isDashboard?: boolean 
   const loadNotifications = async () => {
     try {
       const data = await getNotifications();
-      setNotifications(data);
+      setNotifications(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error('Failed to load notifications', err);
     }

@@ -26,7 +26,7 @@ export default function AdminCasesPage() {
     const fetchCases = () => {
         setIsLoading(true);
         api.get('/admin/applications')
-            .then(res => setCases(res.data))
+            .then(res => setCases(Array.isArray(res.data) ? res.data : []))
             .catch(err => console.error(err))
             .finally(() => setIsLoading(false));
     };
