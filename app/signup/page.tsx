@@ -1155,32 +1155,38 @@ function SignupFlowContent() {
                       </button>
                     </div>
 
-                    <div className="mt-4 overflow-hidden rounded-2xl bg-gradient-to-br from-white to-slate-50/80 backdrop-blur-xl border border-white/60 p-5 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
-                      <div className="mb-4 flex items-center justify-between">
-                        <p className="text-xs sm:text-[11px] font-bold tracking-widest uppercase text-slate-500">Password strength</p>
-                        <span className={`inline-flex items-center gap-1.5 text-xs sm:text-[11px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider transition-colors duration-300 ${password.length === 0 ? 'bg-slate-100 text-slate-500' : passwordScore <= 2 ? 'bg-red-50 text-red-600' : passwordScore <= 4 ? 'bg-amber-50 text-amber-600' : 'bg-emerald-50 text-emerald-600'}`}>
-                          <span className={`h-1.5 w-1.5 rounded-full transition-colors duration-300 ${password.length === 0 ? 'bg-slate-300' : passwordScore <= 2 ? 'bg-red-500 animate-pulse' : passwordScore <= 4 ? 'bg-amber-500 animate-pulse' : 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]'}`} />
-                          {passwordStrength}
-                        </span>
-                      </div>
+                    {password.length === 0 ? (
+                      <p className="mt-2 text-[13px] text-slate-500">
+                        Must be at least 8 characters.
+                      </p>
+                    ) : (
+                      <div className="mt-4 overflow-hidden rounded-2xl bg-gradient-to-br from-white to-slate-50/80 backdrop-blur-xl border border-white/60 p-5 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+                        <div className="mb-4 flex items-center justify-between">
+                          <p className="text-xs sm:text-[11px] font-bold tracking-widest uppercase text-slate-500">Password strength</p>
+                          <span className={`inline-flex items-center gap-1.5 text-xs sm:text-[11px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider transition-colors duration-300 ${passwordScore <= 2 ? 'bg-red-50 text-red-600' : passwordScore <= 4 ? 'bg-amber-50 text-amber-600' : 'bg-emerald-50 text-emerald-600'}`}>
+                            <span className={`h-1.5 w-1.5 rounded-full transition-colors duration-300 ${passwordScore <= 2 ? 'bg-red-500 animate-pulse' : passwordScore <= 4 ? 'bg-amber-500 animate-pulse' : 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]'}`} />
+                            {passwordStrength}
+                          </span>
+                        </div>
 
-                      <div className="w-full h-1.5 rounded-full bg-slate-100/80 overflow-hidden mb-5">
-                        <div className={`h-full rounded-full transition-all duration-500 ease-out ${password.length === 0 ? 'bg-transparent' : passwordScore <= 2 ? 'bg-gradient-to-r from-red-500 to-orange-400' : passwordScore <= 4 ? 'bg-gradient-to-r from-amber-400 to-yellow-400' : 'bg-gradient-to-r from-emerald-400 to-teal-400'}`} style={{ width: password.length === 0 ? '0%' : passwordScore <= 2 ? '30%' : passwordScore <= 4 ? '66%' : '100%' }} />
-                      </div>
+                        <div className="w-full h-1.5 rounded-full bg-slate-100/80 overflow-hidden mb-5">
+                          <div className={`h-full rounded-full transition-all duration-500 ease-out ${passwordScore <= 2 ? 'bg-gradient-to-r from-red-500 to-orange-400' : passwordScore <= 4 ? 'bg-gradient-to-r from-amber-400 to-yellow-400' : 'bg-gradient-to-r from-emerald-400 to-teal-400'}`} style={{ width: passwordScore <= 2 ? '30%' : passwordScore <= 4 ? '66%' : '100%' }} />
+                        </div>
 
-                      <div className="grid gap-2 sm:grid-cols-2">
-                        {passwordValidation.map((item) => (
-                          <div key={item.label} className="flex items-center gap-2.5 py-1 transition-all duration-300 group">
-                            <div className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-full transition-all duration-300 ${item.passed ? 'bg-emerald-500 text-white shadow-[0_0_8px_rgba(16,185,129,0.3)] scale-110' : 'bg-slate-200 text-transparent'}`}>
-                              <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" className={item.passed ? 'opacity-100' : 'opacity-0'}>
-                                <path d="M20 6L9 17l-5-5" />
-                              </svg>
+                        <div className="grid gap-2 sm:grid-cols-2">
+                          {passwordValidation.map((item) => (
+                            <div key={item.label} className="flex items-center gap-2.5 py-1 transition-all duration-300 group">
+                              <div className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-full transition-all duration-300 ${item.passed ? 'bg-emerald-500 text-white shadow-[0_0_8px_rgba(16,185,129,0.3)] scale-110' : 'bg-slate-200 text-transparent'}`}>
+                                <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" className={item.passed ? 'opacity-100' : 'opacity-0'}>
+                                  <path d="M20 6L9 17l-5-5" />
+                                </svg>
+                              </div>
+                              <div className={`text-xs font-medium transition-colors duration-300 ${item.passed ? 'text-slate-800' : 'text-slate-400'}`}>{item.label}</div>
                             </div>
-                            <div className={`text-xs font-medium transition-colors duration-300 ${item.passed ? 'text-slate-800' : 'text-slate-400'}`}>{item.label}</div>
-                          </div>
-                        ))}
+                          ))}
+                        </div>
                       </div>
-                    </div>
+                    )}
                   </div>
 
                   <div className="space-y-2">
