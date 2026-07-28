@@ -161,7 +161,7 @@ function ServiceModal({
                         <label className="block text-xs font-semibold text-[#101F38] mb-1">Description</label>
                         <input value={description} onChange={e => setDescription(e.target.value)} className="w-full border border-[#ECE9E2] rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-orange-500" placeholder="Brief description" />
                     </div>
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <label className="block text-xs font-semibold text-[#101F38] mb-1">Fee ($)</label>
                             <input required type="number" step="0.01" value={price} onChange={e => setPrice(parseFloat(e.target.value))} className="w-full border border-[#ECE9E2] rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-orange-500" />
@@ -235,7 +235,7 @@ function LockboxModal({
                     </button>
                 </div>
                 <form onSubmit={handleSubmit} className="p-6 space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <label className="block text-xs font-semibold text-[#101F38] mb-1">State</label>
                             <input required value={state} onChange={e => setState(e.target.value)} className="w-full border border-[#ECE9E2] rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-orange-500" placeholder="e.g. California" />
@@ -521,7 +521,8 @@ function FormsTrackerTab({ services, onRefresh, onEdit, onDelete, onAdd }: { ser
             {services.length === 0 ? (
                 <div className="rounded-2xl border border-[#ECE9E2] bg-white p-8 text-center text-sm text-[#5B6472]">No form data available.</div>
             ) : (
-                <div className="rounded-2xl border border-[#ECE9E2] overflow-hidden bg-white">
+                <div className="rounded-2xl border border-[#ECE9E2] overflow-x-auto bg-white">
+                <div className="min-w-[900px]">
                     <div className="grid grid-cols-[1fr_2fr_1fr_1fr_1fr_120px] gap-4 px-5 py-3 bg-[#F7F5F0] text-xs font-semibold text-[#5B6472]">
                         <span>Form</span>
                         <span>Description</span>
@@ -547,6 +548,7 @@ function FormsTrackerTab({ services, onRefresh, onEdit, onDelete, onAdd }: { ser
                             </div>
                         </div>
                     ))}
+                </div>
                 </div>
             )}
 
@@ -699,7 +701,8 @@ function LockboxTab() {
             </div>
 
             <h3 className="text-sm font-bold text-[#101F38] mb-3">All Active Rules</h3>
-            <div className="rounded-2xl border border-[#ECE9E2] overflow-hidden bg-white mb-6">
+            <div className="rounded-2xl border border-[#ECE9E2] overflow-x-auto bg-white mb-6">
+                <div className="min-w-[800px]">
                 <div className="grid grid-cols-[1fr_1fr_3fr_100px] gap-4 px-5 py-3 bg-[#F7F5F0] text-xs font-semibold text-[#5B6472]">
                     <span>State</span>
                     <span>Form Type</span>
@@ -725,6 +728,7 @@ function LockboxTab() {
                         </div>
                     ))
                 )}
+                </div>
             </div>
 
             <InfoBanner>
@@ -814,7 +818,7 @@ export default function AdminGuideEnginePage() {
 
             {!loading && !error && (
                 <div className="space-y-6">
-                    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                         {/* Stat Card 1 */}
                         <div className="rounded-lg bg-white text-slate-900 relative overflow-hidden border-0 bg-gradient-to-br from-blue-500/10 via-white to-cyan-500/10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_12px_40px_rgb(0,0,0,0.08)] transition-all duration-300 animate-fade-in hover:scale-[1.02]">
                             <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 opacity-0 hover:opacity-100 transition-opacity duration-300"></div>
@@ -893,7 +897,7 @@ export default function AdminGuideEnginePage() {
                         <div className="p-6 pt-6">
                             <div className="w-full">
                                 {/* Tab List */}
-                                <div className="items-center justify-center text-slate-500 grid w-full grid-cols-4 bg-slate-100 p-1 rounded-xl h-auto mb-6">
+                                <div className="items-center justify-center text-slate-500 grid w-full grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-1 bg-slate-100 p-1 rounded-xl h-auto mb-6">
                                     {PANEL_TABS.map((tab) => (
                                         <button
                                             key={tab}

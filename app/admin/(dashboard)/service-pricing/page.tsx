@@ -259,7 +259,7 @@ export default function ServicePricingPage() {
                 </div>
 
                 {/* Stats Cards */}
-                <div className="grid gap-4 md:grid-cols-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                     {/* Total Revenue Card */}
                     <div className="rounded-lg border border-slate-200 bg-white shadow-sm p-6 hover:shadow-md transition-shadow">
                         <div className="flex flex-row items-center justify-between space-y-0 pb-3">
@@ -334,7 +334,7 @@ export default function ServicePricingPage() {
                                                         {/* Pricing Tiers */}
                                                         <div>
                                                             <p className="text-sm font-semibold text-slate-900 mb-3">Pricing Tiers:</p>
-                                                            <div className="grid grid-cols-3 gap-3">
+                                                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                                                                 {service.tiers.map((tier, tierIdx) => (
                                                                     <div key={tierIdx} className="text-center p-3 bg-white border border-slate-200 rounded-lg hover:border-blue-300 transition-colors">
                                                                         <p className="text-xs font-semibold text-slate-600 mb-1">{tier.name}</p>
@@ -347,7 +347,7 @@ export default function ServicePricingPage() {
                                                         {/* Performance Metrics */}
                                                         <div className="pt-2 border-t border-slate-200">
                                                             <p className="text-sm font-semibold text-slate-900 mb-3">Performance Metrics:</p>
-                                                            <div className="grid grid-cols-2 gap-3">
+                                                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                                                 <div className="text-center p-3 bg-blue-50 rounded-lg border border-blue-100">
                                                                     <p className="text-xs font-semibold text-slate-600 mb-1">Sales</p>
                                                                     <p className="text-lg font-bold text-blue-700">{service.sales}</p>
@@ -399,7 +399,7 @@ export default function ServicePricingPage() {
 
                                         <div>
                                             <p className="text-xs font-semibold text-slate-700 mb-2">Performance</p>
-                                            <div className="grid grid-cols-2 gap-2">
+                                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                                                 <div className="text-center p-2.5 bg-purple-50 border border-purple-100 rounded">
                                                     <p className="text-xs text-slate-600">Sales</p>
                                                     <p className="text-sm font-bold text-purple-700">{addon.sales}</p>

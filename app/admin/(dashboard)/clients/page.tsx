@@ -29,7 +29,7 @@ export default function AdminClientsPage() {
 
     return (
         <div className="max-w-[1200px] mx-auto w-full">
-            <div className="flex justify-between items-end mb-8">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 gap-4">
                 <div>
                     <h1 className="text-3xl font-black text-gray-900">Client Directory</h1>
                     <p className="text-gray-500 mt-2 font-medium">Manage client profiles, contact information, and account access.</p>

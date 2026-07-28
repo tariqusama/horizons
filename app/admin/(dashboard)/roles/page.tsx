@@ -109,7 +109,7 @@ export default function AdminRolesPage() {
     return (
         <div className="max-w-[1200px] mx-auto w-full pb-12">
             {/* Header */}
-            <div className="flex justify-between items-end mb-8">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 gap-4">
                 <div>
                     <h1 className="text-3xl font-black text-gray-900">Role Management</h1>
                     <p className="text-gray-500 mt-2 font-medium">Manage user roles and permissions across the system</p>

@@ -144,7 +144,7 @@ export default function TicketsPage() {
             </div>
 
             {/* Stat cards */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
                 <StatCard label="Total Tickets" value={counts.total} icon={Icon.message} tint="bg-[#EAF0FB]" iconColor="bg-[#D7E4F7] text-[#3A6FC4]" />
                 <StatCard label="Open" value={counts.open} icon={Icon.alertCircle} tint="bg-[#EAF0FB]" iconColor="bg-[#D7E4F7] text-[#3A6FC4]" />
                 <StatCard label="In Progress" value={counts.inProgress} icon={Icon.clock} tint="bg-[#FBEFE3]" iconColor="bg-[#F6DCC0] text-[#C97A2B]" />
