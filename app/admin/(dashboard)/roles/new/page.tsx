@@ -14,6 +14,7 @@ const Icon = {
 
 const ROLE_OPTIONS = [
     { value: 'super-admin', label: 'Super Admin', description: 'Full system access' },
+    { value: 'admin', label: 'Admin', description: 'System settings and configurations' },
     { value: 'immigration-attorney', label: 'Immigration Attorney', description: 'Review and approve cases' },
     { value: 'case-manager', label: 'Case Manager', description: 'Manage client cases' },
     { value: 'printing-team', label: 'Printing Team', description: 'Handle printing operations' },

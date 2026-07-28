@@ -166,6 +166,21 @@ export default function InviteUserPage() {
                                     <input
                                         type="radio"
                                         name="role"
+                                        value="admin"
+                                        checked={role === 'admin'}
+                                        onChange={() => setRole('admin')}
+                                        className="w-4 h-4 mt-1"
+                                    />
+                                    <div className="flex-1">
+                                        <p className="font-bold text-gray-900">Admin</p>
+                                        <p className="text-xs text-gray-500 mt-1">Manage system settings and configurations</p>
+                                    </div>
+                                </label>
+
+                                <label className="flex items-start gap-4 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer hover:border-orange-500/50 transition-colors">
+                                    <input
+                                        type="radio"
+                                        name="role"
                                         value="manager"
                                         checked={role === 'manager'}
                                         onChange={() => setRole('manager')}
@@ -196,14 +211,14 @@ export default function InviteUserPage() {
                                     <input
                                         type="radio"
                                         name="role"
-                                        value="paralegal"
-                                        checked={role === 'paralegal'}
-                                        onChange={() => setRole('paralegal')}
+                                        value="printing-team"
+                                        checked={role === 'printing-team'}
+                                        onChange={() => setRole('printing-team')}
                                         className="w-4 h-4 mt-1"
                                     />
                                     <div className="flex-1">
-                                        <p className="font-bold text-gray-900">Paralegal</p>
-                                        <p className="text-xs text-gray-500 mt-1">Data entry, document preparation, form filing</p>
+                                        <p className="font-bold text-gray-900">Printing Team</p>
+                                        <p className="text-xs text-gray-500 mt-1">Print documents, handle mail and physical forms</p>
                                     </div>
                                 </label>
 

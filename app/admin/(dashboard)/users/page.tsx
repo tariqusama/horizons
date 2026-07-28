@@ -236,9 +236,10 @@ export default function AdminUsersPage() {
                                 >
                                     <option>All Roles</option>
                                     <option>Super Admin</option>
+                                    <option>Admin</option>
                                     <option>Immigration Attorney</option>
                                     <option>Case Manager</option>
-                                    <option>Paralegal</option>
+                                    <option>Printing Team</option>
                                     <option>Client</option>
                                     <option>Read-Only Viewer</option>
                                 </select>

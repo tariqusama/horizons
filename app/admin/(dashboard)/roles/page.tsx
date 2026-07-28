@@ -54,9 +54,11 @@ export default function AdminRolesPage() {
     }).map(u => {
         const r = (u.role || '').toLowerCase();
         let normalizedRole = "Case Manager";
-        if (r.includes('admin')) normalizedRole = "Super Admin";
+        if (r.includes('super admin')) normalizedRole = "Super Admin";
+        else if (r === 'admin' || r === 'administrator') normalizedRole = "Admin";
         else if (r.includes('attorney')) normalizedRole = "Immigration Attorney";
-        else if (r.includes('paralegal')) normalizedRole = "Paralegal";
+        else if (r.includes('print')) normalizedRole = "Printing Team";
+        else normalizedRole = "Case Manager";
 
         return {
             id: u.id,
@@ -70,16 +72,18 @@ export default function AdminRolesPage() {
 
     const roleStats = [
         { name: "Super Admin", count: assignments.filter(a => a.role === "Super Admin").length },
+        { name: "Admin", count: assignments.filter(a => a.role === "Admin").length },
         { name: "Immigration Attorney", count: assignments.filter(a => a.role === "Immigration Attorney").length },
         { name: "Case Manager", count: assignments.filter(a => a.role === "Case Manager").length },
-        { name: "Paralegal", count: assignments.filter(a => a.role === "Paralegal").length },
+        { name: "Printing Team", count: assignments.filter(a => a.role === "Printing Team").length },
     ];
 
     const ROLE_META: Record<string, { bg: string; text: string }> = {
         "Super Admin": { bg: "bg-gradient-to-b from-orange-500 to-orange-600", text: "text-white" },
+        "Admin": { bg: "bg-[#1B3A64]", text: "text-white" },
         "Immigration Attorney": { bg: "bg-[#1B3A64]/10", text: "text-[#1B3A64]" },
         "Case Manager": { bg: "bg-[#3B66A5]/10", text: "text-[#3B66A5]" },
-        "Paralegal": { bg: "bg-[#D6497A]/10", text: "text-[#D6497A]" },
+        "Printing Team": { bg: "bg-[#D6497A]/10", text: "text-[#D6497A]" },
     };
 
     const filteredAssignments = assignments.filter(a => {
