@@ -54,7 +54,8 @@ export default function AdminRolesPage() {
     }).map(u => {
         const r = (u.role || '').toLowerCase();
         let normalizedRole = "Case Manager";
-        if (r.includes('super admin')) normalizedRole = "Super Admin";
+        if (u.email === 'admin@horizonpathways.us') normalizedRole = "Super Admin";
+        else if (r.includes('super admin')) normalizedRole = "Super Admin";
         else if (r === 'admin' || r === 'administrator') normalizedRole = "Admin";
         else if (r.includes('attorney')) normalizedRole = "Immigration Attorney";
         else if (r.includes('print')) normalizedRole = "Printing Team";
