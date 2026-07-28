@@ -148,9 +148,9 @@ export default function AdminAnalyticsPage() {
 
                             <div className="ml-12 w-full flex items-end justify-between h-full pb-8">
                                 {monthlyRevenue.map((month: any, idx: number) => {
-                                    const height = (month.revenue / maxRevenue) * 100;
+                                    const height = Math.max((month.revenue / maxRevenue) * 100, 1);
                                     return (
-                                        <div key={idx} className="w-[6%] relative group">
+                                        <div key={idx} className="w-[6%] h-full relative group flex items-end">
                                             <div
                                                 className="w-full rounded-t-sm bg-[#1B3A64] transition-all duration-300 group-hover:bg-gradient-to-b from-orange-500 to-orange-600"
                                                 style={{ height: `${height}%` }}
