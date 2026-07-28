@@ -1072,7 +1072,7 @@ function SignupFlowContent() {
                       id="firstName"
                       name="firstName"
                       type="text"
-                      placeholder="John"
+                      placeholder=""
                       required
                       value={firstName}
                       onChange={(e) => setFirstName(e.target.value)}
@@ -1085,7 +1085,7 @@ function SignupFlowContent() {
                       id="lastName"
                       name="lastName"
                       type="text"
-                      placeholder="Doe"
+                      placeholder=""
                       required
                       value={lastName}
                       onChange={(e) => setLastName(e.target.value)}
@@ -1108,7 +1108,6 @@ function SignupFlowContent() {
                       name="email"
                       type="email"
                       autoComplete="email"
-                      placeholder="example@gmail.com"
                       required
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
