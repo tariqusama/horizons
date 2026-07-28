@@ -308,12 +308,12 @@ export default function RevenueDashboardPage() {
 
     return (
         <main className="flex-1 px-4 sm:px-6 pb-8 pt-2">
-            <div className="mb-6 px-1 flex items-start justify-between">
+            <div className="mb-6 px-1 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                 <div>
                     <h1 className="text-2xl font-bold text-slate-900">Revenue Dashboard</h1>
                     <p className="text-sm text-slate-600 mt-1">Comprehensive revenue analytics and payment insights</p>
                 </div>
-                <button onClick={loadData} className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-slate-200 bg-white hover:bg-slate-100 hover:text-slate-900 h-10 px-4 py-2 shrink-0">
+                <button onClick={loadData} className="inline-flex w-full sm:w-auto items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-slate-200 bg-white hover:bg-slate-100 hover:text-slate-900 h-10 px-4 py-2 shrink-0">
                     <Icon.refresh width={16} height={16} />
                     Refresh
                 </button>
@@ -321,7 +321,7 @@ export default function RevenueDashboardPage() {
 
             <div className="space-y-6">
                 {/* Tabs */}
-                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
                     <div style={{ animationDelay: '0ms' }}>
                         <StatCard label="Total Revenue" value={revenueData ? money(revenueData.stats.total_revenue) : "$0.00"} sublabel="All time" icon={Icon.dollar} iconBg="#DDF3E4" iconColor="#2F8A5F" />
                     </div>
@@ -338,14 +338,14 @@ export default function RevenueDashboardPage() {
 
                 {/* Tabs */}
                 <div dir="ltr" data-orientation="horizontal" className="space-y-4">
-                    <div role="tablist" aria-orientation="horizontal" className="h-10 items-center justify-center text-slate-500 grid w-full grid-cols-4 bg-slate-100/30 p-1 rounded-xl" tabIndex={0}>
+                    <div role="tablist" aria-orientation="horizontal" className="items-center justify-center text-slate-500 grid w-full grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-1 bg-slate-100/30 p-1 rounded-xl" tabIndex={0}>
                         {TABS.map(tab => (
                             <button
                                 key={tab}
                                 role="tab"
                                 aria-selected={activeTab === tab}
                                 onClick={() => setActiveTab(tab)}
-                                className={`inline-flex items-center justify-center whitespace-nowrap px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 rounded-lg ${activeTab === tab ? 'bg-white text-slate-900 shadow-md' : 'text-slate-600'}`}
+                                className={`inline-flex items-center justify-center whitespace-nowrap px-3 py-2.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 rounded-lg ${activeTab === tab ? 'bg-white text-slate-900 shadow-md' : 'text-slate-600'}`}
                                 tabIndex={-1}
                             >
                                 {tab}
