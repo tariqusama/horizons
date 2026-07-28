@@ -118,18 +118,22 @@ export default function AdminCasesPage() {
                                             <option value="Approved">Approved</option>
                                         </select>
                                     </td>
-                                    <td className="px-6 py-4 text-right space-y-2">
-                                        <Link href={`/admin/cases/${c.id}`} className="block">
-                                            <span className="text-orange-500 hover:text-orange-600 font-bold text-sm cursor-pointer transition-colors">View Details</span>
-                                        </Link>
-                                        {c.is_escalated && (
-                                            <button
-                                                onClick={() => resolveEscalation(c.id)}
-                                                className="text-xs font-bold text-white bg-green-600 hover:bg-green-700 px-3 py-1.5 rounded-md transition-colors w-full"
-                                            >
-                                                Resolve
-                                            </button>
-                                        )}
+                                    <td className="px-6 py-4">
+                                        <div className="flex flex-col items-end gap-2">
+                                            <Link href={`/admin/cases/${c.id}`}>
+                                                <span className="inline-flex items-center justify-center text-orange-600 hover:text-white hover:bg-orange-600 font-bold text-xs px-3 py-1.5 rounded-md transition-colors whitespace-nowrap border border-orange-200 hover:border-orange-600">
+                                                    View Details
+                                                </span>
+                                            </Link>
+                                            {c.is_escalated && (
+                                                <button
+                                                    onClick={() => resolveEscalation(c.id)}
+                                                    className="inline-flex items-center justify-center text-xs font-bold text-white bg-green-600 hover:bg-green-700 px-3 py-1.5 rounded-md transition-colors whitespace-nowrap"
+                                                >
+                                                    Resolve
+                                                </button>
+                                            )}
+                                        </div>
                                     </td>
                                 </tr>
                             ))}
