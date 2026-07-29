@@ -63,11 +63,6 @@ function DocumentChecklistsContent() {
                         </div>
                     </div>
                 </div>
-                {checklist.forms && checklist.forms.length > 0 && (
-                    <div className="p-6 pt-0 space-y-2 text-sm text-slate-600">
-                        <p>Forms: {checklist.forms.join(', ')}</p>
-                    </div>
-                )}
             </div>
 
             {checklist.sections.map((section: any, sectionIdx: number) => (
@@ -105,6 +100,22 @@ function DocumentChecklistsContent() {
                     </div>
                 </div>
             ))}
+
+            {/* Progress */}
+            <div className="rounded-lg border bg-card text-card-foreground shadow-sm bg-white border-slate-200 p-6 mt-6">
+                <div className="flex items-center justify-between mb-3">
+                    <p className="text-sm font-semibold text-slate-800">Document Collection Progress</p>
+                    <span className="text-xs font-bold text-orange-600 bg-orange-50 px-2 py-0.5 rounded-full">
+                        {Object.values(checkedItems).filter(Boolean).length} of {checklist.totalDocuments}
+                    </span>
+                </div>
+                <div className="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
+                    <div
+                        className="h-full bg-orange-500 transition-all duration-500 ease-out"
+                        style={{ width: `${(Object.values(checkedItems).filter(Boolean).length / checklist.totalDocuments) * 100}%` }}
+                    />
+                </div>
+            </div>
 
             <div className="text-xs text-slate-500 pt-2">
                 <button onClick={() => window.history.back()} className="hover:text-slate-900 underline">← Back to assigned cases</button>
