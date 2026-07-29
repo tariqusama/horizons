@@ -81,7 +81,7 @@ export default function AuditLogsPage() {
 
                 {/* Table */}
                 <div className="flex-1 overflow-auto bg-[#1E1E1E]">
-                    <table className="w-full text-left border-collapse font-mono text-sm">
+                    <table className="w-full min-w-[1000px] text-left border-collapse font-mono text-sm">
                         <thead className="sticky top-0 bg-[#2D2D2D] z-10 shadow-md">
                             <tr>
                                 <th className="px-6 py-4 text-[11px] font-bold text-[#A0A0A0] uppercase tracking-wider border-b border-[#404040]">Timestamp (UTC)</th>

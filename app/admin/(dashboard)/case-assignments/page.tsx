@@ -153,7 +153,7 @@ export default function AdminCaseAssignmentsPage() {
                 </div>
 
                 <div className="overflow-x-auto">
-                    <table className="w-full text-left border-collapse">
+                    <table className="w-full min-w-[1000px] text-left border-collapse">
                         <thead>
                             <tr>
                                 <th className="px-6 pt-5 pb-3 text-xs font-bold text-gray-500 uppercase tracking-wider">Client</th>

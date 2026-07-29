@@ -51,7 +51,7 @@ function DocumentChecklistsContent() {
         <div className="max-w-[900px] mx-auto w-full pb-12">
             {/* Header */}
             <div className="rounded-3xl border border-[#ECE9E2] bg-white shadow-sm p-6 mb-6">
-                <div className="flex items-start justify-between gap-4">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                     <div>
                         <h1 className="text-2xl font-bold text-[#101F38] mb-2">{checklist.title}</h1>
                         <p className="text-sm text-[#5B6472] font-medium mb-3">Required Forms</p>

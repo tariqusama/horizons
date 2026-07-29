@@ -239,7 +239,7 @@ export default function TicketsPage() {
                             <p className="text-sm font-semibold text-[#5B6472]">No tickets found</p>
                         </div>
                     ) : (
-                        <table className="w-full text-left border-collapse">
+                        <table className="w-full min-w-[1000px] text-left border-collapse">
                             <thead className="sticky top-0 bg-white z-10">
                                 <tr className="border-b border-[#ECE9E2] bg-[#F9F8F6]">
                                     <th className="px-6 py-4 text-[11px] font-bold text-[#5B6472] uppercase tracking-wider">Ticket ID</th>

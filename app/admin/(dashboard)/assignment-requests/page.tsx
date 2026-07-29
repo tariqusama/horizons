@@ -207,7 +207,7 @@ export default function AssignmentRequestsPage() {
                     <div className="p-6 pt-0">
                         <div className="rounded-md border border-slate-200 overflow-hidden">
                             <div className="relative w-full overflow-auto">
-                                <table className="w-full caption-bottom text-sm">
+                                <table className="w-full min-w-[1000px] caption-bottom text-sm">
                                     <thead className="border-b border-slate-200 bg-slate-50">
                                         <tr>
                                             <th className="h-12 px-6 py-3 text-left align-middle font-semibold text-slate-700 flex-1">Case ID</th>

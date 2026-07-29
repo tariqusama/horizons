@@ -125,7 +125,7 @@ export default function NotificationsPage() {
 
     return (
         <div className="space-y-6">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-2xl font-bold text-[#111c44]">System Notification Center</h1>
                     <p className="text-sm text-[#6b7280]">Automated alerts and system events</p>
@@ -136,7 +136,7 @@ export default function NotificationsPage() {
                 </div>
             </div>
 
-            <div className="grid grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div className="p-4 bg-white rounded-lg shadow-sm border flex items-center justify-between">
                     <div>
                         <div className="text-sm text-[#8A8F98]">Unread Notifications</div>

@@ -281,7 +281,7 @@ export default function AdminUsersPage() {
 
                 {/* Table */}
                 <div className="overflow-x-auto">
-                    <table className="w-full text-left border-collapse">
+                    <table className="w-full min-w-[1000px] text-left border-collapse">
                         <thead>
                             <tr className="border-b border-gray-100 bg-gray-50/50">
                                 <th className="pl-6 pr-2 py-4 w-10">
