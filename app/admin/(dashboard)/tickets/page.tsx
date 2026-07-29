@@ -205,7 +205,7 @@ export default function TicketsPage() {
             </div>
 
             {/* Tickets panel */}
-            <div className="bg-white rounded-2xl border border-[#ECE9E2] shadow-sm flex flex-col">
+            <div className="bg-white rounded-2xl border border-[#ECE9E2] shadow-sm flex flex-col overflow-hidden w-full">
                 <div className="px-6 py-5 border-b border-[#ECE9E2]">
                     <h2 className="text-base font-black text-[#101F38] mb-1">All Tickets</h2>
                     <p className="text-[#5B6472] font-medium text-sm">Manage and respond to user support tickets</p>
@@ -230,7 +230,7 @@ export default function TicketsPage() {
                 </div>
 
                 {/* Table / Empty state */}
-                <div className="flex-1 overflow-auto mt-4">
+                <div className="flex-1 overflow-x-auto mt-4 w-full">
                     {pageTickets.length === 0 ? (
                         <div className="flex flex-col items-center justify-center py-20 text-center">
                             <div className="w-12 h-12 rounded-full bg-[#F5F4F1] flex items-center justify-center text-[#B7B4AA] mb-4">
@@ -242,13 +242,13 @@ export default function TicketsPage() {
                         <table className="w-full min-w-[1000px] text-left border-collapse">
                             <thead className="sticky top-0 bg-white z-10">
                                 <tr className="border-b border-[#ECE9E2] bg-[#F9F8F6]">
-                                    <th className="px-6 py-4 text-[11px] font-bold text-[#5B6472] uppercase tracking-wider">Ticket ID</th>
-                                    <th className="px-6 py-4 text-[11px] font-bold text-[#5B6472] uppercase tracking-wider">Subject</th>
-                                    <th className="px-6 py-4 text-[11px] font-bold text-[#5B6472] uppercase tracking-wider">Client</th>
-                                    <th className="px-6 py-4 text-[11px] font-bold text-[#5B6472] uppercase tracking-wider">Status</th>
-                                    <th className="px-6 py-4 text-[11px] font-bold text-[#5B6472] uppercase tracking-wider">Priority</th>
-                                    <th className="px-6 py-4 text-[11px] font-bold text-[#5B6472] uppercase tracking-wider">Date Created</th>
-                                    <th className="px-6 py-4 text-[11px] font-bold text-[#5B6472] uppercase tracking-wider text-right"></th>
+                                    <th className="px-6 py-4 text-[11px] font-bold text-[#5B6472] uppercase tracking-wider whitespace-nowrap">Ticket ID</th>
+                                    <th className="px-6 py-4 text-[11px] font-bold text-[#5B6472] uppercase tracking-wider whitespace-nowrap">Subject</th>
+                                    <th className="px-6 py-4 text-[11px] font-bold text-[#5B6472] uppercase tracking-wider whitespace-nowrap">Client</th>
+                                    <th className="px-6 py-4 text-[11px] font-bold text-[#5B6472] uppercase tracking-wider whitespace-nowrap">Status</th>
+                                    <th className="px-6 py-4 text-[11px] font-bold text-[#5B6472] uppercase tracking-wider whitespace-nowrap">Priority</th>
+                                    <th className="px-6 py-4 text-[11px] font-bold text-[#5B6472] uppercase tracking-wider whitespace-nowrap">Date Created</th>
+                                    <th className="px-6 py-4 text-right text-[11px] font-bold text-[#5B6472] uppercase tracking-wider whitespace-nowrap">Action</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-[#ECE9E2]">

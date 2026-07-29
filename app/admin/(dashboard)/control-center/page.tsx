@@ -251,9 +251,15 @@ export default function AdminControlCenterPage() {
                                 </div>
                                 <div className="p-6 pt-0">
                                     <div className="space-y-3">
-                                        {flaggedReviews.map((review, idx) => (
-                                            <div key={idx} className="relative overflow-hidden rounded-xl p-4 border border-slate-200/50 bg-gradient-to-br from-slate-50 to-slate-100/20 hover:shadow-[0_8px_20px_rgb(0,0,0,0.08)] hover:scale-[1.01] transition-all duration-300 animate-fade-in" style={{ animationDelay: `${idx * 50}ms` }}>
-                                                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-slate-300/5 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-500"></div>
+                                        {flaggedReviews.length === 0 ? (
+                                            <div className="text-center py-8 bg-slate-50/50 rounded-xl border border-slate-200 border-dashed">
+                                                <p className="text-slate-500 font-medium">No flagged reviews currently.</p>
+                                                <p className="text-xs text-slate-400 mt-1">Escalated or rejected cases will appear here.</p>
+                                            </div>
+                                        ) : (
+                                            flaggedReviews.map((review, idx) => (
+                                                <div key={idx} className="relative overflow-hidden rounded-xl p-4 border border-slate-200/50 bg-gradient-to-br from-slate-50 to-slate-100/20 hover:shadow-[0_8px_20px_rgb(0,0,0,0.08)] hover:scale-[1.01] transition-all duration-300 animate-fade-in" style={{ animationDelay: `${idx * 50}ms` }}>
+                                                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-slate-300/5 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-500"></div>
                                                 <div className="relative flex items-start justify-between gap-4">
                                                     <div className="flex-1 space-y-3">
                                                         <div className="flex items-center gap-2 flex-wrap">
@@ -285,7 +291,7 @@ export default function AdminControlCenterPage() {
                                                     </a>
                                                 </div>
                                             </div>
-                                        ))}
+                                        )))}
                                     </div>
                                 </div>
                             </div>

@@ -124,12 +124,12 @@ export default function AdminAnalyticsPage() {
                     </div>
 
                     <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 mb-8">
-                        <div className="flex justify-between items-center mb-6">
+                        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
                             <div>
                                 <h2 className="font-bold text-gray-900 text-lg">Revenue Overview</h2>
                                 <p className="text-sm text-gray-500">Monthly revenue for the past year.</p>
                             </div>
-                            <button onClick={handleExport} className="text-sm font-bold text-orange-500 hover:text-orange-600 flex items-center">
+                            <button onClick={handleExport} className="text-sm font-bold text-orange-500 hover:text-orange-600 flex items-center shrink-0">
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="mr-1.5">
                                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                                     <polyline points="7 10 12 15 17 10"></polyline>
@@ -139,14 +139,16 @@ export default function AdminAnalyticsPage() {
                             </button>
                         </div>
 
-                        <div className="h-[320px] w-full flex items-end justify-between space-x-2 pt-10 border-b border-gray-100 relative">
-                            <div className="absolute left-0 top-0 bottom-0 flex flex-col justify-between text-xs font-bold text-gray-400 pb-8">
+                        <div className="relative">
+                            <div className="absolute left-0 top-10 bottom-8 flex flex-col justify-between text-xs font-bold text-gray-400 bg-white pr-2 z-10 w-12 pointer-events-none">
                                 {yLabels.map((l, i) => (
                                     <span key={i}>{l}</span>
                                 ))}
                             </div>
-
-                            <div className="ml-12 w-full flex items-end justify-between h-full pb-8">
+                            
+                            <div className="w-full overflow-x-auto pb-6">
+                                <div className="h-[320px] min-w-[500px] flex items-end justify-between space-x-2 pt-10 border-b border-gray-100 relative pl-12 pr-4">
+                                    <div className="w-full flex items-end justify-between h-full pb-8">
                                 {monthlyRevenue.map((month: any, idx: number) => {
                                     const height = Math.max((month.revenue / maxRevenue) * 100, 1);
                                     return (
@@ -164,6 +166,8 @@ export default function AdminAnalyticsPage() {
                                         </div>
                                     );
                                 })}
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

@@ -180,28 +180,28 @@ export default function NotificationsPage() {
                         const isUnread = !n.read_at;
                         const caseId = data?.case_id || data?.notifiable_id;
                         return (
-                            <div key={n.id} className={`flex items-center justify-between p-3 rounded-md border ${isUnread ? 'bg-[#fbfdff]' : 'bg-white'}`}>
+                            <div key={n.id} className={`flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-md border ${isUnread ? 'bg-[#fbfdff]' : 'bg-white'}`}>
                                 <div className="flex items-start gap-4">
                                     <div className="mt-1">
-                                        <div className={`w-9 h-9 rounded-full flex items-center justify-center ${isUnread ? 'bg-[#fff4f0] text-[#F47A3C]' : 'bg-[#f3f4f6] text-[#9aa2ac]'}`}>•</div>
+                                        <div className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${isUnread ? 'bg-[#fff4f0] text-[#F47A3C]' : 'bg-[#f3f4f6] text-[#9aa2ac]'}`}>•</div>
                                     </div>
                                     <div>
-                                        <div className="flex items-center gap-3">
+                                        <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">
                                             <div className={`text-sm ${isUnread ? 'font-semibold text-[#101F38]' : 'font-medium text-[#101F38]'}`}>{data?.title || 'New alert'}</div>
                                             <div className="text-xs text-[#9aa2ac]">{formatDate(n.created_at)}</div>
                                         </div>
-                                        <div className="text-sm text-[#6b7280] mt-1">{data?.email || data?.meta || ''} <span className="px-2 py-0.5 bg-[#eef5ff] text-[#3D7BC9] rounded-full text-xs ml-2">Case</span></div>
+                                        <div className="text-sm text-[#6b7280] mt-1 break-all sm:break-normal">{data?.email || data?.meta || ''} <span className="inline-block px-2 py-0.5 bg-[#eef5ff] text-[#3D7BC9] rounded-full text-xs ml-0 sm:ml-2 mt-1 sm:mt-0">Case</span></div>
                                     </div>
                                 </div>
 
-                                <div className="flex items-center gap-3">
-                                    <button onClick={() => handleViewCase(caseId, n.id)} className="text-xs px-3 py-1.5 bg-white border rounded-md">View case</button>
-                                    <button disabled={loadingIds.includes(n.id)} onClick={() => handleMark(n.id)} className="text-xs px-3 py-1.5 bg-white border rounded-md">
+                                <div className="flex flex-wrap items-center gap-2 sm:gap-3 sm:ml-4 w-full sm:w-auto">
+                                    <button onClick={() => handleViewCase(caseId, n.id)} className="text-xs px-3 py-1.5 bg-white border rounded-md shrink-0">View case</button>
+                                    <button disabled={loadingIds.includes(n.id)} onClick={() => handleMark(n.id)} className="text-xs px-3 py-1.5 bg-white border rounded-md shrink-0">
                                         {loadingIds.includes(n.id) ? (
                                             <svg className="animate-spin w-3 h-3 mx-auto" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path></svg>
                                         ) : 'Mark read'}
                                     </button>
-                                    <button onClick={() => handleInfo(n)} className="text-xs px-2 py-1 bg-white border rounded-md">Info</button>
+                                    <button onClick={() => handleInfo(n)} className="text-xs px-2 py-1.5 bg-white border rounded-md shrink-0">Info</button>
                                 </div>
                             </div>
                         );

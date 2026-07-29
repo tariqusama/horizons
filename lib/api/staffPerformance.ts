@@ -1,4 +1,4 @@
-import api from './axios';
+import api from '../api';
 
 export type LeaderboardEntry = {
     id: number;
@@ -43,6 +43,6 @@ export type StaffPerformanceData = {
 };
 
 export const getStaffPerformance = async (): Promise<StaffPerformanceData> => {
-    const response = await api.get('/staff-performance/data');
+    const response = await api.get('/admin/staff-performance/data');
     return response.data;
 };

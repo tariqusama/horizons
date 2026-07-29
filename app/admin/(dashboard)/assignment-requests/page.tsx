@@ -113,11 +113,6 @@ export default function AssignmentRequestsPage() {
             </div>
 
             <div className="space-y-6">
-                {/* Section Title */}
-                <div>
-                    <h2 className="text-3xl font-bold tracking-tight text-slate-900">Assignment Requests</h2>
-                    <p className="text-slate-600">Review and manage case assignment requests</p>
-                </div>
 
                 {/* Stat Cards with Gradients */}
                 <div className="grid gap-4 md:grid-cols-4">
