@@ -48,87 +48,66 @@ function DocumentChecklistsContent() {
     }
 
     return (
-        <div className="max-w-[900px] mx-auto w-full pb-12">
-            {/* Header */}
-            <div className="rounded-3xl border border-[#ECE9E2] bg-white shadow-sm p-6 mb-6">
-                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                    <div>
-                        <h1 className="text-2xl font-bold text-[#101F38] mb-2">{checklist.title}</h1>
-                        <p className="text-sm text-[#5B6472] font-medium mb-3">Required Forms</p>
-                        <div className="flex flex-wrap gap-2">
-                            {checklist.forms.map((form: any, idx: number) => (
-                                <span key={idx} className="inline-flex items-center px-3 py-1 rounded-full bg-[#E5F1FF] text-[#2563EB] text-xs font-semibold">
-                                    {form}
-                                </span>
-                            ))}
+        <div className="space-y-6 max-w-[900px] mx-auto w-full pb-12 pt-4">
+            <div className="rounded-lg border bg-card text-card-foreground shadow-sm bg-white border-slate-200">
+                <div className="flex flex-col space-y-1.5 p-6">
+                    <div className="flex items-start justify-between gap-4 flex-wrap">
+                        <div>
+                            <h3 className="font-semibold tracking-tight text-2xl text-slate-900">{checklist.title}</h3>
+                            {checklist.forms && checklist.forms.length > 0 && (
+                                <p className="text-sm text-slate-500 mt-2">Form {checklist.forms.join(' + ')}</p>
+                            )}
+                        </div>
+                        <div className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 bg-orange-50 text-orange-700 border-orange-200">
+                            {checklist.totalDocuments} documents
                         </div>
                     </div>
-                    <div className="flex items-center justify-center w-16 h-16 rounded-full bg-[#FBF1EA]">
-                        <span className="text-2xl font-bold text-orange-500">{checklist.totalDocuments}</span>
-                    </div>
                 </div>
+                {checklist.forms && checklist.forms.length > 0 && (
+                    <div className="p-6 pt-0 space-y-2 text-sm text-slate-600">
+                        <p>Forms: {checklist.forms.join(', ')}</p>
+                    </div>
+                )}
             </div>
 
-            {/* Checklist Sections */}
-            <div className="space-y-6">
-                {checklist.sections.map((section: any, sectionIdx: number) => (
-                    <div key={sectionIdx} className="rounded-3xl border border-[#ECE9E2] bg-white shadow-sm p-6">
-                        <h2 className="text-lg font-bold text-[#101F38] mb-4 flex items-center gap-2">
-                            <span className="w-8 h-8 rounded-full bg-gradient-to-b from-orange-500 to-orange-600 text-white flex items-center justify-center text-sm font-bold">
-                                {sectionIdx + 1}
-                            </span>
+            {checklist.sections.map((section: any, sectionIdx: number) => (
+                <div key={sectionIdx} className="rounded-lg border bg-card text-card-foreground shadow-sm bg-white border-slate-200">
+                    <div className="flex flex-col space-y-1.5 p-6">
+                        <h3 className="font-semibold tracking-tight text-lg flex items-center gap-2 text-slate-900">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-file-text w-4 h-4 text-orange-500">
+                                <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"></path><path d="M14 2v4a2 2 0 0 0 2 2h4"></path><path d="M10 9H8"></path><path d="M16 13H8"></path><path d="M16 17H8"></path>
+                            </svg>
                             {section.title}
-                        </h2>
-
-                        <div className="space-y-3">
+                        </h3>
+                    </div>
+                    <div className="p-6 pt-0">
+                        <ul className="space-y-2">
                             {section.documents.map((doc: any, docIdx: number) => {
                                 const docId = `${sectionIdx}-${docIdx}`;
                                 const isChecked = checkedItems[docId] || false;
-
                                 return (
-                                    <div key={docId} className="flex items-start gap-3 p-4 rounded-2xl border border-[#ECE9E2] hover:bg-[#F7F5F0] transition-colors cursor-pointer" onClick={() => toggleCheck(docId)}>
-                                        <div className="w-6 h-6 rounded border-2 border-[#ECE9E2] flex items-center justify-center shrink-0 mt-1 bg-white transition-all" style={{
-                                            borderColor: isChecked ? '#f97316' : '#ECE9E2',
-                                            backgroundColor: isChecked ? '#f97316' : 'white',
-                                        }}>
-                                            {isChecked && <Icon.check width={16} height={16} className="text-white" />}
-                                        </div>
+                                    <li key={docId} onClick={() => toggleCheck(docId)} className="flex items-start gap-3 p-3 rounded-lg border border-slate-100 hover:bg-slate-50 transition-colors cursor-pointer bg-white">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`lucide lucide-circle-check w-4 h-4 mt-0.5 shrink-0 transition-colors ${isChecked ? 'text-orange-500' : 'text-slate-300'}`}>
+                                            <circle cx="12" cy="12" r="10"></circle><path d="m9 12 2 2 4-4"></path>
+                                        </svg>
                                         <div className="flex-1 min-w-0">
-                                            <p className={`text-sm ${isChecked ? 'line-through text-[#8A8F98]' : 'text-[#101F38]'}`}>{doc.name}</p>
-                                            <div className="mt-2 flex gap-2">
-                                                {doc.required ? (
-                                                    <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-[#E24B4A]/10 text-[#E24B4A] text-xs font-semibold">
-                                                        Required
-                                                    </span>
-                                                ) : (
-                                                    <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-gray-100 text-gray-600 text-xs font-semibold">
-                                                        Optional
-                                                    </span>
-                                                )}
-                                            </div>
+                                            <div className={`text-sm ${isChecked ? 'text-slate-400 line-through' : 'text-slate-800'}`}>{doc.name}</div>
                                         </div>
-                                    </div>
+                                        {doc.required ? (
+                                            <div className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 bg-orange-50 text-orange-700 border-orange-200">Required</div>
+                                        ) : (
+                                            <div className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 bg-slate-50 text-slate-600 border-slate-200">Optional</div>
+                                        )}
+                                    </li>
                                 );
                             })}
-                        </div>
+                        </ul>
                     </div>
-                ))}
-            </div>
+                </div>
+            ))}
 
-            {/* Progress */}
-            <div className="rounded-3xl border border-[#ECE9E2] bg-white shadow-sm p-6 mt-6">
-                <div className="flex items-center justify-between mb-3">
-                    <p className="text-sm font-semibold text-[#101F38]">Document Collection Progress</p>
-                    <span className="text-xs font-bold text-orange-500">
-                        {Object.values(checkedItems).filter(Boolean).length} of {checklist.totalDocuments}
-                    </span>
-                </div>
-                <div className="w-full bg-[#ECE9E2] rounded-full h-3 overflow-hidden">
-                    <div
-                        className="h-full bg-gradient-to-b from-orange-500 to-orange-600 transition-all"
-                        style={{ width: `${(Object.values(checkedItems).filter(Boolean).length / checklist.totalDocuments) * 100}%` }}
-                    />
-                </div>
+            <div className="text-xs text-slate-500 pt-2">
+                <button onClick={() => window.history.back()} className="hover:text-slate-900 underline">← Back to assigned cases</button>
             </div>
         </div>
     );
