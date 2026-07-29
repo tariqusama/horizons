@@ -63,6 +63,11 @@ function DocumentChecklistsContent() {
                         </div>
                     </div>
                 </div>
+                {checklist.forms && checklist.forms.length > 0 && (
+                    <div className="p-6 pt-0 space-y-2 text-sm text-slate-600">
+                        <p>Forms: {checklist.forms.join(', ')}.</p>
+                    </div>
+                )}
             </div>
 
             {checklist.sections.map((section: any, sectionIdx: number) => (
@@ -82,9 +87,15 @@ function DocumentChecklistsContent() {
                                 const isChecked = checkedItems[docId] || false;
                                 return (
                                     <li key={docId} onClick={() => toggleCheck(docId)} className="flex items-start gap-3 p-3 rounded-lg border border-slate-100 hover:bg-slate-50 transition-colors cursor-pointer bg-white">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`lucide lucide-circle-check w-4 h-4 mt-0.5 shrink-0 transition-colors ${isChecked ? 'text-orange-500' : 'text-slate-300'}`}>
-                                            <circle cx="12" cy="12" r="10"></circle><path d="m9 12 2 2 4-4"></path>
-                                        </svg>
+                                        {isChecked ? (
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-circle-check w-4 h-4 mt-0.5 shrink-0 text-orange-500">
+                                                <circle cx="12" cy="12" r="10"></circle><path d="m9 12 2 2 4-4"></path>
+                                            </svg>
+                                        ) : (
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-circle w-4 h-4 mt-0.5 shrink-0 text-slate-300">
+                                                <circle cx="12" cy="12" r="10"></circle>
+                                            </svg>
+                                        )}
                                         <div className="flex-1 min-w-0">
                                             <div className={`text-sm ${isChecked ? 'text-slate-400 line-through' : 'text-slate-800'}`}>{doc.name}</div>
                                         </div>
@@ -100,22 +111,6 @@ function DocumentChecklistsContent() {
                     </div>
                 </div>
             ))}
-
-            {/* Progress */}
-            <div className="rounded-lg border bg-card text-card-foreground shadow-sm bg-white border-slate-200 p-6 mt-6">
-                <div className="flex items-center justify-between mb-3">
-                    <p className="text-sm font-semibold text-slate-800">Document Collection Progress</p>
-                    <span className="text-xs font-bold text-orange-600 bg-orange-50 px-2 py-0.5 rounded-full">
-                        {Object.values(checkedItems).filter(Boolean).length} of {checklist.totalDocuments}
-                    </span>
-                </div>
-                <div className="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
-                    <div
-                        className="h-full bg-orange-500 transition-all duration-500 ease-out"
-                        style={{ width: `${(Object.values(checkedItems).filter(Boolean).length / checklist.totalDocuments) * 100}%` }}
-                    />
-                </div>
-            </div>
 
             <div className="text-xs text-slate-500 pt-2">
                 <button onClick={() => window.history.back()} className="hover:text-slate-900 underline">← Back to assigned cases</button>
