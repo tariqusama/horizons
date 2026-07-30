@@ -84,7 +84,7 @@ const adminMenu: MenuGroup[] = [
         collapsible: true,
         defaultOpen: true,
         items: [
-            { href: "https://www.uscis.gov/forms/filing-fees/uscis-lockbox-addresses", label: "USCIS Lockbox Addresses" },
+            { href: "https://www.uscis.gov/forms/all-forms/uscis-lockbox-filing-locations-chart-for-certain-family-based-forms", label: "USCIS Lockbox Addresses" },
             { href: "https://www.uscis.gov/forms/filing-fees", label: "USCIS Filing Fees" },
             { href: "https://www.uscis.gov/forms", label: "USCIS Forms" },
             { href: "https://www.uscis.gov/news-alerts", label: "USCIS News & Alerts" }
