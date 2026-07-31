@@ -1299,13 +1299,13 @@ export default function AssignedCasesPage() {
                                             <ul className="space-y-3">
                                                 {validDocs.map((doc) => (
                                                     <li key={doc.id} className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm">
-                                                        <div className="flex items-center justify-between gap-4">
-                                                            <div className="flex items-center gap-3">
-                                                                <span className="font-medium text-slate-900">{doc.name || doc.file_path?.split('/').pop() || 'Document'}</span>
-                                                                <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">{doc.status}</span>
+                                                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
+                                                            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 min-w-0">
+                                                                <span className="font-medium text-slate-900 break-words">{doc.name || doc.file_path?.split('/').pop() || 'Document'}</span>
+                                                                <span className="w-fit rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700 shrink-0">{doc.status}</span>
                                                             </div>
                                                             {doc.file_path && (
-                                                                <div className="flex items-center gap-2">
+                                                                <div className="flex items-center gap-2 shrink-0">
                                                                     <a href={getStorageUrl(doc.file_path)} target="_blank" rel="noopener noreferrer" className="text-sm font-semibold text-orange-600 hover:text-orange-700 flex items-center gap-1 bg-orange-50 px-3 py-1.5 rounded-full transition-colors hover:bg-orange-100">
                                                                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                                                                         Preview
