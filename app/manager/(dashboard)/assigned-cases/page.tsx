@@ -563,7 +563,7 @@ export default function AssignedCasesPage() {
             </div>
 
             {/* Tab panel */}
-            <div className="rounded-3xl border border-[#ECE9E2] bg-white shadow-sm p-6 lg:p-8">
+            <div className="rounded-3xl border border-[#ECE9E2] bg-white shadow-sm p-4 sm:p-6 lg:p-8">
                 {activeTab === 'Internal Case Notes' && (
                     <div>
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
@@ -657,7 +657,7 @@ export default function AssignedCasesPage() {
                                 )}
                             </div>
 
-                            <div className="flex flex-col rounded-2xl border border-[#ECE9E2] bg-white">
+                            <div className="flex flex-col rounded-2xl border border-[#ECE9E2] bg-white overflow-hidden">
                                 <div className="flex-1 min-h-[240px] p-4 space-y-3">
                                     {(activeConversation?.messages ?? []).length === 0 && (
                                         <p className="text-xs text-[#8A8F98] font-medium text-center pt-16">No messages yet. Start the conversation below.</p>
@@ -697,7 +697,7 @@ export default function AssignedCasesPage() {
                                         onChange={(e) => setMessageDraft(e.target.value)}
                                         onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
                                         placeholder="Type a message..."
-                                        className="flex-1 bg-[#F7F5F0] rounded-full border border-[#ECE9E2] px-4 py-2.5 text-sm text-[#101F38] outline-none focus:border-orange-500"
+                                        className="flex-1 min-w-0 bg-[#F7F5F0] rounded-full border border-[#ECE9E2] px-4 py-2.5 text-sm text-[#101F38] outline-none focus:border-orange-500"
                                     />
                                     <input 
                                         type="file" 
