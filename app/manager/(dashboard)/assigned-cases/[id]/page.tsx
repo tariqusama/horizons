@@ -254,7 +254,7 @@ export default function CaseReviewPage() {
                 <span className="text-gray-900">Case #{caseData.receipt_number || caseData.id}</span>
             </div>
 
-            <div className="flex justify-between items-start mb-8">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0 mb-8">
                 <div>
                     <h1 className="text-3xl font-black text-gray-900 flex items-center gap-4">
                         Review Case: #{caseData.receipt_number || caseData.id}
@@ -287,7 +287,7 @@ export default function CaseReviewPage() {
                             <h2 className="text-lg font-bold text-gray-900">Case & Applicant Information</h2>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-6">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                             <div>
                                 <p className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Full Name</p>
                                 <p className="text-sm font-semibold text-gray-900">{caseData.user?.name}</p>
@@ -332,7 +332,7 @@ export default function CaseReviewPage() {
                         <h2 className="text-lg font-bold text-gray-900 mb-6 border-b border-gray-100 pb-4">Submitted Documents</h2>
 
                         <div className="space-y-4">
-                            <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl border border-gray-100">
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-0 p-4 bg-gray-50 rounded-xl border border-gray-100">
                                 <div className="flex items-center space-x-4">
                                     <div className="w-10 h-10 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center shrink-0">
                                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -356,7 +356,7 @@ export default function CaseReviewPage() {
 
                             {/* Render Uploaded Documents */}
                             {caseData.documents && caseData.documents.filter(doc => !!doc.file_path).map((doc) => (
-                                <div key={doc.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-xl border border-gray-100">
+                                <div key={doc.id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-0 p-4 bg-gray-50 rounded-xl border border-gray-100">
                                     <div className="flex items-center space-x-4">
                                         <div className="w-10 h-10 rounded-lg bg-orange-100 text-orange-600 flex items-center justify-center shrink-0">
                                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
