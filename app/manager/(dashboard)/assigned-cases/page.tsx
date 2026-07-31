@@ -430,7 +430,7 @@ export default function AssignedCasesPage() {
     return (
         <div className="max-w-[1200px] mx-auto w-full pb-12">
             {/* Filter buttons */}
-            <div className="rounded-full border border-[#ECE9E2] bg-white shadow-sm p-1.5 mb-6 flex flex-wrap gap-1">
+            <div className="rounded-2xl sm:rounded-full border border-[#ECE9E2] bg-white shadow-sm p-1.5 mb-6 flex flex-wrap gap-1">
                 {(['all', 'urgent', 'high', 'medium', 'low'] as const).map((filter) => {
                     const labels: Record<typeof filter, string> = {
                         all: 'All Cases',
@@ -491,22 +491,22 @@ export default function AssignedCasesPage() {
                         </div>
                     )}
                 </div>
-                <div className="flex items-center gap-3">
-                    <div className="flex items-center gap-2 rounded-full border border-[#ECE9E2] bg-[#F7F5F0] px-4 py-2.5">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full lg:w-auto">
+                    <div className="flex items-center gap-2 rounded-full border border-[#ECE9E2] bg-[#F7F5F0] px-4 py-2.5 w-full sm:w-auto">
                         <Icon.search width={15} height={15} className="text-[#8A8F98] shrink-0" />
                         <input
                             type="text"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             placeholder="Search cases..."
-                            className="bg-transparent border-none outline-none text-sm text-[#101F38] placeholder:text-[#8A8F98] w-40"
+                            className="bg-transparent border-none outline-none text-sm text-[#101F38] placeholder:text-[#8A8F98] w-full sm:w-40"
                         />
                     </div>
-                    <div className="relative">
+                    <div className="relative w-full sm:w-auto">
                         <select
                             value={selectedCase?.id ?? ''}
                             onChange={(e) => setSelectedCaseId(Number(e.target.value))}
-                            className="appearance-none rounded-full border border-[#ECE9E2] bg-white pl-4 pr-9 py-2.5 text-sm font-semibold text-[#101F38] focus:outline-none focus:ring-2 focus:ring-orange-500/30 cursor-pointer"
+                            className="w-full appearance-none rounded-full border border-[#ECE9E2] bg-white pl-4 pr-9 py-2.5 text-sm font-semibold text-[#101F38] focus:outline-none focus:ring-2 focus:ring-orange-500/30 cursor-pointer"
                         >
                             {filteredCases.map((c) => (
                                 <option key={c.id} value={c.id}>
@@ -548,7 +548,7 @@ export default function AssignedCasesPage() {
             </div>
 
             {/* Tabs */}
-            <div className="rounded-full border border-[#ECE9E2] bg-white shadow-sm p-1.5 mb-6 flex flex-wrap gap-1">
+            <div className="rounded-2xl sm:rounded-full border border-[#ECE9E2] bg-white shadow-sm p-1.5 mb-6 flex flex-wrap gap-1">
                 {TABS.map((tab) => (
                     <button
                         key={tab}
