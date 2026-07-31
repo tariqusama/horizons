@@ -1,11 +1,22 @@
 import api from '../api';
 
+export interface ServicePackage {
+    id?: number;
+    name: string;
+    price: number;
+    order_index: number;
+    features?: string[] | null;
+}
+
 export interface Service {
     id: number;
-    name: string;
-    description: string | null;
-    price: number;
-    tier: string;
+    title: string;
+    subtitle: string | null;
+    starting_price: number;
+    processing_time?: string | null;
+    is_popular?: boolean;
+    order_index?: number;
+    packages?: ServicePackage[];
     created_at?: string;
     updated_at?: string;
 }

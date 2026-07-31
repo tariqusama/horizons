@@ -8,6 +8,7 @@ export default function ToolsGrid() {
       description: "Required for all immigrants when changing address. Get a pre-filled PDF ready for USCIS submission.",
       time: "5-10 minutes",
       isPopular: true,
+      href: "/free/ar-11/start",
       features: [
         "Auto-filled PDF",
         "Filing instructions",
@@ -18,6 +19,7 @@ export default function ToolsGrid() {
       title: "G-1145 E-Notification",
       description: "Get email/text updates for your USCIS applications. Add to any USCIS filing packet.",
       time: "2-3 minutes",
+      href: "/free/g-1145/start",
       features: [
         "Quick setup",
         "Text & email alerts",
@@ -28,6 +30,7 @@ export default function ToolsGrid() {
       title: "I-94 Travel History Guide",
       description: "Step-by-step guide to retrieve your I-94 arrival/departure records from CBP.",
       time: "3-5 minutes",
+      href: "/free/i-94/start",
       features: [
         "Interactive guide",
         "CBP portal walkthrough",
@@ -38,6 +41,7 @@ export default function ToolsGrid() {
       title: "I-131A Boarding Foil Guide",
       description: "Lost your green card abroad? Learn how to apply for a boarding foil to return to the US.",
       time: "5-7 minutes",
+      href: "/free/i-131a/start",
       features: [
         "Eligibility check",
         "Document checklist",
@@ -48,6 +52,7 @@ export default function ToolsGrid() {
       title: "FOIA Request (G-639)",
       description: "Request your immigration file from USCIS. Get your complete A-file records.",
       time: "10-15 minutes",
+      href: "/free/g-639/start",
       features: [
         "Pre-filled G-639",
         "Record type guidance",
@@ -58,6 +63,7 @@ export default function ToolsGrid() {
       title: "I-912 Fee Waiver Request",
       description: "Apply for a fee waiver if you cannot afford USCIS filing fees due to financial hardship.",
       time: "15-20 minutes",
+      href: "/free/i-912/start",
       features: [
         "Income calculator",
         "Evidence checklist",
@@ -108,7 +114,7 @@ export default function ToolsGrid() {
                 </div>
               </div>
 
-              <Link href="/signup" className="w-full bg-[#1B3A64] hover:bg-[#0A192F] text-white font-bold py-5 rounded-[20px] transition-all duration-300 flex items-center justify-center space-x-2 mt-auto shadow-[0_15px_30px_rgba(27,58,100,0.2)] hover:shadow-[0_20px_40px_rgba(27,58,100,0.3)] hover:-translate-y-1 text-[17px]">
+              <Link href={tool.href || "/signup"} className="w-full bg-[#1B3A64] hover:bg-[#0A192F] text-white font-bold py-5 rounded-[20px] transition-all duration-300 flex items-center justify-center space-x-2 mt-auto shadow-[0_15px_30px_rgba(27,58,100,0.2)] hover:shadow-[0_20px_40px_rgba(27,58,100,0.3)] hover:-translate-y-1 text-[17px]">
                 <span>Get Started</span>
                 <span className="material-icons text-[20px] ml-2">arrow_forward</span>
               </Link>

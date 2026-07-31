@@ -32,6 +32,8 @@ const Icon = {
     menu: (p: any) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="3" y1="6" x2="21" y2="6" /><line x1="3" y1="12" x2="21" y2="12" /><line x1="3" y1="18" x2="21" y2="18" /></svg>,
     close: (p: any) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>,
     cases: (p: any) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2" /><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" /></svg>,
+    target: (p: any) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg>,
+    checklist: (p: any) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><line x1="10" y1="9" x2="8" y2="9"></line></svg>,
 };
 
 type MenuItem = { href: string; label: string; icon?: any; bg?: string; fg?: string };
@@ -46,6 +48,7 @@ const adminMenu: MenuGroup[] = [
             { label: 'Tickets', icon: Icon.tickets, href: '/admin/tickets', bg: '#FBE1E6', fg: '#D6497A' },
             { label: 'Revenue Dashboard', icon: Icon.revenue, href: '/admin/revenue', bg: '#DDF3E4', fg: '#2F8A5F' },
             { label: 'Service & Pricing', icon: Icon.service, href: '/admin/service-pricing', bg: '#E8E7E3', fg: '#5B6472' },
+            { label: 'Document Checklists', icon: Icon.checklist, href: '/admin/document-checklists', bg: '#FFF5F0', fg: '#EA580C' },
             { label: 'User Management', icon: Icon.users, href: '/admin/users', bg: '#DCEBFB', fg: '#2F6FB3' },
             { label: 'Role Management', icon: Icon.role, href: '/admin/roles', bg: '#EAE1FA', fg: '#7B54C9' },
             { label: 'Assignment Request', icon: Icon.assignment, href: '/admin/assignment-requests', bg: '#FBEFD1', fg: '#B98A0A' },
@@ -53,6 +56,7 @@ const adminMenu: MenuGroup[] = [
             { label: 'Control Center', icon: Icon.shield, href: '/admin/control-center', bg: '#F0F6EA', fg: '#4D7C2B' },
             { label: 'Stuck Applications', icon: Icon.alert, href: '/admin/stuck-applications', bg: '#FFF1F1', fg: '#C0392B' },
             { label: 'Guide Engine', icon: Icon.book, href: '/admin/guide-engine', bg: '#FFF9ED', fg: '#B98A0A' },
+            { label: 'Signup Setup', icon: Icon.target, href: '/admin/signup-setup', bg: '#F3E8FF', fg: '#7E22CE' },
             { label: 'Staff Performance', icon: Icon.team, href: '/admin/staff-performance', bg: '#EAF5FF', fg: '#2F6FB3' },
             { label: 'Global Search', icon: Icon.globe, href: '/admin/search', bg: '#D2F0EF', fg: '#1E9C97' },
             { label: 'Analytics', icon: Icon.analytics, href: '/admin/analytics', bg: '#E9E4FB', fg: '#7259C9' },

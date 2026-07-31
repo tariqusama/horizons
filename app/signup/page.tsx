@@ -14,58 +14,7 @@ type Question = {
   skipToEndOptions?: string[];
 };
 
-type Pathways = {
-  [key: string]: Question[];
-};
 
-const pathways: Pathways = {
-  "Replace or fix a Green Card": [
-    { question: "Do you currently live in the United States?", options: ["Yes", "No"], disqualifyingOptions: ["No"] },
-    { question: "What is your current immigration status?", options: ["I have permanent resident status", "I have non-permanent resident status"], disqualifyingOptions: ["I have non-permanent resident status"] },
-    { question: "What is the current status of your Green Card?", options: ["Lost, Stolen, Damage or Destroyed Green Card", "Card Expired or Expiring Soon", "Card Issued but Never Received", "Incorrect Information on Card (USCIS Error)", "Biographic Information Changed (Name)", "Biographic Information Changed (Gender)", "Turning 14 Years Old", "None of the Above"], skipToEndOptions: ["Lost, Stolen, Damage or Destroyed Green Card", "Card Issued but Never Received", "Incorrect Information on Card (USCIS Error)", "Biographic Information Changed (Name)", "Biographic Information Changed (Gender)", "Turning 14 Years Old"], disqualifyingOptions: ["None of the Above"] }
-  ],
-  "Bring a fiancé(e) or spouse/relative to the U.S.": [
-    { question: "Who do you want to bring to the United States?", options: ["Fiancé(e)", "Spouse", "Child/Step Child", "Parent", "Sibling"] }
-  ],
-  "Adjust status to permanent resident / get a Green Card while in US": [
-    { question: "Are you currently in the United States?", options: ["Yes", "No"], disqualifyingOptions: ["No"] },
-    { question: "Did you enter the United States through \"inspection and admission\" or \"inspection and parole\"?", options: ["Yes", "No"], disqualifyingOptions: ["No"] },
-    { question: "What criteria do you meet to qualify for a Green Card?", options: ["Family", "Employment", "Asylum/Special US government provisions", "None of the Above"], disqualifyingOptions: ["Employment", "Asylum/Special US government provisions", "None of the Above"] },
-    { question: "What's your family relationship with the petitioner?", options: ["Spouse", "Child", "Parent", "None of the above"], disqualifyingOptions: ["None of the above"] }
-  ],
-  "Remove conditions on residence (marriage-based conditional LPR)": [
-    { question: "Do you currently hold a Green Card?", options: ["Yes", "No"], disqualifyingOptions: ["No"] },
-    { question: "What is the basis for your conditional green card?", options: ["A marriage to a U.S. citizen or legal permanent resident (LPR)", "My parents' marriage to a U.S. citizen or legal permanent resident (LPR)", "Employment in the U.S."], disqualifyingOptions: ["Employment in the U.S."] },
-    { question: "Are you currently residing in the United States?", options: ["Yes", "No"], disqualifyingOptions: ["No"] },
-    { question: "How do you plan to file?", options: ["File jointly with my spouse", "Request a waiver to file alone"], disqualifyingOptions: ["Request a waiver to file alone"] }
-  ],
-  "DACA (Deferred Action) — Renewal": [
-    { question: "What is the current status of your DACA?", options: ["My DACA has not yet expired", "My DACA expired less than one year ago", "My DACA expired more than one year ago", "My DACA was terminated by USCIS"], disqualifyingOptions: ["My DACA expired more than one year ago", "My DACA was terminated by USCIS"] },
-    { question: "Have you maintained continuous residence in the U.S. since your last DACA was Approved?", options: ["Yes", "No"], disqualifyingOptions: ["No"] },
-    { question: "Have you been convicted of any of the following since your last DACA approval?", options: ["A felony", "A significant misdemeanor", "Three or more other misdemeanors (that occurred on different dates and did not arise from the same incident)", "No, I have not been convicted of any of the above"], disqualifyingOptions: ["A felony", "A significant misdemeanor", "Three or more other misdemeanors (that occurred on different dates and did not arise from the same incident)"] },
-    { question: "Do you pose a threat to national security or public safety?", options: ["No", "Yes"], disqualifyingOptions: ["Yes"] }
-  ],
-  "Apply for U.S. Citizenship (Naturalization)": [
-    { question: "Were either or both of your parents U.S. citizens at the time of your birth?", options: ["Yes", "No"], disqualifyingOptions: ["Yes"] },
-    { question: "Are you 18 years old or older?", options: ["Yes", "No"], disqualifyingOptions: ["No"] },
-    { question: "Are you a member of the United States armed forces?", options: ["Yes", "No"], disqualifyingOptions: ["Yes"] },
-    { question: "Are you a lawful permanent resident of the United States?", options: ["Yes", "No"], disqualifyingOptions: ["No"] },
-    { question: "How long have you been a lawful permanent resident of the United States?", options: ["At least 4 years and 9 months", "At least 2 years and 9 months, married to a U.S. citizen during that time", "None of the above"], disqualifyingOptions: ["None of the above"] },
-    { question: "Are you currently in the United States and have you maintained continuous residence here?", options: ["Yes", "No"], disqualifyingOptions: ["No"] },
-    { question: "Have you been physically present in the United States for at least 30 months during the past 5 years, OR at least 18 months in the last 3 years if you are married to a US citizen?", options: ["Yes", "No"], disqualifyingOptions: ["No"] }
-  ]
-};
-
-const goals = Object.keys(pathways);
-
-const goalImages: Record<string, string> = {
-  "Replace or fix a Green Card": "url('https://images.unsplash.com/photo-1521791136064-7986c2920216?auto=format&fit=crop&w=1200&q=80')",
-  "Bring a fiancé(e) or spouse/relative to the U.S.": "url('https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=1200&q=80')",
-  "Adjust status to permanent resident / get a Green Card while in US": "url('https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80')",
-  "Remove conditions on residence (marriage-based conditional LPR)": "url('https://images.unsplash.com/photo-1494496545165-4f0be2d4bd51?auto=format&fit=crop&w=1200&q=80')",
-  "DACA (Deferred Action) — Renewal": "url('https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=1200&q=80')",
-  "Apply for U.S. Citizenship (Naturalization)": "url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1200&q=80')",
-};
 
 const stepImages: { [key: string]: string } = {
   default: "url('https://images.unsplash.com/photo-1511884642898-4c92249e20b6?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80')",
@@ -101,7 +50,7 @@ const getQuestionBackgroundImage = (question?: string) => {
   return undefined;
 };
 
-const getSignupBackgroundImage = (selectedGoal: string | null, currentStep: number, question?: string) => {
+const getSignupBackgroundImage = (selectedGoal: string | null, currentStep: number, question?: string, dynamicGoalImages: Record<string, string> = {}) => {
   if (currentStep === 0) {
     return stepImages.goalSelection;
   }
@@ -112,7 +61,7 @@ const getSignupBackgroundImage = (selectedGoal: string | null, currentStep: numb
   }
 
   if (selectedGoal) {
-    return goalImages[selectedGoal] ?? stepImages.default;
+    return dynamicGoalImages[selectedGoal] ?? stepImages.default;
   }
 
   return stepImages.default;
@@ -183,6 +132,103 @@ function SignupFlowContent() {
   const [answers, setAnswers] = useState<Record<number, string>>({});
   const [isDisqualified, setIsDisqualified] = useState(false);
   const [skippedFromStep, setSkippedFromStep] = useState<number | null>(null);
+
+  const [pathways, setPathways] = useState<Record<string, Question[]> | null>(null);
+  const [goalImages, setGoalImages] = useState<Record<string, string>>({});
+  const [goals, setGoals] = useState<string[]>([]);
+  const [isLoadingPathways, setIsLoadingPathways] = useState(true);
+
+  React.useEffect(() => {
+    fetch('http://localhost:8000/api/public/signup-pathways')
+      .then(res => res.json())
+      .then(data => {
+        setPathways(data.pathways);
+        setGoalImages(data.goalImages);
+        setGoals(data.goals);
+        setIsLoadingPathways(false);
+      })
+      .catch(err => {
+        console.error("Failed to fetch pathways:", err);
+        setIsLoadingPathways(false);
+      });
+  }, []);
+
+  const [dynamicPricing, setDynamicPricing] = useState<{title: string, basic: string, advanced: string, premium: string} | null>(null);
+  const [isLoadingPricing, setIsLoadingPricing] = useState(false);
+
+  React.useEffect(() => {
+    // Only run if pathways is loaded and we have a selected goal
+    if (!pathways || !selectedGoal) return;
+    
+    // We recreate getQuestions logic here to find the length to avoid hook dependency cycle
+    let baseQuestions = [...(pathways[selectedGoal] || [])];
+    if (selectedGoal === "Replace or fix a Green Card") {
+      if (answers[3] === "Card Expired or Expiring Soon") baseQuestions.push({ question: "dummy", options: [] });
+    } else if (selectedGoal === "Bring a fiancé(e) or spouse/relative to the U.S.") {
+      if (answers[1] === "Fiancé(e)") {
+        baseQuestions.push({ question: "dummy", options: [] });
+        if (answers[2] === "Yes") {
+          baseQuestions.push({ question: "dummy", options: [] });
+          if (answers[3] === "Yes") {
+            baseQuestions.push({ question: "dummy", options: [] });
+            if (answers[4] === "Yes") baseQuestions.push({ question: "dummy", options: [] });
+          }
+        }
+      } else if (answers[1] === "Spouse") {
+        baseQuestions.push({ question: "dummy", options: [] });
+        if (answers[2] === "Yes") {
+          baseQuestions.push({ question: "dummy", options: [] });
+          if (answers[3] === "Yes") baseQuestions.push({ question: "dummy", options: [] });
+        }
+      } else if (answers[1] === "Child/Step Child") {
+        baseQuestions.push({ question: "dummy", options: [] });
+        if (answers[2] === "Yes") {
+          baseQuestions.push({ question: "dummy", options: [] });
+          if (answers[3] === "Lawful Permanent Resident (Green Card holder)") {
+            baseQuestions.push({ question: "dummy", options: [] });
+            if (answers[4] === "Yes") baseQuestions.push({ question: "dummy", options: [] });
+          }
+        }
+      } else if (answers[1] === "Parent") {
+        baseQuestions.push({ question: "dummy", options: [] });
+        if (answers[2] === "Yes") {
+          baseQuestions.push({ question: "dummy", options: [] });
+          if (answers[3] === "Yes") baseQuestions.push({ question: "dummy", options: [] });
+        }
+      } else if (answers[1] === "Sibling") {
+        baseQuestions.push({ question: "dummy", options: [] });
+        if (answers[2] === "Yes") baseQuestions.push({ question: "dummy", options: [] });
+      }
+    } else if (selectedGoal === "Adjust status to permanent resident / get a Green Card while in US") {
+      if (answers[3] === "Family") {
+        baseQuestions.push({ question: "dummy", options: [] });
+        if (answers[4] === "Spouse") {
+          baseQuestions.push({ question: "dummy", options: [] });
+          if (answers[5] === "U.S. Citizen") baseQuestions.push({ question: "dummy", options: [] });
+        }
+      }
+    }
+
+    if (currentStep > 0 && currentStep === baseQuestions.length + 1 && !dynamicPricing && !isLoadingPricing) {
+      setIsLoadingPricing(true);
+      fetch('http://localhost:8000/api/public/signup-pricing', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ goal: selectedGoal, answers })
+      })
+      .then(res => res.json())
+      .then(data => {
+        setDynamicPricing(data);
+        setIsLoadingPricing(false);
+      })
+      .catch(err => {
+        console.error("Failed to fetch pricing:", err);
+        setIsLoadingPricing(false);
+      });
+    }
+  }, [currentStep, selectedGoal, answers, dynamicPricing, isLoadingPricing, pathways]);
+
+
 
   // New States for Flow
   const [selectedPlanName, setSelectedPlanName] = useState<string>('');
@@ -512,9 +558,9 @@ function SignupFlowContent() {
   };
 
   const getQuestions = () => {
-    if (!selectedGoal) return [];
+    if (!selectedGoal || !pathways) return [];
 
-    let baseQuestions = [...pathways[selectedGoal]];
+    let baseQuestions = [...(pathways[selectedGoal] || [])];
 
     if (selectedGoal === "Replace or fix a Green Card") {
       if (answers[3] === "Card Expired or Expiring Soon") {
@@ -832,6 +878,14 @@ function SignupFlowContent() {
       );
     }
 
+    if (isLoadingPathways) {
+      return (
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="w-10 h-10 border-4 border-orange-200 border-t-orange-500 rounded-full animate-spin"></div>
+        </div>
+      );
+    }
+
     if (currentStep === 0) {
       return (
         <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -875,7 +929,16 @@ function SignupFlowContent() {
 
     // After questions are done, show plan selection
     if (currentStep === questions.length + 1) {
-      const pricing = getPackagePricing(selectedGoal, answers);
+      if (isLoadingPricing || !dynamicPricing) {
+        return (
+          <div className="flex items-center justify-center min-h-[400px] w-full max-w-[1000px] mx-auto">
+            <div className="w-10 h-10 border-4 border-orange-200 border-t-orange-500 rounded-full animate-spin"></div>
+            <p className="ml-4 text-[#5B6472] font-medium">Calculating your options...</p>
+          </div>
+        );
+      }
+
+      const pricing = dynamicPricing;
 
       return (
         <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 w-full max-w-[1000px] mx-auto">
@@ -1667,7 +1730,7 @@ function SignupFlowContent() {
               <div className="hidden lg:flex lg:w-[40%] relative overflow-hidden">
                 <div
                   className="absolute inset-0 bg-cover bg-center"
-                  style={{ backgroundImage: getSignupBackgroundImage(selectedGoal, currentStep, currentQuestion?.question) }}
+                  style={{ backgroundImage: getSignupBackgroundImage(selectedGoal, currentStep, currentQuestion?.question, goalImages) }}
                 ></div>
                 <div className="absolute inset-0 bg-gradient-to-t from-[#101F38]/90 via-[#101F38]/40 to-transparent"></div>
 
