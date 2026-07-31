@@ -478,7 +478,7 @@ export default function AR11Page() {
                   ].map(([Icon, color, label]) => (
                     <div key={label as string} className="flex items-center text-gray-500 text-sm font-medium gap-1.5">
                       {React.createElement(Icon as React.ElementType, { className: `w-4 h-4 ${color}` })}
-                      {label}
+                      {label as string}
                     </div>
                   ))}
                 </div>

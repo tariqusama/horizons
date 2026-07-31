@@ -129,7 +129,7 @@ export default function ServicesCategory({ title, subtitle, pillText, cards }: S
               {/* Header */}
               <div className="mb-8">
                 <div className="flex items-center flex-wrap gap-3 mb-2 pr-8">
-                  {selectedCardForModal.isPopular && (
+                  {selectedCardForModal.is_popular && (
                     <div className="inline-flex items-center justify-center bg-[#FF5A1F] text-white rounded-md px-2 py-0.5 text-[11px] font-bold tracking-wide">
                       <Star className="w-3.5 h-3.5 mr-1 fill-current" />
                       Most Popular
@@ -165,7 +165,7 @@ export default function ServicesCategory({ title, subtitle, pillText, cards }: S
               <div className="mb-10">
                 <h3 className="text-[22px] font-bold text-[#1a2b4b] mb-2">Processing Time</h3>
                 <p className="text-[15px] text-[#64748b]">
-                  Typically {selectedCardForModal.processingTime} depending on your specific case and location.
+                  Typically {selectedCardForModal.processing_time} depending on your specific case and location.
                 </p>
               </div>
 

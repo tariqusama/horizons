@@ -364,17 +364,17 @@ export default function TicketsPage() {
                                                     <select 
                                                         value={newTitle} 
                                                         onChange={(e) => {
-                                                            const selected = services.find(s => s.name === e.target.value);
+                                                            const selected = services.find(s => s.title === e.target.value);
                                                             setNewTitle(e.target.value);
                                                             if (selected) {
-                                                                setNewAmount(selected.price.toString());
+                                                                setNewAmount(selected.starting_price.toString());
                                                             }
                                                         }}
                                                         className="w-full px-4 py-2 border border-[#ECE9E2] rounded-xl text-sm font-semibold focus:outline-none focus:border-[#101F38]"
                                                     >
                                                         <option value="" disabled>Select a package...</option>
                                                         {services.map(s => (
-                                                            <option key={s.id} value={s.name}>{s.name}</option>
+                                                            <option key={s.id} value={s.title}>{s.title}</option>
                                                         ))}
                                                     </select>
                                                 </div>
