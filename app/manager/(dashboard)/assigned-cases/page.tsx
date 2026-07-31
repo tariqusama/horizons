@@ -566,7 +566,7 @@ export default function AssignedCasesPage() {
             <div className="rounded-3xl border border-[#ECE9E2] bg-white shadow-sm p-6 lg:p-8">
                 {activeTab === 'Internal Case Notes' && (
                     <div>
-                        <div className="flex items-center justify-between gap-4 mb-6">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                             <h2 className="text-lg font-bold text-[#101F38]">Internal Case Notes</h2>
                             <button
                                 type="button"
@@ -821,7 +821,7 @@ export default function AssignedCasesPage() {
 
                 {activeTab === 'Request Additional Documents' && (
                     <div>
-                        <div className="flex items-center justify-between gap-4 mb-6">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                             <div>
                                 <h2 className="text-lg font-bold text-[#101F38]">Additional Documents</h2>
                                 <p className="text-xs text-[#5B6472] font-medium mt-0.5">Requests for {selectedCase?.user?.email}</p>
@@ -1131,7 +1131,7 @@ export default function AssignedCasesPage() {
                             </div>
 
                             {selectedActionInfo === 'View client profile' && (
-                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     {/* Name card */}
                                     <div className="modal-info-card" style={{
                                         gridColumn: '1', borderRadius: '18px', padding: '20px',
@@ -1258,13 +1258,14 @@ export default function AssignedCasesPage() {
                                                                 const isEmpty = fieldVal === null || fieldVal === undefined || String(fieldVal).trim() === '';
                                                                 return (
                                                                     <div key={fieldKey} style={{
-                                                                        display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px',
+                                                                        display: 'flex', gap: '12px',
                                                                         padding: '12px 18px',
                                                                         borderBottom: fieldIdx < nestedEntries.length - 1 ? '1px solid #f1f5f9' : 'none',
                                                                         transition: 'background 0.15s',
                                                                     }}>
-                                                                        <span style={{ fontSize: '0.78rem', fontWeight: 600, color: '#64748b', minWidth: '120px', flexShrink: 0 }}>{fieldKey}</span>
-                                                                        <span style={{
+                                                                        <span style={{ fontSize: '0.78rem', fontWeight: 600, color: '#64748b', minWidth: '120px', flexShrink: 0, marginTop: '4px' }}>{fieldKey}</span>
+                                                                        <div style={{
+                                                                            display: 'flex', flex: 1, justifyContent: 'flex-end',
                                                                             fontSize: '0.85rem', fontWeight: 700,
                                                                             color: isEmpty ? '#cbd5e1' : '#0f172a',
                                                                             textAlign: 'right', wordBreak: 'break-all',
@@ -1274,7 +1275,7 @@ export default function AssignedCasesPage() {
                                                                             border: isEmpty ? 'none' : `1px solid ${p.border}`,
                                                                         }}>
                                                                             {isEmpty ? '—' : typeof fieldVal === 'object' ? JSON.stringify(fieldVal) : String(fieldVal)}
-                                                                        </span>
+                                                                        </div>
                                                                     </div>
                                                                 );
                                                             })
