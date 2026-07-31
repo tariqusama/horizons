@@ -1259,24 +1259,21 @@ export default function AssignedCasesPage() {
                                                             nestedEntries.map(([fieldKey, fieldVal], fieldIdx) => {
                                                                 const isEmpty = fieldVal === null || fieldVal === undefined || String(fieldVal).trim() === '';
                                                                 return (
-                                                                    <div key={fieldKey} style={{
-                                                                        display: 'flex', gap: '12px',
-                                                                        padding: '12px 18px',
-                                                                        borderBottom: fieldIdx < nestedEntries.length - 1 ? '1px solid #f1f5f9' : 'none',
-                                                                        transition: 'background 0.15s',
-                                                                    }}>
-                                                                        <span style={{ fontSize: '0.78rem', fontWeight: 600, color: '#64748b', minWidth: '120px', flexShrink: 0, marginTop: '4px' }}>{fieldKey}</span>
-                                                                        <div style={{
-                                                                            display: 'flex', flex: 1, justifyContent: 'flex-end',
-                                                                            fontSize: '0.85rem', fontWeight: 700,
-                                                                            color: isEmpty ? '#cbd5e1' : '#0f172a',
-                                                                            textAlign: 'right', wordBreak: 'break-all',
-                                                                            background: isEmpty ? 'none' : p.bg,
-                                                                            padding: isEmpty ? '0' : '3px 12px',
-                                                                            borderRadius: '20px',
-                                                                            border: isEmpty ? 'none' : `1px solid ${p.border}`,
-                                                                        }}>
-                                                                            {isEmpty ? '—' : typeof fieldVal === 'object' ? JSON.stringify(fieldVal) : String(fieldVal)}
+                                                                    <div key={fieldKey} className={`flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1.5 sm:gap-4 px-4 py-3 sm:px-5 sm:py-3.5 transition-colors ${fieldIdx < nestedEntries.length - 1 ? 'border-b border-[#f1f5f9]' : ''}`}>
+                                                                        <span className="text-[0.78rem] font-semibold text-[#64748b] sm:min-w-[120px] shrink-0">{fieldKey}</span>
+                                                                        <div className="flex sm:justify-end w-full sm:w-auto">
+                                                                            <span style={{
+                                                                                display: 'inline-block',
+                                                                                fontSize: '0.85rem', fontWeight: 700,
+                                                                                color: isEmpty ? '#cbd5e1' : '#0f172a',
+                                                                                wordBreak: 'break-word',
+                                                                                background: isEmpty ? 'none' : p.bg,
+                                                                                padding: isEmpty ? '0' : '4px 14px',
+                                                                                borderRadius: '20px',
+                                                                                border: isEmpty ? 'none' : `1px solid ${p.border}`,
+                                                                            }}>
+                                                                                {isEmpty ? '—' : typeof fieldVal === 'object' ? JSON.stringify(fieldVal) : String(fieldVal)}
+                                                                            </span>
                                                                         </div>
                                                                     </div>
                                                                 );
