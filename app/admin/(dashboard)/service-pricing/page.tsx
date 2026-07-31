@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { getServices, createService, updateService, deleteService, Service } from '../../../../lib/api/services';
+import { getServices, createService, updateService, deleteService, Service, ServicePackage } from '../../../../lib/api/services';
 import { getRevenueData, RevenueData } from '../../../../lib/api/revenue';
 
 const Icon = {

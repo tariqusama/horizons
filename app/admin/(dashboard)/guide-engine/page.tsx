@@ -805,7 +805,7 @@ export default function AdminGuideEnginePage() {
     const activeGuidesCount = services.length;
     const formsTrackedCount = services.length;
     const feeUpdatesCount = services.length;
-    const locationsCount = new Set(services.map(s => s.tier)).size;
+    const locationsCount = new Set(services.map(s => s.processing_time)).size;
 
     return (
         <main className="flex-1 px-4 sm:px-6 pb-8 pt-2">
