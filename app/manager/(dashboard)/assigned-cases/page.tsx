@@ -1136,7 +1136,7 @@ export default function AssignedCasesPage() {
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     {/* Name card */}
                                     <div className="modal-info-card" style={{
-                                        gridColumn: '1', borderRadius: '18px', padding: '20px',
+                                        borderRadius: '18px', padding: '20px',
                                         background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)',
                                         border: '1px solid rgba(226,232,240,0.8)',
                                         boxShadow: '0 2px 12px rgba(15,23,42,0.06)'
@@ -1157,7 +1157,7 @@ export default function AssignedCasesPage() {
                                     </div>
                                     {/* Email card */}
                                     <div className="modal-info-card" style={{
-                                        gridColumn: '2', borderRadius: '18px', padding: '20px',
+                                        borderRadius: '18px', padding: '20px',
                                         background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)',
                                         border: '1px solid rgba(226,232,240,0.8)',
                                         boxShadow: '0 2px 12px rgba(15,23,42,0.06)'
@@ -1177,8 +1177,8 @@ export default function AssignedCasesPage() {
                                         <p style={{ margin: 0, fontSize: '0.9rem', fontWeight: 600, color: '#0f172a', wordBreak: 'break-all' }}>{selectedCase?.user?.email || 'N/A'}</p>
                                     </div>
                                     {/* Phone card */}
-                                    <div className="modal-info-card" style={{
-                                        gridColumn: '1 / -1', borderRadius: '18px', padding: '20px',
+                                    <div className="modal-info-card sm:col-span-2" style={{
+                                        borderRadius: '18px', padding: '20px',
                                         background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)',
                                         border: '1px solid rgba(226,232,240,0.8)',
                                         boxShadow: '0 2px 12px rgba(15,23,42,0.06)'
