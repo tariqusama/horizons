@@ -557,7 +557,7 @@ export default function CaseReviewPage() {
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#101F38]/60 p-4 backdrop-blur-md">
                     <div className="bg-white rounded-3xl max-w-2xl w-full shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
                         {/* Header */}
-                        <div className="flex items-center justify-between px-8 py-6 border-b border-gray-100 bg-gray-50/50">
+                        <div className="flex items-center justify-between px-4 sm:px-8 py-6 border-b border-gray-100 bg-gray-50/50">
                             <div>
                                 <h3 className="text-2xl font-black text-gray-900">Edit Case Details</h3>
                                 <p className="text-sm font-medium text-gray-500 mt-1">Update package details, processing status, and financials.</p>
@@ -568,7 +568,7 @@ export default function CaseReviewPage() {
                         </div>
 
                         {/* Form Body */}
-                        <form onSubmit={handleEditSubmit} className="flex-1 overflow-y-auto px-8 py-6 space-y-8">
+                        <form onSubmit={handleEditSubmit} className="flex-1 overflow-y-auto px-4 sm:px-8 py-6 space-y-8">
                             
                             {/* Section 1: Package Info */}
                             <div className="space-y-4">
@@ -615,7 +615,7 @@ export default function CaseReviewPage() {
                             {/* Section 2: Processing Status */}
                             <div className="space-y-4">
                                 <h4 className="text-sm font-black text-gray-900 uppercase tracking-widest border-b border-gray-100 pb-2">Processing Status</h4>
-                                <div className="grid grid-cols-2 gap-6">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                     <div>
                                         <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">Receipt Number</label>
                                         <input type="text" value={editFormData.receipt_number} onChange={e => setEditFormData({...editFormData, receipt_number: e.target.value})} className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3.5 text-sm font-medium text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all" />
@@ -631,7 +631,7 @@ export default function CaseReviewPage() {
                                         </select>
                                     </div>
                                 </div>
-                                <div className="grid grid-cols-2 gap-6">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                     <div>
                                         <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">Progress (%)</label>
                                         <input type="text" value={editFormData.progress} onChange={e => setEditFormData({...editFormData, progress: e.target.value})} className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3.5 text-sm font-medium text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all" />
@@ -646,7 +646,7 @@ export default function CaseReviewPage() {
                             {/* Section 3: Financials */}
                             <div className="space-y-4">
                                 <h4 className="text-sm font-black text-gray-900 uppercase tracking-widest border-b border-gray-100 pb-2">Financials</h4>
-                                <div className="grid grid-cols-2 gap-6">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                     <div>
                                         <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">Total Price ($)</label>
                                         <div className="relative">
