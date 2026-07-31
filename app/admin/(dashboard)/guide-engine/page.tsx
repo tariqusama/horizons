@@ -115,10 +115,10 @@ function ServiceModal({
 
     React.useEffect(() => {
         if (service) {
-            setName(service.name);
-            setDescription(service.description || '');
-            setPrice(service.price);
-            setTier(service.tier);
+            setName(service.title || '');
+            setDescription(service.subtitle || '');
+            setPrice(service.starting_price || 0);
+            setTier(service.processing_time || 'Standard');
         } else {
             setName('');
             setDescription('');
@@ -133,7 +133,7 @@ function ServiceModal({
         e.preventDefault();
         setSaving(true);
         try {
-            await onSave({ name, description, price, tier });
+            await onSave({ title: name, subtitle: description, starting_price: price, processing_time: tier });
             onClose();
         } catch (err) {
             console.error(err);
@@ -533,11 +533,11 @@ function FormsTrackerTab({ services, onRefresh, onEdit, onDelete, onAdd }: { ser
                     </div>
                     {services.map((service) => (
                         <div key={service.id} className="grid grid-cols-[1fr_2fr_1fr_1fr_1fr_120px] gap-4 px-5 py-4 border-t border-[#ECE9E2] text-sm text-[#3B4251] items-center">
-                            <span className="font-bold text-[#101F38]">{service.name}</span>
-                            <span className="text-[#5B6472] truncate">{service.description || 'Standard form guidance'}</span>
-                            <span className="font-bold">${Number(service.price).toFixed(2)}</span>
-                            <span>{service.tier}</span>
-                            <span>{service.tier}</span>
+                            <span className="font-bold text-[#101F38]">{service.title}</span>
+                            <span className="text-[#5B6472] truncate">{service.subtitle || 'Standard form guidance'}</span>
+                            <span className="font-bold">${Number(service.starting_price).toFixed(2)}</span>
+                            <span>{service.processing_time || 'Standard'}</span>
+                            <span>{service.processing_time || 'Standard'}</span>
                             <div className="flex items-center justify-end gap-2">
                                 <button onClick={() => onEdit(service)} className="text-[#5B6472] hover:text-orange-500 transition-colors p-1" title="Edit">
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9" /><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" /></svg>
@@ -583,13 +583,13 @@ function FeesTab({ services, onRefresh, onEdit, onDelete, onAdd }: { services: S
                     {services.map((service) => (
                         <div key={service.id} className="rounded-2xl border border-[#ECE9E2] hover:border-orange-500/30 transition-colors p-4 flex items-center justify-between gap-4 group">
                             <div>
-                                <p className="text-sm font-bold text-[#101F38]">{service.name}</p>
-                                <p className="text-xs text-[#5B6472]">{service.description || 'USCIS filing fee details'}</p>
+                                <p className="text-sm font-bold text-[#101F38]">{service.title}</p>
+                                <p className="text-xs text-[#5B6472]">{service.subtitle || 'USCIS filing fee details'}</p>
                             </div>
                             <div className="flex items-center gap-6">
                                 <div className="text-right">
-                                    <p className="font-black text-[#101F38]">${Number(service.price).toFixed(2)}</p>
-                                    <p className="text-[10px] uppercase tracking-wider text-[#8A8F98]">{service.tier}</p>
+                                    <p className="font-black text-[#101F38]">${Number(service.starting_price).toFixed(2)}</p>
+                                    <p className="text-[10px] uppercase tracking-wider text-[#8A8F98]">{service.processing_time || 'Standard'}</p>
                                 </div>
                                 <div className="flex flex-col gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                                     <button onClick={() => onEdit(service)} className="text-[#5B6472] hover:text-orange-500 transition-colors" title="Edit">
