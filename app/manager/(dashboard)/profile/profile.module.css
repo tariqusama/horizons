@@ -195,3 +195,35 @@
 .btnSave:hover {
     background-color: #c2410c;
 }
+
+@media (max-width: 768px) {
+    .pageWrapper {
+        padding: 1rem 0;
+    }
+
+    .tabsContainer {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        border-radius: 1rem;
+    }
+
+    .tab {
+        flex: 1 1 auto;
+        justify-content: center;
+        text-align: center;
+        padding: 0.5rem 1rem;
+    }
+
+    .formGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .formGroupFull {
+        grid-column: span 1;
+    }
+
+    .card {
+        padding: 1.25rem;
+    }
+}
