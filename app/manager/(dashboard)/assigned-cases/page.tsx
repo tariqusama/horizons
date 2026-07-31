@@ -634,7 +634,7 @@ export default function AssignedCasesPage() {
                     <div>
                         <h2 className="text-lg font-bold text-[#101F38] mb-4">Messages</h2>
                         <div className="grid grid-cols-1 md:grid-cols-[260px_1fr] gap-4 border-t border-[#ECE9E2] pt-4">
-                            <div className="space-y-2">
+                            <div className="space-y-2 max-h-[180px] md:max-h-none overflow-y-auto pr-1 md:pr-0">
                                 {conversations.map((conv) => (
                                     <button
                                         key={conv.id}
@@ -664,7 +664,7 @@ export default function AssignedCasesPage() {
                                     )}
                                     {(activeConversation?.messages ?? []).map((m) => (
                                         <div key={m.id} className={`flex w-full ${m.from === 'staff' ? 'justify-end' : 'justify-start'}`}>
-                                            <div className={`inline-block max-w-[70%] rounded-2xl px-4 py-2.5 ${m.from === 'staff' ? 'bg-orange-500 text-white rounded-br-sm' : 'border border-[#ECE9E2] bg-[#F7F5F0] text-[#101F38] rounded-bl-sm'}`}>
+                                            <div className={`inline-block max-w-[85%] md:max-w-[70%] rounded-2xl px-4 py-2.5 ${m.from === 'staff' ? 'bg-orange-500 text-white rounded-br-sm' : 'border border-[#ECE9E2] bg-[#F7F5F0] text-[#101F38] rounded-bl-sm'}`}>
                                                 <div className={`text-[10px] mb-1 font-semibold opacity-70 ${m.from === 'staff' ? 'text-white' : 'text-[#5B6472]'}`}>
                                                     {m.from === 'staff' ? 'Manager' : 'Client'}
                                                 </div>
@@ -771,18 +771,20 @@ export default function AssignedCasesPage() {
                                                 {section.documents.map((document: any) => {
                                                     const checked = Boolean(checkedDocuments[document.name]);
                                                     return (
-                                                        <label key={document.name} className="flex items-start gap-3 rounded-3xl border border-transparent bg-white px-4 py-3 shadow-sm transition hover:border-[#ECE9E2]">
-                                                            <input
-                                                                type="checkbox"
-                                                                checked={checked}
-                                                                onChange={() => toggleChecklistItem(document.name)}
-                                                                className="mt-1 h-4 w-4 rounded border-[#ECE9E2] accent-[#E3755D]"
-                                                            />
-                                                            <div className="flex-1">
-                                                                <p className="text-sm text-[#101F38]">{document.name}</p>
-                                                                <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold mt-1 ${document.required ? 'bg-[#E24B4A]/10 text-[#E24B4A]' : 'bg-gray-100 text-gray-600'}`}>
-                                                                    {document.required ? 'Required' : 'Optional'}
-                                                                </span>
+                                                        <label key={document.name} className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 rounded-3xl border border-transparent bg-white px-4 py-3 shadow-sm transition hover:border-[#ECE9E2]">
+                                                            <div className="flex items-start gap-3 w-full sm:w-auto sm:flex-1 min-w-0">
+                                                                <input
+                                                                    type="checkbox"
+                                                                    checked={checked}
+                                                                    onChange={() => toggleChecklistItem(document.name)}
+                                                                    className="mt-1 h-4 w-4 shrink-0 rounded border-[#ECE9E2] accent-[#E3755D]"
+                                                                />
+                                                                <div className="min-w-0">
+                                                                    <p className="text-sm text-[#101F38] break-words">{document.name}</p>
+                                                                    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold mt-1 ${document.required ? 'bg-[#E24B4A]/10 text-[#E24B4A]' : 'bg-gray-100 text-gray-600'}`}>
+                                                                        {document.required ? 'Required' : 'Optional'}
+                                                                    </span>
+                                                                </div>
                                                             </div>
                                                             {(() => {
                                                                 const isMatch = (reqName: string, docName: string) => {
@@ -794,7 +796,7 @@ export default function AssignedCasesPage() {
                                                                 const uploadedMatch = uploadedDocuments.find(d => isMatch(document.name, d.name) && d.file_path);
                                                                 if (uploadedMatch) {
                                                                     return (
-                                                                        <a href={getStorageUrl(uploadedMatch.file_path)} target="_blank" rel="noopener noreferrer" className="ml-4 shrink-0 inline-flex items-center gap-1.5 rounded-full bg-orange-50 px-3 py-1.5 text-xs font-semibold text-orange-600 hover:bg-orange-100 hover:text-orange-700 transition-colors relative z-10" onClick={(e) => e.stopPropagation()}>
+                                                                        <a href={getStorageUrl(uploadedMatch.file_path)} target="_blank" rel="noopener noreferrer" className="shrink-0 inline-flex items-center gap-1.5 rounded-full bg-orange-50 px-3 py-1.5 text-xs font-semibold text-orange-600 hover:bg-orange-100 hover:text-orange-700 transition-colors relative z-10" onClick={(e) => e.stopPropagation()}>
                                                                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                                                                             Preview
                                                                         </a>
