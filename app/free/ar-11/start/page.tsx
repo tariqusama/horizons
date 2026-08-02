@@ -40,10 +40,10 @@ const US_STATES = [
 ];
 
 const inputClass =
-  "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm";
+  "flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-base ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm";
 
 const selectClass =
-  "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50";
+  "flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-blue-300 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50";
 
 function AddressBlock({ prefix, streetPlaceholder, cityPlaceholder }: { prefix: string; streetPlaceholder: string; cityPlaceholder: string }) {
   const [unitType, setUnitType] = useState<string | null>(null);
@@ -124,7 +124,7 @@ export default function AR11Page() {
 
   const handleDownloadPDF = () => {
     const doc = new jsPDF();
-    
+
     // Header
     doc.setFillColor(27, 58, 100);
     doc.rect(0, 0, 210, 40, 'F');
@@ -144,19 +144,19 @@ export default function AR11Page() {
     doc.setTextColor(50, 50, 50);
     doc.setFontSize(11);
     let y = 60;
-    
+
     for (const [key, value] of Object.entries(formData)) {
       const formattedKey = key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
-      
+
       doc.setFont("helvetica", "bold");
       doc.text(`${formattedKey}:`, 20, y);
-      
+
       doc.setFont("helvetica", "normal");
       const splitValue = doc.splitTextToSize(String(value || 'Not provided'), 110);
       doc.text(splitValue, 80, y);
-      
+
       y += Math.max(10, splitValue.length * 6 + 4);
-      
+
       if (y > 270) {
         doc.addPage();
         y = 20;
@@ -353,8 +353,8 @@ export default function AR11Page() {
 
               <form className="space-y-6" onSubmit={handleFormSubmit}>
                 {/* Personal Information */}
-                <div className="rounded-xl border border-gray-200 bg-white shadow-sm overflow-hidden">
-                  <div className="flex items-center gap-3 px-6 py-4 border-b border-gray-100 bg-gray-50/50">
+                <div className="rounded-xl border border-slate-200 bg-slate-50 shadow-sm overflow-hidden">
+                  <div className="flex items-center gap-3 px-6 py-4 border-b border-slate-200 bg-slate-100/80">
                     <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
                       <User className="w-4 h-4 text-blue-600" />
                     </div>
@@ -391,8 +391,8 @@ export default function AR11Page() {
                 </div>
 
                 {/* Contact Information */}
-                <div className="rounded-xl border border-gray-200 bg-white shadow-sm overflow-hidden">
-                  <div className="flex items-center gap-3 px-6 py-4 border-b border-gray-100 bg-gray-50/50">
+                <div className="rounded-xl border border-slate-200 bg-slate-50 shadow-sm overflow-hidden">
+                  <div className="flex items-center gap-3 px-6 py-4 border-b border-slate-200 bg-slate-100/80">
                     <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
                       <Phone className="w-4 h-4 text-blue-600" />
                     </div>
@@ -413,8 +413,8 @@ export default function AR11Page() {
                 </div>
 
                 {/* Previous Address */}
-                <div className="rounded-xl border border-gray-200 bg-white shadow-sm overflow-hidden">
-                  <div className="flex items-center gap-3 px-6 py-4 border-b border-gray-100 bg-gray-50/50">
+                <div className="rounded-xl border border-slate-200 bg-slate-50 shadow-sm overflow-hidden">
+                  <div className="flex items-center gap-3 px-6 py-4 border-b border-slate-200 bg-slate-100/80">
                     <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
                       <MapPin className="w-4 h-4 text-blue-600" />
                     </div>
@@ -429,8 +429,8 @@ export default function AR11Page() {
                 </div>
 
                 {/* Present Address */}
-                <div className="rounded-xl border border-gray-200 bg-white shadow-sm overflow-hidden">
-                  <div className="flex items-center gap-3 px-6 py-4 border-b border-gray-100 bg-gray-50/50">
+                <div className="rounded-xl border border-slate-200 bg-slate-50 shadow-sm overflow-hidden">
+                  <div className="flex items-center gap-3 px-6 py-4 border-b border-slate-200 bg-slate-100/80">
                     <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
                       <MapPin className="w-4 h-4 text-blue-600" />
                     </div>
@@ -445,8 +445,8 @@ export default function AR11Page() {
                 </div>
 
                 {/* Mailing Address */}
-                <div className="rounded-xl border border-gray-200 bg-white shadow-sm overflow-hidden">
-                  <div className="flex items-center gap-3 px-6 py-4 border-b border-gray-100 bg-gray-50/50">
+                <div className="rounded-xl border border-slate-200 bg-slate-50 shadow-sm overflow-hidden">
+                  <div className="flex items-center gap-3 px-6 py-4 border-b border-slate-200 bg-slate-100/80">
                     <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
                       <Mail className="w-4 h-4 text-blue-600" />
                     </div>
@@ -461,8 +461,8 @@ export default function AR11Page() {
                 </div>
 
                 {/* Pending USCIS Cases */}
-                <div className="rounded-xl border border-gray-200 bg-white shadow-sm overflow-hidden">
-                  <div className="flex items-center gap-3 px-6 py-4 border-b border-gray-100 bg-gray-50/50">
+                <div className="rounded-xl border border-slate-200 bg-slate-50 shadow-sm overflow-hidden">
+                  <div className="flex items-center gap-3 px-6 py-4 border-b border-slate-200 bg-slate-100/80">
                     <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
                       <FileText className="w-4 h-4 text-blue-600" />
                     </div>
@@ -500,8 +500,8 @@ export default function AR11Page() {
                 </div>
 
                 {/* Signature & Attestation */}
-                <div className="rounded-xl border border-gray-200 bg-white shadow-sm overflow-hidden">
-                  <div className="px-6 py-4 border-b border-gray-100 bg-gray-50/50">
+                <div className="rounded-xl border border-slate-200 bg-slate-50 shadow-sm overflow-hidden">
+                  <div className="px-6 py-4 border-b border-slate-200 bg-slate-100/80">
                     <h3 className="text-base font-bold text-[#1B3A64]">Signature &amp; Attestation</h3>
                   </div>
                   <div className="p-6 space-y-5">
