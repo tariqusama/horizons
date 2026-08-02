@@ -1,0 +1,809 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+
+.pageWrapper {
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    padding: 0 0 4rem;
+    font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    color: #1b2559;
+    background: #f8fafc;
+    min-height: 100vh;
+}
+
+/* ==========================================================================
+   TOP PACKET HEADER & PROGRESS BANNER
+   ========================================================================== */
+
+.headerBannerCard {
+    background: #ffffff;
+    border-bottom: 1px solid #e2e8f0;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.02);
+    position: relative;
+}
+
+.headerContentRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 1.25rem 1.5rem;
+}
+
+.headerLeftGroup {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    min-width: 0;
+}
+
+.headerTitleGroup {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.packetBackBtn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    border: 1.5px solid #e2e8f0;
+    background: #ffffff;
+    color: #475569;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.packetBackBtn:hover {
+    border-color: #F0501A;
+    color: #F0501A;
+    background: #fff9f6;
+    transform: translateX(-2px);
+}
+
+.packetTitle {
+    margin: 0 0 0.15rem 0;
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: #1e293b;
+    letter-spacing: -0.01em;
+    font-family: 'Outfit', sans-serif;
+}
+
+.packetSubtitle {
+    margin: 0;
+    font-size: 0.88rem;
+    color: #64748b;
+    font-weight: 500;
+}
+
+.progressCounterGroup {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-shrink: 0;
+}
+
+.progressBadge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.4rem 0.85rem;
+    border-radius: 20px;
+    background: #fff3ee;
+    color: #D94514;
+    font-size: 0.85rem;
+    font-weight: 700;
+    border: 1px solid rgba(240, 80, 26, 0.2);
+    white-space: nowrap;
+}
+
+.progressBarTrack {
+    width: 100%;
+    height: 4px;
+    background: #f1f5f9;
+    position: relative;
+    overflow: hidden;
+}
+
+.progressBarFill {
+    height: 100%;
+    background: linear-gradient(90deg, #FF6B35 0%, #F0501A 100%);
+    transition: width 0.35s ease;
+    border-radius: 0 2px 2px 0;
+}
+
+/* ==========================================================================
+   HORIZONTAL STEP TABS STRIP (Clean & Scrollbar Hidden)
+   ========================================================================== */
+
+.tabsContainer {
+    width: 100%;
+    background: #ffffff;
+    border-bottom: 1px solid #e2e8f0;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    -webkit-overflow-scrolling: touch;
+}
+
+.tabsContainer::-webkit-scrollbar {
+    display: none;
+}
+
+.tabsTrack {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 0.75rem 1.5rem;
+    min-width: max-content;
+}
+
+.tabItem {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.55rem 1rem;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    background: #f8fafc;
+    color: #64748b;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    user-select: none;
+}
+
+.tabStepNum {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #cbd5e1;
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 800;
+    transition: all 0.2s ease;
+}
+
+.tabItem:hover {
+    border-color: #F0501A;
+    color: #F0501A;
+    background: #fff9f6;
+}
+
+.tabItemCompleted {
+    background: #ffffff;
+    border-color: #cbd5e1;
+    color: #334155;
+}
+
+.tabItemCompleted .tabStepNum {
+    background: #94a3b8;
+}
+
+.tabItemActive {
+    color: #ffffff !important;
+    background: linear-gradient(135deg, #FF6B35 0%, #F0501A 100%) !important;
+    border-color: transparent !important;
+    box-shadow: 0 4px 12px rgba(240, 80, 26, 0.28);
+}
+
+.tabItemActive .tabStepNum {
+    background: #ffffff !important;
+    color: #F0501A !important;
+}
+
+.tabCheckSmall {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #F0501A;
+    color: #ffffff;
+    font-size: 10px;
+    font-weight: 800;
+    margin-left: 2px;
+}
+
+.tabItemActive .tabCheckSmall {
+    background: #ffffff;
+    color: #F0501A;
+}
+
+/* ==========================================================================
+   INCREASED WIDTH 2-COLUMN FORM LAYOUT
+   ========================================================================== */
+
+.layoutContainer {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 2rem;
+    max-width: 1440px;
+    margin: 2rem auto 0;
+    padding: 0 1.5rem;
+    align-items: start;
+}
+
+/* Elevated Wide Form Card */
+.formCard {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 2.5rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+    border: 1px solid #f1f5f9;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Page Section Titles */
+.sectionHeader {
+    margin-bottom: 2rem;
+}
+
+.sectionMainTitle {
+    margin: 0 0 0.4rem 0;
+    font-size: 2.1rem;
+    font-weight: 400;
+    color: #334155;
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+    font-family: 'Outfit', sans-serif;
+}
+
+.sectionSubtitle {
+    margin: 0;
+    font-size: 1.05rem;
+    color: #64748b;
+    font-weight: 400;
+    line-height: 1.45;
+}
+
+.sectionDivider {
+    width: 100%;
+    height: 1px;
+    background: #e2e8f0;
+    border: none;
+    margin: 1.25rem 0 2rem;
+}
+
+/* 2-Column Questions Grid Layout */
+.questionsGrid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.75rem 2rem;
+    align-items: start;
+}
+
+/* Question Block */
+.questionBlock {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+}
+
+.questionBlockFullWidth {
+    grid-column: 1 / -1;
+}
+
+.questionHeaderRow {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.statusCheckCircle {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #FF6B35 0%, #F0501A 100%);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 800;
+    flex-shrink: 0;
+    box-shadow: 0 2px 8px rgba(240, 80, 26, 0.25);
+}
+
+.statusCheckEmpty {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 2px solid #cbd5e1;
+    background: #ffffff;
+    color: #94a3b8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.questionTitle {
+    margin: 0;
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: #1e293b;
+    letter-spacing: -0.01em;
+    line-height: 1.35;
+}
+
+.requiredStar {
+    color: #F0501A;
+    font-weight: 600;
+    margin-left: 2px;
+}
+
+.subFieldLabel {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: #475569;
+    margin-bottom: 0.45rem;
+    display: block;
+}
+
+.questionBody {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding-left: 0;
+}
+
+/* Dual Column Grid for Units & Value */
+.dualInputGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+    align-items: flex-start;
+}
+
+/* Inputs & Form Controls */
+.inputField {
+    width: 100%;
+    height: 48px;
+    padding: 0 1rem;
+    border-radius: 8px;
+    border: 1.5px solid #e2e8f0;
+    background: #ffffff;
+    color: #1e293b;
+    font-size: 15px;
+    font-family: inherit;
+    transition: all 0.2s ease;
+    outline: none;
+    box-sizing: border-box;
+}
+
+.inputField:focus {
+    border-color: #F0501A;
+    box-shadow: 0 0 0 3px rgba(240, 80, 26, 0.12);
+    background: #fffdfc;
+}
+
+.textareaField {
+    width: 100%;
+    min-height: 110px;
+    padding: 0.85rem 1rem;
+    border-radius: 8px;
+    border: 1.5px solid #e2e8f0;
+    background: #ffffff;
+    color: #1e293b;
+    font-size: 15px;
+    font-family: inherit;
+    transition: all 0.2s ease;
+    outline: none;
+    resize: vertical;
+    box-sizing: border-box;
+}
+
+.textareaField:focus {
+    border-color: #F0501A;
+    box-shadow: 0 0 0 3px rgba(240, 80, 26, 0.12);
+    background: #fffdfc;
+}
+
+/* Select Dropdown */
+.selectField {
+    width: 100%;
+    height: 48px;
+    padding: 0 1rem;
+    border-radius: 8px;
+    border: 1.5px solid #e2e8f0;
+    background-color: #ffffff;
+    color: #1e293b;
+    font-size: 15px;
+    font-family: inherit;
+    outline: none;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    box-sizing: border-box;
+}
+
+.selectField:focus {
+    border-color: #F0501A;
+    box-shadow: 0 0 0 3px rgba(240, 80, 26, 0.12);
+    background: #fffdfc;
+}
+
+/* Helper Notice */
+.helperNotice {
+    font-size: 0.86rem;
+    color: #64748b;
+    line-height: 1.45;
+    margin: 0.35rem 0 0 0;
+}
+
+/* Radio Group */
+.radioGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 0.75rem;
+}
+
+.radioCard {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-height: 48px;
+    padding: 0.75rem 1.15rem;
+    border-radius: 8px;
+    border: 1.5px solid #e2e8f0;
+    background: #ffffff;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: #334155;
+    user-select: none;
+}
+
+.radioCard:hover {
+    border-color: #F0501A;
+    background: #fff9f6;
+}
+
+.radioCardActive {
+    border-color: #F0501A;
+    background: #fff3ee;
+    color: #D94514;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(240, 80, 26, 0.1);
+}
+
+.radioCard input[type="radio"] {
+    accent-color: #F0501A;
+    width: 18px;
+    height: 18px;
+    margin: 0;
+    cursor: pointer;
+}
+
+/* Footer Action Buttons Spanning Full 2 Columns */
+.footerActions {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 3.5rem;
+    padding-top: 2rem;
+    border-top: 1px solid #f1f5f9;
+}
+
+.btnExit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    height: 46px;
+    padding: 0 1.5rem;
+    border-radius: 8px;
+    border: none;
+    background: linear-gradient(135deg, #FF6B35 0%, #F0501A 100%);
+    color: #ffffff;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(240, 80, 26, 0.25);
+    transition: all 0.2s ease;
+}
+
+.btnExit:hover:not(:disabled) {
+    background: linear-gradient(135deg, #F0501A 0%, #D94514 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(240, 80, 26, 0.35);
+}
+
+.btnSaveContinue {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    height: 46px;
+    padding: 0 1.75rem;
+    border-radius: 8px;
+    border: none;
+    background: linear-gradient(135deg, #FF6B35 0%, #F0501A 100%);
+    color: #ffffff;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(240, 80, 26, 0.25);
+    transition: all 0.2s ease;
+}
+
+.btnSaveContinue:hover:not(:disabled) {
+    background: linear-gradient(135deg, #F0501A 0%, #D94514 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(240, 80, 26, 0.35);
+}
+
+.btnExit:disabled,
+.btnSaveContinue:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* ==========================================================================
+   RIGHT SIDE HELPER / TIPS PANEL
+   ========================================================================== */
+
+.tipsSidePanel {
+    position: sticky;
+    top: 1.5rem;
+}
+
+.tipsCard {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+    border: 1px solid #f1f5f9;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.tipsHeaderRow {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+}
+
+.tipsIconBox {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    background: #fff3ee;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+}
+
+.tipsTitle {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #1e293b;
+}
+
+.tipsText {
+    margin: 0;
+    font-size: 0.88rem;
+    color: #64748b;
+    line-height: 1.5;
+}
+
+.tipsFeatureList {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+    margin-top: 0.25rem;
+}
+
+.tipsFeatureItem {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    font-size: 0.84rem;
+    color: #475569;
+    line-height: 1.45;
+}
+
+.tipsFeatureDot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #F0501A;
+    margin-top: 6px;
+    flex-shrink: 0;
+}
+
+.securityBadgeRow {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid #f1f5f9;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #2d9a8d;
+}
+
+/* ==========================================================================
+   COMPREHENSIVE MOBILE RESPONSIVE BREAKPOINTS
+   ========================================================================== */
+
+@media (max-width: 1024px) {
+    .layoutContainer {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+        margin-top: 1.5rem;
+    }
+
+    .questionsGrid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .tipsSidePanel {
+        position: static;
+    }
+}
+
+@media (max-width: 768px) {
+    .pageWrapper {
+        padding-bottom: 2rem;
+    }
+
+    .headerContentRow {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem;
+        padding: 0.85rem 1rem;
+    }
+
+    .headerLeftGroup {
+        gap: 0.65rem;
+        flex: 1;
+        min-width: 0;
+    }
+
+    .headerTitleGroup {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+    }
+
+    .packetBackBtn {
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+    }
+
+    .packetTitle {
+        font-size: 1.02rem;
+        font-weight: 700;
+        line-height: 1.25;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .packetSubtitle {
+        font-size: 0.78rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .progressBadge {
+        font-size: 0.76rem;
+        padding: 0.3rem 0.65rem;
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+
+    .tabsTrack {
+        padding: 0.5rem 1rem;
+        gap: 0.45rem;
+    }
+
+    .tabItem {
+        padding: 0.45rem 0.8rem;
+        font-size: 0.82rem;
+        border-radius: 6px;
+    }
+
+    .layoutContainer {
+        padding: 0 0.85rem;
+        margin-top: 1rem;
+        gap: 1rem;
+    }
+
+    .formCard {
+        padding: 1.25rem 1rem;
+        border-radius: 12px;
+    }
+
+    .sectionHeader {
+        margin-bottom: 1.25rem;
+    }
+
+    .sectionMainTitle {
+        font-size: 1.5rem;
+    }
+
+    .sectionSubtitle {
+        font-size: 0.9rem;
+    }
+
+    .questionTitle {
+        font-size: 1.05rem;
+    }
+
+    .inputField,
+    .selectField {
+        height: 44px;
+        font-size: 14px;
+        border-radius: 6px;
+    }
+
+    .dualInputGrid {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+
+    .radioGrid {
+        grid-template-columns: 1fr;
+        gap: 0.6rem;
+    }
+
+    .radioCard {
+        min-height: 44px;
+        padding: 0.65rem 0.85rem;
+        font-size: 0.9rem;
+        border-radius: 6px;
+    }
+}
+
+@media (max-width: 640px) {
+    .footerActions {
+        flex-direction: column-reverse;
+        gap: 0.75rem;
+        margin-top: 2rem;
+        padding-top: 1.25rem;
+        width: 100%;
+    }
+
+    .btnExit,
+    .btnSaveContinue {
+        width: 100%;
+        height: 46px;
+        font-size: 0.95rem;
+        border-radius: 8px;
+    }
+}

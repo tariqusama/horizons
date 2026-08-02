@@ -1,55 +1,65 @@
+'use client';
+
 import React from 'react';
+import { motion } from 'framer-motion';
+import { impactStats } from '@/data/homePage';
 
 export default function ImpactSection() {
-  const stats = [
-    {
-      value: "98%",
-      label: "Success Rate",
-      icon: "task_alt",
-    },
-    {
-      value: "3,012+",
-      label: "Cases Handled",
-      icon: "groups",
-    },
-    {
-      value: "24/7",
-      label: "Support Available",
-      icon: "support_agent",
-    },
-    {
-      value: "4.9/5",
-      label: "Client Rating",
-      icon: "star",
-    }
-  ];
-
   return (
-    <section className="w-full py-32 px-4 md:px-8 lg:px-16 max-w-[1400px] mx-auto text-center bg-white relative">
-      <div className="inline-flex items-center bg-[#EAF1F8] rounded-full px-6 py-2 mb-8 border border-blue-100/50 shadow-sm">
-        <span className="text-[#1B3A64] text-[12px] font-bold tracking-[0.15em] uppercase">Our Impact</span>
-      </div>
+    <section className="w-full py-20 px-6 md:px-12 lg:px-16 max-w-[1400px] mx-auto bg-white text-center">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: '-50px' }}
+        transition={{ duration: 0.5 }}
+      >
+        <span className="text-orange-500 text-[12px] font-bold tracking-[0.2em] uppercase">
+          Our Impact
+        </span>
 
-      <h2 className="text-4xl md:text-[56px] font-bold text-[#1B3A64] mb-6 leading-tight tracking-tight">
-        Proven Excellence
-      </h2>
-      <p className="text-[#5A6579] font-medium mb-20 text-[19px] max-w-2xl mx-auto leading-relaxed">
-        Numbers that speak to our commitment, expertise, and the trust our clients place in us.
-      </p>
+        <h2 className="text-3xl md:text-[38px] font-bold text-[#0A192F] mt-3 mb-3 tracking-tight">
+          Proven <span className="text-orange-600">Excellence</span>
+        </h2>
+        <p className="text-[#5A6579] font-medium mb-12 text-[15px]">
+          Numbers that speak to our commitment and success
+        </p>
+      </motion.div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-        {stats.map((stat, idx) => (
-          <div key={idx} className="bg-white rounded-[40px] p-12 shadow-[0_20px_40px_-15px_rgba(27,58,100,0.08)] flex flex-col items-center justify-center border border-gray-100 hover:-translate-y-3 transition-all duration-500 group relative overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-br from-[#F8F9FA] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-            
-            <div className="w-20 h-20 bg-gradient-to-br from-[#EAF1F8] to-[#D5E4F2] rounded-[24px] flex items-center justify-center mb-8 shadow-inner border border-white relative z-10 group-hover:scale-110 transition-transform duration-500">
-              <span className="material-icons text-[#1B3A64] text-[36px] drop-shadow-sm">{stat.icon}</span>
-            </div>
-            <h3 className="text-5xl font-black mb-3 text-[#1B3A64] relative z-10">{stat.value}</h3>
-            <p className="text-[#5A6579] font-bold text-[14px] uppercase tracking-wider relative z-10">{stat.label}</p>
-          </div>
-        ))}
-      </div>
+      <motion.div
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: '-50px' }}
+        variants={{
+          hidden: { opacity: 0 },
+          visible: { opacity: 1, transition: { staggerChildren: 0.15 } },
+        }}
+      >
+        {impactStats.map((stat, idx) => {
+          const Icon = stat.icon;
+          return (
+            <motion.div
+              key={idx}
+              variants={{
+                hidden: { opacity: 0, scale: 0.95 },
+                visible: { opacity: 1, scale: 1, transition: { duration: 0.4, ease: 'easeOut' } },
+              }}
+              className="bg-white rounded-2xl p-7 border border-[#EDEFF3] shadow-[0_2px_8px_rgba(27,58,100,0.04)] flex flex-col items-start text-left"
+            >
+              <div
+                className="w-11 h-11 rounded-full flex items-center justify-center mb-6"
+                style={{ backgroundColor: stat.bg }}
+              >
+                <Icon size={20} color={stat.iconColor} strokeWidth={2.25} />
+              </div>
+              <h3 className="text-[28px] font-bold text-[#0A192F] mb-1 leading-none">
+                {stat.value}
+              </h3>
+              <p className="text-[#8A93A3] text-[13px] font-medium">{stat.label}</p>
+            </motion.div>
+          );
+        })}
+      </motion.div>
     </section>
   );
 }

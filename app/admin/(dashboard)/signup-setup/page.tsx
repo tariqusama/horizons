@@ -215,7 +215,7 @@ export default function SignupSetupPage() {
             setLoading(true);
             const data = await getSignupGoals();
             setGoals(data || []);
-            
+
             // Auto expand all goals initially
             if (Object.keys(expandedGoals).length === 0 && data) {
                 const initExpanded: any = {};
@@ -275,14 +275,14 @@ export default function SignupSetupPage() {
 
     return (
         <main className="flex-1 px-4 sm:px-6 pb-8 pt-2 bg-slate-50">
-            <div className="mb-6 px-1 flex justify-between items-end">
-                <div>
+            <div className="mb-6 px-1 flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-end">
+                <div className="min-w-0">
                     <h1 className="text-2xl font-bold text-slate-900">Signup Setup</h1>
                     <p className="text-sm text-slate-600 mt-1">Configure user goals and their specific qualifying questions</p>
                 </div>
                 <button
                     onClick={() => { setEditingGoal(null); setIsGoalModalOpen(true); }}
-                    className="inline-flex items-center gap-2 text-sm font-semibold text-white bg-indigo-600 rounded-lg px-4 py-2 hover:bg-indigo-700 transition-colors"
+                    className="inline-flex items-center justify-center gap-2 text-sm font-semibold text-white bg-indigo-600 rounded-lg px-4 py-2 hover:bg-indigo-700 transition-colors w-full sm:w-auto"
                 >
                     <Icon.plus className="h-4 w-4" />
                     Add Goal
@@ -299,20 +299,20 @@ export default function SignupSetupPage() {
                 ) : (
                     goals.map(goal => (
                         <div key={goal.id} className="rounded-lg border border-slate-200 bg-white shadow-sm overflow-hidden">
-                            <div className="flex items-center justify-between p-4 bg-slate-50 border-b border-slate-200">
-                                <div className="flex items-center gap-3 cursor-pointer" onClick={() => toggleExpand(goal.id)}>
-                                    <button className="text-slate-400 hover:text-slate-600">
+                            <div className="flex flex-col gap-3 p-4 bg-slate-50 border-b border-slate-200 sm:flex-row sm:items-center sm:justify-between">
+                                <div className="flex items-center gap-3 min-w-0 cursor-pointer" onClick={() => toggleExpand(goal.id)}>
+                                    <button className="text-slate-400 hover:text-slate-600 shrink-0">
                                         {expandedGoals[goal.id] ? <Icon.chevronUp className="w-5 h-5" /> : <Icon.chevronDown className="w-5 h-5" />}
                                     </button>
-                                    <div className="flex items-center justify-center w-8 h-8 rounded-full bg-indigo-100 text-indigo-600">
+                                    <div className="flex items-center justify-center w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 shrink-0">
                                         <Icon.target className="w-4 h-4" />
                                     </div>
-                                    <div>
-                                        <h3 className="font-bold text-slate-900">{goal.title}</h3>
+                                    <div className="min-w-0">
+                                        <h3 className="font-bold text-slate-900 break-words">{goal.title}</h3>
                                         <p className="text-xs text-slate-500">Order: {goal.order_index}</p>
                                     </div>
                                 </div>
-                                <div className="flex gap-2">
+                                <div className="flex flex-wrap gap-2 sm:justify-end">
                                     <button onClick={() => openAddQuestion(goal.id)} className="px-3 py-1.5 text-xs font-medium text-indigo-600 bg-indigo-50 hover:bg-indigo-100 rounded transition-colors">
                                         Add Question
                                     </button>
@@ -324,16 +324,16 @@ export default function SignupSetupPage() {
                                     </button>
                                 </div>
                             </div>
-                            
+
                             {expandedGoals[goal.id] && (
                                 <div className="p-4 bg-white">
                                     {goal.questions && goal.questions.length > 0 ? (
                                         <div className="space-y-3">
                                             {goal.questions.map(q => (
-                                                <div key={q.id} className="flex justify-between items-start p-3 border border-slate-100 rounded-lg hover:border-slate-200 transition-colors">
-                                                    <div>
-                                                        <p className="text-sm font-semibold text-slate-800 mb-1">
-                                                            <span className="text-slate-400 mr-2">#{q.order_index}</span> 
+                                                <div key={q.id} className="flex flex-col gap-3 p-3 border border-slate-100 rounded-lg hover:border-slate-200 transition-colors sm:flex-row sm:justify-between sm:items-start">
+                                                    <div className="min-w-0">
+                                                        <p className="text-sm font-semibold text-slate-800 mb-1 break-words">
+                                                            <span className="text-slate-400 mr-2">#{q.order_index}</span>
                                                             {q.question_text}
                                                         </p>
                                                         <div className="flex flex-wrap gap-2 text-xs">
@@ -348,7 +348,7 @@ export default function SignupSetupPage() {
                                                             )}
                                                         </div>
                                                     </div>
-                                                    <div className="flex gap-1 ml-4">
+                                                    <div className="flex gap-1 self-end sm:self-auto">
                                                         <button onClick={() => { setEditingQuestion(q); setIsQuestionModalOpen(true); }} className="p-1.5 text-slate-400 hover:text-indigo-600 rounded">
                                                             <Icon.edit className="h-4 w-4" />
                                                         </button>

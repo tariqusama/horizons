@@ -528,16 +528,18 @@ function FormsTrackerTab({ services, onRefresh, onEdit, onDelete, onAdd }: { ser
                         <span>Description</span>
                         <span>Fee</span>
                         <span>Processing</span>
-                        <span>Edition</span>
+                        <span>Builder</span>
                         <span className="text-right">Actions</span>
                     </div>
                     {services.map((service) => (
                         <div key={service.id} className="grid grid-cols-[1fr_2fr_1fr_1fr_1fr_120px] gap-4 px-5 py-4 border-t border-[#ECE9E2] text-sm text-[#3B4251] items-center">
                             <span className="font-bold text-[#101F38]">{service.title}</span>
                             <span className="text-[#5B6472] truncate">{service.subtitle || 'Standard form guidance'}</span>
-                            <span className="font-bold">${Number(service.starting_price).toFixed(2)}</span>
+                            <span className="font-bold">${Number(String(service.starting_price).replace(/[^0-9.-]+/g,"")).toFixed(2)}</span>
                             <span>{service.processing_time || 'Standard'}</span>
-                            <span>{service.processing_time || 'Standard'}</span>
+                            <a href={`/admin/guide-engine/builder?serviceId=${service.id}`} className="text-xs font-bold text-orange-500 hover:underline">
+                                Form Builder &rarr;
+                            </a>
                             <div className="flex items-center justify-end gap-2">
                                 <button onClick={() => onEdit(service)} className="text-[#5B6472] hover:text-orange-500 transition-colors p-1" title="Edit">
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9" /><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" /></svg>

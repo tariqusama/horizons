@@ -17,7 +17,7 @@ interface SidebarProps {
 export default function Sidebar({ isOpen = false, onClose }: SidebarProps) {
     const pathname = usePathname();
     const isGetStartedFlow = pathname.startsWith('/dashboard/get-started');
-    const { logout } = useAuth();
+    const { logout, user } = useAuth();
 
     const [goalTitle, setGoalTitle] = useState<string>('');
     const [completedForms, setCompletedForms] = useState<string[]>([]);
@@ -39,78 +39,83 @@ export default function Sidebar({ isOpen = false, onClose }: SidebarProps) {
 
     const formsList = getFormsList(goalTitle, { allowFallback: false });
 
-    const isFormRouteActive = formsList.some(f => pathname === f.path) || pathname === '/dashboard/get-started/forms';
+    const stepItems = [
+        {
+            label: 'Step 1: Getting Started',
+            path: '/dashboard/get-started',
+            isCurrent: pathname === '/dashboard/get-started',
+        },
+        ...formsList.map((form, index) => ({
+            label: `Step ${index + 2}: ${form.name.replace(/^Form\s+/i, '')}`,
+            path: form.path,
+            isCurrent: pathname === form.path || pathname === `/dashboard/get-started/dynamic/${form.code}`,
+        })),
+        {
+            label: `Step ${formsList.length + 2}: Document Upload`,
+            path: '/dashboard/get-started/document-upload',
+            isCurrent: pathname === '/dashboard/get-started/document-upload',
+        },
+        {
+            label: `Step ${formsList.length + 3}: Review and Finish`,
+            path: '/dashboard/get-started/submission',
+            isCurrent: pathname === '/dashboard/get-started/submission',
+        },
+    ];
+
+    const currentStepIdx = stepItems.findIndex(s => s.isCurrent);
+    const applicantName = user?.name?.split(' ')[0] || 'Applicant';
+    const packetTitle = goalTitle
+        ? `${applicantName}'s ${goalTitle} Application Packet`
+        : `${applicantName}'s Application Packet`;
 
     return (
         <aside className={`${styles.sidebar} ${isOpen ? styles.open : ''} hide-scrollbar`}>
             <div className={styles.logoContainer}>
-                <Image src="/horizonlogo.png" alt="Horizon Pathways" width={150} height={40} className="object-contain" />
+                <div className={styles.logoMarkWrap}>
+                    <Image src="/horizonlogo.png" alt="Horizon Pathways" width={150} height={40} className="object-contain" />
+                </div>
             </div>
 
             {isGetStartedFlow ? (
                 <div className={styles.navSection}>
-                    <div className={styles.navSectionTitle}>MAIN</div>
-
-                    {/* Step 1 */}
-                    <Link
-                        href="/dashboard/get-started"
-                        onClick={onClose}
-                        className={pathname === '/dashboard/get-started' ? styles.flowNavItemActive : styles.flowNavItem}
-                    >
-                        1. Start Application
-                    </Link>
-
-                    {/* Step 2: Required Forms */}
-                    <div>
-                        <Link
-                            href={formsList[0]?.path || '/dashboard/get-started'}
-                            onClick={onClose}
-                            className={isFormRouteActive ? styles.flowNavItemActive : styles.flowNavItem}
-                        >
-                            2. Required Forms
-                        </Link>
-
-                        {/* Nested Sub-Forms List */}
-                        <div className="pl-4 pr-1 py-1 space-y-1 mb-2">
-                            {formsList.map((form, fIdx) => {
-                                const isSubActive = pathname === form.path;
-                                const normalizedCode = form.code.replace(/-/g, '').toLowerCase();
-                                const isCompleted = completedForms.includes(normalizedCode);
-                                return (
-                                    <Link
-                                        key={fIdx}
-                                        href={form.path}
-                                        onClick={onClose}
-                                        className={`flex items-center justify-between text-xs font-semibold px-3 py-2 rounded-lg transition-colors ${isSubActive
-                                            ? 'bg-blue-600 text-white font-bold shadow-sm'
-                                            : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
-                                            }`}
-                                    >
-                                        <span>Step {fIdx + 1}</span>
-                                        <span className={isSubActive ? 'text-white' : isCompleted ? 'text-emerald-600' : 'text-transparent'}>✓</span>
-                                    </Link>
-                                );
-                            })}
+                    <div className={styles.packetCard}>
+                        <div className={styles.packetBadgeRow}>
+                            <span className={styles.progressBadge}>
+                                Step {Math.max(1, currentStepIdx + 1)} of {stepItems.length}
+                            </span>
                         </div>
+
+                        <h3 className={styles.packetTitle}>{packetTitle}</h3>
+
+                        <div className={styles.stepperContainer}>
+                            <div className={styles.stepperTrack} />
+                            <div className={styles.packetList}>
+                                {stepItems.map((step, index) => {
+                                    const isPast = currentStepIdx > -1 && index < currentStepIdx;
+                                    const isCurrent = step.isCurrent;
+
+                                    return (
+                                        <Link
+                                            key={`${step.path}-${index}`}
+                                            href={step.path}
+                                            onClick={onClose}
+                                            className={`${styles.packetRow} ${isCurrent ? styles.packetRowCurrent : ''}`}
+                                        >
+                                            <span className={`${styles.packetCircle} ${isCurrent ? styles.packetCircleCurrent : (isPast ? styles.packetCircleDone : styles.packetCirclePending)}`}>
+                                                {isPast ? '✓' : String(index + 1)}
+                                            </span>
+                                            <span className={`${styles.packetLabel} ${isCurrent ? styles.packetLabelCurrent : ''}`}>{step.label}</span>
+                                        </Link>
+                                    );
+                                })}
+                            </div>
+                        </div>
+
+                        <Link href="/dashboard" onClick={onClose} className={styles.backLink}>
+                            <span className={styles.backArrow}>←</span>
+                            <span>Back to Dashboard</span>
+                        </Link>
                     </div>
-
-                    {/* Step 3: Document Upload */}
-                    <Link
-                        href="/dashboard/get-started/document-upload"
-                        onClick={onClose}
-                        className={pathname === '/dashboard/get-started/document-upload' ? styles.flowNavItemActive : styles.flowNavItem}
-                    >
-                        3. Document Upload
-                    </Link>
-
-                    {/* Step 4: Submission */}
-                    <Link
-                        href="/dashboard/get-started/submission"
-                        onClick={onClose}
-                        className={pathname === '/dashboard/get-started/submission' ? styles.flowNavItemActive : styles.flowNavItem}
-                    >
-                        4. Submission
-                    </Link>
                 </div>
             ) : (
                 <div className={styles.navSection}>
@@ -175,12 +180,8 @@ export default function Sidebar({ isOpen = false, onClose }: SidebarProps) {
             )}
 
             <button onClick={logout} className={styles.signoutBtn}>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-                    <polyline points="16 17 21 12 16 7"></polyline>
-                    <line x1="21" y1="12" x2="9" y2="12"></line>
-                </svg>
-                Signout
+                <span className={styles.signoutAvatar}>{user?.name?.charAt(0)?.toUpperCase() || 'N'}</span>
+                <span className={styles.signoutText}>→ Signout</span>
             </button>
         </aside>
     );

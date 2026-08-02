@@ -10,31 +10,60 @@ import HelpCTASection from '@/components/HelpCTASection';
 
 export default function AboutPage() {
   return (
-    <main className="min-h-screen w-full relative flex flex-col items-center pt-40 overflow-hidden bg-gradient-to-b from-[#FDFBF9] to-white">
+    <main className="min-h-screen w-full relative flex flex-col items-center overflow-hidden bg-white">
       
-      {/* Decorative Glow */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-gradient-to-br from-[#E3755D]/5 to-[#1B3A64]/5 rounded-full blur-[100px] pointer-events-none"></div>
+      {/* Dark Hero Section */}
+      <section className="relative w-full h-[600px] flex flex-col justify-center items-center text-center px-4 overflow-hidden pt-20">
+        <div className="absolute inset-0 z-0 bg-[#0A192F]"></div>
+        <div 
+          className="absolute inset-0 z-0" 
+          style={{ backgroundImage: 'radial-gradient(at 0% 0%, rgba(3, 42, 119, 0.9) 0px, transparent 50%), radial-gradient(at 100% 0%, rgba(255, 68, 0, 0.8) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(3, 42, 119, 0.8) 0px, transparent 50%), radial-gradient(at 0% 100%, rgba(255, 68, 0, 0.7) 0px, transparent 50%)' }}
+        ></div>
+        <div className="relative z-10 w-full max-w-[1000px] mx-auto flex flex-col items-center">
+          
+          {/* Pill */}
+          <div className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-full px-5 py-2 mb-8 shadow-sm">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 2v4"></path>
+              <path d="M12 18v4"></path>
+              <path d="M4.93 4.93l2.83 2.83"></path>
+              <path d="M16.24 16.24l2.83 2.83"></path>
+              <path d="M2 12h4"></path>
+              <path d="M18 12h4"></path>
+              <path d="M4.93 19.07l2.83-2.83"></path>
+              <path d="M16.24 7.76l2.83-2.83"></path>
+            </svg>
+            <span className="text-white text-xs font-bold tracking-wide uppercase">Premium Immigration Services Since 2022</span>
+          </div>
 
-      <div className="relative z-10 w-full max-w-[1400px] mx-auto flex flex-col items-center px-4 md:px-8 lg:px-16 text-center">
+          {/* Heading */}
+          <h1 className="text-5xl md:text-[68px] font-black leading-[1.1] mb-6 tracking-tight text-white">
+            About Horizon Pathways
+          </h1>
 
-        {/* Pill */}
-        <div className="inline-flex items-center space-x-2 bg-white/60 backdrop-blur-md border border-gray-200/50 rounded-full px-6 py-2 mb-10 shadow-sm">
-          <span className="text-[#1B3A64] text-[12px] font-bold tracking-[0.15em] uppercase">
-            Premium Immigration Services Since 2022
-          </span>
+          {/* Subtitle */}
+          <p className="text-lg md:text-2xl font-medium text-gray-200 mb-10 max-w-3xl leading-relaxed">
+            We're immigrants helping immigrants. We've been where you are, and we're here to make the road a little easier, clearer, and a lot more reliable.
+          </p>
+
+          {/* Buttons */}
+          <div className="flex flex-wrap items-center justify-center gap-4">
+            <a href="/signup" className="bg-gradient-to-b from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-8 py-3.5 rounded-xl font-bold text-lg transition-colors shadow-lg flex items-center space-x-2 justify-center">
+              <span>Get Started Now</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M5 12h14"></path>
+                <path d="M12 5l7 7-7 7"></path>
+              </svg>
+            </a>
+            <a href="/resources" className="bg-white/10 hover:bg-white/20 border border-white/30 text-white px-8 py-3.5 rounded-xl font-bold text-lg backdrop-blur-sm transition-colors shadow-lg flex items-center space-x-2 justify-center">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <polygon points="5 3 19 12 5 21 5 3"></polygon>
+              </svg>
+              <span>Watch Video Tour</span>
+            </a>
+          </div>
         </div>
-
-        {/* Heading */}
-        <h1 className="text-5xl md:text-[80px] font-bold mb-8 text-center leading-[1.05] tracking-tight text-[#1B3A64] drop-shadow-sm">
-          About Horizon<br/>
-          <span className="text-transparent bg-clip-text bg-gradient-to-b from-orange-500 to-orange-600">Pathways</span>
-        </h1>
-
-        {/* Subtitle */}
-        <p className="text-[#5A6579] font-medium text-[20px] max-w-3xl mx-auto text-center mb-32 leading-relaxed">
-          We're immigrants helping immigrants. We've been where you are, and we're here to make the road a little easier, clearer, and a lot more reliable.
-        </p>
-      </div>
+      </section>
 
       {/* Page Sections */}
       <AboutMission />

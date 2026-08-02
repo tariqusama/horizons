@@ -1,85 +1,76 @@
 import Link from 'next/link';
 import React from 'react';
+import { Users, ShieldCheck, MessageCircle, ArrowRight } from 'lucide-react';
 
 export default function NeverNavigateAlone() {
+  const items = [
+    { icon: Users, title: 'Dedicated Case Manager' },
+    { icon: ShieldCheck, title: 'Attorney Review Available' },
+    { icon: MessageCircle, title: '24/7 Support Access' },
+  ];
+
   return (
-    <section className="w-full py-24 px-4 bg-[#FDFBF9]">
-      <div className="max-w-[1200px] mx-auto">
-        <div className="inline-flex items-center space-x-2 bg-blue-50 rounded-full px-5 py-2 mb-8 border border-blue-100">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1B3A64" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-          </svg>
-          <span className="text-[#1B3A64] text-sm font-bold tracking-wide">Professional Support</span>
-        </div>
+    <section className="w-full py-16 px-6 md:px-12 lg:px-16 max-w-[1400px] mx-auto bg-[#0A192F]">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+        {/* Left content */}
+        <div>
+          <h2 className="text-2xl md:text-[30px] font-bold text-white mb-4 leading-snug tracking-tight">
+            Professional Support: Never Navigate Alone
+          </h2>
+          <p className="text-[#A3B8CC] font-medium text-[14px] leading-relaxed mb-8 max-w-md">
+            From start to finish, you'll have access to experienced case
+            managers who understand immigration law and are dedicated to
+            your success. Get answers to your questions within hours, not
+            days.
+          </p>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-          <div className="space-y-10">
-            <div>
-              <h2 className="text-4xl md:text-5xl font-black text-[#1B3A64] mb-6">
-                Never Navigate Alone
-              </h2>
-              <p className="text-[#5A6579] font-medium text-lg leading-relaxed">
-                From start to finish, you'll have access to experienced case managers who understand immigration law and are dedicated to your success. Get answers to your questions within hours, not days.
-              </p>
-            </div>
-
-            <div className="space-y-6">
-              <div className="flex items-start space-x-5">
-                <div className="w-12 h-12 rounded-xl bg-[#FFE8E0] flex items-center justify-center text-orange-500 shrink-0 border border-orange-100">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="9" cy="7" r="4"></circle>
-                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                  </svg>
+          <div className="space-y-3 mb-8">
+            {items.map((item, idx) => {
+              const Icon = item.icon;
+              return (
+                <div
+                  key={idx}
+                  className="flex items-center gap-3 bg-white/5 rounded-xl px-4 py-3"
+                >
+                  <div className="w-9 h-9 rounded-lg bg-white/10 flex items-center justify-center shrink-0">
+                    <Icon size={18} className="text-orange-500" />
+                  </div>
+                  <p className="text-white font-bold text-[14px]">{item.title}</p>
                 </div>
-                <div>
-                  <h4 className="text-lg font-bold text-[#1B3A64] mb-1">Dedicated Case Manager</h4>
-                  <p className="text-[#5A6579] text-sm font-medium">Your personal guide throughout the entire process</p>
-                </div>
-              </div>
-
-              <div className="flex items-start space-x-5">
-                <div className="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center text-[#1B3A64] shrink-0 border border-blue-100">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                  </svg>
-                </div>
-                <div>
-                  <h4 className="text-lg font-bold text-[#1B3A64] mb-1">Attorney Review Available</h4>
-                  <p className="text-[#5A6579] text-sm font-medium">Optional legal review for maximum confidence</p>
-                </div>
-              </div>
-
-              <div className="flex items-start space-x-5">
-                <div className="w-12 h-12 rounded-xl bg-[#FFE8E0] flex items-center justify-center text-orange-500 shrink-0 border border-orange-100">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-                  </svg>
-                </div>
-                <div>
-                  <h4 className="text-lg font-bold text-[#1B3A64] mb-1">24/7 Support Access</h4>
-                  <p className="text-[#5A6579] text-sm font-medium">Get help whenever you need it via chat, email, or phone</p>
-                </div>
-              </div>
-            </div>
-
-            <Link href="/contact" className="bg-gradient-to-b from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-8 py-3.5 rounded-xl font-bold text-[15px] transition-colors shadow-lg inline-flex items-center justify-center space-x-2">
-              <span>Talk to Our Team</span>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M5 12h14"></path>
-                <path d="M12 5l7 7-7 7"></path>
-              </svg>
-            </Link>
+              );
+            })}
           </div>
 
-          <div className="relative">
-            <div className="absolute -inset-4 bg-gradient-to-br from-orange-50 to-blue-50 rounded-[40px] -z-10 blur-xl opacity-70"></div>
-            <img
-              src="https://placehold.co/1200x800/1B3A64/FFFFFF?text=Support+Team"
-              alt="Support team"
-              className="w-full rounded-[32px] object-cover h-[500px] shadow-2xl border border-gray-100"
-            />
+          <Link
+            href="/contact"
+            className="bg-white hover:bg-gray-100 text-[#0A192F] px-6 py-3 rounded-lg font-bold text-[14px] inline-flex items-center gap-2 transition-colors"
+          >
+            Talk to Our Team
+            <ArrowRight size={16} />
+          </Link>
+        </div>
+
+        {/* Right image */}
+        <div className="relative w-full">
+          <img
+            src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?ixlib=rb-4.0.3&auto=format&fit=crop&w=900&q=80"
+            alt="Case management team meeting"
+            className="w-full h-[340px] md:h-[380px] object-cover rounded-2xl shadow-[0_20px_40px_-10px_rgba(0,0,0,0.4)]"
+          />
+          <div className="absolute bottom-5 left-5 right-5 md:right-auto md:w-[280px] bg-[#0F2444]/95 backdrop-blur-sm rounded-xl p-4 border border-white/10">
+            <div className="flex items-center gap-3 mb-2">
+              <div className="w-9 h-9 rounded-full bg-orange-500 flex items-center justify-center text-white font-bold text-[12px] shrink-0">
+                SM
+              </div>
+              <div>
+                <p className="text-white font-bold text-[13px] leading-tight">Sarah Mitchell</p>
+                <p className="text-[#A3B8CC] text-[11px]">Senior Case Manager</p>
+              </div>
+            </div>
+            <p className="text-[#C8D4E3] text-[12px] italic leading-relaxed">
+              "Our goal is to turn a stressful legal hurdle into a clear,
+              manageable journey for every family we serve."
+            </p>
           </div>
         </div>
       </div>

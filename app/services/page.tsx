@@ -19,7 +19,7 @@ export default function ServicesPage() {
         setLoading(false);
       })
       .catch(err => {
-        console.error("Failed to fetch services:", err);
+        console.error('Failed to fetch services:', err);
         setLoading(false);
       });
   }, []);
@@ -29,25 +29,23 @@ export default function ServicesPage() {
       <ServicesHero />
 
       {/* Navigation Tabs */}
-      <div className="w-full max-w-md mx-auto px-4 mt-8 relative z-30">
-        <div className="bg-white rounded-xl shadow-sm border p-1.5 flex gap-2">
+      <div className="w-full max-w-md mx-auto px-4 mt-16 relative z-30">
+        <div className="bg-white rounded-xl shadow-[0_2px_8px_rgba(27,58,100,0.08)] border border-[#EDEFF3] p-1.5 flex gap-2">
           <button
             onClick={() => setActiveTab('services')}
-            className={`flex-1 py-3 px-4 rounded-lg text-sm font-bold transition-all duration-300 ${
-              activeTab === 'services'
-                ? 'bg-primary text-white shadow-md'
-                : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'
-            }`}
+            className={`flex-1 py-3 px-4 rounded-lg text-sm font-bold transition-all duration-300 ${activeTab === 'services'
+              ? 'bg-[#0A192F] text-white shadow-md'
+              : 'text-[#8A93A3] hover:bg-[#F0F2F5] hover:text-[#0A192F]'
+              }`}
           >
             Browse Services
           </button>
           <button
             onClick={() => setActiveTab('pricing')}
-            className={`flex-1 py-3 px-4 rounded-lg text-sm font-bold transition-all duration-300 ${
-              activeTab === 'pricing'
-                ? 'bg-primary text-white shadow-md'
-                : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'
-            }`}
+            className={`flex-1 py-3 px-4 rounded-lg text-sm font-bold transition-all duration-300 ${activeTab === 'pricing'
+              ? 'bg-[#0A192F] text-white shadow-md'
+              : 'text-[#8A93A3] hover:bg-[#F0F2F5] hover:text-[#0A192F]'
+              }`}
           >
             Pricing Plans
           </button>
@@ -61,16 +59,22 @@ export default function ServicesPage() {
       ) : (
         <>
           {activeTab === 'services' && (
-            <div className="space-y-16 pb-32">
-              {categories.map((category) => (
-                <ServicesCategory
-                  key={category.id}
-                  title={category.title}
-                  subtitle={category.subtitle}
-                  pillText={category.pill_text}
-                  cards={category.services}
-                />
-              ))}
+            <div className="pb-10">
+              {categories.length > 0 ? (
+                categories.map((category, idx) => (
+                  <ServicesCategory
+                    key={category.id ?? idx}
+                    title={category.title}
+                    subtitle={category.subtitle}
+                    pillText={category.pill_text || category.pillText || category.title}
+                    cards={category.services ?? []}
+                  />
+                ))
+              ) : (
+                <div className="flex justify-center items-center py-24">
+                  <p className="text-sm text-[#64748b]">No services available right now. Please check back later.</p>
+                </div>
+              )}
             </div>
           )}
 

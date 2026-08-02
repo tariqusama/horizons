@@ -30,10 +30,17 @@
 .logoContainer {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 0.5rem;
-  margin-bottom: 2rem;
-  padding-bottom: 1.5rem;
-  border-bottom: 1px solid #f3f4f6;
+  margin-bottom: 1rem;
+  padding: 0.2rem 0 1rem;
+  border-bottom: 1px solid #eef2f7;
+}
+
+.logoMarkWrap {
+  width: 100%;
+  display: flex;
+  justify-content: center;
 }
 
 .logoIcon {
@@ -59,11 +66,11 @@
 }
 
 .navSectionTitle {
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: #a3aed1;
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: #6b7280;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.1em;
   margin-bottom: 1rem;
   padding-left: 0.5rem;
 }
@@ -140,26 +147,223 @@
   cursor: pointer;
 }
 
+.packetCard {
+  background: linear-gradient(180deg, #F8FAFC 0%, #F1F5F9 100%);
+  border: 1px solid #E2E8F0;
+  border-radius: 1.25rem;
+  padding: 1.25rem 1.1rem 1rem;
+  color: #1B2559;
+  box-shadow: 0 10px 25px -5px rgba(27, 37, 89, 0.04);
+  position: relative;
+}
+
+.packetBadgeRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.progressBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.3rem 0.65rem;
+  border-radius: 9999px;
+  background: #E0F2FE;
+  color: #0284C7;
+  border: 1px solid #BAE6FD;
+}
+
+.packetTitle {
+  margin: 0 0 1.25rem;
+  font-size: clamp(1.35rem, 1.5vw, 1.8rem);
+  line-height: 1.12;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: #1B2559;
+}
+
+.stepperContainer {
+  position: relative;
+  margin-bottom: 1.25rem;
+}
+
+.stepperTrack {
+  position: absolute;
+  left: 0.95rem;
+  top: 1.2rem;
+  bottom: 1.2rem;
+  width: 2px;
+  background: #E2E8F0;
+  z-index: 1;
+  border-radius: 2px;
+}
+
+.packetList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  position: relative;
+  z-index: 2;
+}
+
+.packetRow {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  color: #64748B;
+  text-decoration: none;
+  font-weight: 600;
+  padding: 0.45rem 0.6rem;
+  border-radius: 0.75rem;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  background: transparent;
+}
+
+.packetRow:hover {
+  background: #FFFFFF;
+  color: #1B2559;
+  transform: translateX(3px);
+  box-shadow: 0 4px 12px rgba(27, 37, 89, 0.04);
+}
+
+.packetRowCurrent {
+  color: #1B2559;
+  background: #FFFFFF !important;
+  box-shadow: 0 4px 16px rgba(240, 80, 26, 0.08) !important;
+  border: 1px solid rgba(240, 80, 26, 0.15);
+}
+
+.packetCircle {
+  width: 1.9rem;
+  height: 1.9rem;
+  min-width: 1.9rem;
+  border-radius: 9999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 800;
+  transition: all 0.25s ease;
+  z-index: 2;
+}
+
+.packetCircleDone {
+  background: #10B981;
+  color: #FFFFFF;
+  border: 1.5px solid #10B981;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.25);
+}
+
+.packetCircleCurrent {
+  background: linear-gradient(135deg, #FF6B35 0%, #F0501A 100%);
+  color: #FFFFFF;
+  border: 2px solid #FFFFFF;
+  box-shadow: 0 4px 12px rgba(240, 80, 26, 0.35);
+  transform: scale(1.08);
+}
+
+.packetCirclePending {
+  background: #FFFFFF;
+  color: #94A3B8;
+  border: 1.5px solid #CBD5E1;
+}
+
+.packetLabel {
+  font-size: 0.92rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+}
+
+.packetLabelCurrent {
+  font-weight: 700;
+  color: #1B2559;
+}
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 0.5rem;
+  padding: 0.5rem 0.8rem;
+  color: #475569;
+  text-decoration: none;
+  font-size: 0.88rem;
+  font-weight: 700;
+  border-radius: 0.65rem;
+  transition: all 0.2s ease;
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid #E2E8F0;
+  width: 100%;
+}
+
+.backLink:hover {
+  background: #FFFFFF;
+  color: #1B2559;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.backArrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 9999px;
+  background: #F1F5F9;
+  color: #1B2559;
+  font-size: 0.9rem;
+}
+
 .signoutBtn {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
+  justify-content: flex-start;
+  gap: 0.75rem;
   width: 100%;
-  padding: 1rem;
-  background-color: #f0501a;
-  color: #ffffff;
+  padding: 0.85rem 1.1rem;
+  background: linear-gradient(135deg, #FF6B35 0%, #F0501A 100%);
+  color: #FFFFFF;
   border: none;
-  border-radius: 1rem;
-  font-weight: 600;
-  font-size: 0.95rem;
+  border-radius: 1.1rem;
+  font-weight: 700;
+  font-size: 0.98rem;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   text-decoration: none;
+  box-shadow: 0 6px 18px -2px rgba(240, 80, 26, 0.3);
 }
 
 .signoutBtn:hover {
-  background-color: #d94514;
+  background: linear-gradient(135deg, #F0501A 0%, #D94514 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px -2px rgba(240, 80, 26, 0.4);
+}
+
+.signoutAvatar {
+  width: 2.1rem;
+  height: 2.1rem;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.22);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 0.92rem;
+  backdrop-filter: blur(4px);
+}
+
+.signoutText {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
 }
 
 .mainWrapper {

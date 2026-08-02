@@ -42,15 +42,15 @@ export default function Header({ isDashboard = false }: { isDashboard?: boolean 
 
   const navLinkClass = (path: string, mobile = false) => {
     const isActive = pathname === path;
-    return `${mobile ? 'text-base font-semibold' : 'pb-1 border-b-[3px] text-[15px] font-bold'} transition-colors ${isActive
-      ? 'text-orange-500 border-orange-500'
-      : 'text-[#5A6579] border-transparent hover:text-[#1B3A64]'
+    return `${mobile ? 'text-lg font-semibold' : 'text-[17px] font-semibold'} transition-colors ${isActive
+      ? 'text-orange-500'
+      : 'text-[#5A6579] hover:text-[#1B3A64]'
       }`;
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 w-full bg-white/90 backdrop-blur-md border-b border-gray-100 shadow-sm">
-      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 h-[88px] flex items-center justify-between w-full gap-3 relative">
+    <header className="fixed top-0 left-0 right-0 z-50 w-full bg-white border-b border-gray-100">
+      <div className="w-full px-4 sm:px-6 lg:px-8 h-[84px] flex items-center justify-between gap-3 relative">
         {/* Logo */}
         <div className="flex items-center gap-3 min-w-0">
           {!isDashboard && (
@@ -71,7 +71,7 @@ export default function Header({ isDashboard = false }: { isDashboard?: boolean 
               alt="Horizon Pathways Logo"
               width={200}
               height={60}
-              className="h-[42px] sm:h-[50px] w-auto object-contain"
+              className="h-[44px] sm:h-[52px] w-auto object-contain"
             />
           </Link>
         </div>
@@ -79,8 +79,7 @@ export default function Header({ isDashboard = false }: { isDashboard?: boolean 
         {!isDashboard ? (
           <>
             {/* Navigation Links for Marketing Site */}
-            <nav className="hidden lg:flex items-center space-x-10 text-[15px]">
-              <Link href="/" className={navLinkClass("/")}>Home</Link>
+            <nav className="hidden lg:flex items-center space-x-8">
               <Link href="/about" className={navLinkClass("/about")}>About Us</Link>
               <Link href="/how-it-works" className={navLinkClass("/how-it-works")}>How It Works</Link>
               <Link href="/services" className={navLinkClass("/services")}>Services</Link>
@@ -90,9 +89,9 @@ export default function Header({ isDashboard = false }: { isDashboard?: boolean 
 
             {/* Right Section for Marketing Site */}
             <div className="hidden md:flex items-center space-x-6">
-              <Link href="/login" className="font-bold text-[#1B3A64] hover:text-orange-500 transition-colors text-[15px]">Login</Link>
-              <Link href="/signup" className="bg-gradient-to-b from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-7 py-3 rounded-[12px] font-bold transition-transform shadow-sm text-[15px]">
-                Start Assessment
+              <Link href="/login" className="font-bold text-[#1B3A64] hover:text-orange-500 transition-colors text-[17px]">Login</Link>
+              <Link href="/signup" className="bg-[#FF6B35] hover:bg-[#E05B2C] text-white px-7 py-3 rounded-lg font-bold transition-colors text-[17px]">
+                Get Started
               </Link>
             </div>
           </>
@@ -164,8 +163,8 @@ export default function Header({ isDashboard = false }: { isDashboard?: boolean 
       </div>
 
       {!isDashboard && isMobileMenuOpen && (
-        <div className="border-t border-gray-100 bg-white/95 backdrop-blur-md lg:hidden shadow-lg">
-          <div className="max-w-[1400px] mx-auto px-4 py-4 flex flex-col gap-3">
+        <div className="border-t border-gray-100 bg-white lg:hidden shadow-lg">
+          <div className="w-full px-4 py-4 flex flex-col gap-3">
             <Link href="/" onClick={() => setIsMobileMenuOpen(false)} className={navLinkClass("/", true)}>Home</Link>
             <Link href="/about" onClick={() => setIsMobileMenuOpen(false)} className={navLinkClass("/about", true)}>About Us</Link>
             <Link href="/how-it-works" onClick={() => setIsMobileMenuOpen(false)} className={navLinkClass("/how-it-works", true)}>How It Works</Link>
@@ -173,9 +172,9 @@ export default function Header({ isDashboard = false }: { isDashboard?: boolean 
             <Link href="/resources" onClick={() => setIsMobileMenuOpen(false)} className={navLinkClass("/resources", true)}>Resources</Link>
             <Link href="/free-tools" onClick={() => setIsMobileMenuOpen(false)} className={navLinkClass("/free-tools", true)}>Free Tools</Link>
             <div className="flex flex-col gap-2 pt-2 border-t border-gray-100">
-              <Link href="/login" onClick={() => setIsMobileMenuOpen(false)} className="font-bold text-[#1B3A64]">Login</Link>
-              <Link href="/signup" onClick={() => setIsMobileMenuOpen(false)} className="bg-gradient-to-b from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-4 py-3 rounded-[12px] font-bold text-center">
-                Start Assessment
+              <Link href="/login" onClick={() => setIsMobileMenuOpen(false)} className="font-bold text-[#1B3A64] text-lg">Login</Link>
+              <Link href="/signup" onClick={() => setIsMobileMenuOpen(false)} className="bg-[#FF6B35] hover:bg-[#E05B2C] text-white px-4 py-3 rounded-lg font-bold text-center text-lg">
+                Get Started
               </Link>
             </div>
           </div>

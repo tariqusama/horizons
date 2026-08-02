@@ -24,10 +24,10 @@ type ServicesCategoryProps = {
   title: string;
   subtitle: string;
   pillText: string;
-  cards: ServiceCardData[];
+  cards?: ServiceCardData[];
 };
 
-export default function ServicesCategory({ title, subtitle, pillText, cards }: ServicesCategoryProps) {
+export default function ServicesCategory({ title, subtitle, pillText, cards = [] }: ServicesCategoryProps) {
   const [selectedCardForModal, setSelectedCardForModal] = useState<ServiceCardData | null>(null);
 
   const closeModal = () => setSelectedCardForModal(null);
@@ -44,9 +44,9 @@ export default function ServicesCategory({ title, subtitle, pillText, cards }: S
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {cards.map((card, idx) => (
-          <div 
-            key={idx} 
+        {(cards || []).map((card, idx) => (
+          <div
+            key={idx}
             className="group relative rounded-2xl border border-gray-200 bg-white p-6 flex flex-col h-full transition-shadow duration-300 hover:shadow-lg"
           >
             {/* Top row: Icon and Popular Badge */}
@@ -54,7 +54,7 @@ export default function ServicesCategory({ title, subtitle, pillText, cards }: S
               <div className="w-10 h-10 rounded-full bg-[#FFF0E8] flex items-center justify-center flex-shrink-0">
                 <Sparkles className="w-5 h-5 text-[#FF5A1F]" />
               </div>
-              
+
               {card.is_popular && (
                 <div className="bg-[#FF5A1F] text-white rounded-full px-3 py-1 text-[11px] font-bold tracking-wide">
                   Most Popular
@@ -83,7 +83,7 @@ export default function ServicesCategory({ title, subtitle, pillText, cards }: S
             <div className="mb-8">
               <div className="text-[13px] font-bold text-[#1a2b4b] mb-3">Requirements:</div>
               <ul className="space-y-2.5">
-                {card.requirements.map((req, rIdx) => (
+                {(card.requirements || []).map((req, rIdx) => (
                   <li key={rIdx} className="flex items-start text-[13px] text-[#64748b]">
                     <CheckCircle2 className="w-4 h-4 text-[#FF5A1F] mr-2 flex-shrink-0 mt-0.5" />
                     <span className="leading-snug">{req}</span>
@@ -94,18 +94,27 @@ export default function ServicesCategory({ title, subtitle, pillText, cards }: S
 
             {/* CTA Button */}
             <div className="mt-auto">
-              <Link 
-                href={
-                  card.title === 'AR-11 Change of Address' ? '/free/ar-11/start' :
-                  card.title === 'G-1145 E-Notification' ? '/free/g-1145/start' :
-                  card.title === 'I-94 Travel History Guide' ? '/free/i-94/start' :
-                  '/services'
-                } 
-                className="w-full bg-[#FF5A1F] hover:bg-[#E04512] text-white font-bold py-2.5 rounded-lg transition-colors duration-300 flex items-center justify-center text-[14px]"
-              >
-                <span>Get Started</span>
-                <ArrowRight className="w-4 h-4 ml-1.5" />
-              </Link>
+              {card.title === 'AR-11 Change of Address' || card.title === 'G-1145 E-Notification' || card.title === 'I-94 Travel History Guide' ? (
+                <Link
+                  href={
+                    card.title === 'AR-11 Change of Address' ? '/free/ar-11/start' :
+                      card.title === 'G-1145 E-Notification' ? '/free/g-1145/start' :
+                        '/free/i-94/start'
+                  }
+                  className="w-full bg-[#FF5A1F] hover:bg-[#E04512] text-white font-bold py-2.5 rounded-lg transition-colors duration-300 flex items-center justify-center text-[14px]"
+                >
+                  <span>Get Started</span>
+                  <ArrowRight className="w-4 h-4 ml-1.5" />
+                </Link>
+              ) : (
+                <button
+                  onClick={() => setSelectedCardForModal(card)}
+                  className="w-full bg-[#FF5A1F] hover:bg-[#E04512] text-white font-bold py-2.5 rounded-lg transition-colors duration-300 flex items-center justify-center text-[14px]"
+                >
+                  <span>View Packages</span>
+                  <ArrowRight className="w-4 h-4 ml-1.5" />
+                </button>
+              )}
             </div>
           </div>
         ))}
@@ -116,10 +125,10 @@ export default function ServicesCategory({ title, subtitle, pillText, cards }: S
         <div className="fixed inset-0 z-50 flex items-center justify-center px-4 py-8 bg-black/60 backdrop-blur-sm overflow-y-auto">
           {/* Modal Background Click */}
           <div className="absolute inset-0" onClick={closeModal}></div>
-          
+
           <div className="relative w-full max-w-4xl bg-[#F8F9FA] rounded-2xl shadow-2xl my-auto animate-fade-in flex flex-col max-h-[90vh]">
-            <button 
-              onClick={closeModal} 
+            <button
+              onClick={closeModal}
               className="absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-700 hover:bg-gray-200 rounded-full transition-colors z-10"
             >
               <X className="w-5 h-5" />
@@ -146,7 +155,7 @@ export default function ServicesCategory({ title, subtitle, pillText, cards }: S
                   <div className="text-3xl font-bold text-[#FF5A1F] mb-1">{selectedCardForModal.packages[0]?.price != null ? (typeof selectedCardForModal.packages[0].price === 'number' ? `$${selectedCardForModal.packages[0].price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : selectedCardForModal.packages[0].price) : '-'}</div>
                   <div className="text-[14px] text-[#64748b]">{selectedCardForModal.packages[0]?.name || 'Basic Plan'}</div>
                 </div>
-                
+
                 <div className="bg-gray-100 border border-[#1a2b4b] rounded-xl p-6 text-center flex flex-col justify-center relative">
                   <div className="text-3xl font-bold text-[#FF5A1F] mb-1">{selectedCardForModal.packages[1]?.price != null ? (typeof selectedCardForModal.packages[1].price === 'number' ? `$${selectedCardForModal.packages[1].price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : selectedCardForModal.packages[1].price) : '-'}</div>
                   <div className="text-[14px] text-[#64748b] mb-3">{selectedCardForModal.packages[1]?.name || 'Advanced Plan'}</div>
@@ -154,7 +163,7 @@ export default function ServicesCategory({ title, subtitle, pillText, cards }: S
                     Most Popular
                   </div>
                 </div>
-                
+
                 <div className="bg-gray-100 rounded-xl p-6 text-center flex flex-col justify-center">
                   <div className="text-3xl font-bold text-[#FF5A1F] mb-1">{selectedCardForModal.packages[2]?.price != null ? (typeof selectedCardForModal.packages[2].price === 'number' ? `$${selectedCardForModal.packages[2].price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : selectedCardForModal.packages[2].price) : '-'}</div>
                   <div className="text-[14px] text-[#64748b]">{selectedCardForModal.packages[2]?.name || 'Premium Plan'}</div>
@@ -176,7 +185,7 @@ export default function ServicesCategory({ title, subtitle, pillText, cards }: S
                   <div>
                     <h4 className="font-bold text-[#1a2b4b] mb-3 text-[15px]">All Plans Include:</h4>
                     <ul className="space-y-3">
-                      {(selectedCardForModal.packages[0]?.features || [
+                      {(selectedCardForModal.packages?.[0]?.features || [
                         "Complete form preparation and review",
                         "Dedicated case manager",
                         "100% satisfaction guarantee",
@@ -192,7 +201,7 @@ export default function ServicesCategory({ title, subtitle, pillText, cards }: S
                   <div>
                     <h4 className="font-bold text-[#1a2b4b] mb-3 text-[15px]">Advanced Plan Adds:</h4>
                     <ul className="space-y-3">
-                      {(selectedCardForModal.packages[1]?.features || [
+                      {(selectedCardForModal.packages?.[1]?.features || [
                         "Certified translation services",
                         "Legal review by immigration attorney",
                         "Priority support (24hr response)",
@@ -212,7 +221,7 @@ export default function ServicesCategory({ title, subtitle, pillText, cards }: S
               <div className="bg-[#EBF3FC] border border-[#D0E1F5] rounded-xl p-6 mb-4">
                 <h4 className="text-[18px] font-bold text-[#1a2b4b] mb-4">Premium Plan Exclusive Benefits:</h4>
                 <ul className="space-y-3">
-                  {(selectedCardForModal.packages[2]?.features || [
+                  {(selectedCardForModal.packages?.[2]?.features || [
                     "30-minute one-on-one consultation with immigration attorney",
                     "USCIS interview preparation kit",
                     "Priority email support (5hr response)",
@@ -229,14 +238,14 @@ export default function ServicesCategory({ title, subtitle, pillText, cards }: S
 
             {/* Footer */}
             <div className="p-6 border-t border-gray-200 flex justify-end gap-3 bg-[#F8F9FA] rounded-b-2xl mt-auto">
-              <button 
+              <button
                 onClick={closeModal}
                 className="px-6 py-2.5 rounded-lg border border-gray-300 bg-white text-[#1a2b4b] font-medium hover:bg-gray-50 transition-colors text-[14px]"
               >
                 Close
               </button>
-              <Link 
-                href="/services" 
+              <Link
+                href="/signup"
                 className="px-6 py-2.5 rounded-lg bg-[#FF5A1F] hover:bg-[#E04512] text-white font-bold transition-colors flex items-center text-[14px]"
               >
                 Get Started

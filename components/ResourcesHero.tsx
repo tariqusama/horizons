@@ -1,8 +1,15 @@
 import React from 'react';
 
-export default function ResourcesHero() {
+type Props = {
+  searchQuery: string;
+  setSearchQuery: (val: string) => void;
+  activeCategory: string;
+  setActiveCategory: (val: string) => void;
+};
+
+export default function ResourcesHero({ searchQuery, setSearchQuery, activeCategory, setActiveCategory }: Props) {
   const categories = [
-    "All", "Tools", "Family-Based", "Citizenship", "Work Authorization", "Green Card", "Travel", "DACA"
+    "All", "Tools", "Family-Based", "Citizenship", "Official Resource"
   ];
 
   return (
@@ -40,6 +47,8 @@ export default function ResourcesHero() {
           <input 
             type="text" 
             placeholder="Search resources..." 
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full bg-transparent border-none outline-none px-5 py-4 text-white text-[18px] font-medium placeholder:text-[#A3B8CC]"
           />
           <button className="bg-gradient-to-b from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-10 py-4 rounded-[20px] font-bold transition-all duration-300 shadow-[0_10px_20px_rgba(227,117,93,0.3)] text-[16px]">
@@ -52,8 +61,9 @@ export default function ResourcesHero() {
           {categories.map((cat, idx) => (
             <button 
               key={idx} 
+              onClick={() => setActiveCategory(cat)}
               className={`px-7 py-3 rounded-full font-bold text-[14px] transition-all duration-300 shadow-lg border ${
-                idx === 0 
+                activeCategory === cat 
                   ? 'bg-gradient-to-b from-orange-500 to-orange-600 text-white border-transparent' 
                   : 'bg-white/5 backdrop-blur-md text-[#A3B8CC] border-white/10 hover:bg-white/10 hover:text-white'
               }`}

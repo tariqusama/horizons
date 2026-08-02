@@ -1,54 +1,78 @@
 import React from 'react';
+import { Heart, ShieldCheck, BadgeCheck, Eye } from 'lucide-react';
 
 export default function AboutValues() {
   const values = [
     {
-      title: "Compassion",
-      description: "We've sat where you're sitting. We know the late-night Googling, the stress, the not-knowing. That's why we treat every case like it's our own family's.",
-      icon: "favorite"
+      title: 'Compassion',
+      description:
+        'We listen first. We know the anxiety of the "pending" status because we\'ve lived it.',
+      icon: Heart,
+      iconColor: '#E3623D',
+      iconBg: '#FDF1EA',
+      titleColor: '#E3623D',
     },
     {
-      title: "Integrity",
-      description: "We'll tell you the truth — even when it's not what you want to hear. Honest pricing, no surprise fees, and no promises we can't keep.",
-      icon: "verified_user"
+      title: 'Integrity',
+      description:
+        'Honest assessments, always. We never give false hope just to secure a client.',
+      icon: ShieldCheck,
+      iconColor: '#5A6579',
+      iconBg: '#F0F2F5',
+      titleColor: '#0A192F',
     },
     {
-      title: "Excellence",
-      description: "98% of our clients are happy with how things went. We get there by sweating the small stuff and working with experienced immigration attorneys.",
-      icon: "military_tech"
+      title: 'Excellence',
+      description:
+        'Triple-check verification. Precision is the difference between approval and rejection.',
+      icon: BadgeCheck,
+      iconColor: '#E3623D',
+      iconBg: '#FDF1EA',
+      titleColor: '#E3623D',
     },
     {
-      title: "Transparency",
-      description: "No black boxes. You'll always know where your case stands, what's next, and why we're doing it that way.",
-      icon: "visibility"
-    }
+      title: 'Transparency',
+      description:
+        "Clear pricing and real-time tracking. You'll never wonder what happens next.",
+      icon: Eye,
+      iconColor: '#5A6579',
+      iconBg: '#F0F2F5',
+      titleColor: '#2F6FDB',
+    },
   ];
 
   return (
-    <section className="w-full py-32 px-4 md:px-8 lg:px-16 max-w-[1400px] mx-auto text-center bg-[#FDFBF9]">
-      <div className="inline-flex items-center bg-[#EAF1F8] rounded-full px-6 py-2 mb-8 border border-blue-100/50 shadow-sm">
-        <span className="text-[#1B3A64] text-[12px] font-bold tracking-[0.15em] uppercase">What Drives Us</span>
-      </div>
-      
-      <h2 className="text-4xl md:text-[56px] font-bold text-[#1B3A64] mb-6 leading-tight tracking-tight">
-        Our Core Values
+    <section className="w-full py-16 px-6 md:px-12 lg:px-16 max-w-[1400px] mx-auto bg-white text-center">
+      <h2 className="text-3xl md:text-[38px] font-bold text-[#0A192F] mb-14 tracking-tight">
+        The Values That Guide Us
       </h2>
-      <p className="text-[#5A6579] font-medium mb-20 text-[19px] max-w-2xl mx-auto leading-relaxed">
-        Four things we won't compromise on — no matter how busy we get.
-      </p>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-        {values.map((val, idx) => (
-          <div key={idx} className="bg-white rounded-[40px] p-10 text-left shadow-[0_20px_40px_-15px_rgba(27,58,100,0.08)] border border-gray-100 hover:-translate-y-3 hover:shadow-[0_40px_60px_-15px_rgba(27,58,100,0.12)] transition-all duration-500 group">
-            <div className="w-16 h-16 bg-gradient-to-br from-[#EAF1F8] to-[#D5E4F2] border border-white rounded-[24px] flex items-center justify-center shadow-inner mb-8 group-hover:scale-110 transition-transform duration-500">
-              <span className="material-icons text-orange-500 text-[28px] drop-shadow-sm">{val.icon}</span>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        {values.map((val, idx) => {
+          const Icon = val.icon;
+          return (
+            <div
+              key={idx}
+              className="bg-white rounded-2xl p-6 text-left border border-[#EDEFF3] shadow-[0_2px_8px_rgba(27,58,100,0.04)]"
+            >
+              <div
+                className="w-11 h-11 rounded-lg flex items-center justify-center mb-5"
+                style={{ backgroundColor: val.iconBg }}
+              >
+                <Icon size={19} color={val.iconColor} strokeWidth={2.25} />
+              </div>
+              <h3
+                className="text-[15px] font-bold mb-2"
+                style={{ color: val.titleColor }}
+              >
+                {val.title}
+              </h3>
+              <p className="text-[#8A93A3] text-[13px] font-medium leading-relaxed">
+                {val.description}
+              </p>
             </div>
-            <h3 className="text-[24px] font-bold text-[#1B3A64] mb-4">{val.title}</h3>
-            <p className="text-[#5A6579] font-medium leading-relaxed text-[16px]">
-              {val.description}
-            </p>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </section>
   );

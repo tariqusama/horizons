@@ -1,67 +1,84 @@
+'use client';
+
 import Link from 'next/link';
 import React from 'react';
+import { motion } from 'framer-motion';
+import { heroContent } from '@/data/homePage';
 
 export default function HeroSection() {
+  const itemVariants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' } },
+  };
+
   return (
-    <section className="relative w-full min-h-[800px] flex items-center px-4 md:px-8 lg:px-16 pt-32 pb-32 bg-gradient-to-br from-[#0A192F] via-[#122846] to-[#1B3A64] overflow-hidden">
-      
-      {/* Premium Glow Effects */}
-      <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-orange-500/10 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/3"></div>
-      <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-[#4375A3]/20 rounded-full blur-[100px] translate-y-1/3 -translate-x-1/4"></div>
+    <section className="relative w-full min-h-[640px] md:min-h-[720px] flex items-center justify-start overflow-hidden mt-[88px]">
+      <img
+        src={heroContent.backgroundImage}
+        alt="A family reviewing immigration documents together at home"
+        className="absolute inset-0 w-full h-full object-cover"
+      />
 
-      <div className="relative z-10 w-full max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-        
-        {/* Left Content */}
-        <div className="flex flex-col items-start text-left max-w-2xl">
-          <div className="inline-flex items-center bg-white/10 backdrop-blur-md rounded-full px-5 py-2 mb-8 border border-white/20 shadow-[0_8px_16px_rgba(0,0,0,0.2)]">
-            <span className="text-[#A3B8CC] text-[11px] font-bold tracking-[0.1em] uppercase">
-              Immigration Application Assistance
+      <div className="absolute inset-0 bg-gradient-to-r from-[#0A192F]/95 via-[#0A192F]/60 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-t from-[#0A192F]/80 via-transparent to-transparent" />
+
+      <div className="relative z-10 w-full max-w-[1400px] mx-auto px-6 md:px-12 lg:px-16 py-20">
+        <motion.div
+          className="max-w-2xl"
+          initial="hidden"
+          animate="visible"
+          variants={{
+            hidden: { opacity: 0 },
+            visible: {
+              opacity: 1,
+              transition: { staggerChildren: 0.15 },
+            },
+          }}
+        >
+          <motion.div
+            variants={itemVariants}
+            className="inline-flex items-center bg-white/10 backdrop-blur-md rounded-full px-4 py-1.5 mb-6 border border-white/20"
+          >
+            <span className="w-1.5 h-1.5 rounded-full bg-[#FF6B35] mr-2" />
+            <span className="text-white text-[11px] font-bold tracking-[0.1em] uppercase">
+              {heroContent.badge}
             </span>
-          </div>
+          </motion.div>
 
-          <h1 className="text-5xl sm:text-[68px] font-bold leading-[1.1] mb-6 tracking-tight text-white drop-shadow-lg">
-            Your Path to U.S.<br />
-            Immigration Success Starts<br />
-            Here<span className="text-orange-500">.</span>
-          </h1>
+          <motion.h1
+            variants={itemVariants}
+            className="text-4xl sm:text-5xl md:text-[56px] font-bold leading-[1.15] mb-5 tracking-tight text-white"
+          >
+            {heroContent.title[0]}<br />
+            <span className="text-[#FF6B35]">{heroContent.highlight}</span> {heroContent.title[2]}<br />
+            {heroContent.title[3]}
+          </motion.h1>
 
-          <p className="text-lg sm:text-[19px] font-medium mb-10 text-[#A3B8CC] leading-relaxed max-w-xl">
-            Professional document preparation services to help you navigate your
-            immigration journey with confidence.
-          </p>
+          <motion.p
+            variants={itemVariants}
+            className="text-base sm:text-lg font-medium mb-8 text-[#D7E1EC] leading-relaxed max-w-xl"
+          >
+            {heroContent.subtitle}
+          </motion.p>
 
-          <div className="flex flex-wrap items-center gap-5">
-            <Link href="/signup" className="bg-gradient-to-b from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-9 py-4 rounded-[16px] font-bold text-lg transition-all duration-300 shadow-[0_10px_20px_rgba(227,117,93,0.3)] hover:shadow-[0_15px_30px_rgba(227,117,93,0.4)] hover:-translate-y-1 flex items-center justify-center">
-              Get Started Today
+          <motion.div
+            variants={itemVariants}
+            className="flex flex-wrap items-center gap-4"
+          >
+            <Link
+              href={heroContent.primaryCta.href}
+              className="bg-[#FF6B35] hover:bg-[#E05B2C] text-white px-7 py-3 rounded-lg font-bold text-[15px] transition-colors"
+            >
+              {heroContent.primaryCta.label}
             </Link>
-            <Link href="/how-it-works" className="bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 text-white px-9 py-4 rounded-[16px] font-bold text-lg transition-all duration-300 shadow-lg hover:-translate-y-1 flex items-center justify-center">
-              Learn More
+            <Link
+              href={heroContent.secondaryCta.href}
+              className="bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/30 text-white px-7 py-3 rounded-lg font-bold text-[15px] transition-colors"
+            >
+              {heroContent.secondaryCta.label}
             </Link>
-          </div>
-        </div>
-
-        {/* Right Content - Abstract/Image Representation */}
-        <div className="relative z-10 w-full h-[550px] hidden lg:block">
-          <div className="absolute inset-0 bg-white/5 backdrop-blur-xl rounded-[48px] shadow-[0_30px_60px_rgba(0,0,0,0.4)] border border-white/10 overflow-hidden transform hover:-translate-y-2 transition-transform duration-500">
-            <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent z-10"></div>
-            <img 
-              src="/hero-bg.png" 
-              alt="Immigration Success" 
-              className="w-full h-full object-cover opacity-80 mix-blend-overlay"
-            />
-            {/* Glassmorphism Badge */}
-            <div className="absolute bottom-12 left-12 z-20 bg-white/10 backdrop-blur-2xl p-6 rounded-[28px] shadow-[0_20px_40px_rgba(0,0,0,0.3)] border border-white/20 flex items-center space-x-5">
-              <div className="w-14 h-14 bg-gradient-to-b from-orange-500 to-orange-600 rounded-[20px] flex items-center justify-center text-white shadow-inner">
-                <span className="material-icons text-[28px]">verified_user</span>
-              </div>
-              <div>
-                <p className="text-white font-bold text-[19px] mb-0.5 tracking-wide">Trusted Service</p>
-                <p className="text-[#A3B8CC] font-medium text-[14px]">Thousands of success stories</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
+          </motion.div>
+        </motion.div>
       </div>
     </section>
   );

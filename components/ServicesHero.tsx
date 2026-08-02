@@ -1,62 +1,95 @@
 import Link from 'next/link';
 import React from 'react';
+import { ShieldCheck, Clock, MessageSquare } from 'lucide-react';
 
 export default function ServicesHero() {
+  const features = [
+    { icon: ShieldCheck, text: 'Expert Guidance' },
+    { icon: Clock, text: 'Timely Processing' },
+    { icon: MessageSquare, text: 'Personalized Support' },
+  ];
+
   return (
-    <section className="relative w-full flex flex-col items-center pt-40 pb-32 bg-gradient-to-br from-[#0A192F] via-[#122846] to-[#1B3A64] overflow-hidden">
-      
-      {/* Decorative Glows */}
-      <div className="absolute top-0 right-1/4 w-[600px] h-[600px] bg-orange-500/10 rounded-full blur-[120px] -translate-y-1/2 pointer-events-none"></div>
-      <div className="absolute bottom-0 left-1/4 w-[500px] h-[500px] bg-[#4375A3]/20 rounded-full blur-[100px] translate-y-1/3 pointer-events-none"></div>
+    <>
+      <section className="relative w-full h-[600px] flex flex-col justify-center items-center text-center px-4 pt-20">
+        {/* Background Layers */}
+        <div className="absolute inset-0 z-0 bg-[#0A192F]"></div>
 
-      <div className="relative z-10 w-full max-w-[1400px] mx-auto flex flex-col items-center px-4 md:px-8 lg:px-16 text-center">
+        {/* Custom Gradient Mesh */}
+        <div
+          className="absolute inset-0 z-0 overflow-hidden"
+          style={{
+            backgroundImage: 'radial-gradient(at 0% 0%, rgba(3, 42, 119, 0.9) 0px, transparent 50%), radial-gradient(at 100% 0%, rgba(255, 68, 0, 0.8) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(3, 42, 119, 0.8) 0px, transparent 50%), radial-gradient(at 0% 100%, rgba(255, 68, 0, 0.7) 0px, transparent 50%)'
+          }}
+        ></div>
 
-        {/* Pill */}
-        <div className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-full px-6 py-2 mb-10 shadow-lg">
-          <span className="text-[#A3B8CC] text-[12px] font-bold tracking-[0.15em] uppercase">
-            Trusted Immigration Partners
-          </span>
+        <div className="relative z-10 w-full max-w-[1000px] mx-auto flex flex-col items-center mt-[-30px]">
+          {/* Pill */}
+          <div className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-full px-5 py-2 mb-8 shadow-sm">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 2v4"></path>
+              <path d="M12 18v4"></path>
+              <path d="M4.93 4.93l2.83 2.83"></path>
+              <path d="M16.24 16.24l2.83 2.83"></path>
+              <path d="M2 12h4"></path>
+              <path d="M18 12h4"></path>
+              <path d="M4.93 19.07l2.83-2.83"></path>
+              <path d="M16.24 7.76l2.83-2.83"></path>
+            </svg>
+            <span className="text-white text-xs font-bold tracking-wide uppercase">
+              Authorized Immigration Guidance
+            </span>
+          </div>
+
+          {/* Heading */}
+          <h1 className="text-5xl md:text-[68px] font-black leading-[1.1] mb-6 tracking-tight text-white">
+            Professional Immigration Services
+          </h1>
+
+          {/* Subtitle */}
+          <p className="text-lg md:text-2xl font-medium text-gray-200 mb-10 max-w-3xl leading-relaxed">
+            Navigate your immigration journey with confidence. Our expert team
+            provides personalized, professional guidance tailored to your unique
+            situation.
+          </p>
+
+          {/* Buttons */}
+          <div className="flex flex-wrap items-center justify-center gap-4">
+            <Link href="/signup" className="bg-gradient-to-b from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-8 py-3.5 rounded-xl font-bold text-lg transition-colors shadow-lg flex items-center space-x-2 justify-center">
+              <span>Start Your Journey</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M5 12h14"></path>
+                <path d="M12 5l7 7-7 7"></path>
+              </svg>
+            </Link>
+            <Link href="/" className="bg-white/10 hover:bg-white/20 border border-white/30 text-white px-8 py-3.5 rounded-xl font-bold text-lg backdrop-blur-sm transition-colors shadow-lg flex items-center justify-center">
+              <span>Back to Home</span>
+            </Link>
+          </div>
         </div>
+      </section>
 
-        {/* Heading */}
-        <h1 className="text-5xl md:text-[80px] font-bold mb-8 text-center leading-[1.05] tracking-tight drop-shadow-md">
-          <span className="text-white block mb-2">Professional</span>
-          <span className="text-transparent bg-clip-text bg-gradient-to-b from-orange-500 to-orange-600 block">Immigration Services</span>
-        </h1>
-
-        {/* Subtitle */}
-        <p className="text-[#A3B8CC] font-medium text-[20px] max-w-3xl mx-auto text-center mb-24 leading-relaxed">
-          Navigate your immigration journey with confidence. Our expert team provides personalized, professional guidance tailored to your unique situation.
-        </p>
-
-        {/* Floating Info Cards */}
-        <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="bg-white/5 backdrop-blur-2xl rounded-[40px] p-10 shadow-[0_20px_40px_rgba(0,0,0,0.3)] flex flex-col items-start border border-white/10 hover:-translate-y-3 transition-all duration-500 group">
-            <div className="w-16 h-16 bg-gradient-to-b from-orange-500 to-orange-600 rounded-[24px] flex items-center justify-center mb-8 shadow-inner border border-white/20 group-hover:scale-110 transition-transform duration-500">
-              <span className="material-icons text-white text-[32px]">school</span>
-            </div>
-            <h3 className="text-white font-bold text-[22px] mb-3">Expert Guidance</h3>
-            <p className="text-[#A3B8CC] font-medium text-[16px] leading-relaxed text-left">Professional immigration attorneys and experienced specialists at your side.</p>
-          </div>
-
-          <div className="bg-white/5 backdrop-blur-2xl rounded-[40px] p-10 shadow-[0_20px_40px_rgba(0,0,0,0.3)] flex flex-col items-start border border-white/10 hover:-translate-y-3 transition-all duration-500 group">
-            <div className="w-16 h-16 bg-gradient-to-b from-orange-500 to-orange-600 rounded-[24px] flex items-center justify-center mb-8 shadow-inner border border-white/20 group-hover:scale-110 transition-transform duration-500">
-              <span className="material-icons text-white text-[32px]">timer</span>
-            </div>
-            <h3 className="text-white font-bold text-[22px] mb-3">Timely Processing</h3>
-            <p className="text-[#A3B8CC] font-medium text-[16px] leading-relaxed text-left">Efficient, accurate handling of your case to prevent unnecessary delays.</p>
-          </div>
-
-          <div className="bg-white/5 backdrop-blur-2xl rounded-[40px] p-10 shadow-[0_20px_40px_rgba(0,0,0,0.3)] flex flex-col items-start border border-white/10 hover:-translate-y-3 transition-all duration-500 group">
-            <div className="w-16 h-16 bg-gradient-to-b from-orange-500 to-orange-600 rounded-[24px] flex items-center justify-center mb-8 shadow-inner border border-white/20 group-hover:scale-110 transition-transform duration-500">
-              <span className="material-icons text-white text-[32px]">support_agent</span>
-            </div>
-            <h3 className="text-white font-bold text-[22px] mb-3">Personalized Support</h3>
-            <p className="text-[#A3B8CC] font-medium text-[16px] leading-relaxed text-left">Dedicated support throughout your entire immigration journey.</p>
-          </div>
+      {/* Features Section Outside Hero */}
+      <section className="w-full bg-white border-b border-[#E7EBF0] py-6 relative z-20 shadow-sm">
+        <div className="flex flex-wrap justify-center gap-x-12 gap-y-6 max-w-[1400px] mx-auto px-6">
+          {features.map((feature, idx) => {
+            const Icon = feature.icon;
+            return (
+              <div
+                key={idx}
+                className="flex items-center gap-3"
+              >
+                <div className="w-10 h-10 rounded-full bg-[#E4EAF5] flex items-center justify-center shrink-0">
+                  <Icon size={18} className="text-[#2F6FDB]" />
+                </div>
+                <span className="text-[#0A192F] font-bold text-[15px]">
+                  {feature.text}
+                </span>
+              </div>
+            );
+          })}
         </div>
-
-      </div>
-    </section>
+      </section>
+    </>
   );
 }

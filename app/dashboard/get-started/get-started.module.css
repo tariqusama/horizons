@@ -1,280 +1,533 @@
-.pageWrapper {
+.stepPageWrapper {
     width: 100%;
-    max-width: 1240px;
+    max-width: 1280px;
     margin: 0 auto;
     display: flex;
     flex-direction: column;
-    gap: 1.75rem;
-    padding: 1.5rem 1.5rem 2.5rem;
+    gap: 1.25rem;
+    padding: 1.5rem 1.5rem 2rem;
+    color: #1b2559;
+    background: #f8f8f7;
 }
 
-.heroCard {
-    background: linear-gradient(180deg, rgba(248, 250, 255, 0.94) 0%, rgba(255, 255, 255, 1) 100%);
-    border-radius: 2rem;
-    padding: 2.5rem 2.5rem 2rem;
-    box-shadow: 0 28px 80px rgba(15, 23, 42, 0.08);
-    border: 1px solid rgba(226, 232, 240, 0.7);
+.stepHeader {
+    padding-top: 0.25rem;
 }
 
-.heroText {
-    max-width: 780px;
+.stepHeader h2 {
+    margin: 0;
+    font-size: 2.5rem;
+    font-weight: 300;
+    color: #1b2559;
+    line-height: 1.2;
+    letter-spacing: -0.04em;
+    font-family: "Segoe UI", sans-serif;
+}
+
+.progressRow {
+    width: 100%;
+    padding-top: 0.75rem;
+    border-top: 1px solid #dfe7f6;
+}
+
+.progressTrack {
+    position: relative;
+    width: 100%;
+    height: 52px;
+    background: #dfe1e5;
+    border-radius: 999px;
+    overflow: hidden;
+    display: flex;
+    align-items: stretch;
+}
+
+.progressSegment {
+    flex: 1 1 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #dfe1e5;
+    color: #4c5b70;
+    min-width: 0;
+    padding: 0 0.25rem;
+}
+
+.progressSegmentActive {
+    background: linear-gradient(90deg, rgba(27, 37, 89, 0.96), rgba(57, 67, 109, 0.96));
+    color: #ffffff;
+}
+
+.progressLabel {
+    display: block;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: inherit;
+    white-space: nowrap;
+    text-align: center;
+    font-family: "Segoe UI", sans-serif;
+    transform: translateY(1px);
+}
+
+.progressLabelActive {
+    color: #ffffff;
+}
+
+.infoPanel {
+    border-top: 1px solid #dfe7f6;
+    padding-top: 1.5rem;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 2rem;
+}
+
+.processIllustrationWrap {
+    flex-shrink: 0;
+    width: 360px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+}
+
+.processIllustration {
+    position: relative;
+    width: 330px;
+    height: 195px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+}
+
+.illustrationBoard {
+    position: absolute;
+    left: 18px;
+    top: 16px;
+    width: 235px;
+    height: 120px;
+    background: #2d9a8d;
+    border: 4px solid #1b2559;
+    border-radius: 10px;
+    box-shadow: inset 0 0 0 3px rgba(255, 255, 255, 0.2);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: #f7f7f6;
+    text-transform: uppercase;
+    font-weight: 800;
+    text-align: center;
+    line-height: 1.05;
+    padding: 0.75rem;
+}
+
+.illustrationLabel {
+    font-size: 1.2rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+}
+
+.illustrationLabelLarge {
+    font-size: 1.6rem;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+}
+
+.illustrationPerson {
+    position: absolute;
+    left: 105px;
+    top: 44px;
+    width: 150px;
+    height: 120px;
+}
+
+.personHead {
+    position: absolute;
+    left: 62px;
+    top: 0;
+    width: 28px;
+    height: 28px;
+    background: #f4c6a2;
+    border: 3px solid #1b2559;
+    border-radius: 50%;
+}
+
+.personBody {
+    position: absolute;
+    left: 52px;
+    top: 28px;
+    width: 52px;
+    height: 54px;
+    background: #f5f5f3;
+    border: 3px solid #1b2559;
+    border-radius: 18px 18px 12px 12px;
+}
+
+.personDesk {
+    position: absolute;
+    left: 4px;
+    bottom: 12px;
+    width: 150px;
+    height: 14px;
+    background: #d9dfe5;
+    border: 3px solid #1b2559;
+    border-radius: 8px;
+}
+
+.personPlant {
+    position: absolute;
+    right: 0;
+    bottom: 22px;
+    width: 34px;
+    height: 56px;
+    border-radius: 8px;
+    background: linear-gradient(180deg, #dfe9ef 0%, #dfe9ef 60%, #bfe2cb 60%, #bfe2cb 100%);
+    border: 3px solid #1b2559;
+    transform: rotate(4deg);
+}
+
+.welcomeText {
+    flex: 1;
+    margin: 0;
+    font-size: 1.42rem;
+    line-height: 1.55;
+    color: #2b2b2b;
+    font-weight: 400;
+    max-width: 840px;
+    letter-spacing: -0.02em;
+}
+
+.learningSectionHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    border-top: 1px solid #dfe7f6;
+    padding-top: 1.5rem;
+}
+
+.learningSectionHeader h3 {
+    margin: 0;
+    font-size: 2.2rem;
+    color: #1b2559;
+    line-height: 1.1;
+    letter-spacing: -0.04em;
+    font-weight: 300;
+    font-family: "Segoe UI", sans-serif;
+}
+
+.languageToggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.7rem;
+    background: #fff;
+    border: 2px solid #1b2559;
+    border-radius: 0.65rem;
+    color: #1b2559;
+    font-size: 1.05rem;
+    font-weight: 600;
+    padding: 0.35rem 0.9rem 0.35rem 0.55rem;
+    min-width: 170px;
+    justify-content: space-between;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(30, 41, 59, 0.04);
+}
+
+.languageFlag {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 0.35rem;
+    background: #f2f4f7;
+}
+
+.languageArrow {
+    font-size: 1.8rem;
+    color: #1b2559;
+    line-height: 1;
+    transform: translateY(-2px);
+}
+
+.learningSection {
+    color: #1b2559;
+}
+
+.learningSection ul {
+    margin: 0 0 0 1.7rem;
+    padding: 0;
+    color: #334155;
+    line-height: 2.1;
+    font-size: 1.05rem;
+}
+
+.gettingStartedSection {
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
+    border-top: 1px solid #dfe7f6;
+    padding-top: 1.5rem;
 }
 
-.heroEyebrow {
-    color: #475569;
-    font-size: 0.95rem;
+.gettingStartedSection h4 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: #1b2559;
     font-weight: 700;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
 }
 
-.heroCard h1 {
-    margin: 0;
-    font-size: clamp(2.1rem, 4vw, 3.6rem);
-    line-height: 1.02;
-    color: #0f172a;
-}
-
-.heroSubtitle {
-    margin: 0;
-    font-size: 1rem;
+.gettingStartedBody {
+    min-height: 68px;
+    border: 1px solid #dfe7f6;
+    background: #f8fafc;
+    border-radius: 0.75rem;
+    padding: 0.9rem 1rem;
+    display: flex;
+    align-items: center;
     color: #475569;
-    max-width: 640px;
+    font-size: 1rem;
+}
+
+.startButton {
+    align-self: flex-end;
+    background: #d9dfe5;
+    color: #1b2559;
+    border: none;
+    border-radius: 0.7rem;
+    padding: 0.85rem 1.6rem;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    box-shadow: 0 6px 16px rgba(30, 41, 59, 0.08);
 }
 
 .infoSection {
     display: flex;
     flex-direction: column;
     gap: 1rem;
+    margin-top: 1rem;
+    border-top: 1px solid #dfe7f6;
+    padding-top: 1.25rem;
 }
 
-.sectionTitleWrapper {
-    display: flex;
-    flex-direction: column;
-}
-
-.sectionTitleWrapper h2 {
+.beginHeader {
     margin: 0;
-    font-size: 2rem;
-    color: #0f172a;
+    font-size: 3rem;
+    line-height: 1.1;
+    letter-spacing: -0.05em;
+    color: #1b2559;
     font-weight: 800;
-    line-height: 1.05;
+    font-family: "Segoe UI", sans-serif;
 }
 
 .infoGrid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 1rem;
+    gap: 1.25rem;
 }
 
 .infoCard {
-    background-color: #ffffff;
-    border-radius: 1.75rem;
-    padding: 1.75rem 1.75rem;
-    box-shadow: 0 20px 50px rgba(15, 23, 42, 0.05);
-    border: 1px solid #e2e8f0;
+    background: rgba(255, 255, 255, 0.7);
+    border: 1px solid #dfe7f6;
+    border-radius: 1rem;
+    min-height: 120px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 1rem 1.25rem;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
 }
 
 .infoCardLabel {
     display: block;
-    margin-bottom: 0.85rem;
-    font-size: 0.85rem;
-    font-weight: 700;
-    color: #475569;
+    margin-bottom: 0.7rem;
+    font-size: 1.1rem;
+    line-height: 1.5;
+    color: #1b2559;
+    font-weight: 500;
 }
 
 .infoCardValue {
-    font-size: 1.05rem;
-    color: #111827;
-    font-weight: 700;
-    line-height: 1.5;
+    font-size: 2rem;
+    line-height: 1.2;
+    color: #1b2559;
+    font-weight: 800;
+    letter-spacing: -0.03em;
 }
 
 .confirmationCard {
-    background-color: #ffffff;
-    border-radius: 1.75rem;
-    padding: 2rem;
-    box-shadow: 0 28px 80px rgba(15, 23, 42, 0.08);
-    border: 1px solid #e2e8f0;
+    background: rgba(255, 255, 255, 0.7);
+    border: 1px solid #dfe7f6;
+    border-radius: 1rem;
+    padding: 1.5rem 1.5rem 1.25rem;
+    margin-top: 1.5rem;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
 }
 
-.confirmationHeading h3 {
+.confirmationTitle {
     margin: 0;
-    font-size: 1.5rem;
-    color: #0f172a;
+    font-size: 2.8rem;
+    line-height: 1.1;
+    letter-spacing: -0.04em;
+    color: #1b2559;
     font-weight: 800;
+    font-family: "Segoe UI", sans-serif;
 }
 
 .confirmationText {
-    margin: 1rem 0 0;
-    color: #475569;
-    font-size: 1rem;
-    line-height: 1.8;
-    max-width: 720px;
+    margin: 1.25rem 0 0;
+    color: #1b2559;
+    font-size: 1.15rem;
+    line-height: 1.5;
+    max-width: 860px;
 }
 
-.noteText {
-    margin-top: 1rem;
-    color: #64748b;
-    font-size: 0.95rem;
-    line-height: 1.7;
+.confirmationSubtext {
+    margin: 1.2rem 0 0;
+    color: #1b2559;
+    font-size: 1.15rem;
+    line-height: 1.5;
+    max-width: 980px;
 }
 
-.buttonRow {
+.confirmationActions {
     display: flex;
     flex-wrap: wrap;
     gap: 1rem;
-    margin-top: 1.75rem;
+    margin-top: 1.5rem;
 }
 
-.buttonPrimary,
-.buttonSecondary {
-    min-width: 240px;
+.confirmPrimary,
+.confirmSecondary {
     border: none;
-    border-radius: 999px;
-    padding: 1rem 1.75rem;
-    font-size: 0.95rem;
-    font-weight: 700;
+    border-radius: 0.8rem;
+    min-height: 58px;
+    padding: 0.9rem 1.5rem;
+    font-size: 1.15rem;
+    font-weight: 800;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.7rem;
     cursor: pointer;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.buttonPrimary {
-    background-color: #0f172a;
-    color: #ffffff;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.confirmPrimary {
+    background: #1b2559;
+    color: #fff;
+    min-width: 260px;
 }
 
-.buttonPrimary:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 16px 40px rgba(15, 23, 42, 0.16);
+.confirmSecondary {
+    background: #d9dfe5;
+    color: #1b2559;
+    min-width: 420px;
 }
 
-.buttonSecondary {
-    background-color: #f97316;
-    color: #ffffff;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.buttonSecondary:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 16px 40px rgba(249, 115, 22, 0.2);
-}
-
-.buttonSelected {
-    opacity: 0.98;
-}
-
-@media (max-width: 960px) {
-    .pageWrapper {
-        padding: 1rem 1rem 2rem;
+@media (max-width: 860px) {
+    .stepHeader h2 {
+        font-size: 2rem;
     }
 
-    .heroCard {
-        padding: 2rem 1.75rem;
+    .infoPanel {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .processIllustrationWrap {
+        width: 100%;
+        justify-content: flex-start;
+    }
+
+    .learningSectionHeader {
+        flex-direction: column;
+        align-items: flex-start;
     }
 
     .infoGrid {
         grid-template-columns: 1fr;
     }
-}
 
-@media (max-width: 640px) {
-    .buttonRow {
-        flex-direction: column;
+    .beginHeader,
+    .confirmationTitle {
+        font-size: 2rem;
+    }
+
+    .confirmSecondary {
+        min-width: 260px;
     }
 }
 
-.modalOverlay {
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
+@media (max-width: 640px) {
+    .stepPageWrapper {
+        padding: 1rem 0.75rem 1.5rem;
+    }
+
+    .progressTrack {
+        height: 24px;
+    }
+
+    .progressLabel {
+        font-size: 0.6rem;
+    }
+
+    .welcomeText {
+        font-size: 1.1rem;
+    }
+
+    .learningSectionHeader h3 {
+        font-size: 1.6rem;
+    }
+
+    .beginHeader,
+    .confirmationTitle {
+        font-size: 1.6rem;
+    }
+
+    .infoCardValue {
+        font-size: 1.4rem;
+    }
 }
 
-.modalContent {
-    background-color: #f8fafc;
-    border-radius: 1rem;
-    padding: 1.5rem;
-    width: 90%;
-    max-width: 500px;
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+@media (max-width: 860px) {
+    .stepHeader h2 {
+        font-size: 2rem;
+    }
+
+    .infoPanel {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .processIllustrationWrap {
+        width: 100%;
+        justify-content: flex-start;
+    }
+
+    .learningSectionHeader {
+        flex-direction: column;
+        align-items: flex-start;
+    }
 }
 
-.modalHeader {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 0.5rem;
-}
+@media (max-width: 640px) {
+    .stepPageWrapper {
+        padding: 1rem 0.75rem 1.5rem;
+    }
 
-.modalTitle {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: #1e293b;
-    margin: 0;
-}
+    .progressTrack {
+        height: 24px;
+    }
 
-.modalClose {
-    background: none;
-    border: none;
-    color: #64748b;
-    cursor: pointer;
-    padding: 0.25rem;
-}
+    .progressLabel {
+        font-size: 0.6rem;
+    }
 
-.modalDescription {
-    color: #64748b;
-    font-size: 0.9rem;
-    margin-bottom: 1rem;
-    line-height: 1.4;
-}
+    .welcomeText {
+        font-size: 1.1rem;
+    }
 
-.modalTextarea {
-    width: 100%;
-    border: 2px solid #f97316;
-    border-radius: 0.5rem;
-    padding: 0.75rem;
-    font-family: inherit;
-    font-size: 0.9rem;
-    color: #334155;
-    resize: vertical;
-    min-height: 120px;
-    margin-bottom: 1rem;
-}
-
-.modalActions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 0.75rem;
-}
-
-.modalButtonCancel {
-    background-color: #ffffff;
-    border: 1px solid #e2e8f0;
-    color: #0f172a;
-    padding: 0.5rem 1rem;
-    border-radius: 0.5rem;
-    font-weight: 600;
-    cursor: pointer;
-}
-
-.modalButtonSend {
-    background-color: #f97316;
-    border: none;
-    color: #ffffff;
-    padding: 0.5rem 1rem;
-    border-radius: 0.5rem;
-    font-weight: 600;
-    cursor: pointer;
+    .learningSectionHeader h3 {
+        font-size: 1.6rem;
+    }
 }
