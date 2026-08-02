@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 import { CheckCircle2, Info, Sparkles, ArrowRight } from 'lucide-react';
 
 export default function PricingSection({ categories }: { categories: any[] }) {
@@ -25,14 +26,13 @@ export default function PricingSection({ categories }: { categories: any[] }) {
             <h3 className="text-lg font-bold text-[#1a2b4b] mb-6">{category.title}</h3>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {category.services.map((service: any, sIdx: number) => (
-                <div 
+                <div
                   key={sIdx}
                   onClick={() => setSelectedService(service.title)}
-                  className={`group relative rounded-2xl border p-6 cursor-pointer transition-all duration-300 hover:shadow-xl hover:-translate-y-1 flex flex-col h-full bg-white ${
-                    selectedService === service.title 
-                      ? 'border-[#FF5A1F] ring-1 ring-[#FF5A1F] shadow-md' 
+                  className={`group relative rounded-2xl border p-6 cursor-pointer transition-all duration-300 hover:shadow-xl hover:-translate-y-1 flex flex-col h-full bg-white ${selectedService === service.title
+                      ? 'border-[#FF5A1F] ring-1 ring-[#FF5A1F] shadow-md'
                       : 'border-gray-200 hover:border-[#FF5A1F]/30'
-                  }`}
+                    }`}
                 >
                   <div className="flex items-start gap-4 mb-5">
                     <div className="w-14 h-14 rounded-2xl bg-[#FFF0E8] flex items-center justify-center flex-shrink-0 transition-colors group-hover:bg-[#FFE4D6]">
@@ -42,13 +42,13 @@ export default function PricingSection({ categories }: { categories: any[] }) {
                       {service.title}
                     </h4>
                   </div>
-                  
+
                   <div className="flex-1 mb-6">
                     <p className="text-[13px] text-[#64748b] leading-relaxed">
                       {service.subtitle}
                     </p>
                   </div>
-                  
+
                   <div className="mt-auto">
                     <div className="bg-[#FFF0E8] rounded-[14px] p-4 flex items-center justify-between border border-[#FFE4D6] group-hover:bg-[#FFE4D6]/70 transition-colors">
                       <div>
@@ -57,10 +57,14 @@ export default function PricingSection({ categories }: { categories: any[] }) {
                           <span className="text-[28px] font-extrabold text-[#FF5A1F] leading-none">${service.packages?.[0]?.price || '0.00'}</span>
                         </div>
                       </div>
-                      
-                      <div className="w-10 h-10 rounded-full bg-[#FFE4D6] flex items-center justify-center text-[#FF5A1F] group-hover:bg-[#FF5A1F] group-hover:text-white transition-colors">
+
+                      <Link
+                        href={`/signup?service=${encodeURIComponent(service.title)}`}
+                        className="w-10 h-10 rounded-full bg-[#FFE4D6] flex items-center justify-center text-[#FF5A1F] group-hover:bg-[#FF5A1F] group-hover:text-white transition-colors"
+                        onClick={(e) => e.stopPropagation()}
+                      >
                         <ArrowRight className="w-5 h-5" />
-                      </div>
+                      </Link>
                     </div>
                   </div>
                 </div>
@@ -81,7 +85,7 @@ export default function PricingSection({ categories }: { categories: any[] }) {
               Prices listed are for our professional services only and do not include USCIS filing fees. All payments are securely processed through Stripe. We offer flexible payment plans for qualified applicants.
             </p>
           </div>
-          
+
           <div className="flex-1 bg-white rounded-xl p-6 border border-gray-200 shadow-sm w-full">
             <h4 className="font-bold text-[#1a2b4b] mb-4">What's Included in All Plans</h4>
             <ul className="space-y-3">
