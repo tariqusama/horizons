@@ -1,5 +1,8 @@
+'use client';
+
 import Link from 'next/link';
 import React from 'react';
+import { motion } from 'framer-motion';
 
 export default function HowItWorksHero() {
   return (
@@ -15,9 +18,20 @@ export default function HowItWorksHero() {
         }}
       ></div>
 
-      <div className="relative z-10 w-full max-w-[1000px] mx-auto flex flex-col items-center">
+      <motion.div 
+        className="relative z-10 w-full max-w-[1000px] mx-auto flex flex-col items-center"
+        initial="hidden"
+        animate="visible"
+        variants={{
+          hidden: { opacity: 0 },
+          visible: { opacity: 1, transition: { staggerChildren: 0.15 } }
+        }}
+      >
         {/* Pill */}
-        <div className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-full px-5 py-2 mb-8 shadow-sm">
+        <motion.div 
+          variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } } }}
+          className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-full px-5 py-2 mb-8 shadow-sm"
+        >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M12 2v4"></path>
             <path d="M12 18v4"></path>
@@ -31,17 +45,26 @@ export default function HowItWorksHero() {
           <span className="text-white text-xs font-bold tracking-wide uppercase">
             Simplified Immigration Process
           </span>
-        </div>
+        </motion.div>
 
-        <h1 className="text-5xl md:text-[68px] font-black leading-[1.1] mb-6 tracking-tight text-white">
+        <motion.h1 
+          variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } } }}
+          className="text-5xl md:text-[68px] font-black leading-[1.1] mb-6 tracking-tight text-white"
+        >
           How Horizon Pathways Works
-        </h1>
+        </motion.h1>
 
-        <p className="text-lg md:text-2xl font-medium text-gray-200 mb-10 max-w-3xl leading-relaxed">
+        <motion.p 
+          variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } } }}
+          className="text-lg md:text-2xl font-medium text-gray-200 mb-10 max-w-3xl leading-relaxed"
+        >
           From profile creation to USCIS submission, we guide you through every step of your immigration journey with professional support and cutting-edge technology.
-        </p>
+        </motion.p>
 
-        <div className="flex flex-wrap items-center justify-center gap-4">
+        <motion.div 
+          variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } } }}
+          className="flex flex-wrap items-center justify-center gap-4"
+        >
           <Link href="/signup" className="bg-gradient-to-b from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-8 py-3.5 rounded-xl font-bold text-lg transition-colors shadow-lg flex items-center space-x-2 justify-center">
             <span>Get Started Now</span>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -55,8 +78,8 @@ export default function HowItWorksHero() {
             </svg>
             <span>Watch Video Tour</span>
           </Link>
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
     </section>
   );
 }

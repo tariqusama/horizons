@@ -1,4 +1,7 @@
+'use client';
+
 import React from 'react';
+import { motion } from 'framer-motion';
 import AboutMission from '@/components/AboutMission';
 import AboutImpact from '@/components/AboutImpact';
 import AboutJourney from '@/components/AboutJourney';
@@ -19,10 +22,21 @@ export default function AboutPage() {
           className="absolute inset-0 z-0" 
           style={{ backgroundImage: 'radial-gradient(at 0% 0%, rgba(3, 42, 119, 0.9) 0px, transparent 50%), radial-gradient(at 100% 0%, rgba(255, 68, 0, 0.8) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(3, 42, 119, 0.8) 0px, transparent 50%), radial-gradient(at 0% 100%, rgba(255, 68, 0, 0.7) 0px, transparent 50%)' }}
         ></div>
-        <div className="relative z-10 w-full max-w-[1000px] mx-auto flex flex-col items-center">
+        <motion.div 
+          className="relative z-10 w-full max-w-[1000px] mx-auto flex flex-col items-center"
+          initial="hidden"
+          animate="visible"
+          variants={{
+            hidden: { opacity: 0 },
+            visible: { opacity: 1, transition: { staggerChildren: 0.15 } }
+          }}
+        >
           
           {/* Pill */}
-          <div className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-full px-5 py-2 mb-8 shadow-sm">
+          <motion.div 
+            variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } } }}
+            className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-full px-5 py-2 mb-8 shadow-sm"
+          >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M12 2v4"></path>
               <path d="M12 18v4"></path>
@@ -34,20 +48,29 @@ export default function AboutPage() {
               <path d="M16.24 7.76l2.83-2.83"></path>
             </svg>
             <span className="text-white text-xs font-bold tracking-wide uppercase">Premium Immigration Services Since 2022</span>
-          </div>
+          </motion.div>
 
           {/* Heading */}
-          <h1 className="text-5xl md:text-[68px] font-black leading-[1.1] mb-6 tracking-tight text-white">
+          <motion.h1 
+            variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } } }}
+            className="text-5xl md:text-[68px] font-black leading-[1.1] mb-6 tracking-tight text-white"
+          >
             About Horizon Pathways
-          </h1>
+          </motion.h1>
 
           {/* Subtitle */}
-          <p className="text-lg md:text-2xl font-medium text-gray-200 mb-10 max-w-3xl leading-relaxed">
+          <motion.p 
+            variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } } }}
+            className="text-lg md:text-2xl font-medium text-gray-200 mb-10 max-w-3xl leading-relaxed"
+          >
             We're immigrants helping immigrants. We've been where you are, and we're here to make the road a little easier, clearer, and a lot more reliable.
-          </p>
+          </motion.p>
 
           {/* Buttons */}
-          <div className="flex flex-wrap items-center justify-center gap-4">
+          <motion.div 
+            variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } } }}
+            className="flex flex-wrap items-center justify-center gap-4"
+          >
             <a href="/signup" className="bg-gradient-to-b from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-8 py-3.5 rounded-xl font-bold text-lg transition-colors shadow-lg flex items-center space-x-2 justify-center">
               <span>Get Started Now</span>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -61,8 +84,8 @@ export default function AboutPage() {
               </svg>
               <span>Watch Video Tour</span>
             </a>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       </section>
 
       {/* Page Sections */}

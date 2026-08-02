@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import React from 'react';
 import { ShieldCheck, Clock, MessageSquare } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 export default function ServicesHero() {
   const features = [
@@ -23,9 +24,23 @@ export default function ServicesHero() {
           }}
         ></div>
 
-        <div className="relative z-10 w-full max-w-[1000px] mx-auto flex flex-col items-center mt-[-30px]">
+        <motion.div 
+          className="relative z-10 w-full max-w-[1000px] mx-auto flex flex-col items-center mt-[-30px]"
+          initial="hidden"
+          animate="visible"
+          variants={{
+            hidden: { opacity: 0 },
+            visible: {
+              opacity: 1,
+              transition: { staggerChildren: 0.15 },
+            },
+          }}
+        >
           {/* Pill */}
-          <div className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-full px-5 py-2 mb-8 shadow-sm">
+          <motion.div 
+            variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } } }}
+            className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-full px-5 py-2 mb-8 shadow-sm"
+          >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M12 2v4"></path>
               <path d="M12 18v4"></path>
@@ -39,22 +54,31 @@ export default function ServicesHero() {
             <span className="text-white text-xs font-bold tracking-wide uppercase">
               Authorized Immigration Guidance
             </span>
-          </div>
+          </motion.div>
 
           {/* Heading */}
-          <h1 className="text-5xl md:text-[68px] font-black leading-[1.1] mb-6 tracking-tight text-white">
+          <motion.h1 
+            variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } } }}
+            className="text-5xl md:text-[68px] font-black leading-[1.1] mb-6 tracking-tight text-white"
+          >
             Professional Immigration Services
-          </h1>
+          </motion.h1>
 
           {/* Subtitle */}
-          <p className="text-lg md:text-2xl font-medium text-gray-200 mb-10 max-w-3xl leading-relaxed">
+          <motion.p 
+            variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } } }}
+            className="text-lg md:text-2xl font-medium text-gray-200 mb-10 max-w-3xl leading-relaxed"
+          >
             Navigate your immigration journey with confidence. Our expert team
             provides personalized, professional guidance tailored to your unique
             situation.
-          </p>
+          </motion.p>
 
           {/* Buttons */}
-          <div className="flex flex-wrap items-center justify-center gap-4">
+          <motion.div 
+            variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } } }}
+            className="flex flex-wrap items-center justify-center gap-4"
+          >
             <Link href="/signup" className="bg-gradient-to-b from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-8 py-3.5 rounded-xl font-bold text-lg transition-colors shadow-lg flex items-center space-x-2 justify-center">
               <span>Start Your Journey</span>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -65,8 +89,8 @@ export default function ServicesHero() {
             <Link href="/" className="bg-white/10 hover:bg-white/20 border border-white/30 text-white px-8 py-3.5 rounded-xl font-bold text-lg backdrop-blur-sm transition-colors shadow-lg flex items-center justify-center">
               <span>Back to Home</span>
             </Link>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       </section>
 
       {/* Features Section Outside Hero */}
