@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
+import React, { Suspense, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import api from '@/lib/api';
 
-export default function FormBuilderPage() {
+function FormBuilderContent() {
     const searchParams = useSearchParams();
     const serviceId = searchParams.get('serviceId');
     const router = useRouter();
@@ -348,5 +348,13 @@ export default function FormBuilderPage() {
                 </div>
             )}
         </div>
+    );
+}
+
+export default function FormBuilderPage() {
+    return (
+        <Suspense fallback={<div className="p-8 text-center text-[#5B6472]">Loading builder...</div>}>
+            <FormBuilderContent />
+        </Suspense>
     );
 }
