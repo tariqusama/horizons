@@ -48,22 +48,22 @@ export default function FreeToolsFAQ() {
           {faqs.map((faq, index) => {
             const isOpen = openIndex === index;
             return (
-              <div 
-                key={index} 
+              <div
+                key={index}
                 className={`bg-white border border-gray-200/60 rounded-[28px] overflow-hidden transition-all duration-300 ${isOpen ? 'border-[#EAF1F8] bg-[#FDFBF9] shadow-[0_15px_30px_-10px_rgba(27,58,100,0.08)]' : 'hover:border-[#EAF1F8] hover:bg-[#FDFBF9] hover:shadow-sm'} group`}
               >
                 <button
                   className={`w-full flex items-center justify-between p-8 text-left transition-colors`}
                   onClick={() => setOpenIndex(isOpen ? null : index)}
                 >
-                  <span className={`font-bold text-[18px] transition-colors ${isOpen ? 'text-orange-500' : 'text-[#1B3A64] group-hover:text-orange-500'}`}>{faq.question}</span>
+                  <span className={`font-bold text-[18px] transition-colors ${isOpen ? 'text-orange-500' : 'text-[#0A192F] group-hover:text-orange-500'}`}>{faq.question}</span>
                   <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ml-4 transition-colors ${isOpen ? 'bg-orange-500/10 text-orange-500' : 'bg-[#EAF1F8] text-[#1B3A64] group-hover:bg-orange-500/10 group-hover:text-orange-500'}`}>
                     <span className={`material-icons transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}>
                       expand_more
                     </span>
                   </div>
                 </button>
-                <div 
+                <div
                   className={`overflow-hidden transition-all duration-300 ease-in-out ${isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}
                 >
                   <div className="px-8 pb-8 text-[#5A6579] leading-relaxed font-medium text-[16px]">
