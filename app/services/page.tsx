@@ -5,6 +5,7 @@ import ServicesHero from '@/components/ServicesHero';
 import ServicesCategory from '@/components/ServicesCategory';
 import ServicesCTA from '@/components/ServicesCTA';
 import PricingSection from '@/components/PricingSection';
+import api from '@/lib/api';
 
 export default function ServicesPage() {
   const [activeTab, setActiveTab] = useState('services');
@@ -12,10 +13,9 @@ export default function ServicesPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('http://localhost:8000/api/public/services')
-      .then(res => res.json())
-      .then(data => {
-        setCategories(data);
+    api.get('/public/services')
+      .then(res => {
+        setCategories(res.data);
         setLoading(false);
       })
       .catch(err => {

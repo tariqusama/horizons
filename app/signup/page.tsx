@@ -139,12 +139,11 @@ function SignupFlowContent() {
   const [isLoadingPathways, setIsLoadingPathways] = useState(true);
 
   React.useEffect(() => {
-    fetch('http://localhost:8000/api/public/signup-pathways')
-      .then(res => res.json())
-      .then(data => {
-        setPathways(data.pathways);
-        setGoalImages(data.goalImages);
-        setGoals(data.goals);
+    api.get('/public/signup-pathways')
+      .then(res => {
+        setPathways(res.data.pathways);
+        setGoalImages(res.data.goalImages);
+        setGoals(res.data.goals);
         setIsLoadingPathways(false);
       })
       .catch(err => {
@@ -153,13 +152,13 @@ function SignupFlowContent() {
       });
   }, []);
 
-  const [dynamicPricing, setDynamicPricing] = useState<{title: string, basic: string, advanced: string, premium: string} | null>(null);
+  const [dynamicPricing, setDynamicPricing] = useState<{ title: string, basic: string, advanced: string, premium: string } | null>(null);
   const [isLoadingPricing, setIsLoadingPricing] = useState(false);
 
   React.useEffect(() => {
     // Only run if pathways is loaded and we have a selected goal
     if (!pathways || !selectedGoal) return;
-    
+
     // We recreate getQuestions logic here to find the length to avoid hook dependency cycle
     let baseQuestions = [...(pathways[selectedGoal] || [])];
     if (selectedGoal === "Replace or fix a Green Card") {
@@ -211,20 +210,15 @@ function SignupFlowContent() {
 
     if (currentStep > 0 && currentStep === baseQuestions.length + 1 && !dynamicPricing && !isLoadingPricing) {
       setIsLoadingPricing(true);
-      fetch('http://localhost:8000/api/public/signup-pricing', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ goal: selectedGoal, answers })
-      })
-      .then(res => res.json())
-      .then(data => {
-        setDynamicPricing(data);
-        setIsLoadingPricing(false);
-      })
-      .catch(err => {
-        console.error("Failed to fetch pricing:", err);
-        setIsLoadingPricing(false);
-      });
+      api.post('/public/signup-pricing', { goal: selectedGoal, answers })
+        .then(res => {
+          setDynamicPricing(res.data);
+          setIsLoadingPricing(false);
+        })
+        .catch(err => {
+          console.error("Failed to fetch pricing:", err);
+          setIsLoadingPricing(false);
+        });
     }
   }, [currentStep, selectedGoal, answers, dynamicPricing, isLoadingPricing, pathways]);
 
@@ -1709,110 +1703,110 @@ function SignupFlowContent() {
     );
   };
 
-        return (
-        <main className="w-full min-h-screen bg-[#F5F4F1] py-16 px-4 sm:px-6 lg:px-12 flex items-center justify-center">
-          <style>{`
+  return (
+    <main className="w-full min-h-screen bg-[#F5F4F1] py-16 px-4 sm:px-6 lg:px-12 flex items-center justify-center">
+      <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500&display=swap');
         .font-body { font-family: 'Inter', sans-serif; }
         .font-mono { font-family: 'IBM Plex Mono', monospace; }
         main, main * { font-family: 'Inter', sans-serif; }
       `}</style>
 
-          {isQuestionsDone ? (
-            // Post-Questionnaire Views (Plan Selection, Account, Verification, Payment)
-            <div className="w-full">
-              {renderContent()}
-            </div>
-          ) : (
-            <div className="w-full max-w-[1200px] mx-auto bg-white rounded-[24px] shadow-[0_20px_50px_-15px_rgba(16,31,56,0.12)] border border-gray-100 overflow-hidden flex flex-col lg:flex-row min-h-[650px] relative">
+      {isQuestionsDone ? (
+        // Post-Questionnaire Views (Plan Selection, Account, Verification, Payment)
+        <div className="w-full">
+          {renderContent()}
+        </div>
+      ) : (
+        <div className="w-full max-w-[1200px] mx-auto bg-white rounded-[24px] shadow-[0_20px_50px_-15px_rgba(16,31,56,0.12)] border border-gray-100 overflow-hidden flex flex-col lg:flex-row min-h-[650px] relative">
 
-              {/* Left Side - Image/Illustration */}
-              <div className="hidden lg:flex lg:w-[40%] relative overflow-hidden">
-                <div
-                  className="absolute inset-0 bg-cover bg-center"
-                  style={{ backgroundImage: getSignupBackgroundImage(selectedGoal, currentStep, currentQuestion?.question, goalImages) }}
-                ></div>
-                <div className="absolute inset-0 bg-gradient-to-t from-[#101F38]/90 via-[#101F38]/40 to-transparent"></div>
+          {/* Left Side - Image/Illustration */}
+          <div className="hidden lg:flex lg:w-[40%] relative overflow-hidden">
+            <div
+              className="absolute inset-0 bg-cover bg-center"
+              style={{ backgroundImage: getSignupBackgroundImage(selectedGoal, currentStep, currentQuestion?.question, goalImages) }}
+            ></div>
+            <div className="absolute inset-0 bg-gradient-to-t from-[#101F38]/90 via-[#101F38]/40 to-transparent"></div>
 
-                <div className="absolute bottom-0 left-0 right-0 p-12 text-white">
-                  <div className="inline-flex items-center bg-white/10 backdrop-blur-md rounded-full px-4 py-2 mb-6 border border-white/20 shadow-sm">
-                    <div className="w-[140px]">
-                      <Image src="/horizonlogo.png" alt="Horizon Pathways" width={140} height={32} className="object-contain" />
-                    </div>
-                  </div>
-                  <p className="text-base sm:text-[16px] font-medium leading-relaxed max-w-md text-white/80">
-                    Start your U.S. immigration journey with confidence. Answer a few quick questions and we'll guide you to the right path — with experienced attorneys by your side.
-                  </p>
+            <div className="absolute bottom-0 left-0 right-0 p-12 text-white">
+              <div className="inline-flex items-center bg-white/10 backdrop-blur-md rounded-full px-4 py-2 mb-6 border border-white/20 shadow-sm">
+                <div className="w-[140px]">
+                  <Image src="/horizonlogo.png" alt="Horizon Pathways" width={140} height={32} className="object-contain" />
                 </div>
               </div>
-
-              {/* Right Side - Content */}
-              <div className="w-full lg:w-[60%] flex flex-col px-6 py-8 sm:px-10 sm:py-10 lg:px-16 lg:py-16 relative">
-                <div className="w-full max-w-full lg:max-w-[600px] mx-auto flex-grow flex flex-col justify-center">
-
-                  {!isQuestionsDone && !isDisqualified && (
-                    <button onClick={handleBack} className="inline-flex items-center gap-2 text-sm font-semibold text-orange-500 hover:text-[#C93500] transition-colors self-start mb-6">
-                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <line x1="19" y1="12" x2="5" y2="12"></line>
-                        <polyline points="12 19 5 12 12 5"></polyline>
-                      </svg>
-                      Back
-                    </button>
-                  )}
-
-                  {!isQuestionsDone && !isDisqualified && currentStep > 0 && (
-                    <div className="text-orange-500 font-bold text-sm sm:text-[15px] mb-3">
-                      Step {currentStep} of {totalSteps}
-                    </div>
-                  )}
-
-                  {!isQuestionsDone && !isDisqualified && (
-                    <div className="mb-10 w-full">
-                      <div className="flex justify-between font-mono text-xs sm:text-[11px] text-[#8A8F98] mb-1.5">
-                        <span>{Math.round(progress)}%</span>
-                        <span>100%</span>
-                      </div>
-                      <div className="w-full h-2 bg-[#F0EEE8] rounded-full overflow-hidden">
-                        <div
-                          className="h-full bg-gradient-to-r from-[#5BAE8C] to-[#3F9A73] rounded-full transition-all duration-500 ease-out"
-                          style={{ width: `${progress}%` }}
-                        ></div>
-                      </div>
-                    </div>
-                  )}
-
-                  <div className="flex-grow w-full flex flex-col justify-center">
-                    {renderContent()}
-                  </div>
-
-                  {!isDisqualified && currentStep > 0 && (
-                    <div className="flex justify-end items-center pb-2 mt-12 w-full pt-6 border-t border-gray-100">
-                      <button
-                        onClick={handleRestart}
-                        className="bg-gradient-to-b from-orange-500 to-orange-600 hover:bg-[#C93500] text-white font-bold py-3 px-6 rounded-xl shadow-sm transition-colors flex items-center space-x-2"
-                      >
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                          <polyline points="1 4 1 10 7 10"></polyline>
-                          <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
-                        </svg>
-                        <span>Restart</span>
-                      </button>
-                    </div>
-                  )}
-                </div>
-              </div>
+              <p className="text-base sm:text-[16px] font-medium leading-relaxed max-w-md text-white/80">
+                Start your U.S. immigration journey with confidence. Answer a few quick questions and we'll guide you to the right path — with experienced attorneys by your side.
+              </p>
             </div>
-          )}
-        </main>
-        );
+          </div>
+
+          {/* Right Side - Content */}
+          <div className="w-full lg:w-[60%] flex flex-col px-6 py-8 sm:px-10 sm:py-10 lg:px-16 lg:py-16 relative">
+            <div className="w-full max-w-full lg:max-w-[600px] mx-auto flex-grow flex flex-col justify-center">
+
+              {!isQuestionsDone && !isDisqualified && (
+                <button onClick={handleBack} className="inline-flex items-center gap-2 text-sm font-semibold text-orange-500 hover:text-[#C93500] transition-colors self-start mb-6">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                  </svg>
+                  Back
+                </button>
+              )}
+
+              {!isQuestionsDone && !isDisqualified && currentStep > 0 && (
+                <div className="text-orange-500 font-bold text-sm sm:text-[15px] mb-3">
+                  Step {currentStep} of {totalSteps}
+                </div>
+              )}
+
+              {!isQuestionsDone && !isDisqualified && (
+                <div className="mb-10 w-full">
+                  <div className="flex justify-between font-mono text-xs sm:text-[11px] text-[#8A8F98] mb-1.5">
+                    <span>{Math.round(progress)}%</span>
+                    <span>100%</span>
+                  </div>
+                  <div className="w-full h-2 bg-[#F0EEE8] rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-gradient-to-r from-[#5BAE8C] to-[#3F9A73] rounded-full transition-all duration-500 ease-out"
+                      style={{ width: `${progress}%` }}
+                    ></div>
+                  </div>
+                </div>
+              )}
+
+              <div className="flex-grow w-full flex flex-col justify-center">
+                {renderContent()}
+              </div>
+
+              {!isDisqualified && currentStep > 0 && (
+                <div className="flex justify-end items-center pb-2 mt-12 w-full pt-6 border-t border-gray-100">
+                  <button
+                    onClick={handleRestart}
+                    className="bg-gradient-to-b from-orange-500 to-orange-600 hover:bg-[#C93500] text-white font-bold py-3 px-6 rounded-xl shadow-sm transition-colors flex items-center space-x-2"
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="1 4 1 10 7 10"></polyline>
+                      <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+                    </svg>
+                    <span>Restart</span>
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+    </main>
+  );
 }
 
-        function SignupFlow() {
+function SignupFlow() {
   return (
-        <Elements stripe={stripePromise}>
-          <SignupFlowContent />
-        </Elements>
-        );
+    <Elements stripe={stripePromise}>
+      <SignupFlowContent />
+    </Elements>
+  );
 }
 
-        export default SignupFlow;
+export default SignupFlow;
