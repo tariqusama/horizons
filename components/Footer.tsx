@@ -102,7 +102,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
           <div className="flex flex-col gap-6">
             <Image
-              src="/horizonlogo footer.png"
+              src="/horizonlogo.png"
               alt="Horizon Pathways"
               width={180}
               height={45}
