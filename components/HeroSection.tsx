@@ -12,7 +12,7 @@ export default function HeroSection() {
   };
 
   return (
-    <section className="relative w-full min-h-[640px] md:min-h-[720px] flex items-center justify-start overflow-hidden mt-[88px]">
+    <section className="relative w-full min-h-[calc(100vh-84px)] flex items-center justify-start overflow-hidden pt-[84px]">
       <img
         src={heroContent.backgroundImage}
         alt="A family reviewing immigration documents together at home"
