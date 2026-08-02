@@ -1,11 +1,31 @@
 'use client';
 
-import React from 'react';
-import Link from 'next/link';
+import React, { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { motion } from 'framer-motion';
 
+const timelineEstimates: Record<string, string> = {
+  marriage: '12-18 months',
+  fiance: '8-12 months',
+  citizenship: '6-10 months',
+};
+
 export default function TimelineSection() {
+  const [selectedType, setSelectedType] = useState('');
+  const [calculatedTime, setCalculatedTime] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState('');
+
+  const handleCalculate = () => {
+    if (!selectedType) {
+      setErrorMessage('Please choose a case type to calculate your timeline.');
+      setCalculatedTime(null);
+      return;
+    }
+
+    setErrorMessage('');
+    setCalculatedTime(timelineEstimates[selectedType] || 'Varies by case complexity');
+  };
+
   return (
     <section className="w-full py-20 px-6 md:px-12 lg:px-16 max-w-[1400px] mx-auto bg-white text-center">
       <motion.div
@@ -27,7 +47,7 @@ export default function TimelineSection() {
         </p>
       </motion.div>
 
-      <motion.div 
+      <motion.div
         className="bg-[#F5F7FA] rounded-2xl p-8 md:p-10 border border-[#E7EBF0] text-left max-w-2xl mx-auto"
         initial={{ opacity: 0, scale: 0.95 }}
         whileInView={{ opacity: 1, scale: 1 }}
@@ -55,15 +75,34 @@ export default function TimelineSection() {
           </div>
         </div>
 
-        <Link
-          href="/signup"
+        <button
+          type="button"
+          onClick={handleCalculate}
           className="w-full bg-gradient-to-b from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-bold text-[14px] rounded-lg py-3.5 flex items-center justify-center transition-all duration-300"
         >
           Calculate Timeline
-        </Link>
+        </button>
+
+        {errorMessage && (
+          <p className="text-red-600 text-sm mt-4">{errorMessage}</p>
+        )}
+
+        {calculatedTime && (
+          <div className="mt-8 rounded-3xl border border-[#FFE5D1] bg-[#FFF4EB] p-6 text-left">
+            <p className="text-sm uppercase tracking-[0.2em] text-[#FF6B31] font-bold mb-2">
+              Estimated Processing Time
+            </p>
+            <p className="text-[32px] md:text-[36px] font-extrabold text-[#1A2B4B] mb-2">
+              {calculatedTime}
+            </p>
+            <p className="text-[#64748B] text-sm leading-relaxed">
+              This estimate is based on current USCIS trends and varies by service center and case details.
+            </p>
+          </div>
+        )}
       </motion.div>
 
-      <motion.p 
+      <motion.p
         className="text-[#8A93A3] text-[13px] leading-relaxed max-w-xl mx-auto mt-6 italic"
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
