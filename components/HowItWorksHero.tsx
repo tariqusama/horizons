@@ -18,8 +18,8 @@ export default function HowItWorksHero() {
         }}
       ></div>
 
-      <motion.div 
-        className="relative z-10 w-full max-w-[1000px] mx-auto flex flex-col items-center"
+      <motion.div
+        className="relative z-10 w-full max-w-[1400px] mx-auto px-6 md:px-12 lg:px-16 flex flex-col items-center"
         initial="hidden"
         animate="visible"
         variants={{
@@ -28,7 +28,7 @@ export default function HowItWorksHero() {
         }}
       >
         {/* Pill */}
-        <motion.div 
+        <motion.div
           variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } } }}
           className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-full px-5 py-2 mb-8 shadow-sm"
         >
@@ -47,21 +47,21 @@ export default function HowItWorksHero() {
           </span>
         </motion.div>
 
-        <motion.h1 
+        <motion.h1
           variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } } }}
           className="text-5xl md:text-[68px] font-black leading-[1.1] mb-6 tracking-tight text-white"
         >
           How Horizon Pathways Works
         </motion.h1>
 
-        <motion.p 
+        <motion.p
           variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } } }}
           className="text-lg md:text-2xl font-medium text-gray-200 mb-10 max-w-3xl leading-relaxed"
         >
           From profile creation to USCIS submission, we guide you through every step of your immigration journey with professional support and cutting-edge technology.
         </motion.p>
 
-        <motion.div 
+        <motion.div
           variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } } }}
           className="flex flex-wrap items-center justify-center gap-4"
         >
