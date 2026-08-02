@@ -90,6 +90,15 @@ export default function ResourcesGrid({ searchQuery, activeCategory }: Props) {
       url: "https://www.uscis.gov/policy-manual"
     },
     {
+      type: "Official Resource",
+      title: "U.S. Department of State",
+      description: "Information on visa services, passport applications, and consular services",
+      category: "Official Resource",
+      action: "Visit",
+      icon: "public",
+      url: "https://travel.state.gov/"
+    },
+    {
       type: "Checklist",
       title: "Marriage Green Card Complete Checklist",
       description: "Comprehensive document checklist for I-130/I-485 concurrent filing including all required forms and supporting documents",
@@ -118,6 +127,42 @@ export default function ResourcesGrid({ searchQuery, activeCategory }: Props) {
     },
     {
       type: "Form Guide",
+      title: "I-864 Affidavit of Support Official Form",
+      description: "Official USCIS Form I-864 Affidavit of Support with poverty guidelines and instructions",
+      category: "Family-Based",
+      action: "View",
+      icon: "description",
+      url: "https://www.uscis.gov/i-864"
+    },
+    {
+      type: "Official Resource",
+      title: "K-1 Fiancé Visa Official Information",
+      description: "Official USCIS information on K-1 nonimmigrant visa for fiancé(e)s of U.S. citizens",
+      category: "Family-Based",
+      action: "Visit",
+      icon: "info",
+      url: "https://www.uscis.gov/k-1"
+    },
+    {
+      type: "Form Guide",
+      title: "I-129F Petition Official Form",
+      description: "Official USCIS Form I-129F Petition for Alien Fiancé(e) with complete instructions",
+      category: "Family-Based",
+      action: "View",
+      icon: "description",
+      url: "https://www.uscis.gov/i-129f"
+    },
+    {
+      type: "Official Resource",
+      title: "K-1 Visa Interview Guidance",
+      description: "Department of State guidance on preparing for your K-1 visa interview at a U.S. embassy",
+      category: "Family-Based",
+      action: "Visit",
+      icon: "support_agent",
+      url: "https://travel.state.gov/content/travel/en/us-visas/visa-information-resources/interview.html"
+    },
+    {
+      type: "Form Guide",
       title: "N-400 Citizenship Application Official Form",
       description: "Official USCIS Form N-400 Application for Naturalization with complete instructions",
       category: "Citizenship",
@@ -136,12 +181,102 @@ export default function ResourcesGrid({ searchQuery, activeCategory }: Props) {
     },
     {
       type: "Official Resource",
+      title: "Official Citizenship Test Study Materials",
+      description: "Official USCIS study materials and practice questions for the civics test (2008 version)",
+      category: "Citizenship",
+      action: "Visit",
+      icon: "menu_book",
+      url: "https://www.uscis.gov/citizenship/find-study-materials-and-resources"
+    },
+    {
+      type: "Official Resource",
       title: "100 Civics Questions and Answers",
       description: "Complete list of 100 civics questions and answers with audio for the naturalization test",
       category: "Citizenship",
       action: "Visit",
       icon: "question_answer",
       url: "https://www.uscis.gov/citizenship/find-study-materials-and-resources"
+    },
+    {
+      type: "Form Guide",
+      title: "I-765 Work Permit Official Form",
+      description: "Official USCIS Form I-765 Application for Employment Authorization Document (EAD)",
+      category: "Work Authorization",
+      action: "View",
+      icon: "description",
+      url: "https://www.uscis.gov/i-765"
+    },
+    {
+      type: "Official Resource",
+      title: "EAD Eligibility Categories",
+      description: "Complete list of eligibility categories for work authorization in the United States",
+      category: "Work Authorization",
+      action: "Visit",
+      icon: "menu_book",
+      url: "https://www.uscis.gov/i-765"
+    },
+    {
+      type: "Form Guide",
+      title: "I-751 Remove Conditions Official Form",
+      description: "Official USCIS Form I-751 Petition to Remove Conditions on Residence",
+      category: "Green Card",
+      action: "View",
+      icon: "description",
+      url: "https://www.uscis.gov/i-751"
+    },
+    {
+      type: "Official Resource",
+      title: "I-751 Evidence Requirements",
+      description: "Official guidance on types of evidence needed to prove bona fide marriage for I-751",
+      category: "Green Card",
+      action: "Visit",
+      icon: "article",
+      url: "https://www.uscis.gov/i-751"
+    },
+    {
+      type: "Form Guide",
+      title: "I-90 Green Card Renewal Official Form",
+      description: "Official USCIS Form I-90 Application to Replace Permanent Resident Card",
+      category: "Green Card",
+      action: "View",
+      icon: "description",
+      url: "https://www.uscis.gov/i-90"
+    },
+    {
+      type: "Form Guide",
+      title: "I-131 Travel Document Official Form",
+      description: "Official USCIS Form I-131 Application for Travel Document (Advance Parole/Reentry Permit)",
+      category: "Travel",
+      action: "View",
+      icon: "description",
+      url: "https://www.uscis.gov/i-131"
+    },
+    {
+      type: "Official Resource",
+      title: "Travel as a Green Card Holder",
+      description: "Official information on international travel requirements for permanent residents",
+      category: "Travel",
+      action: "Visit",
+      icon: "flight_takeoff",
+      url: "https://www.uscis.gov/green-card/after-we-grant-your-green-card/traveling-and-living-abroad"
+    },
+    {
+      type: "Official Resource",
+      title: "DACA Official Information",
+      description: "Official USCIS information on Deferred Action for Childhood Arrivals program",
+      category: "DACA",
+      action: "Visit",
+      icon: "verified_user",
+      url: "https://www.uscis.gov/humanitarian/consideration-of-deferred-action-for-childhood-arrivals-daca"
+    },
+    {
+      type: "Form Guide",
+      title: "I-821D DACA Request Form",
+      description: "Official USCIS Form I-821D Consideration of Deferred Action for Childhood Arrivals",
+      category: "DACA",
+      action: "View",
+      icon: "description",
+      url: "https://www.uscis.gov/i-821d"
     },
     {
       type: "Video",
@@ -151,14 +286,23 @@ export default function ResourcesGrid({ searchQuery, activeCategory }: Props) {
       action: "Watch",
       icon: "play_circle",
       url: "https://www.youtube.com/user/uscis"
+    },
+    {
+      type: "Video",
+      title: "USCIS Webinars and Training",
+      description: "Free webinars and training sessions on immigration topics from USCIS",
+      category: "Tools",
+      action: "Watch",
+      icon: "live_tv",
+      url: "https://www.uscis.gov/newsroom/webinars"
     }
   ];
 
   const filteredResources = useMemo(() => {
     return resources.filter(res => {
       const matchesCategory = activeCategory === "All" || res.category === activeCategory;
-      const matchesSearch = res.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                            res.description.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesSearch = res.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        res.description.toLowerCase().includes(searchQuery.toLowerCase());
       return matchesCategory && matchesSearch;
     });
   }, [searchQuery, activeCategory, resources]);
@@ -185,15 +329,15 @@ export default function ResourcesGrid({ searchQuery, activeCategory }: Props) {
                     {res.category}
                   </span>
                 </div>
-                
+
                 <h3 className="text-[#1B3A64] font-bold text-[20px] mb-4 leading-snug group-hover:text-orange-500 transition-colors">
                   {res.title}
                 </h3>
-                
+
                 <p className="text-[#5A6579] text-[15px] leading-relaxed mb-8 flex-grow font-medium">
                   {res.description}
                 </p>
-                
+
                 <div className="pt-5 border-t border-gray-100 flex items-center justify-between mt-auto">
                   <Link href={res.url} target="_blank" className="text-[#1B3A64] font-bold text-[14px] uppercase hover:text-orange-500 transition-colors cursor-pointer flex items-center space-x-2">
                     <span>{res.action}</span>
