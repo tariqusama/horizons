@@ -1,19 +1,41 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import api from '@/lib/api';
 import { ChevronDown } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-const timelineEstimates: Record<string, string> = {
+const defaultTimelineEstimates: Record<string, string> = {
   marriage: '12-18 months',
   fiance: '8-12 months',
   citizenship: '6-10 months',
 };
 
+const defaultCaseTypes = [
+  { value: 'marriage', label: 'Marriage Green Card' },
+  { value: 'fiance', label: 'K-1 Fiance Visa' },
+  { value: 'citizenship', label: 'Citizenship & Naturalization' },
+];
+
 export default function TimelineSection() {
+  const [caseTypes, setCaseTypes] = useState<{ value: string; label: string }[]>(defaultCaseTypes);
   const [selectedType, setSelectedType] = useState('');
   const [calculatedTime, setCalculatedTime] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState('');
+
+  useEffect(() => {
+    api.get('/public/signup-pathways')
+      .then((res) => {
+        const goals = Array.isArray(res.data.goals) ? res.data.goals : [];
+        if (goals.length > 0) {
+          setCaseTypes(goals.map((goal: string) => ({ value: goal, label: goal })));
+        }
+      })
+      .catch((err) => {
+        console.error('Failed to load case types for timeline:', err);
+      });
+
+  }, []);
 
   const handleCalculate = () => {
     if (!selectedType) {
@@ -23,7 +45,7 @@ export default function TimelineSection() {
     }
 
     setErrorMessage('');
-    setCalculatedTime(timelineEstimates[selectedType] || 'Varies by case complexity');
+    setCalculatedTime(defaultTimelineEstimates[selectedType] || 'Varies by case complexity');
   };
 
   return (
@@ -71,9 +93,11 @@ export default function TimelineSection() {
             <option value="" disabled>
               Choose from 40+ immigration case types...
             </option>
-            <option value="marriage">Marriage Green Card</option>
-            <option value="fiance">K-1 Fiance Visa</option>
-            <option value="citizenship">Citizenship &amp; Naturalization</option>
+            {caseTypes.map((caseType) => (
+              <option key={caseType.value} value={caseType.value}>
+                {caseType.label}
+              </option>
+            ))}
           </select>
           <div className="absolute inset-y-0 right-0 flex items-center px-3.5 pointer-events-none text-[#8A93A3]">
             <ChevronDown size={18} />
