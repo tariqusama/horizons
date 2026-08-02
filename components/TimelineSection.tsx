@@ -60,7 +60,12 @@ export default function TimelineSection() {
 
         <div className="relative mb-6">
           <select
-            defaultValue=""
+            value={selectedType}
+            onChange={(event) => {
+              setSelectedType(event.target.value);
+              setErrorMessage('');
+              setCalculatedTime(null);
+            }}
             className="w-full appearance-none bg-white border border-[#D8DEE6] text-[#5A6579] font-medium text-[14px] rounded-lg px-4 py-3.5 pr-10 focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-500 transition-all cursor-pointer"
           >
             <option value="" disabled>
