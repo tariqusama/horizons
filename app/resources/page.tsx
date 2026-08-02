@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import ResourcesHero from '@/components/ResourcesHero';
+import ResourcesToolsSection from '@/components/ResourcesToolsSection';
 import ResourcesGrid from '@/components/ResourcesGrid';
 import PathwaysComparison from '@/components/PathwaysComparison';
 import ResourcesInfo from '@/components/ResourcesInfo';
@@ -13,13 +14,14 @@ export default function ResourcesPage() {
 
   return (
     <main className="flex flex-col w-full bg-[#FDFBF9]">
-      <ResourcesHero 
+      <ResourcesHero
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
         activeCategory={activeCategory}
         setActiveCategory={setActiveCategory}
       />
-      <ResourcesGrid 
+      <ResourcesToolsSection />
+      <ResourcesGrid
         searchQuery={searchQuery}
         activeCategory={activeCategory}
       />
