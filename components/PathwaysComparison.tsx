@@ -133,8 +133,8 @@ export default function PathwaysComparison() {
             </tbody>
           </table>
         </div>
-        
-        <div className="mt-8 text-center text-[15px] text-[#5A6579] max-w-3xl mx-auto font-medium bg-white p-6 rounded-[24px] border border-gray-100 shadow-sm inline-block">
+
+        <div className="mt-8 text-center text-[15px] text-[#5A6579] w-full max-w-3xl mx-auto font-medium bg-white p-6 rounded-[24px] border border-gray-100 shadow-sm">
           <p className="flex items-start justify-center space-x-3">
             <span className="material-icons text-orange-500 text-[24px] shrink-0">info</span>
             <span className="leading-relaxed text-left">
