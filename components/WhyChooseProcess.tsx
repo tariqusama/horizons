@@ -65,7 +65,7 @@ export default function WhyChooseProcess() {
         {/* Right image */}
         <div className="relative w-full">
           <img
-            src="/images/immigration-consultation-tvHQGT_i.jpg"
+            src="/immigration-consultation-tvHQGT_i.jpg"
             alt="Case manager reviewing an application with a client"
             className="w-full h-[300px] md:h-[340px] object-cover rounded-2xl shadow-[0_20px_40px_-10px_rgba(27,58,100,0.15)]"
           />

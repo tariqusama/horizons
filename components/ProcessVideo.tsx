@@ -20,6 +20,9 @@ export default function ProcessVideo() {
     },
   ];
 
+  // Replace this URL with the actual online video link you want to use
+  const VIDEO_URL = 'https://horizons-tau-three.vercel.app/video-tour';
+
   return (
     <section className="w-full py-16 px-6 md:px-12 lg:px-16 max-w-[1400px] mx-auto bg-white text-center">
       <h2 className="text-2xl md:text-[28px] font-bold text-[#0A192F] mb-3 tracking-tight">
@@ -31,10 +34,21 @@ export default function ProcessVideo() {
         Pathways.
       </p>
 
+      <div className="mb-8">
+        <a
+          href={VIDEO_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-orange-600 font-semibold hover:underline"
+        >
+          ▶ Watch the video online
+        </a>
+      </div>
+
       {/* Video Player */}
       <div className="relative w-full max-w-[900px] mx-auto aspect-[16/9] bg-[#0A192F] rounded-2xl overflow-hidden mb-8 shadow-[0_20px_40px_-10px_rgba(27,58,100,0.2)] border border-[#EDEFF3]">
         <img
-          src="/images/immigration-consultation-tvHQGT_i.jpg"
+          src="/immigration-consultation-tvHQGT_i.jpg"
           alt="Video tour thumbnail"
           className="w-full h-full object-cover"
         />
@@ -45,9 +59,15 @@ export default function ProcessVideo() {
         </div>
 
         <div className="absolute inset-0 flex items-center justify-center">
-          <button className="w-16 h-16 bg-orange-500 rounded-full flex items-center justify-center shadow-[0_0_0_10px_rgba(227,98,61,0.25)] hover:scale-105 transition-transform">
+          <a
+            href={VIDEO_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Watch video tour"
+            className="w-16 h-16 bg-orange-500 rounded-full flex items-center justify-center shadow-[0_0_0_10px_rgba(227,98,61,0.25)] hover:scale-105 transition-transform"
+          >
             <Play size={24} color="white" fill="white" className="ml-0.5" />
-          </button>
+          </a>
         </div>
 
         <div className="absolute bottom-5 left-5 text-left">
