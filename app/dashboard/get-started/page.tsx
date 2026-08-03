@@ -116,7 +116,7 @@ export default function GetStartedPage() {
 
     const getWelcomeContent = () => {
         const title = application?.title?.toLowerCase() || '';
-        
+
         if (title.includes('n-400') || title.includes('naturalization') || title.includes('citizenship')) {
             return {
                 title: "Congratulations!",
@@ -181,68 +181,68 @@ export default function GetStartedPage() {
 
     if (showWelcome) {
         return (
-            <div style={{ width: '100%', maxWidth: '1000px', margin: '0 auto', padding: '40px 20px', fontFamily: '"Segoe UI", Roboto, Helvetica, Arial, sans-serif', background: '#fff' }}>
-                <h1 style={{ fontSize: '24px', color: '#6B7280', fontWeight: 300, borderBottom: '1px solid #E5E7EB', paddingBottom: '20px', marginBottom: '30px' }}>
+            <div style={{ width: '100%', maxWidth: '1000px', margin: '0 auto', padding: '32px 20px', fontFamily: '"Segoe UI", Roboto, Helvetica, Arial, sans-serif', background: '#F8FAFC', color: '#0F172A' }}>
+                <h1 style={{ fontSize: '26px', color: '#0F172A', fontWeight: 700, borderBottom: '1px solid #E2E8F0', paddingBottom: '18px', marginBottom: '28px' }}>
                     Welcome to Horizon Pathways!
                 </h1>
-                
-                <div style={{ display: 'flex', gap: '40px', flexWrap: 'wrap', marginBottom: '30px' }}>
-                    <div style={{ flex: '1', minWidth: '350px' }}>
-                        <h2 style={{ color: '#1b2559', fontSize: '20px', fontWeight: 600, marginBottom: '15px' }}>{welcomeContent.title}</h2>
-                        <p style={{ color: '#374151', fontSize: '15px', lineHeight: '1.6', marginBottom: '16px' }}>
+
+                <div style={{ display: 'flex', gap: '32px', flexWrap: 'wrap', marginBottom: '28px' }}>
+                    <div style={{ flex: '1', minWidth: '320px' }}>
+                        <h2 style={{ color: '#0F172A', fontSize: '18px', fontWeight: 700, marginBottom: '14px' }}>{welcomeContent.title}</h2>
+                        <p style={{ color: '#334155', fontSize: '15px', lineHeight: '1.75', marginBottom: '14px' }}>
                             {welcomeContent.p1}
                         </p>
-                        <p style={{ color: '#374151', fontSize: '15px', lineHeight: '1.6', marginBottom: '16px' }}>
+                        <p style={{ color: '#334155', fontSize: '15px', lineHeight: '1.75', marginBottom: '14px' }}>
                             <span dangerouslySetInnerHTML={{ __html: welcomeContent.p2.replace(/(Form [A-Z0-9-]+[a-zA-Z\s]*)/, '<strong>$1</strong>') }} />
                         </p>
-                        <p style={{ color: '#374151', fontSize: '15px', lineHeight: '1.6' }}>
+                        <p style={{ color: '#334155', fontSize: '15px', lineHeight: '1.75' }}>
                             {welcomeContent.p3}
                         </p>
                     </div>
-                    <div style={{ flex: '1', minWidth: '350px', display: 'flex', justifyContent: 'center', alignItems: 'flex-start' }}>
-                        <div style={{ width: '100%', maxWidth: '400px', background: '#f4f7fe', borderRadius: '80px', padding: '40px', border: '1px solid #dfe7f6', position: 'relative', overflow: 'hidden', height: '220px', display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }}>
-                            <div style={{ position: 'absolute', top: '20px', right: '30px', fontSize: '40px' }}>🇺🇸</div>
-                            <div style={{ position: 'absolute', top: '30px', left: '30px', fontSize: '30px' }}>📄</div>
-                            <div style={{ position: 'absolute', bottom: '80px', right: '60px', fontSize: '30px' }}>📋</div>
+                    <div style={{ flex: '1', minWidth: '320px', display: 'flex', justifyContent: 'center', alignItems: 'flex-start' }}>
+                        <div style={{ width: '100%', maxWidth: '380px', background: '#ffffff', borderRadius: '28px', padding: '28px', border: '1px solid #E2E8F0', position: 'relative', overflow: 'hidden', height: '220px', display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }}>
+                            <div style={{ position: 'absolute', top: '20px', right: '28px', fontSize: '32px' }}>🇺🇸</div>
+                            <div style={{ position: 'absolute', top: '25px', left: '24px', fontSize: '24px' }}>📄</div>
+                            <div style={{ position: 'absolute', bottom: '80px', right: '48px', fontSize: '24px' }}>📋</div>
                             <div style={{ zIndex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                                <div style={{ fontSize: '50px', marginBottom: '-10px' }}>👩🏽‍💻</div>
-                                <div style={{ width: '120px', height: '40px', background: '#374151', borderRadius: '4px 4px 0 0' }}></div>
+                                <div style={{ fontSize: '42px', marginBottom: '-8px' }}>👩🏽‍💻</div>
+                                <div style={{ width: '110px', height: '34px', background: '#0F172A', borderRadius: '4px 4px 0 0' }}></div>
                             </div>
-                            <div style={{ position: 'absolute', bottom: '0', width: '100%', height: '4px', background: '#374151' }}></div>
+                            <div style={{ position: 'absolute', bottom: '0', width: '100%', height: '4px', background: '#0F172A' }}></div>
                         </div>
                     </div>
                 </div>
 
                 <div style={{ marginBottom: '30px' }}>
-                    <h2 style={{ color: '#1b2559', fontSize: '20px', fontWeight: 600, marginBottom: '15px' }}>Who We Help</h2>
-                    <p style={{ color: '#374151', fontSize: '15px', lineHeight: '1.6' }}>
+                    <h2 style={{ color: '#0F172A', fontSize: '18px', fontWeight: 700, marginBottom: '14px' }}>Who We Help</h2>
+                    <p style={{ color: '#334155', fontSize: '15px', lineHeight: '1.75' }}>
                         Each year, we guide thousands of immigrants through the application process. Our software is designed to identify potential red flags that might require specialized legal support, and while our platform is a great fit for many, we recognize it may not be right for everyone.
                     </p>
                 </div>
 
                 <div style={{ marginBottom: '30px' }}>
-                    <h2 style={{ color: '#1b2559', fontSize: '20px', fontWeight: 600, marginBottom: '15px' }}>{welcomeContent.eligibilityTitle}</h2>
-                    <p style={{ color: '#374151', fontSize: '15px', lineHeight: '1.6', marginBottom: '16px' }}>
+                    <h2 style={{ color: '#0F172A', fontSize: '18px', fontWeight: 700, marginBottom: '14px' }}>{welcomeContent.eligibilityTitle}</h2>
+                    <p style={{ color: '#334155', fontSize: '15px', lineHeight: '1.75', marginBottom: '14px' }}>
                         {welcomeContent.eligibilityText}
                     </p>
-                    <ul style={{ color: '#374151', fontSize: '15px', lineHeight: '1.6', paddingLeft: '24px', marginBottom: '24px', listStyleType: 'disc' }}>
+                    <ul style={{ color: '#334155', fontSize: '15px', lineHeight: '1.75', paddingLeft: '24px', marginBottom: '24px', listStyleType: 'disc' }}>
                         {welcomeContent.eligibilityBullets.map((bullet, idx) => (
-                            <li key={idx} style={{ marginBottom: '8px' }}>{bullet}</li>
+                            <li key={idx} style={{ marginBottom: '10px' }}>{bullet}</li>
                         ))}
                     </ul>
-                    
-                    <div style={{ background: '#E0F2FE', padding: '16px 20px', borderRadius: '8px', display: 'flex', gap: '16px', alignItems: 'center' }}>
-                        <div style={{ background: '#1b2559', color: 'white', borderRadius: '50%', width: '28px', height: '28px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', flexShrink: 0, fontStyle: 'italic', fontSize: '14px' }}>i</div>
-                        <p style={{ margin: 0, color: '#374151', fontSize: '14px', fontWeight: 500 }}>Have questions or concerns about your eligibility or immigration history? Reach out to our live chat team.</p>
+
+                    <div style={{ background: '#EFF6FF', padding: '16px 20px', borderRadius: '8px', display: 'flex', gap: '16px', alignItems: 'center' }}>
+                        <div style={{ background: '#1D4ED8', color: 'white', borderRadius: '50%', width: '28px', height: '28px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', flexShrink: 0, fontSize: '14px' }}>i</div>
+                        <p style={{ margin: 0, color: '#334155', fontSize: '14px', fontWeight: 500 }}>Have questions or concerns about your eligibility or immigration history? Reach out to our live chat team.</p>
                     </div>
                 </div>
 
-                <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px solid #E5E7EB', paddingTop: '30px', marginTop: '40px' }}>
-                    <button onClick={() => setShowWelcome(false)} style={{ background: '#1b2559', color: 'white', padding: '12px 24px', borderRadius: '6px', border: 'none', cursor: 'pointer', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '8px', fontSize: '15px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px solid #E2E8F0', paddingTop: '28px', marginTop: '36px' }}>
+                    <button onClick={() => setShowWelcome(false)} style={{ background: '#0F172A', color: 'white', padding: '12px 22px', borderRadius: '6px', border: 'none', cursor: 'pointer', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px' }}>
                         &larr; Previous
                     </button>
-                    <button onClick={handleContinueToForm} style={{ background: '#1b2559', color: 'white', padding: '12px 24px', borderRadius: '6px', border: 'none', cursor: 'pointer', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '8px', fontSize: '15px' }}>
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                    <button onClick={handleContinueToForm} style={{ background: '#0F172A', color: 'white', padding: '12px 22px', borderRadius: '6px', border: 'none', cursor: 'pointer', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px' }}>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3" /><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" /></svg>
                         Save and Continue
                     </button>
                 </div>
