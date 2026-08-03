@@ -412,31 +412,28 @@ export default function SignupSetupPage() {
             />
 
             {deleteTarget && (
-                <div className="fixed inset-0 z-[110] flex items-center justify-center bg-slate-950/80 backdrop-blur-sm p-4">
-                    <div className="w-full max-w-lg overflow-hidden rounded-[32px] border border-slate-200 bg-white shadow-[0_40px_120px_-40px_rgba(15,23,42,0.55)]">
-                        <div className="relative overflow-hidden pb-10">
-                            <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-r from-rose-500 via-fuchsia-500 to-indigo-500" />
-                            <div className="relative px-6 pt-10 text-center">
-                                <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-white shadow-lg shadow-slate-900/10">
-                                    <span className="text-3xl">⚠️</span>
-                                </div>
-                                <p className="text-xs font-semibold uppercase tracking-[0.26em] text-white/85 mb-3">Confirm Delete</p>
-                                <h2 className="text-3xl font-semibold text-white mb-2">Are you sure?</h2>
-                                <p className="mx-auto max-w-xl text-sm leading-7 text-white/80">{deleteTarget.message}</p>
+                <div className="fixed inset-0 z-[110] flex items-center justify-center bg-slate-900/60 backdrop-blur-md p-4 transition-all">
+                    <div className="w-full max-w-md overflow-hidden rounded-[2.5rem] bg-white shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] ring-1 ring-slate-900/5">
+                        <div className="px-8 pt-10 pb-8 text-center relative">
+                            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-4/5 h-32 bg-rose-400/20 blur-3xl rounded-full pointer-events-none" />
+                            <div className="mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-rose-50 border-8 border-rose-50/50 shadow-sm relative z-10">
+                                <Icon.trash className="h-10 w-10 text-rose-500" />
                             </div>
+                            <h2 className="text-[1.75rem] font-bold text-slate-900 mb-3 tracking-tight relative z-10">Confirm Deletion</h2>
+                            <p className="text-base leading-relaxed text-slate-500 relative z-10">{deleteTarget.message || "Are you sure you want to delete this? This action cannot be undone."}</p>
                         </div>
-                        <div className="space-y-3 bg-slate-50 px-6 pb-6 pt-4 sm:flex sm:items-center sm:justify-end sm:space-y-0 sm:space-x-3">
-                            <button
-                                onClick={handleCancelDelete}
-                                className="w-full sm:w-auto rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-100"
-                            >
-                                Cancel
-                            </button>
+                        <div className="px-8 pb-8 pt-2 sm:flex sm:flex-row-reverse sm:space-x-reverse sm:space-x-4">
                             <button
                                 onClick={handleConfirmDelete}
-                                className="w-full sm:w-auto rounded-2xl bg-gradient-to-r from-rose-500 to-pink-500 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-rose-500/20 transition hover:from-rose-600 hover:to-pink-600"
+                                className="w-full sm:w-auto flex-1 rounded-2xl bg-rose-500 hover:bg-rose-600 px-6 py-4 text-base font-semibold text-white shadow-lg shadow-rose-500/30 transition-all hover:-translate-y-0.5 active:translate-y-0"
                             >
-                                Delete
+                                Yes, delete it
+                            </button>
+                            <button
+                                onClick={handleCancelDelete}
+                                className="mt-4 sm:mt-0 w-full sm:w-auto flex-1 rounded-2xl bg-slate-100 hover:bg-slate-200 px-6 py-4 text-base font-semibold text-slate-700 transition-all active:translate-y-0"
+                            >
+                                Cancel
                             </button>
                         </div>
                     </div>
