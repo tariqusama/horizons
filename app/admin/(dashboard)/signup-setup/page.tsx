@@ -412,25 +412,29 @@ export default function SignupSetupPage() {
             />
 
             {deleteTarget && (
-                <div className="fixed inset-0 z-[110] flex items-center justify-center bg-slate-900/50 p-4">
-                    <div className="w-full max-w-md rounded-[32px] bg-white shadow-2xl ring-1 ring-slate-900/5 overflow-hidden">
-                        <div className="px-6 py-5 border-b border-slate-200">
-                            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-amber-600">Confirm Delete</p>
+                <div className="fixed inset-0 z-[110] flex items-center justify-center bg-slate-950/80 backdrop-blur-sm p-4">
+                    <div className="w-full max-w-lg overflow-hidden rounded-[32px] border border-slate-200 bg-white shadow-[0_40px_120px_-40px_rgba(15,23,42,0.55)]">
+                        <div className="relative overflow-hidden pb-10">
+                            <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-r from-rose-500 via-fuchsia-500 to-indigo-500" />
+                            <div className="relative px-6 pt-10 text-center">
+                                <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-white shadow-lg shadow-slate-900/10">
+                                    <span className="text-3xl">⚠️</span>
+                                </div>
+                                <p className="text-xs font-semibold uppercase tracking-[0.26em] text-white/85 mb-3">Confirm Delete</p>
+                                <h2 className="text-3xl font-semibold text-white mb-2">Are you sure?</h2>
+                                <p className="mx-auto max-w-xl text-sm leading-7 text-white/80">{deleteTarget.message}</p>
+                            </div>
                         </div>
-                        <div className="px-6 py-6">
-                            <h2 className="text-2xl font-semibold text-slate-900 mb-3">Are you sure?</h2>
-                            <p className="text-sm leading-6 text-slate-600">{deleteTarget.message}</p>
-                        </div>
-                        <div className="flex flex-col gap-3 px-6 pb-6 pt-2 sm:flex-row sm:justify-end">
+                        <div className="space-y-3 bg-slate-50 px-6 pb-6 pt-4 sm:flex sm:items-center sm:justify-end sm:space-y-0 sm:space-x-3">
                             <button
                                 onClick={handleCancelDelete}
-                                className="w-full sm:w-auto rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+                                className="w-full sm:w-auto rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-100"
                             >
                                 Cancel
                             </button>
                             <button
                                 onClick={handleConfirmDelete}
-                                className="w-full sm:w-auto rounded-2xl bg-rose-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-rose-700"
+                                className="w-full sm:w-auto rounded-2xl bg-gradient-to-r from-rose-500 to-pink-500 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-rose-500/20 transition hover:from-rose-600 hover:to-pink-600"
                             >
                                 Delete
                             </button>
