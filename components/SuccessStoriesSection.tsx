@@ -41,9 +41,9 @@ export default function SuccessStoriesSection() {
             }}
             className="bg-white rounded-2xl p-7 border border-[#EDEFF3] shadow-[0_2px_8px_rgba(27,58,100,0.04)] flex flex-col"
           >
-            <div className="flex gap-1 text-[#F5A623] mb-4">
+            <div className="flex gap-1 text-emerald-500 mb-4">
               {[...Array(5)].map((_, i) => (
-                <Star key={i} size={15} fill="#F5A623" strokeWidth={0} />
+                <Star key={i} size={15} fill="#10B981" strokeWidth={0} />
               ))}
             </div>
             <p className="text-[#5A6579] font-medium text-[15px] leading-relaxed mb-6 flex-grow">
