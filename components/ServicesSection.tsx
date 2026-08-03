@@ -33,29 +33,9 @@ export default function ServicesSection() {
             onChange={(e) => setCategory(e.target.value)}
             className="w-full appearance-none bg-white border border-[#D8DEE6] text-orange-600 font-bold text-[15px] text-center rounded-full px-6 py-2.5 pr-10 focus:outline-none focus:ring-2 focus:ring-orange-500/30 shadow-sm cursor-pointer"
           >
-            <option value="adjustment">Adjustment of Status (Inside U.S.)</option>
-            <optgroup label="— Adjustment Subtypes">
-              <option value="adjustment:marriage">Marriage AOS</option>
-              <option value="adjustment:parent">Parent AOS</option>
-              <option value="adjustment:child">Child AOS</option>
-            </optgroup>
-
-            <option value="consular">Consular Processing (Outside U.S.)</option>
-            <optgroup label="— Consular Subtypes">
-              <option value="consular:spouse">Spouse Abroad</option>
-              <option value="consular:parent">Parent Abroad</option>
-              <option value="consular:child">Child Abroad</option>
-              <option value="consular:sibling">Sibling</option>
-              <option value="consular:fiance">K-1 Fiancé(e)</option>
-            </optgroup>
-
+            <option value="adjustment">Adjustment of Status (Inside the U.S.)</option>
+            <option value="consular">Consular Processing (Outside the U.S.)</option>
             <option value="other">Other Immigration Services</option>
-            <optgroup label="— Other Services">
-              <option value="other:naturalization">Naturalization (N-400)</option>
-              <option value="other:i751">Removal of Conditions (I-751)</option>
-              <option value="other:i90">Green Card Renewal/Replacement (I-90)</option>
-              <option value="other:daca">DACA Renewal</option>
-            </optgroup>
           </select>
           <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none text-[#8A93A3]">
             <ChevronDown size={16} />
