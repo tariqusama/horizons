@@ -21,7 +21,7 @@ export default function ContactHero() {
         <h1 className="text-5xl md:text-[64px] font-black leading-[1.1] mb-6 tracking-tight text-white">
           Get in Touch
         </h1>
-        
+
         <p className="text-lg md:text-xl font-medium text-blue-100 mb-10 max-w-2xl leading-relaxed">
           Have questions about your immigration journey? Our team of experts is ready to provide the guidance and support you need.
         </p>
@@ -36,7 +36,7 @@ export default function ContactHero() {
             <h3 className="text-white font-bold mb-1">Call Us</h3>
             <p className="text-blue-100">+1 (800) 795 7153</p>
           </div>
-          
+
           <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 flex-1 w-full text-center hover:bg-white/15 transition-colors">
             <div className="w-12 h-12 bg-blue-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#60A5FA" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -47,17 +47,7 @@ export default function ContactHero() {
             <h3 className="text-white font-bold mb-1">Email Us</h3>
             <p className="text-blue-100">support@horizonpathways.us</p>
           </div>
-          
-          <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 flex-1 w-full text-center hover:bg-white/15 transition-colors">
-            <div className="w-12 h-12 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#34D399" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                <circle cx="12" cy="10" r="3"></circle>
-              </svg>
-            </div>
-            <h3 className="text-white font-bold mb-1">Visit Us</h3>
-            <p className="text-blue-100">Lanham, MD 20706</p>
-          </div>
+
         </div>
       </div>
     </section>

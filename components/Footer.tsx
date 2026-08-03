@@ -205,7 +205,7 @@ export default function Footer() {
         <div className="w-full h-[1px] bg-[#1A2D4C] mb-8"></div>
 
         <div className="flex flex-col md:flex-row justify-between items-center text-[14px] text-[#627C9E] font-medium gap-4">
-          <p>© 2024 Horizon Pathways. Professional Immigration Experts. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} Horizon Pathways. Professional Immigration Experts. All rights reserved.</p>
           <div className="flex items-center gap-6">
             <Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
             <Link href="/terms" className="hover:text-white transition-colors">Terms of Service</Link>
