@@ -206,6 +206,12 @@ export default function SignupSetupPage() {
     const [editingQuestion, setEditingQuestion] = useState<SignupQuestion | null>(null);
     const [activeGoalId, setActiveGoalId] = useState<number | null>(null);
 
+    const [deleteTarget, setDeleteTarget] = useState<{
+        type: 'goal' | 'question';
+        id: number;
+        message: string;
+    } | null>(null);
+
     useEffect(() => {
         loadData();
     }, []);
@@ -244,10 +250,31 @@ export default function SignupSetupPage() {
     };
 
     const handleDeleteGoal = async (id: number) => {
-        if (confirm("Are you sure you want to delete this goal and all its questions?")) {
-            await deleteSignupGoal(id);
+        setDeleteTarget({
+            type: 'goal',
+            id,
+            message: 'Are you sure you want to delete this goal and all its questions?',
+        });
+    };
+
+    const handleConfirmDelete = async () => {
+        if (!deleteTarget) return;
+        try {
+            if (deleteTarget.type === 'goal') {
+                await deleteSignupGoal(deleteTarget.id);
+            } else {
+                await deleteSignupQuestion(deleteTarget.id);
+            }
             await loadData();
+        } catch (error) {
+            console.error('Delete failed:', error);
+        } finally {
+            setDeleteTarget(null);
         }
+    };
+
+    const handleCancelDelete = () => {
+        setDeleteTarget(null);
     };
 
     // Question Handlers
@@ -261,10 +288,11 @@ export default function SignupSetupPage() {
     };
 
     const handleDeleteQuestion = async (id: number) => {
-        if (confirm("Are you sure you want to delete this question?")) {
-            await deleteSignupQuestion(id);
-            await loadData();
-        }
+        setDeleteTarget({
+            type: 'question',
+            id,
+            message: 'Are you sure you want to delete this question?',
+        });
     };
 
     const openAddQuestion = (goalId: number) => {
@@ -382,6 +410,34 @@ export default function SignupSetupPage() {
                 onSave={handleSaveQuestion}
                 question={editingQuestion}
             />
+
+            {deleteTarget && (
+                <div className="fixed inset-0 z-[110] flex items-center justify-center bg-slate-900/50 p-4">
+                    <div className="w-full max-w-md rounded-[32px] bg-white shadow-2xl ring-1 ring-slate-900/5 overflow-hidden">
+                        <div className="px-6 py-5 border-b border-slate-200">
+                            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-amber-600">Confirm Delete</p>
+                        </div>
+                        <div className="px-6 py-6">
+                            <h2 className="text-2xl font-semibold text-slate-900 mb-3">Are you sure?</h2>
+                            <p className="text-sm leading-6 text-slate-600">{deleteTarget.message}</p>
+                        </div>
+                        <div className="flex flex-col gap-3 px-6 pb-6 pt-2 sm:flex-row sm:justify-end">
+                            <button
+                                onClick={handleCancelDelete}
+                                className="w-full sm:w-auto rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={handleConfirmDelete}
+                                className="w-full sm:w-auto rounded-2xl bg-rose-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-rose-700"
+                            >
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </main>
     );
 }
