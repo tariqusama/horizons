@@ -44,23 +44,17 @@ export default function ServicesSection() {
       </motion.div>
 
       <motion.div
+        key={category}
         className="grid grid-cols-1 md:grid-cols-3 gap-5 text-left"
         initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, margin: '-50px' }}
+        animate="visible"
         variants={{
           hidden: { opacity: 0 },
-          visible: { opacity: 1, transition: { staggerChildren: 0.15 } },
+          visible: { opacity: 1, transition: { staggerChildren: 0.1 } },
         }}
       >
         {services
-          .filter((s) => {
-            if (category.includes(':')) {
-              const [main, sub] = category.split(':');
-              return s.category === main && s.sub === sub;
-            }
-            return s.category === category;
-          })
+          .filter((s) => s.category === category)
           .map((service, idx) => (
             <motion.div
               key={idx}
