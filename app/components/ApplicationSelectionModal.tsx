@@ -114,14 +114,14 @@ const CheckoutForm = ({ selectedSubPlan, selectedTier, handleClose, getSelectedA
 
     return (
         <div className="bg-[#f8f9fa] rounded-2xl w-full max-w-[650px] shadow-2xl overflow-hidden animate-in slide-in-from-right duration-300 relative my-8 flex flex-col max-h-[90vh]">
-            <div className="p-8 pb-4 relative shrink-0 border-b border-[#e2e8f0]">
-                <button onClick={handleClose} className="absolute top-8 right-8 bg-[#1B3A64] hover:bg-[#132a4a] text-white rounded-full p-2 transition-colors z-10">
+            <div className="p-6 sm:p-8 pb-4 relative shrink-0 border-b border-[#e2e8f0]">
+                <button onClick={handleClose} className="absolute top-4 right-4 sm:top-8 sm:right-8 bg-[#1B3A64] hover:bg-[#132a4a] text-white rounded-full p-2 transition-colors z-10">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                 </button>
                 <h2 className="text-2xl font-black text-[#1B3A64]">Your Order Summary</h2>
             </div>
 
-            <div className="px-8 py-6 overflow-y-auto flex-1 custom-scrollbar">
+            <div className="px-6 sm:px-8 py-6 overflow-y-auto flex-1 custom-scrollbar">
                 <h3 className="text-lg font-bold text-[#1B3A64] mb-1">
                     {selectedSubPlan.id === 'fiance_petition' ? 'K-1 Fiancé: ' : `${selectedSubPlan.title.split(' – ')[0]}: `}{selectedTier}
                 </h3>
@@ -494,17 +494,17 @@ export default function ApplicationSelectionModal({ isOpen, onClose }: Applicati
 
     return (
         <Elements stripe={stripePromise}>
-            <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[#1B3A64]/60 backdrop-blur-sm p-3 sm:p-4 overflow-y-auto">
+            <div className="fixed inset-0 z-[100] flex items-start sm:items-center justify-center bg-[#1B3A64]/60 backdrop-blur-sm p-3 sm:p-4 overflow-y-auto">
                 {view === 'grid' && !selectedGoal && (
-                    <div className="bg-[#f8f9fa] rounded-2xl w-[min(94vw,900px)] shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200 my-4 sm:my-8 relative">
-                        <div className="flex justify-between items-center p-8 pb-4">
+                    <div className="bg-[#f8f9fa] rounded-2xl w-full max-w-[94vw] shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200 my-4 sm:my-8 relative">
+                        <div className="flex justify-between items-center p-6 sm:p-8 pb-4">
                             <h2 className="text-3xl font-black text-[#1B3A64]">Select An Application</h2>
                             <button onClick={handleClose} className="bg-[#1B3A64] hover:bg-[#132a4a] text-white rounded-full p-2 transition-colors">
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                             </button>
                         </div>
 
-                        <div className="p-8 pt-4 grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="p-6 pt-4 grid grid-cols-1 md:grid-cols-2 gap-6">
                             {goals.map((goal, idx) => (
                                 <div key={goal.id} className="bg-white rounded-[20px] p-6 shadow-sm hover:shadow-md transition-shadow cursor-pointer border border-transparent hover:border-[#FA6514]/20" onClick={() => handleGoalClick(goal)}>
                                     <h3 className="text-lg font-bold text-[#1B3A64] mb-2">{idx + 1}. {goal.emoji} {goal.title}</h3>
@@ -523,8 +523,8 @@ export default function ApplicationSelectionModal({ isOpen, onClose }: Applicati
                 )}
 
                 {view === 'details' && selectedGoal && (
-                    <div className="w-[min(95vw,78rem)] max-h-[92vh] flex flex-col bg-[#F5F5F5] rounded-3xl overflow-hidden shadow-2xl animate-in fade-in zoom-in-95 duration-200 relative my-4 sm:my-8">
-                        <div className="flex items-start justify-between px-4 sm:px-6 md:px-10 pt-6 sm:pt-8 pb-4 shrink-0">
+                    <div className="w-full max-w-[95vw] sm:max-w-[86vw] lg:max-w-[78rem] max-h-[92vh] flex flex-col bg-[#F5F5F5] rounded-3xl overflow-hidden shadow-2xl animate-in fade-in zoom-in-95 duration-200 relative my-4 sm:my-8">
+                        <div className="flex flex-col sm:flex-row items-start justify-between px-4 sm:px-6 md:px-10 pt-6 sm:pt-8 pb-4 shrink-0 gap-4">
                             <div className="flex-1 text-center">
                                 <span className="inline-block px-4 py-1 rounded-full bg-[#fff1f2] border border-[#f9c8d3] text-xs font-semibold text-[#e11d48]">
                                     {selectedGoal.headerPill}
@@ -610,8 +610,8 @@ export default function ApplicationSelectionModal({ isOpen, onClose }: Applicati
                 )}
 
                 {view === 'tiers' && selectedSubPlan && (
-                    <div className="w-[min(94vw,56rem)] max-h-[92vh] flex flex-col bg-[#F5F5F5] rounded-3xl overflow-hidden shadow-lg animate-in fade-in duration-200 relative my-4 sm:my-8">
-                        <div className="flex items-start justify-between px-4 sm:px-6 md:px-10 pt-6 sm:pt-8 pb-4">
+                    <div className="w-full max-w-[95vw] sm:max-w-[86vw] lg:max-w-[56rem] max-h-[92vh] flex flex-col bg-[#F5F5F5] rounded-3xl overflow-hidden shadow-lg animate-in fade-in duration-200 relative my-4 sm:my-8">
+                        <div className="flex flex-col sm:flex-row items-start justify-between px-4 sm:px-6 md:px-10 pt-6 sm:pt-8 pb-4 gap-4">
                             <div>
                                 <h2 className="tracking-tight text-2xl sm:text-3xl font-bold text-slate-900">{selectedSubPlan.title}</h2>
                                 <p className="mt-2 text-sm text-slate-500">You can finish your application after this purchase</p>
@@ -629,7 +629,7 @@ export default function ApplicationSelectionModal({ isOpen, onClose }: Applicati
                             </p>
                             <h3 className="mt-5 text-lg font-bold text-slate-900">Select which level of service you need</h3>
 
-                            <div className="mt-6 grid gap-5 sm:grid-cols-3">
+                            <div className="mt-6 grid gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
                                 <div className="rounded-2xl bg-white border border-slate-200/70 overflow-hidden flex flex-col shadow-sm">
                                     <div className="bg-[#fff1f2] py-4 text-center">
                                         <p className="text-lg font-bold text-slate-900">Basic</p>
@@ -680,10 +680,10 @@ export default function ApplicationSelectionModal({ isOpen, onClose }: Applicati
                 )}
 
                 {view === 'agreement' && selectedSubPlan && (
-                    <div className="fixed inset-0 z-50 grid place-items-center p-3 sm:p-6 shadow-lg duration-200 max-w-[min(95vw,56rem)] w-[min(95vw,56rem)] mx-auto bg-[#F5F5F5] rounded-3xl overflow-hidden border-0 [&>button]:hidden">
+                    <div className="relative z-50 w-full max-w-[95vw] sm:max-w-[86vw] lg:max-w-[56rem] mx-auto p-3 sm:p-6 shadow-lg duration-200 bg-[#F5F5F5] rounded-3xl overflow-hidden border-0 [&>button]:hidden">
                         <h2 className="text-lg font-semibold leading-none tracking-tight sr-only">Limited Scope Representation Agreement</h2>
 
-                        <div className="relative px-8 pt-7 pb-5 border-b border-slate-200/70">
+                        <div className="relative px-4 sm:px-8 pt-7 pb-5 border-b border-slate-200/70">
                             <button onClick={handleClose} aria-label="Close" className="absolute top-5 right-5 w-9 h-9 rounded-full bg-[#0B2545] hover:bg-[#0a1f3d] text-white flex items-center justify-center transition shadow-sm">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-x w-4 h-4"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
                             </button>
@@ -691,7 +691,7 @@ export default function ApplicationSelectionModal({ isOpen, onClose }: Applicati
                             <p className="mt-1 text-sm text-sky-700/80">You can finish your application after this purchase</p>
                         </div>
 
-                        <div className="px-8 py-6 max-h-[60vh] overflow-y-auto text-[13.5px] leading-relaxed text-slate-700 space-y-4">
+                        <div className="px-4 sm:px-8 py-6 max-h-[60vh] overflow-y-auto text-[13.5px] leading-relaxed text-slate-700 space-y-4">
                             <p>THIS LIMITED SCOPE REPRESENTATION AGREEMENT ("Agreement") is made between you, a Horizon Pathways customer and the Immigration Attorney ("Attorney") who has agreed to provide Services as defined below to you. You and Attorney agree that Attorney is not engaged to represent you generally in your immigration case. Rather, Attorney's representation of you is limited to the Services defined below, and nothing more, unless you and Attorney otherwise agree separately in writing.</p>
 
                             <p>Horizon Pathways, Inc. ("Horizon Pathways") is not a party to this Agreement. Your relationship with Horizon Pathways is governed by the company's Terms and Conditions and Privacy Policy.</p>
@@ -749,7 +749,7 @@ export default function ApplicationSelectionModal({ isOpen, onClose }: Applicati
                             </ul>
                         </div>
 
-                        <div className="px-8 py-5 border-t border-slate-200/70 bg-white space-y-4">
+                        <div className="px-4 sm:px-8 py-5 border-t border-slate-200/70 bg-white space-y-4">
                             <label className="flex items-start gap-3 cursor-pointer group">
                                 <input
                                     type="checkbox"
@@ -777,12 +777,14 @@ export default function ApplicationSelectionModal({ isOpen, onClose }: Applicati
                 )}
 
                 {view === 'checkout' && selectedSubPlan && (
-                    <CheckoutForm
-                        selectedSubPlan={selectedSubPlan}
-                        selectedTier={selectedTier}
-                        handleClose={handleClose}
-                        getSelectedAmount={getSelectedAmount}
-                    />
+                    <div className="w-full max-w-[95vw] sm:max-w-[650px]">
+                        <CheckoutForm
+                            selectedSubPlan={selectedSubPlan}
+                            selectedTier={selectedTier}
+                            handleClose={handleClose}
+                            getSelectedAmount={getSelectedAmount}
+                        />
+                    </div>
                 )}
             </div>
         </Elements>
