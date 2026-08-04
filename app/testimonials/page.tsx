@@ -265,7 +265,7 @@ export default function TestimonialsPage() {
             <section className="relative overflow-hidden py-20 md:py-24">
                 <div className="mx-auto max-w-5xl px-4 md:px-6 lg:px-8">
                     <div className="rounded-[32px] border border-[#F3C3A8] bg-gradient-to-br from-[#FDF5EE] via-white to-[#F6F9FF] p-8 text-center shadow-[0_18px_50px_rgba(27,58,100,0.08)] md:p-14">
-                        <div className="mb-5 inline-flex gap-1 text-[#E3623D]">
+                        <div className="mb-5 inline-flex gap-1 text-[#00b67a]">
                             {Array.from({ length: 5 }).map((_, i) => (
                                 <span key={i} className="text-2xl">★</span>
                             ))}
