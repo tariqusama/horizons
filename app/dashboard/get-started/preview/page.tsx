@@ -209,27 +209,52 @@ export default function ApplicationPreviewPage() {
                             </div>
                         </div>
                     )}
+
+                    {/* DYNAMIC/FLAT FORM DATA */}
+                    {previewData && Object.keys(previewData).filter(key => typeof previewData[key] !== 'object' && previewData[key] !== null).length > 0 && (
+                        <div>
+                            <div className="flex items-center justify-between mb-3">
+                                <h2 className="text-xs font-bold uppercase tracking-wider text-emerald-600">
+                                    APPLICATION DATA
+                                </h2>
+                                <button
+                                    onClick={() => router.push(getFirstFormRoute())}
+                                    className="text-xs font-semibold text-emerald-600 hover:text-emerald-700 bg-emerald-50 hover:bg-emerald-100 px-3 py-1 rounded-full transition-colors"
+                                >
+                                    Edit Section
+                                </button>
+                            </div>
+                            <div className="bg-slate-50/80 border border-emerald-100/60 rounded-[16px] p-5 sm:p-6 grid grid-cols-1 sm:grid-cols-2 gap-y-5 gap-x-8 shadow-sm">
+                                {Object.keys(previewData).filter(key => typeof previewData[key] !== 'object' && previewData[key] !== null).map(key => (
+                                    <div key={key}>
+                                        <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400">{key.replace(/([A-Z])/g, ' $1').trim()}</div>
+                                        <div className="text-[14px] font-bold text-slate-900 mt-0.5">{renderFieldValue(previewData[key])}</div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
                 </div>
 
                 {/* Footer */}
-                <div className="pt-6 border-t border-slate-200 flex justify-between items-center">
-                    <div className="flex items-center gap-4">
+                <div className="pt-6 border-t border-slate-200 flex flex-wrap justify-between items-center gap-4">
+                    <div className="flex flex-wrap items-center gap-4 w-full md:w-auto justify-center md:justify-start">
                         <button
                             onClick={() => router.push(getFirstFormRoute())}
-                            className="text-sm font-semibold text-slate-600 hover:text-slate-900 flex items-center gap-1.5"
+                            className="text-sm font-semibold text-slate-600 hover:text-slate-900 flex items-center justify-center gap-1.5"
                         >
                             Open Full Form
                         </button>
                         <button
                             onClick={() => router.push(getPrevFormPath('/dashboard/get-started/preview', applicationTitle))}
-                            className="text-sm font-semibold text-slate-600 hover:text-slate-900 flex items-center gap-1.5"
+                            className="text-sm font-semibold text-slate-600 hover:text-slate-900 flex items-center justify-center gap-1.5"
                         >
                             ← Back to Forms
                         </button>
                     </div>
                     <button
                         onClick={() => router.push('/dashboard/get-started/submission')}
-                        className="bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white font-bold px-8 py-3 rounded-full shadow-lg shadow-blue-500/30 transition-all transform hover:-translate-y-0.5 active:translate-y-0 text-sm"
+                        className="bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white font-bold px-8 py-3 rounded-full shadow-lg shadow-blue-500/30 transition-all transform hover:-translate-y-0.5 active:translate-y-0 text-sm w-full md:w-auto"
                     >
                         Close Preview
                     </button>
