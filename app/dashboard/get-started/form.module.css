@@ -1101,3 +1101,13 @@
     box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
 }
 
+@media (max-width: 640px) {
+    .footerScreenshot {
+        flex-direction: column-reverse;
+        gap: 1rem;
+        width: 100%;
+    }
+    .footerScreenshot button {
+        width: 100%;
+    }
+}

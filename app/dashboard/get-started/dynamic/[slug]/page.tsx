@@ -305,6 +305,22 @@ export default function DynamicFormEnginePage() {
     const handleNext = async () => {
         if (steps.length === 0) return;
 
+        // Validation for required fields in the current step
+        const missingFields = currentStep.questions.filter((q: any) => {
+            if (q.is_required) {
+                const val = formData[q.field_name];
+                if (val === undefined || val === null || val === '') {
+                    return true;
+                }
+            }
+            return false;
+        });
+
+        if (missingFields.length > 0) {
+            alert('Please fill out all required fields before proceeding.');
+            return;
+        }
+
         setIsSaving(true);
         try {
             await new Promise(resolve => setTimeout(resolve, 200));
