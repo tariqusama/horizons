@@ -166,9 +166,7 @@ export default function Footer() {
               <li><Link href="/about" className="text-[#9AB0CF] text-[15px] font-medium hover:text-[#E3623D] transition-colors">About Us</Link></li>
               <li><Link href="/resources" className="text-[#9AB0CF] text-[15px] font-medium hover:text-[#E3623D] transition-colors">Resources</Link></li>
               <li><Link href="/contact" className="text-[#9AB0CF] text-[15px] font-medium hover:text-[#E3623D] transition-colors">Contact</Link></li>
-              <li><Link href="/privacy" className="text-[#9AB0CF] text-[15px] font-medium hover:text-[#E3623D] transition-colors">Privacy Policy</Link></li>
-              <li><Link href="/terms" className="text-[#9AB0CF] text-[15px] font-medium hover:text-[#E3623D] transition-colors">Terms and Conditions</Link></li>
-            </ul>
+             </ul>
           </div>
 
           <div className="flex flex-col gap-6">
