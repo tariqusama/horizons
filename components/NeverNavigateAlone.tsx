@@ -59,9 +59,11 @@ export default function NeverNavigateAlone() {
           />
           <div className="absolute bottom-5 left-5 right-5 md:right-auto md:w-[280px] bg-[#0F2444]/95 backdrop-blur-sm rounded-xl p-4 border border-white/10">
             <div className="flex items-center gap-3 mb-2">
-              <div className="w-9 h-9 rounded-full bg-orange-500 flex items-center justify-center text-white font-bold text-[12px] shrink-0">
-                SM
-              </div>
+              <img
+                src="/sm-horizon.jpeg"
+                alt="Sarah Mitchell"
+                className="w-9 h-9 rounded-full object-cover shrink-0"
+              />
               <div>
                 <p className="text-white font-bold text-[13px] leading-tight">Sarah Mitchell</p>
                 <p className="text-[#A3B8CC] text-[11px]">Senior Case Manager</p>
