@@ -101,7 +101,7 @@ export default function Footer() {
   return (
     <footer className="bg-[#09182F] text-white pt-16 pb-8 w-full font-sans border-t border-[#122642]">
       <div className="w-full px-6 md:px-12 lg:px-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 mb-16">
           <div className="flex flex-col gap-6">
             <div className="inline-flex w-fit items-center justify-center rounded-lg bg-white px-4 py-3 shadow-sm border border-white/70">
               <Image
@@ -182,6 +182,14 @@ export default function Footer() {
           </div>
 
           <div className="flex flex-col gap-6">
+            <h4 className="text-[17px] font-bold text-white">Legal</h4>
+            <ul className="flex flex-col gap-5">
+              <li><Link href="/terms" className="text-[#9AB0CF] text-[15px] font-medium hover:text-[#E3623D] transition-colors">Terms & Conditions</Link></li>
+              <li><Link href="/privacy" className="text-[#9AB0CF] text-[15px] font-medium hover:text-[#E3623D] transition-colors">Privacy Policy</Link></li>
+            </ul>
+          </div>
+
+          <div className="flex flex-col gap-6">
             <h4 className="text-[17px] font-bold text-white">Contact Us</h4>
             <ul className="flex flex-col gap-6">
               <li className="flex items-start gap-4">
@@ -212,12 +220,6 @@ export default function Footer() {
 
         <div className="flex flex-col md:flex-row justify-between items-center text-[14px] text-[#627C9E] font-medium gap-4">
           <p className="text-[#9AB0CF]">© {new Date().getFullYear()} Horizon Pathways. Professional Immigration Experts. All rights reserved.</p>
-          <div className="flex items-center gap-6">
-            <Link href="/privacy" className="text-[#9AB0CF] hover:text-[#E3623D] transition-colors">Privacy Policy</Link>
-            {pathname && pathname.startsWith('/signup') ? (
-              <Link href="/terms" className="text-[#9AB0CF] hover:text-[#E3623D] transition-colors">Terms of Service</Link>
-            ) : null}
-          </div>
         </div>
       </div>
     </footer>
