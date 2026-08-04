@@ -62,7 +62,7 @@ export default function NeverNavigateAlone() {
               <img
                 src="/sm-horizon.jpeg"
                 alt="Sarah Mitchell"
-                className="w-9 h-9 rounded-full object-cover shrink-0"
+                className="w-12 h-12 rounded-full object-cover object-[center_14%] shrink-0 border border-orange-400/40"
               />
               <div>
                 <p className="text-white font-bold text-[13px] leading-tight">Sarah Mitchell</p>
