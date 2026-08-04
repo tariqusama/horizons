@@ -8,15 +8,15 @@ import ReadyCTA from '@/components/ReadyCTA';
 
 export default function HowItWorksPage() {
   return (
-    <main className="flex flex-col w-full">
+    <main className="flex flex-col w-full overflow-x-hidden">
       <HowItWorksHero />
       <HowItWorksSteps />
-      
+
       {/* New Sections based on user request */}
       <WhyChooseProcess />
       <NeverNavigateAlone />
       <ProcessVideo />
-      
+
       {/* Final CTA */}
       <ReadyCTA />
     </main>

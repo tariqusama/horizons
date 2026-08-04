@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 
 export default function HowItWorksHero() {
   return (
-    <section className="relative w-full h-[600px] flex flex-col justify-center items-center text-center px-4 overflow-hidden pt-20">
+    <section className="relative w-full min-h-[520px] md:min-h-[600px] flex flex-col justify-center items-center text-center px-4 overflow-hidden pt-20 pb-14 md:pb-20">
       {/* Background Layers */}
       <div className="absolute inset-0 z-0 bg-[#0A192F]"></div>
 
@@ -49,14 +49,14 @@ export default function HowItWorksHero() {
 
         <motion.h1
           variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } } }}
-          className="text-5xl md:text-[68px] font-black leading-[1.1] mb-6 tracking-tight text-white"
+          className="text-4xl sm:text-5xl md:text-[56px] lg:text-[64px] font-black leading-[1.08] mb-6 tracking-tight text-white"
         >
           How Horizon Pathways Works
         </motion.h1>
 
         <motion.p
           variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } } }}
-          className="text-lg md:text-2xl font-medium text-gray-200 mb-10 max-w-3xl leading-relaxed"
+          className="text-base sm:text-lg md:text-[22px] font-medium text-gray-200 mb-10 max-w-3xl leading-relaxed"
         >
           From profile creation to USCIS submission, we guide you through every step of your immigration journey with professional support and cutting-edge technology.
         </motion.p>

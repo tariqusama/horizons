@@ -63,11 +63,11 @@ export default function HowItWorksSteps() {
         accuracy, compliance, and peace of mind.
       </p>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-5 text-left">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5 text-left">
         {steps.map((step, idx) => (
           <div
             key={idx}
-            className="bg-white rounded-xl p-6 border border-[#EDEFF3] border-l-4 border-l-orange-500 shadow-[0_2px_8px_rgba(27,58,100,0.04)] relative"
+            className="bg-white rounded-xl p-6 border border-[#EDEFF3] border-l-4 border-l-orange-500 shadow-[0_2px_8px_rgba(27,58,100,0.04)] relative min-h-[260px]"
           >
             <div className="w-8 h-8 rounded-full bg-orange-500 text-white font-bold text-[13px] flex items-center justify-center mb-4">
               {step.number}
