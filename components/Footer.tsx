@@ -12,7 +12,7 @@ const socialLinks = [
     href: 'https://facebook.com/Horizonpway',
     label: 'Facebook',
     icon: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <svg className="h-5 w-5" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
         <path d="M13.5 22v-8h2.8l.4-3.2h-3.2V7.5c0-.9.3-1.5 1.6-1.5H17V2.9c-.3 0-1.4-.1-2.7-.1-2.7 0-4.5 1.6-4.5 4.6V10.8H7v3.2h2.8v8h3.7z" />
       </svg>
     ),
@@ -22,7 +22,7 @@ const socialLinks = [
     href: 'https://www.instagram.com/horizonpathways.us?igsh=Z3NxNTA5bWFncDFy&utm_source=qr',
     label: 'Instagram',
     icon: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <svg className="h-5 w-5" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
         <rect x="3" y="3" width="18" height="18" rx="5"></rect>
         <circle cx="12" cy="12" r="4"></circle>
         <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"></circle>
@@ -34,8 +34,8 @@ const socialLinks = [
     href: 'https://www.tiktok.com/@horizon_pathways?_t=ZP-90Hu7Xrttrq&_r=1',
     label: 'TikTok',
     icon: (
-      <svg width="18" height="18" viewBox="0 0 32 32" fill="currentColor" aria-hidden="true">
-        <path d="M22.7 7.2c-.5 0-1.1-.1-1.6-.2v6.8c0 3.2-2.7 5.9-5.9 5.9-1.1 0-2.1-.3-3-.8v3.5c.9.6 2 1 3.2 1 3.9 0 7-3.2 7-7.1V4.1h-1.7v3.1z" />
+      <svg className="h-6 w-6" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <path d="M14.2 3.1c.9 1.5 2.2 2.6 3.9 3.1v2.1c-1.1 0-2.1-.2-3.1-.6v6.4c0 2.8-2.3 5.1-5.1 5.1S5 16.9 5 14.1S7.3 9 10.1 9c.4 0 .7 0 1 .1v2.1c-.3-.1-.6-.1-1-.1-1.6 0-2.9 1.3-2.9 2.9s1.3 2.9 2.9 2.9 2.9-1.3 2.9-2.9V3.1h2.1z" />
       </svg>
     ),
   },
@@ -44,7 +44,7 @@ const socialLinks = [
     href: 'https://www.youtube.com/@HorizonPathways',
     label: 'YouTube',
     icon: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <svg className="h-5 w-5" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
         <path d="M21.8 8s-.2-1.6-.8-2.3c-.8-.8-1.7-.8-2.2-.9C15.9 4.5 12 4.5 12 4.5h0s-3.9 0-6.8.3c-.6 0-1.4.1-2.2.9C2.2 6.4 2 8 2 8s-.2 1.8-.2 3.6v1.6c0 1.8.2 3.6.2 3.6s.2 1.6.8 2.3c.8.8 1.8.8 2.2.9 2.9.3 6.8.3 6.8.3s3.9 0 6.8-.3c.6 0 1.4-.1 2.2-.9.6-.7.8-2.3.8-2.3s.2-1.8.2-3.6v-1.6c0-1.8-.2-3.6-.2-3.6zM10 15.5v-7l6 3.5-6 3.5z" />
       </svg>
     ),
@@ -103,16 +103,16 @@ export default function Footer() {
       <div className="w-full px-6 md:px-12 lg:px-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
           <div className="flex flex-col gap-6">
-            <div className="inline-flex w-fit items-center justify-center rounded-lg bg-white px-4 py-3 shadow-sm">
+            <div className="inline-flex w-fit items-center justify-center rounded-lg bg-white px-4 py-3 shadow-sm border border-white/70">
               <Image
                 src="/horizonlogo.png"
                 alt="Horizon Pathways"
                 width={180}
                 height={45}
-                className="h-8 w-auto object-contain"
+                className="h-10 w-auto object-contain"
               />
             </div>
-            <p className="text-[#627C9E] text-[15px] leading-[1.7] max-w-[280px]">
+            <p className="text-[#9AB0CF] text-[15px] leading-[1.7] max-w-[280px] font-medium">
               We are professional document preparers dedicated to helping you achieve your American dream through expert guidance and modern technology.
             </p>
 
@@ -150,9 +150,9 @@ export default function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={social.label}
-                  className="w-10 h-10 rounded-full bg-[#1A2D4C] flex items-center justify-center hover:bg-[#E3623D] transition-colors text-white shadow-sm"
+                  className="w-11 h-11 rounded-full bg-[#1A2D4C] flex items-center justify-center hover:bg-[#E3623D] transition-colors text-white shadow-sm"
                 >
-                  {social.icon}
+                  <span className="inline-flex items-center justify-center">{social.icon}</span>
                 </a>
               ))}
             </div>
@@ -161,21 +161,21 @@ export default function Footer() {
           <div className="flex flex-col gap-6">
             <h4 className="text-[17px] font-bold text-white">Quick Links</h4>
             <ul className="flex flex-col gap-5">
-              <li><Link href="/" className="text-[#627C9E] text-[15px] font-medium hover:text-white transition-colors">Home</Link></li>
-              <li><Link href="/how-it-works" className="text-[#627C9E] text-[15px] font-medium hover:text-white transition-colors">How It Works</Link></li>
-              <li><Link href="/about" className="text-[#627C9E] text-[15px] font-medium hover:text-white transition-colors">About Us</Link></li>
-              <li><Link href="/success-stories" className="text-[#627C9E] text-[15px] font-medium hover:text-white transition-colors">Success Stories</Link></li>
-              <li><Link href="/contact" className="text-[#627C9E] text-[15px] font-medium hover:text-white transition-colors">Contact</Link></li>
+              <li><Link href="/" className="text-[#9AB0CF] text-[15px] font-medium hover:text-[#E3623D] transition-colors">Home</Link></li>
+              <li><Link href="/how-it-works" className="text-[#9AB0CF] text-[15px] font-medium hover:text-[#E3623D] transition-colors">How It Works</Link></li>
+              <li><Link href="/about" className="text-[#9AB0CF] text-[15px] font-medium hover:text-[#E3623D] transition-colors">About Us</Link></li>
+              <li><Link href="/success-stories" className="text-[#9AB0CF] text-[15px] font-medium hover:text-[#E3623D] transition-colors">Success Stories</Link></li>
+              <li><Link href="/contact" className="text-[#9AB0CF] text-[15px] font-medium hover:text-[#E3623D] transition-colors">Contact</Link></li>
             </ul>
           </div>
 
           <div className="flex flex-col gap-6">
             <h4 className="text-[17px] font-bold text-white">Services</h4>
             <ul className="flex flex-col gap-5">
-              <li><Link href="/services" className="text-[#627C9E] text-[15px] font-medium hover:text-white transition-colors">All Services</Link></li>
-              <li><Link href="/free-tools" className="text-[#627C9E] text-[15px] font-medium hover:text-white transition-colors">Free Tools</Link></li>
-              <li><Link href="/faq" className="text-[#627C9E] text-[15px] font-medium hover:text-white transition-colors">FAQ</Link></li>
-              <li><Link href="/signup" className="text-[#627C9E] text-[15px] font-medium hover:text-white transition-colors">Get Started</Link></li>
+              <li><Link href="/services" className="text-[#9AB0CF] text-[15px] font-medium hover:text-[#E3623D] transition-colors">All Services</Link></li>
+              <li><Link href="/free-tools" className="text-[#9AB0CF] text-[15px] font-medium hover:text-[#E3623D] transition-colors">Free Tools</Link></li>
+              <li><Link href="/faq" className="text-[#9AB0CF] text-[15px] font-medium hover:text-[#E3623D] transition-colors">FAQ</Link></li>
+              <li><Link href="/signup" className="text-[#9AB0CF] text-[15px] font-medium hover:text-[#E3623D] transition-colors">Get Started</Link></li>
             </ul>
           </div>
 
@@ -184,7 +184,7 @@ export default function Footer() {
             <ul className="flex flex-col gap-6">
               <li className="flex items-start gap-4">
                 <div className="shrink-0 mt-0.5">{contactIcons.address}</div>
-                <div className="text-[#627C9E] text-[15px] font-medium leading-[1.6]">
+                <div className="text-[#9AB0CF] text-[15px] font-medium leading-[1.6] hover:text-[#E3623D] transition-colors">
                   7170 Executive Pl, Ste 410<br />
                   #1362<br />
                   Lanham, MD 20706
@@ -192,13 +192,13 @@ export default function Footer() {
               </li>
               <li className="flex items-center gap-4">
                 <div className="shrink-0">{contactIcons.email}</div>
-                <a href="mailto:support@horizonpathways.us" className="text-[#627C9E] text-[15px] font-medium hover:text-white transition-colors">
+                <a href="mailto:support@horizonpathways.us" className="text-[#9AB0CF] text-[15px] font-medium hover:text-[#E3623D] transition-colors">
                   support@horizonpathways.us
                 </a>
               </li>
               <li className="flex items-center gap-4">
                 <div className="shrink-0">{contactIcons.phone}</div>
-                <a href="tel:+18007957153" className="text-[#627C9E] text-[15px] font-medium hover:text-white transition-colors">
+                <a href="tel:+18007957153" className="text-[#9AB0CF] text-[15px] font-medium hover:text-[#E3623D] transition-colors">
                   +1 (800) 795-7153
                 </a>
               </li>
@@ -209,11 +209,11 @@ export default function Footer() {
         <div className="w-full h-[1px] bg-[#1A2D4C] mb-8"></div>
 
         <div className="flex flex-col md:flex-row justify-between items-center text-[14px] text-[#627C9E] font-medium gap-4">
-          <p>© {new Date().getFullYear()} Horizon Pathways. Professional Immigration Experts. All rights reserved.</p>
+          <p className="text-[#9AB0CF]">© {new Date().getFullYear()} Horizon Pathways. Professional Immigration Experts. All rights reserved.</p>
           <div className="flex items-center gap-6">
-            <Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
+            <Link href="/privacy" className="text-[#9AB0CF] hover:text-[#E3623D] transition-colors">Privacy Policy</Link>
             {pathname && pathname.startsWith('/signup') ? (
-              <Link href="/terms" className="hover:text-white transition-colors">Terms of Service</Link>
+              <Link href="/terms" className="text-[#9AB0CF] hover:text-[#E3623D] transition-colors">Terms of Service</Link>
             ) : null}
           </div>
         </div>
