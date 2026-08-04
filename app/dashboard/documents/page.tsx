@@ -317,7 +317,8 @@ export default function DashboardDocumentsPage() {
                         </div>
                     </div>
 
-                    <div className="mt-10 overflow-hidden rounded-[28px] border border-slate-200">
+                    <div className="mt-10 overflow-x-auto rounded-[28px] border border-slate-200">
+                        <div className="min-w-[800px]">
                         {/* Table header — 4 cols now: doc / status / preview / action */}
                         <div className="grid grid-cols-12 gap-4 bg-[#F8F6F3] px-6 py-4 text-sm font-semibold text-[#5A6579]">
                             <span className="col-span-6">Document</span>
@@ -378,6 +379,7 @@ export default function DashboardDocumentsPage() {
                                 ) : documents.map((item) => renderDocumentRow(item, item.required === true))}
                             </div>
                         )}
+                        </div>
                     </div>
                 </div>
 
