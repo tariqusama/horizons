@@ -101,8 +101,8 @@ export default function Footer() {
   return (
     <footer className="bg-[#09182F] text-white pt-16 pb-8 w-full font-sans border-t border-[#122642]">
       <div className="w-full px-6 md:px-12 lg:px-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 mb-16">
-          <div className="flex flex-col gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 mb-16">
+          <div className="flex flex-col gap-4">
             <div className="inline-flex w-fit items-center justify-center rounded-lg bg-white px-4 py-3 shadow-sm border border-white/70">
               <Image
                 src="/horizonlogo.png"
@@ -158,20 +158,20 @@ export default function Footer() {
             </div>
           </div>
 
-          <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-4">
             <h4 className="text-[17px] font-bold text-white">Quick Links</h4>
-            <ul className="flex flex-col gap-5">
+            <ul className="flex flex-col gap-3">
               <li><Link href="/" className="text-[#9AB0CF] text-[15px] font-medium hover:text-[#E3623D] transition-colors">Home</Link></li>
               <li><Link href="/how-it-works" className="text-[#9AB0CF] text-[15px] font-medium hover:text-[#E3623D] transition-colors">How It Works</Link></li>
               <li><Link href="/about" className="text-[#9AB0CF] text-[15px] font-medium hover:text-[#E3623D] transition-colors">About Us</Link></li>
               <li><Link href="/resources" className="text-[#9AB0CF] text-[15px] font-medium hover:text-[#E3623D] transition-colors">Resources</Link></li>
               <li><Link href="/contact" className="text-[#9AB0CF] text-[15px] font-medium hover:text-[#E3623D] transition-colors">Contact</Link></li>
-             </ul>
+            </ul>
           </div>
 
-          <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-4">
             <h4 className="text-[17px] font-bold text-white">Services</h4>
-            <ul className="flex flex-col gap-5">
+            <ul className="flex flex-col gap-3">
               <li><Link href="/services" className="text-[#9AB0CF] text-[15px] font-medium hover:text-[#E3623D] transition-colors">All Services</Link></li>
               <li><Link href="/free-tools" className="text-[#9AB0CF] text-[15px] font-medium hover:text-[#E3623D] transition-colors">Free Tools</Link></li>
               <li><Link href="/faq" className="text-[#9AB0CF] text-[15px] font-medium hover:text-[#E3623D] transition-colors">FAQ</Link></li>
@@ -179,17 +179,17 @@ export default function Footer() {
             </ul>
           </div>
 
-          <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-4">
             <h4 className="text-[17px] font-bold text-white">Legal</h4>
-            <ul className="flex flex-col gap-5">
+            <ul className="flex flex-col gap-3">
               <li><Link href="/terms" className="text-[#9AB0CF] text-[15px] font-medium hover:text-[#E3623D] transition-colors">Terms & Conditions</Link></li>
               <li><Link href="/privacy" className="text-[#9AB0CF] text-[15px] font-medium hover:text-[#E3623D] transition-colors">Privacy Policy</Link></li>
             </ul>
           </div>
 
-          <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-4">
             <h4 className="text-[17px] font-bold text-white">Contact Us</h4>
-            <ul className="flex flex-col gap-6">
+            <ul className="flex flex-col gap-4">
               <li className="flex items-start gap-4">
                 <div className="shrink-0 mt-0.5">{contactIcons.address}</div>
                 <div className="text-[#9AB0CF] text-[15px] font-medium leading-[1.6] hover:text-[#E3623D] transition-colors">
