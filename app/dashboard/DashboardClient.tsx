@@ -110,7 +110,7 @@ export default function DashboardClient({ children }: { children: React.ReactNod
                             </button>
 
                             {showNotifications && (
-                                <div className="absolute right-0 mt-2 w-[min(94vw,320px)] sm:w-[360px] bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden z-50">
+                                <div className="absolute right-[-1rem] sm:right-0 mt-2 w-[calc(100vw-2rem)] max-w-[300px] sm:max-w-[320px] bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden z-50">
                                     <div className="px-5 py-3 border-b border-gray-100 flex justify-between items-center bg-[#F8F9FA]">
                                         <h3 className="font-bold text-[#1B3A64] text-sm">Notifications</h3>
                                         <button onClick={async () => { await markAsRead(); const data = await getNotifications(); setNotifications(data); setUnreadCount(data.filter(n => !n.read_at).length); }} className="text-xs text-[#5A6579] hover:text-orange-500 font-medium">Mark all as read</button>

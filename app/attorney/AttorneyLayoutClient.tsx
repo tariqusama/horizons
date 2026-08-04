@@ -214,7 +214,7 @@ export default function AttorneyLayoutClient({ children }: { children: React.Rea
                         </button>
 
                         {showNotifications && (
-                            <div className="absolute right-0 mt-2 w-[calc(100vw-2rem)] sm:w-[320px] bg-white rounded-3xl shadow-lg border border-slate-200 overflow-hidden z-50">
+                            <div className="absolute right-[-1rem] sm:right-0 mt-2 w-[calc(100vw-2rem)] max-w-[300px] sm:max-w-[320px] bg-white rounded-3xl shadow-lg border border-slate-200 overflow-hidden z-50">
                                 <div className="px-4 py-3 border-b border-slate-200 bg-slate-50">
                                     <div className="flex items-center justify-between gap-3">
                                         <p className="text-sm font-semibold text-slate-900">Notifications</p>

@@ -485,7 +485,7 @@ export default function ManagerLayoutClient({ children }: { children: React.Reac
                             )}
                         </button>
                         {showNotifications && (
-                            <div className="absolute right-[-3.5rem] sm:right-0 mt-2 w-[300px] sm:w-[320px] bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden z-50">
+                            <div className="absolute right-[-1rem] sm:right-0 mt-2 w-[calc(100vw-2rem)] max-w-[300px] sm:max-w-[320px] bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden z-50">
                                 <div className="px-4 py-3 border-b border-gray-100 bg-[#F8F9FA]">
                                     <div className="flex items-center justify-between gap-3">
                                         <p className="text-sm font-bold text-[#1B3A64]">Notifications</p>

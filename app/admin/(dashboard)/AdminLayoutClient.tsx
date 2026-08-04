@@ -365,7 +365,7 @@ export default function AdminLayoutClient({ children }: { children: React.ReactN
                         </button>
 
                         {showNotifications && (
-                            <div className="absolute right-0 mt-2 w-[calc(100vw-2rem)] sm:w-[360px] bg-white rounded-xl shadow-lg border border-slate-200/50 overflow-hidden z-50">
+                            <div className="absolute right-[-1rem] sm:right-0 mt-2 w-[calc(100vw-2rem)] max-w-[300px] sm:max-w-[320px] bg-white rounded-xl shadow-lg border border-slate-200/50 overflow-hidden z-50">
                                 <div className="px-5 py-3 border-b border-slate-200/50 flex justify-between items-center bg-white/50">
                                     <h3 className="font-semibold text-slate-900 text-[13px] sm:text-sm">Notifications</h3>
                                     <div className="flex items-center gap-3">
