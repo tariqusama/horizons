@@ -12,17 +12,17 @@ export default function HeroSection() {
   };
 
   return (
-    <section className="relative w-full min-h-[calc(100vh-84px)] flex items-center justify-start overflow-hidden pt-[84px]">
+    <section className="relative w-full min-h-screen flex items-center justify-start overflow-hidden">
       <img
         src={heroContent.backgroundImage}
         alt="A family reviewing immigration documents together at home"
-        className="absolute inset-0 w-full h-full object-cover object-[center_28%] md:object-center"
+        className="absolute inset-0 w-full h-full object-cover object-center"
       />
 
       <div className="absolute inset-0 bg-gradient-to-r from-[#0A192F]/95 via-[#0A192F]/60 to-transparent" />
       <div className="absolute inset-0 bg-gradient-to-t from-[#0A192F]/80 via-transparent to-transparent" />
 
-      <div className="relative z-10 w-full max-w-[1400px] mx-auto px-6 md:px-12 lg:px-16 py-20">
+      <div className="relative z-10 w-full max-w-[1400px] mx-auto px-6 md:px-12 lg:px-16 pt-32 pb-20">
         <motion.div
           className="max-w-2xl"
           initial="hidden"
