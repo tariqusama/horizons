@@ -575,14 +575,23 @@
   .topbar {
     gap: 0.5rem;
     align-items: center;
+    justify-content: space-between;
   }
 
   .searchContainer {
-    display: none;
+    display: flex;
+    width: 100%;
+    min-width: 0;
+    order: 1;
+  }
+
+  .searchInput {
+    width: 100%;
   }
 
   .topbarActions {
     margin-left: 0;
+    order: 2;
   }
 
   .actionIconBtn {
