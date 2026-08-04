@@ -102,7 +102,7 @@ const CheckoutForm = ({ selectedSubPlan, selectedTier, handleClose, getSelectedA
 
             alert('Payment successful! Your application has been submitted.');
             handleClose();
-            
+
             // Reload the page to fetch the new application
             window.location.href = '/dashboard?payment=success';
         } catch (err: any) {
@@ -127,18 +127,18 @@ const CheckoutForm = ({ selectedSubPlan, selectedTier, handleClose, getSelectedA
                 </h3>
 
                 <ul className="list-disc pl-6 space-y-2 text-sm text-[#475569] mb-6">
-                    {selectedTier === 'Enhanced' ? (
+                    {selectedTier === 'Advanced' ? (
                         <>
-                            <li>Everything in Essentials</li>
+                            <li>Everything in Basic</li>
                             <li>Translation of 5 additional pages to include in your application (if needed)</li>
                             <li>Ready-to-submit application mailed to your home</li>
                             <li>Legal support if USCIS requests additional evidence</li>
                             <li>Extended support from assigned Case Manager until approval</li>
                             <li>One consultation with an immigration attorney to answer questions</li>
                         </>
-                    ) : selectedTier === 'Professional' ? (
+                    ) : selectedTier === 'Premium' ? (
                         <>
-                            <li>Everything in Enhanced</li>
+                            <li>Everything in Advanced</li>
                             <li>Priority consultation scheduling</li>
                             <li>Extended application review and attorney follow-up</li>
                             <li>Legal support if USCIS requests additional evidence</li>
@@ -223,7 +223,7 @@ const CheckoutForm = ({ selectedSubPlan, selectedTier, handleClose, getSelectedA
                 <div className="border border-[#e2e8f0] rounded-xl p-4 flex justify-between items-center mb-6 bg-white">
                     <span className="text-[#5A6579] font-medium">Total</span>
                     <span className="text-2xl font-black text-[#1B3A64]">
-                        ${selectedTier === 'Professional' ? selectedSubPlan.premiumPrice : selectedTier === 'Enhanced' ? selectedSubPlan.advancedPrice : selectedSubPlan.basePrice}
+                        ${selectedTier === 'Premium' ? selectedSubPlan.premiumPrice : selectedTier === 'Advanced' ? selectedSubPlan.advancedPrice : selectedSubPlan.basePrice}
                     </span>
                 </div>
 
@@ -483,9 +483,9 @@ export default function ApplicationSelectionModal({ isOpen, onClose }: Applicati
 
     const getSelectedAmount = () => {
         if (!selectedSubPlan) return 0;
-        return selectedTier === 'Professional'
+        return selectedTier === 'Premium'
             ? selectedSubPlan.premiumPrice
-            : selectedTier === 'Enhanced'
+            : selectedTier === 'Advanced'
                 ? selectedSubPlan.advancedPrice
                 : selectedSubPlan.basePrice;
     };
@@ -632,14 +632,14 @@ export default function ApplicationSelectionModal({ isOpen, onClose }: Applicati
                             <div className="mt-6 grid gap-5 sm:grid-cols-3">
                                 <div className="rounded-2xl bg-white border border-slate-200/70 overflow-hidden flex flex-col shadow-sm">
                                     <div className="bg-orange-50 py-4 text-center">
-                                        <p className="text-lg font-bold text-slate-900">Essentials</p>
+                                        <p className="text-lg font-bold text-slate-900">Basic</p>
                                     </div>
                                     <div className="px-6 py-8 text-center flex-1 flex flex-col">
                                         <p className="text-4xl font-bold text-slate-900">${selectedSubPlan.basePrice}</p>
                                         <p className="mt-6 text-sm text-slate-500">Do-it-yourself application preparation</p>
                                     </div>
                                     <div className="px-5 pb-5">
-                                        <button onClick={() => handleSelectTier('Essentials')} className="w-full py-3 rounded-xl bg-orange-600 hover:bg-orange-700 text-white font-semibold flex items-center justify-center gap-2 transition shadow-[0_6px_20px_rgb(249,115,22,0.35)]">
+                                        <button onClick={() => handleSelectTier('Basic')} className="w-full py-3 rounded-xl bg-orange-600 hover:bg-orange-700 text-white font-semibold flex items-center justify-center gap-2 transition shadow-[0_6px_20px_rgb(249,115,22,0.35)]">
                                             Select <span aria-hidden="true">→</span>
                                         </button>
                                     </div>
@@ -647,14 +647,14 @@ export default function ApplicationSelectionModal({ isOpen, onClose }: Applicati
 
                                 <div className="rounded-2xl bg-white border border-slate-200/70 overflow-hidden flex flex-col shadow-[0_8px_30px_rgb(249,115,22,0.18)]">
                                     <div className="bg-sky-50 py-4 text-center">
-                                        <p className="text-lg font-bold text-slate-900">Enhanced</p>
+                                        <p className="text-lg font-bold text-slate-900">Advanced</p>
                                     </div>
                                     <div className="px-6 py-8 text-center flex-1 flex flex-col">
                                         <p className="text-4xl font-bold text-slate-900">${selectedSubPlan.advancedPrice}</p>
                                         <p className="mt-6 text-sm text-slate-500">Do-it-yourself application preparation</p>
                                     </div>
                                     <div className="px-5 pb-5">
-                                        <button onClick={() => handleSelectTier('Enhanced')} className="w-full py-3 rounded-xl bg-orange-600 hover:bg-orange-700 text-white font-semibold flex items-center justify-center gap-2 transition shadow-[0_6px_20px_rgb(249,115,22,0.35)]">
+                                        <button onClick={() => handleSelectTier('Advanced')} className="w-full py-3 rounded-xl bg-orange-600 hover:bg-orange-700 text-white font-semibold flex items-center justify-center gap-2 transition shadow-[0_6px_20px_rgb(249,115,22,0.35)]">
                                             Select <span aria-hidden="true">→</span>
                                         </button>
                                     </div>
@@ -662,14 +662,14 @@ export default function ApplicationSelectionModal({ isOpen, onClose }: Applicati
 
                                 <div className="rounded-2xl bg-white border border-slate-200/70 overflow-hidden flex flex-col shadow-sm">
                                     <div className="bg-emerald-50 py-4 text-center">
-                                        <p className="text-lg font-bold text-slate-900">Professional</p>
+                                        <p className="text-lg font-bold text-slate-900">Premium</p>
                                     </div>
                                     <div className="px-6 py-8 text-center flex-1 flex flex-col">
                                         <p className="text-4xl font-bold text-slate-900">${selectedSubPlan.premiumPrice}</p>
                                         <p className="mt-6 text-sm text-slate-500">Do-it-yourself application preparation</p>
                                     </div>
                                     <div className="px-5 pb-5">
-                                        <button onClick={() => handleSelectTier('Professional')} className="w-full py-3 rounded-xl bg-orange-600 hover:bg-orange-700 text-white font-semibold flex items-center justify-center gap-2 transition shadow-[0_6px_20px_rgb(249,115,22,0.35)]">
+                                        <button onClick={() => handleSelectTier('Premium')} className="w-full py-3 rounded-xl bg-orange-600 hover:bg-orange-700 text-white font-semibold flex items-center justify-center gap-2 transition shadow-[0_6px_20px_rgb(249,115,22,0.35)]">
                                             Select <span aria-hidden="true">→</span>
                                         </button>
                                     </div>
@@ -777,7 +777,7 @@ export default function ApplicationSelectionModal({ isOpen, onClose }: Applicati
                 )}
 
                 {view === 'checkout' && selectedSubPlan && (
-                    <CheckoutForm 
+                    <CheckoutForm
                         selectedSubPlan={selectedSubPlan}
                         selectedTier={selectedTier}
                         handleClose={handleClose}

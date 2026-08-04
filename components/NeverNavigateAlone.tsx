@@ -52,11 +52,11 @@ export default function NeverNavigateAlone() {
           </div>
 
           {/* Right image */}
-          <div className="relative w-full">
+          <div className="relative w-full h-full">
             <img
               src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?ixlib=rb-4.0.3&auto=format&fit=crop&w=900&q=80"
               alt="Case management team meeting"
-              className="w-full h-[340px] md:h-[380px] object-cover rounded-2xl shadow-[0_20px_40px_-10px_rgba(0,0,0,0.4)]"
+              className="w-full h-auto object-cover rounded-2xl shadow-[0_20px_40px_-10px_rgba(0,0,0,0.4)]"
             />
             <div className="absolute bottom-5 left-5 right-5 md:right-auto md:w-[280px] bg-[#0F2444]/95 backdrop-blur-sm rounded-xl p-4 border border-white/10">
               <div className="flex items-center gap-3 mb-2">
