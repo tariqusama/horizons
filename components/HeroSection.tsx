@@ -16,7 +16,7 @@ export default function HeroSection() {
       <img
         src={heroContent.backgroundImage}
         alt="A family reviewing immigration documents together at home"
-        className="absolute inset-0 w-full h-full object-cover"
+        className="absolute inset-0 w-full h-full object-cover object-[center_28%] md:object-center"
       />
 
       <div className="absolute inset-0 bg-gradient-to-r from-[#0A192F]/95 via-[#0A192F]/60 to-transparent" />
