@@ -12,32 +12,20 @@ export default function HeroSection() {
   };
 
   return (
-    <section className="relative w-full min-h-screen flex flex-col md:flex-row md:items-center overflow-hidden bg-[#0A192F]">
-
-      {/* Mobile: image block at top, fills width naturally */}
-      <div className="relative w-full h-[55vw] min-h-[220px] max-h-[360px] md:hidden shrink-0">
-        <img
-          src={heroContent.backgroundImage}
-          alt="A family reviewing immigration documents together at home"
-          className="w-full h-full object-cover object-[center_25%]"
-        />
-        {/* bottom fade into dark section below */}
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#0A192F]" />
-      </div>
-
-      {/* Desktop: full-bleed background image */}
+    <section className="relative w-full min-h-screen flex items-center justify-start overflow-hidden">
+      {/* Background image — full bleed on all screen sizes */}
       <img
         src={heroContent.backgroundImage}
         alt="A family reviewing immigration documents together at home"
-        className="hidden md:block absolute inset-0 w-full h-full object-cover object-center"
+        className="absolute inset-0 w-full h-full object-cover object-[60%_center]"
       />
 
-      {/* Desktop overlays */}
-      <div className="hidden md:block absolute inset-0 bg-gradient-to-r from-[#0A192F]/95 via-[#0A192F]/60 to-transparent" />
-      <div className="hidden md:block absolute inset-0 bg-gradient-to-t from-[#0A192F]/80 via-transparent to-transparent" />
+      {/* Overlays — stronger on mobile for text readability */}
+      <div className="absolute inset-0 bg-gradient-to-r from-[#0A192F]/95 via-[#0A192F]/80 to-[#0A192F]/50 md:via-[#0A192F]/60 md:to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-t from-[#0A192F]/90 via-transparent to-[#0A192F]/40 md:to-transparent" />
 
       {/* Content */}
-      <div className="relative z-10 w-full max-w-[1400px] mx-auto px-6 md:px-12 lg:px-16 pb-16 pt-4 md:py-28">
+      <div className="relative z-10 w-full max-w-[1400px] mx-auto px-6 md:px-12 lg:px-16 pt-28 pb-16 md:py-28">
         <motion.div
           className="max-w-2xl"
           initial="hidden"
@@ -49,7 +37,7 @@ export default function HeroSection() {
         >
           <motion.div
             variants={itemVariants}
-            className="inline-flex items-center bg-white/10 backdrop-blur-md rounded-full px-4 py-1.5 mb-5 border border-white/20"
+            className="inline-flex items-center bg-white/10 backdrop-blur-md rounded-full px-4 py-1.5 mb-6 border border-white/20"
           >
             <span className="w-1.5 h-1.5 rounded-full bg-[#FF6B35] mr-2" />
             <span className="text-white text-[11px] font-bold tracking-[0.1em] uppercase">
