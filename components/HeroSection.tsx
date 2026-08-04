@@ -12,11 +12,11 @@ export default function HeroSection() {
   };
 
   return (
-    <section className="relative w-full min-h-screen flex items-center justify-start overflow-hidden">
+    <section className="relative w-full min-h-screen flex items-center justify-start overflow-hidden bg-[#0A192F]">
       <img
         src={heroContent.backgroundImage}
         alt="A family reviewing immigration documents together at home"
-        className="absolute inset-0 w-full h-full object-cover object-center"
+        className="absolute inset-0 w-full h-full object-contain object-center md:object-cover"
       />
 
       <div className="absolute inset-0 bg-gradient-to-r from-[#0A192F]/95 via-[#0A192F]/60 to-transparent" />
