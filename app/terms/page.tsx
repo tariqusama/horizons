@@ -80,7 +80,7 @@ export default function TermsPage() {
 
           <h2 className="text-2xl font-bold text-[#1B3A64] mt-8 mb-4">6. PRIVACY AND DATA PROTECTION</h2>
           <p>
-            Horizon Pathways LLC is committed to safeguarding the privacy and confidentiality of your personal data. We understand the importance of privacy in the digital age and have developed a Privacy Policy to explain how we collect, use, store, and protect your personal information when you use our Services. By accessing or using our Services, you consent to the collection, use, and processing of your personal data as described in the <strong>Privacy Policy</strong> (https://ivory-cat-169392.hostingersite.com/#), which is incorporated by reference into these Terms and Conditions.
+            Horizon Pathways LLC is committed to safeguarding the privacy and confidentiality of your personal data. We understand the importance of privacy in the digital age and have developed a Privacy Policy to explain how we collect, use, store, and protect your personal information when you use our Services. By accessing or using our Services, you consent to the collection, use, and processing of your personal data as described in the <strong>Privacy Policy</strong> (https://horizonpathways.us/privacy), which is incorporated by reference into these Terms and Conditions.
           </p>
 
           <p>
