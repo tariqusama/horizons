@@ -161,7 +161,7 @@ export default function SubmissionPage() {
                         </div>
                     )}
 
-                    <div style={{ display: 'flex', gap: '1rem' }}>
+                    <div className={styles.submitActions}>
                         <button
                             onClick={(e) => { e.preventDefault(); router.push('/dashboard/get-started/preview'); }}
                             className={styles.btnUpload}

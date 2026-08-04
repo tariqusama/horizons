@@ -1111,3 +1111,19 @@
         width: 100%;
     }
 }
+
+.submitActions {
+    display: flex;
+    gap: 1rem;
+}
+
+@media (max-width: 640px) {
+    .submitActions {
+        flex-direction: column-reverse;
+        gap: 1rem;
+    }
+    .submitActions button {
+        width: 100%;
+    }
+}
+
