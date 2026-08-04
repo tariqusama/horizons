@@ -47,11 +47,11 @@ export default function HeroSection() {
 
           <motion.h1
             variants={itemVariants}
-            className="text-4xl sm:text-5xl md:text-[56px] font-bold leading-[1.15] mb-5 tracking-tight text-white"
+            className="text-[28px] sm:text-4xl md:text-[56px] font-bold leading-[1.2] mb-5 tracking-tight text-white"
           >
-            {heroContent.title[0]}<br />
-            <span className="text-[#FF6B35]">{heroContent.highlight}</span> {heroContent.title[2]}<br />
-            {heroContent.title[3]}
+            {heroContent.title[0]}{' '}
+            <span className="text-[#FF6B35]">{heroContent.highlight}</span>{' '}
+            {heroContent.title[2]} {heroContent.title[3]}
           </motion.h1>
 
           <motion.p
