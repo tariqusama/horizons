@@ -60,21 +60,28 @@ export default function ServicesPage() {
         <>
           {activeTab === 'services' && (
             <div className="pb-10">
-              {categories.length > 0 ? (
-                categories.map((category, idx) => (
-                  <ServicesCategory
-                    key={category.id ?? idx}
-                    title={category.title}
-                    subtitle={category.subtitle}
-                    pillText={category.pill_text || category.pillText || category.title}
-                    cards={category.services ?? []}
-                  />
-                ))
-              ) : (
-                <div className="flex justify-center items-center py-24">
-                  <p className="text-sm text-[#64748b]">No services available right now. Please check back later.</p>
-                </div>
-              )}
+              {(() => {
+                const visibleCategories = categories.filter((category) => {
+                  const title = String(category?.title ?? '').trim().toLowerCase();
+                  return title !== 'immigration forms';
+                });
+
+                return visibleCategories.length > 0 ? (
+                  visibleCategories.map((category, idx) => (
+                    <ServicesCategory
+                      key={category.id ?? idx}
+                      title={category.title}
+                      subtitle={category.subtitle}
+                      pillText={category.pill_text || category.pillText || category.title}
+                      cards={category.services ?? []}
+                    />
+                  ))
+                ) : (
+                  <div className="flex justify-center items-center py-24">
+                    <p className="text-sm text-[#64748b]">No services available right now. Please check back later.</p>
+                  </div>
+                );
+              })()}
             </div>
           )}
 
