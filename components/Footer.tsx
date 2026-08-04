@@ -103,13 +103,15 @@ export default function Footer() {
       <div className="w-full px-6 md:px-12 lg:px-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
           <div className="flex flex-col gap-6">
-            <Image
-              src="/horizonlogo.png"
-              alt="Horizon Pathways"
-              width={180}
-              height={45}
-              className="h-8 w-auto object-contain"
-            />
+            <div className="inline-flex w-fit items-center justify-center rounded-lg bg-white px-4 py-3 shadow-sm">
+              <Image
+                src="/horizonlogo.png"
+                alt="Horizon Pathways"
+                width={180}
+                height={45}
+                className="h-8 w-auto object-contain"
+              />
+            </div>
             <p className="text-[#627C9E] text-[15px] leading-[1.7] max-w-[280px]">
               We are professional document preparers dedicated to helping you achieve your American dream through expert guidance and modern technology.
             </p>
