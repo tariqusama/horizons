@@ -83,7 +83,7 @@ export default function Header({ isDashboard = false }: { isDashboard?: boolean 
               <Link href="/about" className={navLinkClass("/about")}>About Us</Link>
               <Link href="/how-it-works" className={navLinkClass("/how-it-works")}>How It Works</Link>
               <Link href="/services" className={navLinkClass("/services")}>Services</Link>
-              <Link href="/resources" className={navLinkClass("/resources")}>Resources</Link>
+              <Link href="/testimonials" className={navLinkClass("/testimonials")}>Testimonials</Link>
               <Link href="/free-tools" className={navLinkClass("/free-tools")}>Free Tools</Link>
             </nav>
 
@@ -169,7 +169,7 @@ export default function Header({ isDashboard = false }: { isDashboard?: boolean 
             <Link href="/about" onClick={() => setIsMobileMenuOpen(false)} className={navLinkClass("/about", true)}>About Us</Link>
             <Link href="/how-it-works" onClick={() => setIsMobileMenuOpen(false)} className={navLinkClass("/how-it-works", true)}>How It Works</Link>
             <Link href="/services" onClick={() => setIsMobileMenuOpen(false)} className={navLinkClass("/services", true)}>Services</Link>
-            <Link href="/resources" onClick={() => setIsMobileMenuOpen(false)} className={navLinkClass("/resources", true)}>Resources</Link>
+            <Link href="/testimonials" onClick={() => setIsMobileMenuOpen(false)} className={navLinkClass("/testimonials", true)}>Testimonials</Link>
             <Link href="/free-tools" onClick={() => setIsMobileMenuOpen(false)} className={navLinkClass("/free-tools", true)}>Free Tools</Link>
             <div className="flex flex-col gap-2 pt-2 border-t border-gray-100">
               <Link href="/login" onClick={() => setIsMobileMenuOpen(false)} className="font-bold text-[#1B3A64] text-lg">Login</Link>
