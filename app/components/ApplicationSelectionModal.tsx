@@ -247,7 +247,7 @@ const CheckoutForm = ({ selectedSubPlan, selectedTier, handleClose, getSelectedA
                 <button
                     onClick={completePurchase}
                     disabled={!isTermsChecked || isSubmitting || !isCardReady}
-                    className={`w-full py-3 rounded-xl text-sm font-semibold text-white transition-colors ${isTermsChecked && isCardReady ? 'bg-gradient-to-r from-orange-500 to-amber-500 shadow-[0_8px_24px_rgba(244,114,22,0.35)] hover:shadow-[0_10px_28px_rgba(244,114,22,0.45)]' : 'bg-slate-400 cursor-not-allowed opacity-50 shadow-none'}`}
+                    className={`w-full py-3 rounded-xl text-sm font-semibold text-white transition-colors ${isTermsChecked && isCardReady ? 'bg-gradient-to-r from-[#f43f5e] to-[#e11d48] shadow-[0_8px_24px_rgba(225,29,72,0.35)] hover:shadow-[0_10px_28px_rgba(225,29,72,0.45)]' : 'bg-slate-400 cursor-not-allowed opacity-50 shadow-none'}`}
                 >
                     {isSubmitting ? 'Processing payment...' : isCardReady ? 'Complete Purchase →' : 'Loading card field...'}
                 </button>
@@ -526,7 +526,7 @@ export default function ApplicationSelectionModal({ isOpen, onClose }: Applicati
                     <div className="w-full max-w-7xl max-h-[94vh] flex flex-col bg-[#F5F5F5] rounded-3xl overflow-hidden shadow-2xl animate-in fade-in zoom-in-95 duration-200 relative my-8">
                         <div className="flex items-start justify-between px-6 sm:px-10 pt-8 pb-4 shrink-0">
                             <div className="flex-1 text-center">
-                                <span className="inline-block px-4 py-1 rounded-full bg-rose-50 border border-rose-100 text-xs font-semibold text-rose-600">
+                                <span className="inline-block px-4 py-1 rounded-full bg-[#fff1f2] border border-[#f9c8d3] text-xs font-semibold text-[#e11d48]">
                                     {selectedGoal.headerPill}
                                 </span>
                                 <h2 className="tracking-tight mt-3 text-3xl sm:text-4xl font-bold text-slate-900">
@@ -535,7 +535,7 @@ export default function ApplicationSelectionModal({ isOpen, onClose }: Applicati
                                 <p className="mt-2 text-sm text-slate-500">
                                     {selectedGoal.headerSubtitle}
                                 </p>
-                                <div className="mt-3 mx-auto w-16 h-0.5 bg-rose-500 rounded-full"></div>
+                                <div className="mt-3 mx-auto w-16 h-0.5 bg-[#e11d48] rounded-full"></div>
                             </div>
                             <button onClick={handleClose} className="w-10 h-10 rounded-full bg-slate-900 hover:bg-slate-800 text-white flex items-center justify-center transition shrink-0" aria-label="Close">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
@@ -547,8 +547,8 @@ export default function ApplicationSelectionModal({ isOpen, onClose }: Applicati
                                 {selectedGoal.subPlans.map((plan: any) => (
                                     <div key={plan.id} className="relative rounded-2xl bg-white border p-5 flex flex-col border-slate-200/70 shadow-sm">
                                         <div className="flex items-start gap-3">
-                                            <span className="w-9 h-9 rounded-lg bg-rose-50 flex items-center justify-center shrink-0">
-                                                {getIcon(plan.iconType, "w-4.5 h-4.5 text-rose-500")}
+                                            <span className="w-9 h-9 rounded-lg bg-[#fff1f2] flex items-center justify-center shrink-0">
+                                                {getIcon(plan.iconType, "w-4.5 h-4.5 text-[#e11d48]")}
                                             </span>
                                             <h3 className="text-sm font-bold text-slate-900 leading-snug">{plan.title}</h3>
                                         </div>
@@ -575,7 +575,7 @@ export default function ApplicationSelectionModal({ isOpen, onClose }: Applicati
                                         </div>
 
                                         <div className="mt-3 rounded-xl border border-slate-200 px-4 py-3 flex items-center gap-2">
-                                            <Clock className="w-4 h-4 text-rose-500" />
+                                            <Clock className="w-4 h-4 text-[#e11d48]" />
                                             <div>
                                                 <p className="text-[10px] text-slate-500 uppercase tracking-wide">Processing Time</p>
                                                 <p className="text-xs font-semibold text-slate-900">{plan.processingTime}</p>
@@ -583,13 +583,13 @@ export default function ApplicationSelectionModal({ isOpen, onClose }: Applicati
                                         </div>
 
                                         <div className="mt-4">
-                                            <p className="text-[10px] font-bold text-rose-500 uppercase tracking-wide flex items-center gap-1">
+                                            <p className="text-[10px] font-bold text-[#e11d48] uppercase tracking-wide flex items-center gap-1">
                                                 <CheckCircle2 className="w-3 h-3" /> Requirements
                                             </p>
                                             <ul className="mt-2 space-y-1.5">
                                                 {plan.requirements.map((req: string, i: number) => (
                                                     <li key={i} className="flex items-start gap-2 text-xs text-slate-600">
-                                                        <CheckCircle2 className="w-3 h-3 text-rose-400 mt-0.5 shrink-0" />
+                                                        <CheckCircle2 className="w-3 h-3 text-[#f43f5e] mt-0.5 shrink-0" />
                                                         <span>{req}</span>
                                                     </li>
                                                 ))}
@@ -597,7 +597,7 @@ export default function ApplicationSelectionModal({ isOpen, onClose }: Applicati
                                         </div>
 
                                         <div className="mt-auto pt-5">
-                                            <button onClick={() => handleSelectSubPlan(plan)} className="w-full py-2.5 rounded-xl bg-rose-500 hover:bg-rose-600 text-white text-sm font-semibold flex items-center justify-center gap-2 transition shadow-[0_6px_20px_rgb(244,63,94,0.3)]">
+                                            <button onClick={() => handleSelectSubPlan(plan)} className="w-full py-2.5 rounded-xl bg-[#e11d48] hover:bg-[#be123c] text-white text-sm font-semibold flex items-center justify-center gap-2 transition shadow-[0_6px_20px_rgba(225,29,72,0.3)]">
                                                 Get Started <ArrowRight className="w-4 h-4" />
                                             </button>
                                             <button className="mt-2 w-full text-xs text-slate-600 hover:text-slate-900 font-medium">Learn More</button>
@@ -631,7 +631,7 @@ export default function ApplicationSelectionModal({ isOpen, onClose }: Applicati
 
                             <div className="mt-6 grid gap-5 sm:grid-cols-3">
                                 <div className="rounded-2xl bg-white border border-slate-200/70 overflow-hidden flex flex-col shadow-sm">
-                                    <div className="bg-orange-50 py-4 text-center">
+                                    <div className="bg-[#fff1f2] py-4 text-center">
                                         <p className="text-lg font-bold text-slate-900">Basic</p>
                                     </div>
                                     <div className="px-6 py-8 text-center flex-1 flex flex-col">
@@ -639,14 +639,14 @@ export default function ApplicationSelectionModal({ isOpen, onClose }: Applicati
                                         <p className="mt-6 text-sm text-slate-500">Do-it-yourself application preparation</p>
                                     </div>
                                     <div className="px-5 pb-5">
-                                        <button onClick={() => handleSelectTier('Basic')} className="w-full py-3 rounded-xl bg-orange-600 hover:bg-orange-700 text-white font-semibold flex items-center justify-center gap-2 transition shadow-[0_6px_20px_rgb(249,115,22,0.35)]">
+                                        <button onClick={() => handleSelectTier('Basic')} className="w-full py-3 rounded-xl bg-[#e11d48] hover:bg-[#be123c] text-white font-semibold flex items-center justify-center gap-2 transition shadow-[0_6px_20px_rgba(225,29,72,0.35)]">
                                             Select <span aria-hidden="true">→</span>
                                         </button>
                                     </div>
                                 </div>
 
-                                <div className="rounded-2xl bg-white border border-slate-200/70 overflow-hidden flex flex-col shadow-[0_8px_30px_rgb(249,115,22,0.18)]">
-                                    <div className="bg-sky-50 py-4 text-center">
+                                <div className="rounded-2xl bg-white border border-slate-200/70 overflow-hidden flex flex-col shadow-[0_8px_30px_rgba(225,29,72,0.18)]">
+                                    <div className="bg-[#fff1f2] py-4 text-center">
                                         <p className="text-lg font-bold text-slate-900">Advanced</p>
                                     </div>
                                     <div className="px-6 py-8 text-center flex-1 flex flex-col">
@@ -654,14 +654,14 @@ export default function ApplicationSelectionModal({ isOpen, onClose }: Applicati
                                         <p className="mt-6 text-sm text-slate-500">Do-it-yourself application preparation</p>
                                     </div>
                                     <div className="px-5 pb-5">
-                                        <button onClick={() => handleSelectTier('Advanced')} className="w-full py-3 rounded-xl bg-orange-600 hover:bg-orange-700 text-white font-semibold flex items-center justify-center gap-2 transition shadow-[0_6px_20px_rgb(249,115,22,0.35)]">
+                                        <button onClick={() => handleSelectTier('Advanced')} className="w-full py-3 rounded-xl bg-[#e11d48] hover:bg-[#be123c] text-white font-semibold flex items-center justify-center gap-2 transition shadow-[0_6px_20px_rgba(225,29,72,0.35)]">
                                             Select <span aria-hidden="true">→</span>
                                         </button>
                                     </div>
                                 </div>
 
                                 <div className="rounded-2xl bg-white border border-slate-200/70 overflow-hidden flex flex-col shadow-sm">
-                                    <div className="bg-emerald-50 py-4 text-center">
+                                    <div className="bg-[#fff1f2] py-4 text-center">
                                         <p className="text-lg font-bold text-slate-900">Premium</p>
                                     </div>
                                     <div className="px-6 py-8 text-center flex-1 flex flex-col">
@@ -669,7 +669,7 @@ export default function ApplicationSelectionModal({ isOpen, onClose }: Applicati
                                         <p className="mt-6 text-sm text-slate-500">Do-it-yourself application preparation</p>
                                     </div>
                                     <div className="px-5 pb-5">
-                                        <button onClick={() => handleSelectTier('Premium')} className="w-full py-3 rounded-xl bg-orange-600 hover:bg-orange-700 text-white font-semibold flex items-center justify-center gap-2 transition shadow-[0_6px_20px_rgb(249,115,22,0.35)]">
+                                        <button onClick={() => handleSelectTier('Premium')} className="w-full py-3 rounded-xl bg-[#e11d48] hover:bg-[#be123c] text-white font-semibold flex items-center justify-center gap-2 transition shadow-[0_6px_20px_rgba(225,29,72,0.35)]">
                                             Select <span aria-hidden="true">→</span>
                                         </button>
                                     </div>
@@ -707,9 +707,9 @@ export default function ApplicationSelectionModal({ isOpen, onClose }: Applicati
                             <h3 className="font-bold text-[#0B2545] pt-2">INCLUDED SERVICES</h3>
                             <p>Depending on the product you purchased, the Services to be provided will consist of the following:</p>
                             <ul className="list-disc pl-6 space-y-1.5">
-                                <li>If you purchased the <strong>Professional</strong> package, you have the option of scheduling up to three consultations with the Attorney and the Attorney will review your immigration application documents before you receive them from Horizon Pathways.</li>
-                                <li>If you purchased the <strong>Enhanced</strong> package, you have the option of scheduling one consultation with the Attorney and the Attorney will review your immigration documents before you receive them from Horizon Pathways.</li>
-                                <li>If you purchased the <strong>Essentials</strong> package, the Attorney will only review your immigration application documents before you receive them from Horizon Pathways.</li>
+                                <li>If you purchased the <strong>Premium</strong> package, you have the option of scheduling up to three consultations with the Attorney and the Attorney will review your immigration application documents before you receive them from Horizon Pathways.</li>
+                                <li>If you purchased the <strong>Advanced</strong> package, you have the option of scheduling one consultation with the Attorney and the Attorney will review your immigration documents before you receive them from Horizon Pathways.</li>
+                                <li>If you purchased the <strong>Basic</strong> package, the Attorney will only review your immigration application documents before you receive them from Horizon Pathways.</li>
                             </ul>
                             <p>Consultation Services include the following and no more:</p>
                             <ul className="list-disc pl-6 space-y-1.5">
@@ -753,7 +753,7 @@ export default function ApplicationSelectionModal({ isOpen, onClose }: Applicati
                             <label className="flex items-start gap-3 cursor-pointer group">
                                 <input
                                     type="checkbox"
-                                    className="mt-0.5 w-5 h-5 rounded border-slate-300 text-rose-500 focus:ring-rose-400 cursor-pointer accent-rose-500"
+                                    className="mt-0.5 w-5 h-5 rounded border-slate-300 text-[#e11d48] focus:ring-[#f43f5e] cursor-pointer accent-[#e11d48]"
                                     checked={isAgreementChecked}
                                     onChange={(e) => setIsAgreementChecked(e.target.checked)}
                                 />
@@ -767,7 +767,7 @@ export default function ApplicationSelectionModal({ isOpen, onClose }: Applicati
                                 <button
                                     onClick={handleAgreeAndContinue}
                                     disabled={!isAgreementChecked}
-                                    className={`px-6 py-2.5 rounded-xl text-sm font-semibold text-white shadow-[0_8px_24px_rgba(244,114,22,0.35)] hover:shadow-[0_10px_28px_rgba(244,114,22,0.45)] transition ${isAgreementChecked ? 'bg-gradient-to-r from-orange-500 to-amber-500' : 'bg-slate-400 cursor-not-allowed opacity-50 shadow-none'}`}
+                                    className={`px-6 py-2.5 rounded-xl text-sm font-semibold text-white shadow-[0_8px_24px_rgba(225,29,72,0.35)] hover:shadow-[0_10px_28px_rgba(225,29,72,0.45)] transition ${isAgreementChecked ? 'bg-gradient-to-r from-[#f43f5e] to-[#e11d48]' : 'bg-slate-400 cursor-not-allowed opacity-50 shadow-none'}`}
                                 >
                                     I Agree & Continue
                                 </button>
