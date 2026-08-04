@@ -11,16 +11,27 @@ export default function ApplicationPreviewPage() {
     const router = useRouter();
     const [previewData, setPreviewData] = useState<any>({});
     const [applicationTitle, setApplicationTitle] = useState('');
+    const [loading, setLoading] = useState(true);
+    const [noData, setNoData] = useState(false);
 
     useEffect(() => {
         api.get('/applications')
             .then(res => {
-                if (res.data && res.data[0] && res.data[0].form_data) {
-                    setPreviewData(res.data[0].form_data);
-                    setApplicationTitle(res.data[0].title || '');
+                if (res.data && res.data.length > 0) {
+                    const app = res.data[0];
+                    setApplicationTitle(app.title || '');
+                    // Try nested form_data first
+                    if (app.form_data && typeof app.form_data === 'object' && Object.keys(app.form_data).length > 0) {
+                        setPreviewData(app.form_data);
+                    } else {
+                        setNoData(true);
+                    }
+                } else {
+                    setNoData(true);
                 }
             })
-            .catch(() => { });
+            .catch(() => { setNoData(true); })
+            .finally(() => setLoading(false));
     }, []);
 
     const renderFieldValue = (val: any) => {
@@ -71,8 +82,33 @@ export default function ApplicationPreviewPage() {
                     </button>
                 </div>
 
+                {/* Loading State */}
+                {loading && (
+                    <div className="py-16 flex flex-col items-center justify-center gap-4 text-center">
+                        <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
+                        <p className="text-slate-500 text-sm font-medium">Loading your application data...</p>
+                    </div>
+                )}
+
+                {/* Empty State */}
+                {!loading && noData && (
+                    <div className="py-16 flex flex-col items-center justify-center gap-4 text-center">
+                        <div className="text-5xl">📋</div>
+                        <h2 className="text-lg font-bold text-slate-800">No Data Saved Yet</h2>
+                        <p className="text-slate-500 text-sm max-w-sm">
+                            You haven't completed any form steps yet. Fill out your application form and your answers will appear here.
+                        </p>
+                        <button
+                            onClick={() => router.push('/dashboard/get-started')}
+                            className="mt-2 bg-gradient-to-r from-blue-500 to-blue-700 text-white font-semibold px-6 py-2.5 rounded-full text-sm shadow"
+                        >
+                            Go to Application Form
+                        </button>
+                    </div>
+                )}
+
                 {/* Body Content */}
-                <div className="py-6 space-y-8">
+                {!loading && !noData && <div className="py-6 space-y-8">
 
                     {/* I90 DATA */}
                     {previewData.i90 && (
@@ -211,7 +247,7 @@ export default function ApplicationPreviewPage() {
                     )}
 
                     {/* DYNAMIC/FLAT FORM DATA */}
-                    {previewData && Object.keys(previewData).filter(key => typeof previewData[key] !== 'object' && previewData[key] !== null).length > 0 && (
+                    {previewData && Object.keys(previewData).filter(key => key !== '_current_step' && typeof previewData[key] !== 'object' && previewData[key] !== null && previewData[key] !== '').length > 0 && (
                         <div>
                             <div className="flex items-center justify-between mb-3">
                                 <h2 className="text-xs font-bold uppercase tracking-wider text-emerald-600">
@@ -225,16 +261,16 @@ export default function ApplicationPreviewPage() {
                                 </button>
                             </div>
                             <div className="bg-slate-50/80 border border-emerald-100/60 rounded-[16px] p-5 sm:p-6 grid grid-cols-1 sm:grid-cols-2 gap-y-5 gap-x-8 shadow-sm">
-                                {Object.keys(previewData).filter(key => typeof previewData[key] !== 'object' && previewData[key] !== null).map(key => (
+                                {Object.keys(previewData).filter(key => key !== '_current_step' && typeof previewData[key] !== 'object' && previewData[key] !== null && previewData[key] !== '').map(key => (
                                     <div key={key}>
-                                        <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400">{key.replace(/([A-Z])/g, ' $1').trim()}</div>
+                                        <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400">{key.replace(/([A-Z])/g, ' $1').replace(/_/g, ' ').trim()}</div>
                                         <div className="text-[14px] font-bold text-slate-900 mt-0.5">{renderFieldValue(previewData[key])}</div>
                                     </div>
                                 ))}
                             </div>
                         </div>
                     )}
-                </div>
+                </div>}
 
                 {/* Footer */}
                 <div className="pt-6 border-t border-slate-200 flex flex-wrap justify-between items-center gap-4">

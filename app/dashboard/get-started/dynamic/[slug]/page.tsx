@@ -228,11 +228,13 @@ export default function DynamicFormEnginePage() {
     const [formSchema, setFormSchema] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+    const [applicationId, setApplicationId] = useState<number | null>(null);
 
     const [formData, setFormData] = useState<any>({});
     const [currentStepIndex, setCurrentStepIndex] = useState(0);
     const [unitsState, setUnitsState] = useState<{ [key: string]: string }>({});
     const [isSaving, setIsSaving] = useState(false);
+    const [saveError, setSaveError] = useState('');
 
     // Pre-fill user session data
     useEffect(() => {
@@ -251,6 +253,7 @@ export default function DynamicFormEnginePage() {
     useEffect(() => {
         const fetchForm = async () => {
             try {
+                // Load form schema
                 const res = await api.get(`/guide-engine/forms/${slug}`);
                 setFormSchema(res.data);
                 
@@ -267,6 +270,26 @@ export default function DynamicFormEnginePage() {
                     });
                 }
                 setUnitsState(initialUnits);
+
+                // Load existing application progress
+                try {
+                    const appRes = await api.get('/applications');
+                    if (appRes.data && appRes.data.length > 0) {
+                        const app = appRes.data[0];
+                        setApplicationId(app.id);
+                        // Restore saved form data if exists
+                        if (app.form_data && typeof app.form_data === 'object' && Object.keys(app.form_data).length > 0) {
+                            const { _current_step, ...savedFormData } = app.form_data;
+                            setFormData((prev: any) => ({ ...savedFormData, ...prev }));
+                            // Restore saved step index
+                            if (typeof _current_step === 'number' && _current_step > 0) {
+                                setCurrentStepIndex(_current_step);
+                            }
+                        }
+                    }
+                } catch {
+                    // Application may not exist yet, that's fine
+                }
 
             } catch (err) {
                 console.error(err);
@@ -304,34 +327,43 @@ export default function DynamicFormEnginePage() {
 
     const handleNext = async () => {
         if (steps.length === 0) return;
+        setSaveError('');
 
-        // Validation for required fields in the current step
+        // Validate required fields in the current step
         const missingFields = currentStep.questions.filter((q: any) => {
             if (q.is_required) {
                 const val = formData[q.field_name];
-                if (val === undefined || val === null || val === '') {
-                    return true;
-                }
+                if (val === undefined || val === null || val === '') return true;
             }
             return false;
         });
 
         if (missingFields.length > 0) {
-            alert('Please fill out all required fields before proceeding.');
+            setSaveError(`Please fill out all required fields: ${missingFields.map((q: any) => q.question_text).join(', ')}`);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
             return;
         }
 
         setIsSaving(true);
         try {
-            await new Promise(resolve => setTimeout(resolve, 200));
-            
+            const nextStepIndex = currentStepIndex < steps.length - 1 ? currentStepIndex + 1 : currentStepIndex;
+
+            // Save progress to backend
+            if (applicationId) {
+                await api.put(`/applications/${applicationId}/save-progress`, {
+                    form_data: formData,
+                    current_step: nextStepIndex,
+                });
+            }
+
             if (currentStepIndex < steps.length - 1) {
-                setCurrentStepIndex(currentStepIndex + 1);
+                setCurrentStepIndex(nextStepIndex);
             } else {
                 router.push('/dashboard/get-started/document-upload');
             }
         } catch (err) {
             console.error('Error saving step', err);
+            setSaveError('Failed to save your progress. Please try again.');
         } finally {
             setIsSaving(false);
             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -459,6 +491,23 @@ export default function DynamicFormEnginePage() {
                         <p className={styles.sectionSubtitle}>{currentStep?.subSectionTitle}</p>
                         <hr className={styles.sectionDivider} />
                     </div>
+
+                    {/* Validation / Save Error Banner */}
+                    {saveError && (
+                        <div style={{
+                            background: '#fef2f2',
+                            border: '1.5px solid #fca5a5',
+                            borderRadius: '10px',
+                            padding: '0.85rem 1.25rem',
+                            marginBottom: '1.5rem',
+                            display: 'flex',
+                            alignItems: 'flex-start',
+                            gap: '0.65rem',
+                        }}>
+                            <span style={{ fontSize: '1.1rem', flexShrink: 0 }}>⚠️</span>
+                            <p style={{ margin: 0, color: '#b91c1c', fontSize: '0.9rem', fontWeight: 500, lineHeight: 1.5 }}>{saveError}</p>
+                        </div>
+                    )}
 
                     {/* Questions in 2-Column Grid Layout */}
                     <div className={styles.questionsGrid}>
