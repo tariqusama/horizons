@@ -112,7 +112,7 @@ export default function Header({ isDashboard = false }: { isDashboard?: boolean 
 
             {/* Notifications Dropdown */}
             {showNotifications && (
-              <div className="absolute top-14 left-1/2 -translate-x-1/2 w-[min(22rem,calc(100vw-2rem))] bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden z-50 md:left-auto md:right-0 md:translate-x-0 md:w-[360px]">
+              <div className="absolute top-full right-0 mt-2 w-[min(22rem,calc(100vw-2rem))] max-w-[95vw] bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden z-50 md:right-0 md:top-14 md:translate-x-0 md:w-[360px]">
                 <div className="px-5 py-3 border-b border-gray-100 flex justify-between items-center bg-[#F8F9FA]">
                   <h3 className="font-bold text-[#1B3A64] text-sm">Notifications</h3>
                   <div className="flex items-center gap-3">
