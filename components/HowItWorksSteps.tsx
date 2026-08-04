@@ -54,48 +54,50 @@ export default function HowItWorksSteps() {
   ];
 
   return (
-    <section className="w-full py-16 px-6 md:px-12 lg:px-16 max-w-[1400px] mx-auto bg-white text-center">
-      <h2 className="text-3xl md:text-[36px] font-bold text-[#0A192F] mb-3 tracking-tight">
-        Your Step-by-Step Journey
-      </h2>
-      <p className="text-orange-500 font-semibold text-[14px] mb-12 max-w-xl mx-auto leading-relaxed">
-        Every application follows our proven 6-step process, ensuring
-        accuracy, compliance, and peace of mind.
-      </p>
+    <section className="w-full bg-white">
+      <div className="py-16 px-6 md:px-12 lg:px-16 max-w-[1400px] mx-auto text-center">
+        <h2 className="text-3xl md:text-[36px] font-bold text-[#0A192F] mb-3 tracking-tight">
+          Your Step-by-Step Journey
+        </h2>
+        <p className="text-orange-500 font-semibold text-[14px] mb-12 max-w-xl mx-auto leading-relaxed">
+          Every application follows our proven 6-step process, ensuring
+          accuracy, compliance, and peace of mind.
+        </p>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5 text-left">
-        {steps.map((step, idx) => (
-          <div
-            key={idx}
-            className="bg-white rounded-xl p-6 border border-[#EDEFF3] border-l-4 border-l-orange-500 shadow-[0_2px_8px_rgba(27,58,100,0.04)] relative min-h-[260px]"
-          >
-            <div className="w-8 h-8 rounded-full bg-orange-500 text-white font-bold text-[13px] flex items-center justify-center mb-4">
-              {step.number}
-            </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5 text-left">
+          {steps.map((step, idx) => (
+            <div
+              key={idx}
+              className="bg-white rounded-xl p-6 border border-[#EDEFF3] border-l-4 border-l-orange-500 shadow-[0_2px_8px_rgba(27,58,100,0.04)] relative min-h-[260px]"
+            >
+              <div className="w-8 h-8 rounded-full bg-orange-500 text-white font-bold text-[13px] flex items-center justify-center mb-4">
+                {step.number}
+              </div>
 
-            <h3 className="text-[#0A192F] font-bold text-[16px] mb-1">
-              {step.title}
-            </h3>
-            <div className="flex items-center gap-1.5 text-[#8A93A3] text-[12px] font-medium mb-3">
-              <Clock size={12} />
-              {step.time}
-            </div>
-            <p className="text-[#5A6579] text-[13px] leading-relaxed mb-4">
-              {step.description}
-            </p>
+              <h3 className="text-[#0A192F] font-bold text-[16px] mb-1">
+                {step.title}
+              </h3>
+              <div className="flex items-center gap-1.5 text-[#8A93A3] text-[12px] font-medium mb-3">
+                <Clock size={12} />
+                {step.time}
+              </div>
+              <p className="text-[#5A6579] text-[13px] leading-relaxed mb-4">
+                {step.description}
+              </p>
 
-            <div className="space-y-2">
-              {step.features.map((feature, fIdx) => (
-                <div key={fIdx} className="flex items-center gap-2">
-                  <Check size={14} className="text-green-600 shrink-0" />
-                  <span className="text-[#5A6579] text-[12px] font-medium">
-                    {feature}
-                  </span>
-                </div>
-              ))}
+              <div className="space-y-2">
+                {step.features.map((feature, fIdx) => (
+                  <div key={fIdx} className="flex items-center gap-2">
+                    <Check size={14} className="text-green-600 shrink-0" />
+                    <span className="text-[#5A6579] text-[12px] font-medium">
+                      {feature}
+                    </span>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </section>
   );
