@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import api, { initCsrf } from '@/lib/api';
@@ -71,6 +72,7 @@ const contactIcons = {
 };
 
 export default function Footer() {
+  const pathname = usePathname?.() || '';
   const [newsletterEmail, setNewsletterEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [newsletterMessage, setNewsletterMessage] = useState('');
@@ -208,7 +210,9 @@ export default function Footer() {
           <p>© {new Date().getFullYear()} Horizon Pathways. Professional Immigration Experts. All rights reserved.</p>
           <div className="flex items-center gap-6">
             <Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
-            <Link href="/terms" className="hover:text-white transition-colors">Terms of Service</Link>
+            {pathname && pathname.startsWith('/signup') ? (
+              <Link href="/terms" className="hover:text-white transition-colors">Terms of Service</Link>
+            ) : null}
           </div>
         </div>
       </div>
