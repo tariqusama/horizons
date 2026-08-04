@@ -68,7 +68,7 @@ export default function WhyChooseProcess() {
             <img
               src="/immigration_infographic.jpeg"
               alt="Immigration infographic"
-              className="w-full h-[300px] md:h-[340px] object-cover rounded-2xl shadow-[0_20px_40px_-10px_rgba(27,58,100,0.15)]"
+              className="w-full h-auto object-contain rounded-2xl shadow-[0_20px_40px_-10px_rgba(27,58,100,0.15)]"
             />
           </div>
         </div>
