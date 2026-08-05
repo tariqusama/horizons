@@ -129,7 +129,7 @@ export default function TermsPage() {
             All rights not expressly granted herein are reserved by Horizon Pathways LLC. Any unauthorized use of our intellectual property may result in legal action, including but not limited to claims for copyright infringement, trademark violations, and damages.
           </p>
 
-          <h2 className="text-2xl font-bold text-[#1B3A64] mt-8 mb-4">8. LIMITATION OF LIABILITY</h2>
+          <h2 className="text-2xl font-bold text-[#1B3A64] mt-8 mb-4">8. LIMITATION</h2>
           <p>
             To the fullest extent permitted by applicable law, Horizon Pathways LLC, its affiliates, officers, directors, employees, agents, representatives, and licensors shall not be liable for any indirect, incidental, special, consequential, punitive, or exemplary damages, including but not limited to loss of profit, business interruption, loss of data, or other damages resulting from your use of, or inability to use, our Services. This limitation applies regardless of whether such damages were foreseeable or whether Horizon Pathways LLC was advised of the possibility of such damages.
           </p>
@@ -202,7 +202,7 @@ export default function TermsPage() {
             Termination of this Agreement shall not affect any rights or obligations that, by their nature, should survive such termination, including but not limited to payment obligations, intellectual property rights, confidentiality obligations, and indemnification responsibilities.
           </p>
 
-          <h2 className="text-2xl font-bold text-[#1B3A64] mt-8 mb-4">4. PAYMENT AND REFUND POLICY</h2>
+          <h2 className="text-2xl font-bold text-[#1B3A64] mt-8 mb-4">4. FEES AND REFUND</h2>
           <p>
             By utilizing our Services, you agree to pay all applicable fees associated with the provision of those Services as outlined in the applicable service descriptions or agreements. The following terms apply to the payment and refund process:
           </p>
@@ -222,6 +222,9 @@ export default function TermsPage() {
                 </li>
                 <li>
                   <strong>Refund Limitations:</strong> No refunds will be issued if the Services have been fully delivered in accordance with the agreed terms. Users acknowledge that by utilizing our Services, they have agreed to the scope, nature, and pricing of such Services. No refunds will be provided for any costs incurred in connection with third-party services, including but not limited to, payment processing fees, or other transactional costs.
+                </li>
+                <li>
+                  <strong>Fees and Refund:</strong> Your use of our Services is subject to the fees outlined in your service agreement. All fees are non-refundable once work has begun, unless otherwise required by law or expressly agreed by Horizon Pathways LLC. Refund eligibility is determined on a case-by-case basis and may be denied if the service has been substantially performed.
                 </li>
               </ul>
             </li>
