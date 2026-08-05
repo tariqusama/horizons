@@ -5,7 +5,7 @@ export default function TermsPage() {
     <main className="w-full bg-[#FDFBF9] min-h-screen pt-32 pb-24 px-4">
       <div className="max-w-[900px] mx-auto bg-white rounded-3xl p-8 md:p-12 border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.06)]">
         <h1 className="text-4xl md:text-5xl font-black text-[#1B3A64] mb-4">TERMS AND CONDITIONS</h1>
-        <p className="text-gray-500 font-medium mb-12 border-b border-gray-100 pb-8">Last Updated: AUGUST, 2025</p>
+        <p className="text-gray-500 font-medium mb-12 border-b border-gray-100 pb-8">Last updated July 2026</p>
 
         <div className="prose prose-lg text-[#5A6579] font-medium leading-relaxed max-w-none">
           <h2 className="text-2xl font-bold text-[#1B3A64] mt-8 mb-4">1. INTRODUCTION</h2>
