@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 
 export default function HelpCTASection() {
   return (
-    <section className="w-full px-6 md:px-12 lg:px-16 py-16 max-w-[1400px] mx-auto bg-white">
+    <section className="w-full px-6 md:px-12 lg:px-16 py-10 max-w-[1400px] mx-auto bg-white">
       <motion.div
         initial={{ opacity: 0, y: 18 }}
         whileInView={{ opacity: 1, y: 0 }}

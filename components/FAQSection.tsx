@@ -46,7 +46,7 @@ export default function FAQSection() {
   const [openIndex, setOpenIndex] = React.useState<number | null>(0);
 
   return (
-    <section className="w-full px-6 md:px-12 lg:px-16 py-20 bg-[#F7F8FA] flex flex-col items-center">
+    <section className="w-full px-6 md:px-12 lg:px-16 py-10 bg-[#F7F8FA] flex flex-col items-center">
       <motion.div
         initial={{ opacity: 0, y: 18 }}
         whileInView={{ opacity: 1, y: 0 }}

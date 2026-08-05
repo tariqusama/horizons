@@ -12,20 +12,47 @@ export default function HeroSection() {
   };
 
   return (
-    <section className="relative w-full min-h-screen flex items-center justify-start overflow-hidden">
-      {/* Background image — full bleed on all screen sizes */}
-      <img
-        src={heroContent.backgroundImage}
-        alt="A family reviewing immigration documents together at home"
-        className="absolute inset-0 w-full h-full object-cover object-[60%_center]"
+    <section className="relative w-full h-screen flex items-center justify-start overflow-hidden">
+      {/* Background image */}
+      <div
+        className="absolute inset-0 w-full h-full"
+        style={{
+          backgroundImage: `url(${heroContent.backgroundImage})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center center',
+        }}
+        className="md:bg-[60%_center]"
       />
 
-      {/* Overlays — stronger on mobile for text readability */}
-      <div className="absolute inset-0 bg-gradient-to-r from-[#0A192F]/95 via-[#0A192F]/80 to-[#0A192F]/50 md:via-[#0A192F]/60 md:to-transparent" />
-      <div className="absolute inset-0 bg-gradient-to-t from-[#0A192F]/90 via-transparent to-[#0A192F]/40 md:to-transparent" />
+      {/* Mobile optimized background positioning */}
+      <style>{`
+        @media (max-width: 767px) {
+          .hero-bg {
+            background-position: center center !important;
+          }
+        }
+        @media (min-width: 768px) {
+          .hero-bg {
+            background-position: 60% center !important;
+          }
+        }
+      `}</style>
+
+      <div
+        className="hero-bg absolute inset-0 w-full h-full"
+        style={{
+          backgroundImage: `url(${heroContent.backgroundImage})`,
+          backgroundSize: 'cover',
+          backgroundAttachment: 'fixed',
+        }}
+      />
+
+      {/* Overlays */}
+      <div className="absolute inset-0 bg-gradient-to-r from-[#0A192F]/95 via-[#0A192F]/80 to-[#0A192F]/40 md:via-[#0A192F]/60 md:to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-t from-[#0A192F]/95 via-transparent to-[#0A192F]/40 md:to-transparent" />
 
       {/* Content */}
-      <div className="relative z-10 w-full max-w-[1400px] mx-auto px-6 md:px-12 lg:px-16 pt-28 pb-16 md:py-28">
+      <div className="relative z-10 w-full max-w-[1400px] mx-auto px-6 md:px-12 lg:px-16 py-20 md:py-32">
         <motion.div
           className="max-w-2xl"
           initial="hidden"

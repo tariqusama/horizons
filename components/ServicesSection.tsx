@@ -9,7 +9,7 @@ import { services } from '@/data/homePage';
 export default function ServicesSection() {
   const [category, setCategory] = useState('adjustment');
   return (
-    <section className="w-full py-20 px-6 md:px-12 lg:px-16 max-w-[1400px] mx-auto bg-white text-center">
+    <section className="w-full py-10 px-6 md:px-12 lg:px-16 max-w-[1400px] mx-auto bg-white text-center">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}

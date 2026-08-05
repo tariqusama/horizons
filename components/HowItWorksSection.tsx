@@ -6,7 +6,7 @@ import { howItWorksSteps } from '@/data/homePage';
 
 export default function HowItWorksSection() {
   return (
-    <section className="w-full py-20 px-6 md:px-12 lg:px-16 max-w-[1400px] mx-auto bg-white">
+    <section className="w-full py-10 px-6 md:px-12 lg:px-16 max-w-[1400px] mx-auto bg-white">
       <motion.div
         className="text-center mb-16"
         initial={{ opacity: 0, y: 20 }}
