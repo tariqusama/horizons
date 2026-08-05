@@ -99,7 +99,7 @@ export default function Footer() {
   };
 
   return (
-    <footer className="bg-[#09182F] text-white pt-16 pb-24 w-full font-sans border-t border-[#122642]">
+    <footer className="bg-[#09182F] text-white pt-16 pb-8 w-full font-sans border-t border-[#122642]">
       <div className="w-full px-6 md:px-12 lg:px-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[1.6fr_0.8fr_0.8fr_1fr_1.2fr] gap-x-4 gap-y-8 mb-16">
           <div className="flex flex-col gap-4">
