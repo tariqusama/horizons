@@ -25,7 +25,7 @@ export default function AboutJourney() {
             </p>
             <div className="flex items-center gap-3">
               <img
-                src="https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80"
+                src="/ceo-picture.jpeg"
                 alt="Augustine Koroma"
                 className="w-11 h-11 rounded-full object-cover"
               />
