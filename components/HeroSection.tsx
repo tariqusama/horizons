@@ -15,13 +15,12 @@ export default function HeroSection() {
     <section className="relative w-full h-screen flex items-center justify-start overflow-hidden">
       {/* Background image */}
       <div
-        className="absolute inset-0 w-full h-full"
+        className="absolute inset-0 w-full h-full hero-bg"
         style={{
           backgroundImage: `url(${heroContent.backgroundImage})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center center',
         }}
-        className="md:bg-[60%_center]"
       />
 
       {/* Mobile optimized background positioning */}
