@@ -84,7 +84,7 @@ export default function Header({ isDashboard = false }: { isDashboard?: boolean 
               <Link href="/how-it-works" className={navLinkClass("/how-it-works")}>How It Works</Link>
               <Link href="/services" className={navLinkClass("/services")}>Services</Link>
               <Link href="/testimonials" className={navLinkClass("/testimonials")}>Testimonials</Link>
-              <Link href="/free-tools" className={navLinkClass("/free-tools")}>Free Tools</Link>
+              {/* <Link href="/free-tools" className={navLinkClass("/free-tools")}>Free Tools</Link> */}
             </nav>
 
             {/* Right Section for Marketing Site */}
@@ -170,7 +170,7 @@ export default function Header({ isDashboard = false }: { isDashboard?: boolean 
             <Link href="/how-it-works" onClick={() => setIsMobileMenuOpen(false)} className={navLinkClass("/how-it-works", true)}>How It Works</Link>
             <Link href="/services" onClick={() => setIsMobileMenuOpen(false)} className={navLinkClass("/services", true)}>Services</Link>
             <Link href="/testimonials" onClick={() => setIsMobileMenuOpen(false)} className={navLinkClass("/testimonials", true)}>Testimonials</Link>
-            <Link href="/free-tools" onClick={() => setIsMobileMenuOpen(false)} className={navLinkClass("/free-tools", true)}>Free Tools</Link>
+            {/* <Link href="/free-tools" onClick={() => setIsMobileMenuOpen(false)} className={navLinkClass("/free-tools", true)}>Free Tools</Link> */}
             <div className="flex flex-col gap-2 pt-2 border-t border-gray-100">
               <Link href="/login" onClick={() => setIsMobileMenuOpen(false)} className="font-bold text-[#1B3A64] text-lg">Login</Link>
               <Link href="/signup" onClick={() => setIsMobileMenuOpen(false)} className="bg-[#FF6B35] hover:bg-[#E05B2C] text-white px-4 py-3 rounded-lg font-bold text-center text-lg">

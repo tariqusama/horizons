@@ -44,8 +44,8 @@ export default function AboutJourney() {
         {/* Right image */}
         <div className="w-full">
           <img
-            src="https://images.unsplash.com/photo-1591382386627-349b692688ff?ixlib=rb-4.0.3&auto=format&fit=crop&w=900&q=80"
-            alt="Family reviewing immigration documents together"
+            src="/team-picture.jpg"
+            alt="Horizon Pathways team"
             className="w-full h-[380px] md:h-[420px] object-cover rounded-3xl shadow-[0_20px_40px_-10px_rgba(27,58,100,0.15)] rotate-1"
           />
         </div>
