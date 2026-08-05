@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
-import { getManagerAssignedCases, Application, updateApplication, getServices, Service } from '@/lib/api/cases';
+import { getManagerAssignedCases, Application, updateApplication, inviteBeneficiary, getServices, Service } from '@/lib/api/cases';
 import { getStorageUrl } from '@/lib/api';
 
 export default function CaseReviewPage() {
@@ -17,6 +17,10 @@ export default function CaseReviewPage() {
     const [isApprovingCase, setIsApprovingCase] = useState(false);
     const [isDenyingCase, setIsDenyingCase] = useState(false);
     const [isUpdating, setIsUpdating] = useState(false);
+    const [isInvitingBeneficiary, setIsInvitingBeneficiary] = useState(false);
+    const [showInviteModal, setShowInviteModal] = useState(false);
+    const [inviteEmail, setInviteEmail] = useState('');
+    const [inviteMessage, setInviteMessage] = useState('');
     const [showModal, setShowModal] = useState(false);
     const [modalMessage, setModalMessage] = useState({ title: '', description: '', type: 'success' });
     const [managerNote, setManagerNote] = useState('');
@@ -184,6 +188,32 @@ export default function CaseReviewPage() {
             setShowModal(true);
         } finally {
             setIsUpdating(false);
+        }
+    };
+
+    const handleInviteBeneficiary = async () => {
+        if (!caseData) return;
+        if (!inviteEmail.trim()) {
+            setModalMessage({ title: 'Missing email', description: 'Please enter the beneficiary email before sending the invite.', type: 'error' });
+            setShowModal(true);
+            return;
+        }
+
+        setIsInvitingBeneficiary(true);
+        try {
+            const updatedCase = await inviteBeneficiary(caseData.id, inviteEmail.trim(), inviteMessage.trim());
+            setCaseData(updatedCase);
+            setInviteEmail('');
+            setInviteMessage('');
+            setShowInviteModal(false);
+            setModalMessage({ title: 'Invite sent', description: 'Beneficiary invitation email was sent successfully.', type: 'success' });
+            setShowModal(true);
+        } catch (err) {
+            console.error('Failed to send beneficiary invite:', err);
+            setModalMessage({ title: 'Error', description: 'Failed to send beneficiary invite. Please try again.', type: 'error' });
+            setShowModal(true);
+        } finally {
+            setIsInvitingBeneficiary(false);
         }
     };
 
@@ -423,6 +453,33 @@ export default function CaseReviewPage() {
                                     Request Revisions
                                 </button>
 
+                                <button
+                                    type="button"
+                                    onClick={() => setShowInviteModal(true)}
+                                    disabled={isInvitingBeneficiary}
+                                    style={{
+                                        width: '100%',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        gap: '8px',
+                                        backgroundImage: 'linear-gradient(180deg, #f97316 0%, #ea580c 100%)',
+                                        color: 'white',
+                                        padding: '14px 24px',
+                                        borderRadius: '12px',
+                                        fontWeight: '700',
+                                        fontSize: '14px',
+                                        border: 'none',
+                                        cursor: isInvitingBeneficiary ? 'not-allowed' : 'pointer'
+                                    }}
+                                >
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                        <path d="M12 5v14"/>
+                                        <path d="M5 12h14"/>
+                                    </svg>
+                                    {isInvitingBeneficiary ? 'Sending Invite...' : 'Invite Beneficiary'}
+                                </button>
+
                                 {/* ── Reject ── */}
                                 <button
                                     type="button"
@@ -436,6 +493,17 @@ export default function CaseReviewPage() {
                                     {isDenyingCase ? 'Rejecting...' : 'Reject Case'}
                                 </button>
 
+                            </div>
+                        )}
+
+                        {caseData.form_data?.beneficiary_invite && (
+                            <div className="mt-4 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
+                                <p className="font-semibold text-slate-900">Beneficiary Invite</p>
+                                <p className="mt-2">Sent to: <span className="font-semibold">{caseData.form_data.beneficiary_invite.email}</span></p>
+                                <p>Status: <span className="font-semibold">{caseData.form_data.beneficiary_invite.status || 'sent'}</span></p>
+                                {caseData.form_data.beneficiary_invite.invited_at ? (
+                                    <p>Invited: {new Date(caseData.form_data.beneficiary_invite.invited_at).toLocaleString()}</p>
+                                ) : null}
                             </div>
                         )}
 
@@ -523,9 +591,9 @@ export default function CaseReviewPage() {
                 </div>
             )}
 
-            {showModal && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
-                    <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl transform transition-all">
+            {showRevisionModal && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
+                    <div className="bg-white rounded-2xl max-w-lg w-full shadow-2xl overflow-hidden">
                         <div className={`flex items-center justify-center w-12 h-12 rounded-full mb-4 mx-auto ${modalMessage.type === 'success' ? 'bg-green-100' : 'bg-red-100'}`}>
                             {modalMessage.type === 'success' ? (
                                 <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -549,6 +617,58 @@ export default function CaseReviewPage() {
                         >
                             OK
                         </button>
+                    </div>
+                </div>
+            )}
+
+            {showInviteModal && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
+                    <div className="bg-white rounded-3xl max-w-xl w-full shadow-2xl overflow-hidden">
+                        <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100">
+                            <div>
+                                <h3 className="text-xl font-black text-gray-900">Invite Beneficiary</h3>
+                                <p className="text-sm text-gray-500 mt-1">Send an intake invitation link directly to the beneficiary email.</p>
+                            </div>
+                            <button onClick={() => setShowInviteModal(false)} className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-200 text-gray-500 transition-colors">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                            </button>
+                        </div>
+                        <div className="px-6 py-5 space-y-5">
+                            <div>
+                                <label className="block text-sm font-bold text-gray-700 mb-2">Beneficiary Email *</label>
+                                <input
+                                    type="email"
+                                    value={inviteEmail}
+                                    onChange={(e) => setInviteEmail(e.target.value)}
+                                    placeholder="beneficiary@example.com"
+                                    className="w-full rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500/30"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-bold text-gray-700 mb-2">Message (optional)</label>
+                                <textarea
+                                    value={inviteMessage}
+                                    onChange={(e) => setInviteMessage(e.target.value)}
+                                    rows={4}
+                                    placeholder="Add a short note for the beneficiary."
+                                    className="w-full rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500/30 resize-none"
+                                />
+                            </div>
+                            <div className="rounded-2xl border border-blue-100 bg-blue-50 p-4 text-sm text-blue-700">
+                                <p className="font-semibold">What happens next</p>
+                                <p className="mt-2">The beneficiary will receive an email with a secure link to complete their portion of the intake. The link will be tied to this application.</p>
+                            </div>
+                        </div>
+                        <div className="flex gap-3 px-6 py-5 border-t border-slate-100 bg-slate-50">
+                            <button onClick={() => setShowInviteModal(false)} className="flex-1 rounded-2xl border border-gray-200 bg-white py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition">Cancel</button>
+                            <button
+                                onClick={handleInviteBeneficiary}
+                                disabled={isInvitingBeneficiary}
+                                className="flex-1 rounded-2xl bg-blue-600 py-3 text-sm font-semibold text-white hover:bg-blue-700 transition disabled:opacity-70"
+                            >
+                                {isInvitingBeneficiary ? 'Sending Invite…' : 'Send Invite'}
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}

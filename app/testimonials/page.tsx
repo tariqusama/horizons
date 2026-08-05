@@ -64,30 +64,52 @@ const reviewCards = [
 export default function TestimonialsPage() {
     return (
         <main className="min-h-screen bg-white text-[#0A192F]">
-            <section className="relative overflow-hidden pt-24 pb-14 md:pt-32 md:pb-20">
-                <div className="absolute top-0 right-0 h-[420px] w-[420px] rounded-full bg-gradient-to-br from-[#FDE8D9] to-[#F2F8FF] blur-3xl" />
-                <div className="absolute bottom-0 left-0 h-[320px] w-[320px] rounded-full bg-gradient-to-tr from-[#FCECE6] to-[#EEF4FF] blur-3xl" />
+            <section className="relative overflow-hidden bg-[#06132a] pt-24 pb-16 md:pt-32 md:pb-24">
+                <div className="absolute left-[-80px] top-12 h-[320px] w-[320px] rounded-full bg-[#ff743b]/20 blur-3xl" />
+                <div className="absolute right-[-80px] top-28 h-[300px] w-[300px] rounded-full bg-[#3b82f6]/20 blur-3xl" />
+                <div className="absolute inset-x-0 bottom-0 h-[220px] bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.12),transparent_60%)]" />
 
-                <div className="relative z-10 mx-auto max-w-4xl px-4 text-center md:px-6 lg:px-8">
-                    <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-[#F2B89A] bg-white/80 px-5 py-2 text-xs font-bold uppercase tracking-[0.18em] text-[#E3623D] backdrop-blur-sm">
+                <div className="relative z-10 mx-auto max-w-6xl px-4 text-center md:px-6 lg:px-8">
+                    <div className="mb-4 inline-flex items-center justify-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-xs uppercase tracking-[0.2em] text-white/80 backdrop-blur-sm">
                         <span className="text-base">✦</span>
-                        <span>Real People · Real Approvals</span>
+                        <span>Client Reviews</span>
                     </div>
 
-                    <h1 className="mb-5 text-4xl font-bold leading-tight md:text-6xl">
-                        Success Stories &amp;{' '}
-                        <span className="bg-gradient-to-r from-[#E3623D] to-[#2F6FDB] bg-clip-text text-transparent">
-                            Client Reviews
-                        </span>
+                    <h1 className="mb-6 text-4xl font-black tracking-tight text-white sm:text-5xl md:text-6xl">
+                        Success Stories &amp; Client Reviews
                     </h1>
 
-                    <p className="mx-auto max-w-2xl text-base leading-relaxed text-[#5A6579] md:text-xl">
+                    <p className="mx-auto max-w-2xl text-base leading-relaxed text-slate-300 sm:text-lg">
                         Meet one of our immigration attorneys and hear directly from clients whose applications we’ve helped approve — in their own words.
                     </p>
+
+                    <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-4">
+                        <a href="#watch" className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-[#E3623D] to-[#2F6FDB] px-8 py-3 text-sm font-semibold text-white shadow-lg shadow-[#E3623D]/25 transition hover:shadow-[#E3623D]/40">
+                            Watch Real Stories
+                        </a>
+                        <a href="#reviews" className="inline-flex items-center justify-center rounded-full border border-white/20 bg-white/10 px-8 py-3 text-sm font-semibold text-white transition hover:bg-white/15">
+                            Read Written Reviews
+                        </a>
+                    </div>
+
+                    <div className="mt-16 grid gap-4 sm:grid-cols-3">
+                        <div className="rounded-[24px] border border-white/10 bg-white/5 p-6 text-left backdrop-blur-sm">
+                            <p className="text-3xl font-black text-white">3,000+</p>
+                            <p className="mt-2 text-sm uppercase tracking-[0.2em] text-slate-300">Approvals</p>
+                        </div>
+                        <div className="rounded-[24px] border border-white/10 bg-white/5 p-6 text-left backdrop-blur-sm">
+                            <p className="text-3xl font-black text-white">98%</p>
+                            <p className="mt-2 text-sm uppercase tracking-[0.2em] text-slate-300">Success Rate</p>
+                        </div>
+                        <div className="rounded-[24px] border border-white/10 bg-white/5 p-6 text-left backdrop-blur-sm">
+                            <p className="text-3xl font-black text-white">4.9/5</p>
+                            <p className="mt-2 text-sm uppercase tracking-[0.2em] text-slate-300">Average Rating</p>
+                        </div>
+                    </div>
                 </div>
             </section>
 
-            <section className="relative overflow-hidden bg-[#FFF8F4] py-20 md:py-28">
+            <section id="watch" className="relative overflow-hidden bg-[#FFF8F4] py-20 md:py-28">
                 <div className="absolute top-0 right-0 h-[450px] w-[450px] rounded-full bg-gradient-to-br from-[#F8E0D2] to-[#FFF4EE] blur-3xl" />
                 <div className="absolute bottom-0 left-0 h-[350px] w-[350px] rounded-full bg-gradient-to-tr from-[#F8E0D2] to-[#EEF5FF] blur-3xl" />
 
@@ -104,78 +126,62 @@ export default function TestimonialsPage() {
                     </div>
 
                     <div className="mb-14 md:mb-20">
-                        <div className="group relative overflow-hidden rounded-[28px] border border-[#F3C3A8] bg-gradient-to-br from-[#FDF5EE] to-[#FDFDFF] shadow-[0_18px_50px_rgba(27,58,100,0.08)]">
-                            <div className="grid items-stretch md:grid-cols-2">
-                                <div className="relative min-h-[280px] overflow-hidden bg-slate-100 md:min-h-[420px]">
+                        <div className="grid gap-6 xl:grid-cols-[2fr_1fr]">
+                            <div className="group relative overflow-hidden rounded-[30px] border border-[#E9EDF4] bg-white shadow-[0_18px_50px_rgba(27,58,100,0.08)]">
+                                <div className="relative overflow-hidden">
                                     <img
                                         src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1200&q=80"
                                         alt="Immigration attorney introduction"
                                         className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                                     />
-                                    <div className="absolute inset-0 bg-gradient-to-r from-black/40 via-black/10 to-transparent" />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                                     <div className="absolute inset-0 flex items-center justify-center">
-                                        <div className="flex h-20 w-20 items-center justify-center rounded-full bg-white/95 text-[#E3623D] shadow-2xl transition-transform duration-300 group-hover:scale-110 md:h-24 md:w-24">
-                                            <span className="ml-1 text-2xl">▶</span>
+                                        <div className="flex h-20 w-20 items-center justify-center rounded-full bg-[#E3623D] text-white shadow-2xl transition-transform duration-300 group-hover:scale-110 md:h-24 md:w-24">
+                                            <span className="text-2xl">▶</span>
                                         </div>
                                     </div>
                                 </div>
+                                <div className="absolute left-6 top-6 rounded-full bg-white/95 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#0A192F] shadow-sm">
+                                    One of our immigration attorneys
+                                </div>
+                                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent px-8 py-8 text-white">
+                                    <p className="mb-2 text-xs uppercase tracking-[0.24em] text-white/70">Welcome to The Guided Path</p>
+                                    <h3 className="text-3xl font-bold">A personal welcome and a look at how our attorney-reviewed process protects your case from day one.</h3>
+                                </div>
+                            </div>
 
-                                <div className="flex flex-col justify-center p-8 text-left md:p-12">
-                                    <div className="mb-4 inline-flex w-fit items-center gap-2 rounded-full bg-[#FBE8DD] px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.16em] text-[#E3623D]">
-                                        <span>✦</span>
-                                        <span>Attorney Welcome</span>
+                            <div className="space-y-4">
+                                {featuredStories.map((story) => (
+                                    <div key={story.name} className="flex overflow-hidden rounded-[24px] border border-[#E9EDF4] bg-white shadow-sm transition hover:shadow-md">
+                                        <div className="relative h-24 w-28 overflow-hidden">
+                                            <img
+                                                src={story.image}
+                                                alt={story.name}
+                                                className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                                            />
+                                            <div className="absolute inset-0 bg-black/25" />
+                                            <div className="absolute inset-0 flex items-center justify-center">
+                                                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/90 text-[#E3623D] shadow-lg">
+                                                    <span className="text-xl">▶</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="flex-1 p-4">
+                                            <div className="text-sm font-semibold text-[#0A192F]">{story.name}</div>
+                                            <div className="mt-1 text-[11px] uppercase tracking-[0.24em] text-[#5A6579]">Approved · {story.origin}</div>
+                                            <div className="mt-3 text-sm text-[#5A6579]">{story.route}</div>
+                                        </div>
                                     </div>
-                                    <h3 className="mb-3 text-2xl font-bold md:text-3xl">One of our Immigration Attorneys</h3>
-                                    <p className="mb-4 text-sm font-semibold text-[#E3623D]">Licensed U.S. Immigration Attorney</p>
-                                    <p className="mb-6 text-base leading-relaxed text-[#5A6579] md:text-lg">
-                                        A personal welcome and a look at how our attorney-reviewed process protects your case from day one.
-                                    </p>
-                                    <button className="inline-flex w-fit items-center justify-center rounded-md bg-gradient-to-r from-[#E3623D] to-[#2F6FDB] px-8 py-3 text-sm font-semibold text-white shadow-lg transition-all duration-300 hover:scale-105">
-                                        <span className="mr-2 text-base">▶</span>
-                                        Watch Introduction
+                                ))}
+
+                                <div className="mt-2">
+                                    <button className="inline-flex items-center gap-2 text-sm font-semibold text-[#0A192F] transition hover:text-[#E3623D]">
+                                        <span>View More Stories</span>
+                                        <span>→</span>
                                     </button>
                                 </div>
                             </div>
                         </div>
-                    </div>
-
-                    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 md:gap-8">
-                        {featuredStories.map((story, index) => (
-                            <div
-                                key={story.name}
-                                className="group overflow-hidden rounded-[28px] border border-[#F1D7C7] bg-white shadow-[0_12px_35px_rgba(27,58,100,0.06)] transition-all duration-500 hover:-translate-y-1 hover:border-[#E3623D]"
-                            >
-                                <div className="relative aspect-video overflow-hidden bg-slate-100">
-                                    <img
-                                        src={story.image}
-                                        alt={story.name}
-                                        className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
-                                    />
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
-                                    <div className="absolute inset-0 flex items-center justify-center">
-                                        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-white/95 text-[#E3623D] shadow-2xl transition-transform duration-300 group-hover:scale-110 md:h-20 md:w-20">
-                                            <span className="ml-1 text-xl">▶</span>
-                                        </div>
-                                    </div>
-                                    <div className="absolute left-4 top-4 rounded-full border border-[#E4B89E] bg-white/95 px-3 py-1 text-[11px] font-semibold text-[#E3623D]">
-                                        Approved · {story.origin}
-                                    </div>
-                                </div>
-
-                                <div className="p-5 md:p-6">
-                                    <div className="mb-2 text-lg font-bold text-[#0A192F] group-hover:text-[#E3623D]">{story.name}</div>
-                                    <div className="mb-3 text-sm text-[#5A6579]">{story.route}</div>
-                                    <p className="text-sm leading-relaxed text-[#5A6579]">{story.quote}</p>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-
-                    <div className="mt-12 flex justify-center">
-                        <button className="inline-flex items-center gap-2 rounded-full border border-[#E3623D]/30 bg-white px-8 py-3 text-sm font-semibold text-[#E3623D] transition-all duration-300 hover:scale-[1.02] hover:border-[#E3623D] hover:bg-[#FFF7F2]">
-                            <span>View 5 More Stories</span>
-                            <span>⌄</span>
-                        </button>
                     </div>
                 </div>
             </section>
@@ -210,39 +216,27 @@ export default function TestimonialsPage() {
                     </div>
 
                     <div className="mx-auto grid max-w-7xl gap-6 md:grid-cols-2 lg:grid-cols-3 md:gap-8">
-                        {reviewCards.map((review, index) => (
+                        {reviewCards.map((review) => (
                             <div
                                 key={review.name}
-                                className="flex min-h-[300px] flex-col rounded-[20px] border border-[#DDE5F1] bg-white p-6 shadow-[0_10px_30px_rgba(27,58,100,0.05)] transition-all duration-500 hover:border-[#E3623D] hover:-translate-y-1"
+                                className="flex min-h-[300px] flex-col rounded-[24px] border border-[#E7ECF5] bg-white p-6 shadow-[0_12px_30px_rgba(15,23,42,0.06)] transition-transform duration-300 hover:-translate-y-1"
                             >
-                                <div className="mb-4 flex items-center justify-between">
-                                    <div className="flex gap-0.5">
-                                        {Array.from({ length: 5 }).map((_, starIndex) => (
-                                            <span key={starIndex} className="inline-flex h-6 w-6 items-center justify-center rounded-sm bg-[#00b67a] text-[10px] text-white">
-                                                ★
-                                            </span>
-                                        ))}
-                                    </div>
-                                    <span className="text-xs text-[#5A6579]">{review.date}</span>
+                                <div className="mb-5 flex gap-1 text-amber-400">
+                                    {Array.from({ length: 5 }).map((_, starIndex) => (
+                                        <span key={starIndex} className="text-lg">★</span>
+                                    ))}
                                 </div>
 
-                                <p className="mb-4 flex-1 text-sm leading-relaxed text-[#5A6579] md:text-base">{review.review}</p>
-                                <button className="mb-4 self-start text-xs font-semibold text-[#E3623D] hover:underline">Read more</button>
+                                <p className="mb-6 flex-1 text-base leading-relaxed text-[#334155]">{review.review}</p>
 
-                                <div className="flex items-center justify-between border-t border-[#EDEFF3] pt-4">
-                                    <div>
-                                        <div className="font-bold text-[#0A192F]">{review.name}</div>
-                                        <div className="text-xs text-[#5A6579]">US</div>
+                                <div className="flex items-center gap-3 border-t border-[#F1F5F9] pt-5">
+                                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#E2E8F0] text-sm font-bold text-[#0F172A]">
+                                        {review.name.split(' ').map((word) => word[0]).slice(0, 2).join('')}
                                     </div>
-                                    <a
-                                        href="https://www.trustpilot.com/review/horizonpathways.us"
-                                        target="_blank"
-                                        rel="noreferrer"
-                                        className="inline-flex items-center gap-1 text-xs font-semibold text-[#00b67a] hover:underline"
-                                    >
-                                        <span>✓</span>
-                                        <span>Verified</span>
-                                    </a>
+                                    <div>
+                                        <div className="text-sm font-semibold text-[#0A192F]">{review.name}</div>
+                                        <div className="text-xs uppercase tracking-[0.24em] text-[#475569]">Verified Client</div>
+                                    </div>
                                 </div>
                             </div>
                         ))}
@@ -253,7 +247,7 @@ export default function TestimonialsPage() {
                             href="https://www.trustpilot.com/review/horizonpathways.us"
                             target="_blank"
                             rel="noreferrer"
-                            className="inline-flex items-center gap-2 text-sm font-semibold text-[#E3623D] hover:underline"
+                            className="inline-flex items-center gap-2 text-sm font-semibold text-[#0A192F] hover:text-[#E3623D]"
                         >
                             <span>See all reviews on Trustpilot</span>
                             <span>↗</span>
@@ -262,49 +256,20 @@ export default function TestimonialsPage() {
                 </div>
             </section>
 
-            <section className="relative overflow-hidden py-20 md:py-24">
-                <div className="mx-auto max-w-5xl px-4 md:px-6 lg:px-8">
-                    <div className="rounded-[32px] border border-[#F3C3A8] bg-gradient-to-br from-[#FDF5EE] via-white to-[#F6F9FF] p-8 text-center shadow-[0_18px_50px_rgba(27,58,100,0.08)] md:p-14">
-                        <div className="mb-5 inline-flex gap-1 text-[#00b67a]">
-                            {Array.from({ length: 5 }).map((_, i) => (
-                                <span key={i} className="text-2xl">★</span>
-                            ))}
-                        </div>
-
-                        <h2 className="mb-4 text-3xl font-bold md:text-4xl">Want to read more reviews?</h2>
-                        <p className="mx-auto mb-8 max-w-2xl text-base text-[#5A6579] md:text-lg">
-                            See hundreds of verified, independent reviews from clients on Trustpilot and Google.
-                        </p>
-
-                        <div className="flex flex-col justify-center gap-4 sm:flex-row">
-                            <a
-                                href="https://www.trustpilot.com/review/horizonpathways.us"
-                                target="_blank"
-                                rel="noreferrer"
-                                className="inline-flex items-center justify-center rounded-md bg-gradient-to-r from-[#E3623D] to-[#2F6FDB] px-8 py-3 text-sm font-semibold text-white shadow-lg transition-all duration-300 hover:scale-105"
-                            >
-                                <span>Read on Trustpilot</span>
-                                <span className="ml-2">↗</span>
-                            </a>
-                            <a
-                                href="https://maps.app.goo.gl/bdsBtS4HTrg6g1PX6?g_st=iw"
-                                target="_blank"
-                                rel="noreferrer"
-                                className="inline-flex items-center justify-center rounded-md border-2 border-[#E3623D]/30 bg-white px-8 py-3 text-sm font-semibold text-[#E3623D] transition-all duration-300 hover:scale-105 hover:border-[#E3623D] hover:bg-[#FFF7F2]"
-                            >
-                                <span>Read on Google</span>
-                                <span className="ml-2">↗</span>
-                            </a>
-                        </div>
-
-                        <div className="mt-10 border-t border-[#E9D2C2] pt-8">
-                            <p className="mb-4 text-sm text-[#5A6579]">Ready to start your own immigration journey?</p>
-                            <a href="/signup" className="inline-flex items-center gap-2 text-sm font-semibold text-[#E3623D] hover:underline">
-                                <span>Get Started Today</span>
-                                <span>→</span>
-                            </a>
-                        </div>
-                    </div>
+            <section className="relative overflow-hidden bg-[#07122d] py-20 md:py-24">
+                <div className="mx-auto max-w-4xl px-4 text-center md:px-6 lg:px-8">
+                    <h2 className="mb-6 text-3xl font-bold text-white sm:text-4xl md:text-5xl">
+                        Ready to start your own immigration journey?
+                    </h2>
+                    <p className="mx-auto mb-10 max-w-2xl text-base leading-relaxed text-slate-300 sm:text-lg">
+                        Take the next step with Horizon Pathways and get expert guidance for your application.
+                    </p>
+                    <a
+                        href="/signup"
+                        className="inline-flex items-center justify-center rounded-full bg-gradient-to-b from-orange-500 to-orange-600 px-8 py-3.5 text-sm font-semibold text-white shadow-[0_20px_40px_rgba(236,72,153,0.18)] transition duration-300 hover:from-orange-600 hover:to-orange-700"
+                    >
+                        Get Started Today
+                    </a>
                 </div>
             </section>
         </main>

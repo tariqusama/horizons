@@ -247,7 +247,7 @@ const CheckoutForm = ({ selectedSubPlan, selectedTier, handleClose, getSelectedA
                 <button
                     onClick={completePurchase}
                     disabled={!isTermsChecked || isSubmitting || !isCardReady}
-                    className={`w-full py-3 rounded-xl text-sm font-semibold text-white transition-colors ${isTermsChecked && isCardReady ? 'bg-gradient-to-r from-[#f43f5e] to-[#e11d48] shadow-[0_8px_24px_rgba(225,29,72,0.35)] hover:shadow-[0_10px_28px_rgba(225,29,72,0.45)]' : 'bg-slate-400 cursor-not-allowed opacity-50 shadow-none'}`}
+                    className={`w-full py-3 rounded-xl text-sm font-semibold text-white transition-colors ${isTermsChecked && isCardReady ? 'bg-gradient-to-b from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 shadow-lg shadow-orange-500/30 hover:shadow-orange-500/50' : 'bg-slate-400 cursor-not-allowed opacity-50 shadow-none'}`}
                 >
                     {isSubmitting ? 'Processing payment...' : isCardReady ? 'Complete Purchase →' : 'Loading card field...'}
                 </button>
@@ -597,10 +597,10 @@ export default function ApplicationSelectionModal({ isOpen, onClose }: Applicati
                                         </div>
 
                                         <div className="mt-auto pt-5">
-                                            <button onClick={() => handleSelectSubPlan(plan)} className="w-full py-2.5 rounded-xl bg-[#e11d48] hover:bg-[#be123c] text-white text-sm font-semibold flex items-center justify-center gap-2 transition shadow-[0_6px_20px_rgba(225,29,72,0.3)]">
+                                            <button onClick={() => handleSelectSubPlan(plan)} className="w-full py-2.5 rounded-xl bg-gradient-to-b from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white text-sm font-semibold flex items-center justify-center gap-2 transition shadow-lg shadow-orange-500/30 hover:shadow-orange-500/50">
                                                 Get Started <ArrowRight className="w-4 h-4" />
                                             </button>
-                                            <button className="mt-2 w-full text-xs text-slate-600 hover:text-slate-900 font-medium">Learn More</button>
+                                            <button className="mt-2 w-full text-xs text-orange-600 hover:text-orange-700 font-medium">Learn More</button>
                                         </div>
                                     </div>
                                 ))}
@@ -639,7 +639,7 @@ export default function ApplicationSelectionModal({ isOpen, onClose }: Applicati
                                         <p className="mt-6 text-sm text-slate-500">Do-it-yourself application preparation</p>
                                     </div>
                                     <div className="px-5 pb-5">
-                                        <button onClick={() => handleSelectTier('Basic')} className="w-full py-3 rounded-xl bg-[#e11d48] hover:bg-[#be123c] text-white font-semibold flex items-center justify-center gap-2 transition shadow-[0_6px_20px_rgba(225,29,72,0.35)]">
+                                        <button onClick={() => handleSelectTier('Basic')} className="w-full py-3 rounded-xl bg-gradient-to-b from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold flex items-center justify-center gap-2 transition shadow-lg shadow-orange-500/30 hover:shadow-orange-500/50">
                                             Select <span aria-hidden="true">→</span>
                                         </button>
                                     </div>
@@ -654,7 +654,7 @@ export default function ApplicationSelectionModal({ isOpen, onClose }: Applicati
                                         <p className="mt-6 text-sm text-slate-500">Do-it-yourself application preparation</p>
                                     </div>
                                     <div className="px-5 pb-5">
-                                        <button onClick={() => handleSelectTier('Advanced')} className="w-full py-3 rounded-xl bg-[#e11d48] hover:bg-[#be123c] text-white font-semibold flex items-center justify-center gap-2 transition shadow-[0_6px_20px_rgba(225,29,72,0.35)]">
+                                        <button onClick={() => handleSelectTier('Advanced')} className="w-full py-3 rounded-xl bg-gradient-to-b from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold flex items-center justify-center gap-2 transition shadow-lg shadow-orange-500/30 hover:shadow-orange-500/50">
                                             Select <span aria-hidden="true">→</span>
                                         </button>
                                     </div>
@@ -669,7 +669,7 @@ export default function ApplicationSelectionModal({ isOpen, onClose }: Applicati
                                         <p className="mt-6 text-sm text-slate-500">Do-it-yourself application preparation</p>
                                     </div>
                                     <div className="px-5 pb-5">
-                                        <button onClick={() => handleSelectTier('Premium')} className="w-full py-3 rounded-xl bg-[#e11d48] hover:bg-[#be123c] text-white font-semibold flex items-center justify-center gap-2 transition shadow-[0_6px_20px_rgba(225,29,72,0.35)]">
+                                        <button onClick={() => handleSelectTier('Premium')} className="w-full py-3 rounded-xl bg-gradient-to-b from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold flex items-center justify-center gap-2 transition shadow-lg shadow-orange-500/30 hover:shadow-orange-500/50">
                                             Select <span aria-hidden="true">→</span>
                                         </button>
                                     </div>
@@ -767,7 +767,7 @@ export default function ApplicationSelectionModal({ isOpen, onClose }: Applicati
                                 <button
                                     onClick={handleAgreeAndContinue}
                                     disabled={!isAgreementChecked}
-                                    className={`px-6 py-2.5 rounded-xl text-sm font-semibold text-white shadow-[0_8px_24px_rgba(225,29,72,0.35)] hover:shadow-[0_10px_28px_rgba(225,29,72,0.45)] transition ${isAgreementChecked ? 'bg-gradient-to-r from-[#f43f5e] to-[#e11d48]' : 'bg-slate-400 cursor-not-allowed opacity-50 shadow-none'}`}
+                                    className={`px-6 py-2.5 rounded-xl text-sm font-semibold text-white shadow-lg shadow-orange-500/30 hover:shadow-orange-500/50 transition ${isAgreementChecked ? 'bg-gradient-to-b from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700' : 'bg-slate-400 cursor-not-allowed opacity-50 shadow-none'}`}
                                 >
                                     I Agree & Continue
                                 </button>

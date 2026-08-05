@@ -154,6 +154,21 @@ export const updateApplication = async (
     return response.data;
 };
 
+export const inviteBeneficiary = async (id: number, email: string, message?: string): Promise<Application> => {
+    const response = await api.post(`/manager/applications/${id}/invite-beneficiary`, { email, message });
+    return response.data.application;
+};
+
+export const getBeneficiaryInvite = async (token: string): Promise<{ application: { id: number; title: string | null; package_name: string | null; subtitle: string | null; receipt_number: string | null }; invite: { email: string; message?: string; status?: string; invited_at?: string; completed_at?: string } }> => {
+    const response = await api.get(`/beneficiary-invites/${token}`);
+    return response.data;
+};
+
+export const saveBeneficiaryInvite = async (token: string, payload: { email: string; fullName: string; dob?: string; countryOfBirth?: string; phone?: string; additionalInfo?: string }): Promise<any> => {
+    const response = await api.post(`/beneficiary-invites/${token}`, payload);
+    return response.data;
+};
+
 export const getManagerMessages = async (applicationId: number): Promise<MessagePayload[]> => {
     const response = await api.get(`/manager/applications/${applicationId}/messages`);
     return response.data;
