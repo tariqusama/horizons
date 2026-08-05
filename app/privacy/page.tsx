@@ -118,7 +118,7 @@ export default function PrivacyPage() {
             <p className="font-semibold">Horizon Pathways LLC</p>
             <p>7375 Executive Pl, Ste 400 #1062<br />Lanham, MD 20706</p>
             <p>Email: <a href="mailto:privacy@horizonpathways.us" className="text-indigo-600 underline">privacy@horizonpathways.us</a></p>
-            <p>Phone: ____________________________</p>
+            <p>Phone: +1 (800) 795 7153</p>
           </div>
         </div>
       </div>

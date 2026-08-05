@@ -303,7 +303,7 @@ export default function TermsPage() {
             <strong>Horizon Pathways LLC</strong><br />
             7375 Executive Pl, Ste 400 #1062<br />
             Lanham, MD 20706<br />
-            Contact Number: ______________________
+            Contact Number: +1 (800) 795 7153
           </p>
         </div>
       </div>
