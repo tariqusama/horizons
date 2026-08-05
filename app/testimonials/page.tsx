@@ -126,9 +126,9 @@ export default function TestimonialsPage() {
                     </div>
 
                     <div className="mb-14 md:mb-20">
-                        <div className="grid gap-6 xl:grid-cols-[2fr_1fr]">
+                        <div className="grid gap-6 md:grid-cols-1 xl:grid-cols-[2fr_1fr]">
                             <div className="group relative overflow-hidden rounded-[30px] border border-[#E9EDF4] bg-white shadow-[0_18px_50px_rgba(27,58,100,0.08)]">
-                                <div className="relative overflow-hidden">
+                                <div className="relative min-h-[320px] overflow-hidden sm:min-h-[360px] md:min-h-[420px]">
                                     <img
                                         src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1200&q=80"
                                         alt="Immigration attorney introduction"
@@ -144,16 +144,16 @@ export default function TestimonialsPage() {
                                 <div className="absolute left-6 top-6 rounded-full bg-white/95 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#0A192F] shadow-sm">
                                     One of our immigration attorneys
                                 </div>
-                                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent px-8 py-8 text-white">
+                                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent px-6 py-6 text-white md:px-8 md:py-8">
                                     <p className="mb-2 text-xs uppercase tracking-[0.24em] text-white/70">Welcome to The Guided Path</p>
-                                    <h3 className="text-3xl font-bold">A personal welcome and a look at how our attorney-reviewed process protects your case from day one.</h3>
+                                    <h3 className="text-2xl font-bold md:text-3xl">A personal welcome and a look at how our attorney-reviewed process protects your case from day one.</h3>
                                 </div>
                             </div>
 
                             <div className="space-y-4">
                                 {featuredStories.map((story) => (
-                                    <div key={story.name} className="flex overflow-hidden rounded-[24px] border border-[#E9EDF4] bg-white shadow-sm transition hover:shadow-md">
-                                        <div className="relative h-24 w-28 overflow-hidden">
+                                    <div key={story.name} className="flex flex-col overflow-hidden rounded-[24px] border border-[#E9EDF4] bg-white shadow-sm transition hover:shadow-md md:flex-row">
+                                        <div className="relative h-48 w-full overflow-hidden md:h-24 md:w-28">
                                             <img
                                                 src={story.image}
                                                 alt={story.name}

@@ -105,8 +105,8 @@ export default function SuccessStoriesPage() {
 
                     <div className="mb-14 md:mb-20">
                         <div className="group relative overflow-hidden rounded-[28px] border border-[#F3C3A8] bg-gradient-to-br from-[#FDF5EE] to-[#FDFDFF] shadow-[0_18px_50px_rgba(27,58,100,0.08)]">
-                            <div className="grid items-stretch md:grid-cols-2">
-                                <div className="relative min-h-[280px] overflow-hidden bg-slate-100 md:min-h-[420px]">
+                            <div className="grid gap-6 items-stretch md:grid-cols-2">
+                                <div className="relative min-h-[280px] sm:min-h-[340px] overflow-hidden bg-slate-100 md:min-h-[420px]">
                                     <img
                                         src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1200&q=80"
                                         alt="Immigration attorney introduction"
@@ -120,7 +120,7 @@ export default function SuccessStoriesPage() {
                                     </div>
                                 </div>
 
-                                <div className="flex flex-col justify-center p-8 text-left md:p-12">
+                                <div className="flex flex-col justify-center p-6 text-left md:p-12">
                                     <div className="mb-4 inline-flex w-fit items-center gap-2 rounded-full bg-[#FBE8DD] px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.16em] text-[#E3623D]">
                                         <span>✦</span>
                                         <span>Attorney Welcome</span>
