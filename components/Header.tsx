@@ -5,12 +5,15 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { getNotifications, markAsRead, Notification } from '../lib/api/notifications';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function Header({ isDashboard = false }: { isDashboard?: boolean }) {
   const [showNotifications, setShowNotifications] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
+  const { user } = useAuth();
+  const isLoggedIn = !!user;
   const unreadCount = notifications.filter((n) => !n.read_at).length;
 
   useEffect(() => {
@@ -65,7 +68,7 @@ export default function Header({ isDashboard = false }: { isDashboard?: boolean 
               </svg>
             </button>
           )}
-          <Link href={isDashboard ? "/dashboard" : "/"} className="flex items-center space-x-3 transition-opacity hover:opacity-80 min-w-0">
+          <Link href={isDashboard ? "/dashboard" : (isLoggedIn ? "/dashboard" : "/")} className="flex items-center space-x-3 transition-opacity hover:opacity-80 min-w-0">
             <Image
               src="/horizonlogo.png"
               alt="Horizon Pathways Logo"
@@ -89,7 +92,11 @@ export default function Header({ isDashboard = false }: { isDashboard?: boolean 
 
             {/* Right Section for Marketing Site */}
             <div className="hidden md:flex items-center space-x-6">
-              <Link href="/login" className="font-bold text-[#1B3A64] hover:text-orange-500 transition-colors text-[17px]">Login</Link>
+              {isLoggedIn ? (
+                <Link href="/dashboard" className="font-bold text-[#1B3A64] hover:text-orange-500 transition-colors text-[17px]">Dashboard</Link>
+              ) : (
+                <Link href="/login" className="font-bold text-[#1B3A64] hover:text-orange-500 transition-colors text-[17px]">Login</Link>
+              )}
               <Link href="/signup" className="bg-[#FF6B35] hover:bg-[#E05B2C] text-white px-7 py-3 rounded-lg font-bold transition-colors text-[17px]">
                 Get Started
               </Link>
@@ -172,7 +179,11 @@ export default function Header({ isDashboard = false }: { isDashboard?: boolean 
             <Link href="/testimonials" onClick={() => setIsMobileMenuOpen(false)} className={navLinkClass("/testimonials", true)}>Testimonials</Link>
             {/* <Link href="/free-tools" onClick={() => setIsMobileMenuOpen(false)} className={navLinkClass("/free-tools", true)}>Free Tools</Link> */}
             <div className="flex flex-col gap-2 pt-2 border-t border-gray-100">
-              <Link href="/login" onClick={() => setIsMobileMenuOpen(false)} className="font-bold text-[#1B3A64] text-lg">Login</Link>
+              {isLoggedIn ? (
+                <Link href="/dashboard" onClick={() => setIsMobileMenuOpen(false)} className="font-bold text-[#1B3A64] text-lg">Dashboard</Link>
+              ) : (
+                <Link href="/login" onClick={() => setIsMobileMenuOpen(false)} className="font-bold text-[#1B3A64] text-lg">Login</Link>
+              )}
               <Link href="/signup" onClick={() => setIsMobileMenuOpen(false)} className="bg-[#FF6B35] hover:bg-[#E05B2C] text-white px-4 py-3 rounded-lg font-bold text-center text-lg">
                 Get Started
               </Link>

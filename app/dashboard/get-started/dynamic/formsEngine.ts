@@ -99,7 +99,7 @@ export function buildFormSteps(formSchema: any, applicantName: string): SubStep[
         questions: [
             {
                 field_name: 'name_group',
-                question_text: `What is the full legal name of the ${name}?`,
+                question_text: `What is the full legal name of ${name}?`,
                 field_type: 'name_group',
                 is_required: true,
                 help_text: `This is the Applicant's CURRENT full legal name, including first, middle, and last names.`
@@ -117,7 +117,7 @@ export function buildFormSteps(formSchema: any, applicantName: string): SubStep[
             },
             {
                 field_name: 'gender',
-                question_text: `What is the sex of the Applicant?`,
+                question_text: `What is ${name.endsWith('s') ? name + "'" : name + "'s"} sex?`,
                 field_type: 'radio_gender',
                 is_required: true,
                 help_text: `USCIS allows individuals to self-identify their gender marker. The selected gender will not be required to match the gender marker from their supporting documentation, and no additional documentation will be required. Currently, USCIS only recognizes two sexes 'Male' and 'Female'.`,

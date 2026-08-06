@@ -162,12 +162,12 @@ export default function DynamicFormEnginePage() {
             }
 
             if (mode === 'edit') {
-                router.push('/dashboard/get-started/overview');
+                router.push(`/dashboard/get-started/overview?form=${slug}`);
             } else if (currentStepIndex < steps.length - 1) {
                 setCurrentStepIndex(currentStepIndex + 1);
             } else {
                 // Return to overview dashboard after finishing a section
-                router.push('/dashboard/get-started/overview');
+                router.push(`/dashboard/get-started/overview?form=${slug}`);
             }
         } catch (err) {
             console.error('Error saving step', err);
@@ -182,7 +182,7 @@ export default function DynamicFormEnginePage() {
         if (currentStepIndex > 0) {
             setCurrentStepIndex(currentStepIndex - 1);
         } else {
-            router.push('/dashboard/get-started');
+            router.push(`/dashboard/get-started/overview?form=${slug}`);
         }
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };

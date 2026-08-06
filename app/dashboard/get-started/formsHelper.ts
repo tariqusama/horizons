@@ -38,6 +38,13 @@ export function getFormsList(titleRaw: string, options?: { allowFallback?: boole
             { path: '/dashboard/get-started/dynamic/g-1145', code: 'g-1145', name: 'Form G-1145 (e-Notification)' }
         ];
     }
+    if (title.includes('130') || title.includes('spouse') || title.includes('alien relative')) {
+        return [
+            { path: '/dashboard/get-started/dynamic/i-130', code: 'i-130', name: 'Form I-130 (Petition)' },
+            { path: '/dashboard/get-started/dynamic/i-130a', code: 'i-130a', name: 'Form I-130A (Spouse Supp.)' },
+            { path: '/dashboard/get-started/dynamic/g-1145', code: 'g-1145', name: 'Form G-1145 (e-Notification)' }
+        ];
+    }
 
     if (!allowFallback) {
         return [];

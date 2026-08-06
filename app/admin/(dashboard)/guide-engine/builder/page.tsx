@@ -24,6 +24,8 @@ function FormBuilderContent() {
     const [isQuestionModalOpen, setIsQuestionModalOpen] = useState(false);
     const [activeSectionId, setActiveSectionId] = useState<number | null>(null);
     const [newQuestionText, setNewQuestionText] = useState('');
+    const [newQuestionHelpText, setNewQuestionHelpText] = useState('');
+    const [newQuestionImageBase64, setNewQuestionImageBase64] = useState('');
     const [newQuestionField, setNewQuestionField] = useState('');
     const [newQuestionType, setNewQuestionType] = useState('text');
     const [newQuestionOptions, setNewQuestionOptions] = useState([{ label: '', value: '' }]);
@@ -113,6 +115,8 @@ function FormBuilderContent() {
     const openQuestionModal = (sectionId: number) => {
         setActiveSectionId(sectionId);
         setNewQuestionText('');
+        setNewQuestionHelpText('');
+        setNewQuestionImageBase64('');
         setNewQuestionField('');
         setNewQuestionType('text');
         setNewQuestionOptions([{ label: '', value: '' }]);
@@ -124,8 +128,14 @@ function FormBuilderContent() {
         if (!activeSectionId) return;
 
         try {
+            let finalHelpText = newQuestionHelpText;
+            if (newQuestionImageBase64) {
+                finalHelpText = (finalHelpText + ` [IMAGE:${newQuestionImageBase64}]`).trim();
+            }
+
             const payload: any = {
                 question_text: newQuestionText,
+                help_text: finalHelpText || null,
                 field_name: newQuestionField,
                 field_type: newQuestionType,
                 is_required: true,
@@ -298,6 +308,25 @@ function FormBuilderContent() {
                                 <div>
                                     <label className="block text-sm font-semibold text-[#101F38] mb-1">Question Text</label>
                                     <input autoFocus required value={newQuestionText} onChange={e => setNewQuestionText(e.target.value)} placeholder="e.g. What is your height?" className="w-full border border-[#ECE9E2] rounded-lg px-3 py-2 text-sm focus:border-orange-500 outline-none" />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-semibold text-[#101F38] mb-1">Help Text (Optional)</label>
+                                    <textarea value={newQuestionHelpText} onChange={e => setNewQuestionHelpText(e.target.value)} placeholder="e.g. Please enter your full legal name." className="w-full border border-[#ECE9E2] rounded-lg px-3 py-2 text-sm focus:border-orange-500 outline-none h-20 resize-none" />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-semibold text-[#101F38] mb-1">Helper Image (Optional)</label>
+                                    <input type="file" accept="image/*" onChange={(e) => {
+                                        const file = e.target.files?.[0];
+                                        if (file) {
+                                            const reader = new FileReader();
+                                            reader.onloadend = () => {
+                                                setNewQuestionImageBase64(reader.result as string);
+                                            };
+                                            reader.readAsDataURL(file);
+                                        } else {
+                                            setNewQuestionImageBase64('');
+                                        }
+                                    }} className="w-full border border-[#ECE9E2] rounded-lg px-3 py-2 text-sm focus:border-orange-500 outline-none file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-orange-50 file:text-orange-600 hover:file:bg-orange-100" />
                                 </div>
                                 <div>
                                     <label className="block text-sm font-semibold text-[#101F38] mb-1">Field Name (Backend Key)</label>
