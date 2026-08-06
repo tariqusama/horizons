@@ -24,6 +24,7 @@ function DocumentUploadContent() {
     const [error, setError] = useState(false);
     const [applicationTitle, setApplicationTitle] = useState('');
     const [applicationSubtitle, setApplicationSubtitle] = useState('');
+    const [expandedGroup, setExpandedGroup] = useState<number | null>(null);
 
     useEffect(() => {
         Promise.all([
@@ -137,7 +138,7 @@ function DocumentUploadContent() {
     if (!checklist) return <div className="p-10 text-center">Loading checklist...</div>;
 
     return (
-        <div className={styles.pageWrapper}>
+        <div className={styles.pageWrapperDocUpload}>
             <input
                 type="file"
                 ref={fileInputRef}
@@ -145,25 +146,19 @@ function DocumentUploadContent() {
                 onChange={handleFileChange}
                 accept=".pdf,.jpg,.jpeg,.png"
             />
-            <div className={styles.formSection}>
-                <h1 className={styles.pageTitle}>{applicationTitle || checklist.title}</h1>
-                {applicationSubtitle && (
-                    <p className={styles.pageSubtitle} style={{ fontWeight: 600, color: '#FA6514', marginBottom: '4px' }}>{applicationSubtitle}</p>
-                )}
-                <p className={styles.pageSubtitle}>{checklist.subtitle}</p>
+            <div className={styles.formSectionDocUpload}>
+                <h1 className={styles.docUploadTitle}>Step 4: Document Upload</h1>
+                
+                <p className={styles.docUploadDesc}>
+                    This is where you upload your required supporting documents. You can either upload a digital copy, or login to your account on a smart phone and take a picture of the document. If a document is not in English, we will translate it for you with a USCIS certified translator. <strong>REQUIRED documents are in BOLD</strong>
+                </p>
 
-                <div className={styles.alertBox}>
-                    <p className={styles.alertTitle}>Need document translation?</p>
-                    <p className={styles.alertDesc}>Any document not in English must be accompanied by a full English translation certified by the translator.</p>
-                </div>
-
-                <div className={styles.progressSection}>
-                    <div className={styles.progressHeader}>
-                        <span>Your uploads progress</span>
-                        <span>{progress}% complete</span>
+                <div className={styles.progressSectionDocUpload}>
+                    <div className={styles.progressHeaderDocUpload}>
+                        You have uploaded <span className={styles.progressHighlight}>{uploadedRequiredCount}/{totalRequired}</span> required supporting documents.
                     </div>
-                    <div className={styles.progressBarContainer}>
-                        <div className={styles.progressBar} style={{ width: `${progress}%`, transition: 'width 0.3s ease' }}></div>
+                    <div className={styles.progressBarContainerDocUpload}>
+                        <div className={styles.progressBarDocUpload} style={{ width: `${progress}%` }}></div>
                     </div>
                 </div>
 
@@ -173,46 +168,61 @@ function DocumentUploadContent() {
                     </div>
                 )}
 
-                {checklist.groups.map((group, gIdx) => (
-                    <div key={gIdx} className={styles.uploadGroup}>
-                        <div className={styles.uploadGroupHeader}>{group.header}</div>
-                        {group.items.map((item) => {
-                            const isUploaded = !!uploads[item.key];
-                            return (
-                                <div key={item.key} className={styles.uploadRow}>
-                                    <div className={styles.uploadInfo}>
-                                        {getIcon(isUploaded)}
-                                        <span className={styles.uploadText}>
-                                            {item.label}{' '}
-                                            {item.required ? (
-                                                <span className={styles.requiredText} style={{ color: error && !isUploaded ? '#ef4444' : '' }}>
-                                                    Required
-                                                </span>
-                                            ) : (
-                                                <span className={styles.optionalText}>Optional</span>
-                                            )}
-                                        </span>
-                                    </div>
-                                    <button
-                                        onClick={() => handleUploadClick(item.key)}
-                                        disabled={isUploading === item.key}
-                                        className={styles.btnUpload}
-                                        style={{ backgroundColor: isUploaded ? '#f3f4f6' : '', color: isUploaded ? '#10b981' : '' }}
-                                    >
-                                        {isUploading === item.key ? 'Uploading...' : (isUploaded ? 'Uploaded' : 'Upload')}
-                                    </button>
+                {checklist.groups.map((group, gIdx) => {
+                    const groupRequiredCount = group.items.filter(i => i.required).length;
+                    const isExpanded = expandedGroup === gIdx;
+                    return (
+                        <div key={gIdx} className={styles.uploadGroupDocUpload}>
+                            <button 
+                                className={styles.uploadGroupHeaderDocUpload}
+                                onClick={() => setExpandedGroup(isExpanded ? null : gIdx)}
+                            >
+                                <span>{group.header} <span className={styles.uploadGroupHeaderCount}>{groupRequiredCount} required documents</span></span>
+                                <span className={styles.uploadGroupHeaderIcon}>{isExpanded ? '-' : '+'}</span>
+                            </button>
+                            
+                            {isExpanded && (
+                                <div className={styles.uploadGroupContentDocUpload}>
+                                    {group.items.map((item) => {
+                                        const isUploaded = !!uploads[item.key];
+                                        return (
+                                            <div key={item.key} className={styles.uploadRow}>
+                                                <div className={styles.uploadInfo}>
+                                                    {getIcon(isUploaded)}
+                                                    <span className={`${styles.uploadText} ${item.required ? styles.uploadTextBold : ''}`}>
+                                                        {item.label}{' '}
+                                                        {item.required ? (
+                                                            <span className={styles.requiredText} style={{ color: error && !isUploaded ? '#ef4444' : '' }}>
+                                                                Required
+                                                            </span>
+                                                        ) : (
+                                                            <span className={styles.optionalText}>Optional</span>
+                                                        )}
+                                                    </span>
+                                                </div>
+                                                <button
+                                                    onClick={() => handleUploadClick(item.key)}
+                                                    disabled={isUploading === item.key}
+                                                    className={styles.btnUpload}
+                                                    style={{ backgroundColor: isUploaded ? '#f3f4f6' : '', color: isUploaded ? '#10b981' : '' }}
+                                                >
+                                                    {isUploading === item.key ? 'Uploading...' : (isUploaded ? 'Uploaded' : 'Upload')}
+                                                </button>
+                                            </div>
+                                        );
+                                    })}
                                 </div>
-                            );
-                        })}
-                    </div>
-                ))}
+                            )}
+                        </div>
+                    );
+                })}
 
-                <div className={styles.footerScreenshot}>
-                    <button onClick={() => { const prev = getPrevFormPath('/dashboard/get-started/document-upload', applicationTitle); router.push(prev); }} className={styles.btnTeal}>
+                <div className={styles.footerScreenshotDocUpload}>
+                    <button onClick={() => { const prev = getPrevFormPath('/dashboard/get-started/document-upload', applicationTitle); router.push(prev); }} className={styles.btnActionDocUpload}>
                         &#8592; Previous
                     </button>
-                    <button onClick={handleNext} className={styles.btnTeal}>
-                        Save and Continue
+                    <button onClick={handleNext} className={styles.btnActionDocUpload}>
+                        Continue
                     </button>
                 </div>
             </div>

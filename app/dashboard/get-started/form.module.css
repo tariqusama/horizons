@@ -1052,6 +1052,150 @@
     background-color: #dc2626;
 }
 
+.modalActions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 2.5rem;
+}
+
+/* ==========================================================================
+   DOCUMENT UPLOAD REDESIGN
+   ========================================================================== */
+
+.pageWrapperDocUpload {
+    width: 100%;
+    max-width: 1100px;
+    margin: 2rem auto 0;
+    padding: 0 1.5rem;
+    font-family: 'Outfit', sans-serif;
+    padding-bottom: 6rem;
+}
+
+.formSectionDocUpload {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.docUploadTitle {
+    font-size: 1.5rem;
+    color: #4b9e94;
+    font-weight: 400;
+    margin-bottom: 1rem;
+}
+
+.docUploadDesc {
+    font-size: 0.85rem;
+    color: #64748b;
+    margin-bottom: 2rem;
+    line-height: 1.5;
+}
+
+.progressSectionDocUpload {
+    margin-bottom: 2rem;
+}
+
+.progressHeaderDocUpload {
+    font-size: 0.9rem;
+    color: #64748b;
+    margin-bottom: 0.5rem;
+}
+
+.progressHighlight {
+    color: #4b9e94;
+    font-weight: 600;
+}
+
+.progressBarContainerDocUpload {
+    width: 100%;
+    height: 8px;
+    background-color: #e2e8f0;
+}
+
+.progressBarDocUpload {
+    height: 100%;
+    background-color: #4b9e94;
+    transition: width 0.3s ease;
+}
+
+.uploadGroupDocUpload {
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.uploadGroupHeaderDocUpload {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 0;
+    background: none;
+    border: none;
+    font-size: 0.95rem;
+    color: #64748b;
+    cursor: pointer;
+    text-align: left;
+}
+
+.uploadGroupHeaderCount {
+    color: #4b9e94;
+    font-weight: 500;
+    margin-left: 0.25rem;
+}
+
+.uploadGroupHeaderIcon {
+    color: #94a3b8;
+    font-size: 1.25rem;
+    font-weight: 300;
+}
+
+.uploadGroupContentDocUpload {
+    padding: 0 0 1.5rem 0;
+}
+
+.uploadTextBold {
+    font-weight: 600;
+}
+
+.footerScreenshotDocUpload {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 3rem;
+}
+
+.btnActionDocUpload {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 42px;
+    padding: 0 1.75rem;
+    background: linear-gradient(135deg, #FF6B35 0%, #F0501A 100%);
+    color: #ffffff;
+    font-size: 0.95rem;
+    font-weight: 700;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 12px rgba(240, 80, 26, 0.2);
+}
+
+.btnActionDocUpload:hover {
+    background: linear-gradient(135deg, #F0501A 0%, #D94514 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(240, 80, 26, 0.3);
+}
+
+@media (max-width: 768px) {
+    .footerScreenshotDocUpload {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    .btnActionDocUpload {
+        width: 100%;
+    }
+}
+
 .btnAddItemRow {
     display: flex;
     justify-content: flex-end;

@@ -1,222 +1,11 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from 'react';
-import { useRouter, useParams } from 'next/navigation';
+import { useRouter, useParams, useSearchParams } from 'next/navigation';
 import styles from './dynamic.module.css';
 import api from '@/lib/api';
 import { useAuth } from '@/contexts/AuthContext';
-
-interface SubStep {
-    id: string;
-    sectionTitle: string;
-    subSectionTitle: string;
-    tabLabel: string;
-    questions: any[];
-}
-
-/**
- * Capitalizes names nicely (e.g. "muhamamd baksh" -> "Muhamamd Baksh")
- */
-function capitalizeName(name: string): string {
-    if (!name) return 'Applicant';
-    return name
-        .trim()
-        .split(' ')
-        .filter(Boolean)
-        .map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
-        .join(' ');
-}
-
-/**
- * Transforms standard USCIS question labels into friendly, personalized questions
- * addressing the applicant by name (e.g. "How tall is [Applicant Name]?*")
- */
-function personalizeQuestionText(text: string, applicantName: string): string {
-    if (!text) return '';
-    const name = capitalizeName(applicantName);
-    const possessiveName = name.endsWith('s') ? `${name}'` : `${name}'s`;
-
-    // Explicit template tokens
-    let output = text
-        .replace(/\{applicant_name\}|\{full_name\}|\{name\}|\[Applicant Name\]|\[Applicant\]|\[Name\]/gi, name)
-        .replace(/\{first_name\}|\[First Name\]/gi, name.split(' ')[0] || name)
-        .replace(/\{last_name\}|\[Last Name\]/gi, name.split(' ').slice(1).join(' ') || name)
-        .replace(/\{possessive_name\}|\[Possessive Name\]/gi, possessiveName);
-
-    if (output !== text) {
-        return output;
-    }
-
-    const trimmed = text.trim();
-    const cleanLower = trimmed.toLowerCase().replace(/[?:.*]/g, '').trim();
-
-    // Biometrics & physical appearance conversions
-    if (/^height(\s*\(.*\))?$/i.test(cleanLower) || /^how tall are you$/i.test(cleanLower)) {
-        return `How tall is ${name}?`;
-    }
-    if (/^weight(\s*\(.*\))?$/i.test(cleanLower) || /^how much do you weigh$/i.test(cleanLower) || /^how much does/i.test(cleanLower)) {
-        return `How much does ${name} weigh?`;
-    }
-    if (/^eye color$/i.test(cleanLower)) {
-        return `What color are ${possessiveName} eyes?`;
-    }
-    if (/^hair color$/i.test(cleanLower)) {
-        return `What color is ${possessiveName} hair?`;
-    }
-    if (/^sex$/i.test(cleanLower) || /^gender$/i.test(cleanLower)) {
-        return `What is ${possessiveName} sex?`;
-    }
-    if (/^date of birth$/i.test(cleanLower) || /^dob$/i.test(cleanLower)) {
-        return `What is ${possessiveName} date of birth?`;
-    }
-    if (/^city\/town\/village of birth$/i.test(cleanLower) || /^place of birth$/i.test(cleanLower)) {
-        return `What city or town was ${name} born in?`;
-    }
-    if (/^country of birth$/i.test(cleanLower)) {
-        return `What is ${possessiveName} country of birth?`;
-    }
-    if (/^country of citizenship or nationality$/i.test(cleanLower)) {
-        return `What is ${possessiveName} country of citizenship or nationality?`;
-    }
-    if (/^alien registration number(\s*\(a-number\))?$/i.test(cleanLower) || /^a-number$/i.test(cleanLower)) {
-        return `What is ${possessiveName} Alien Registration Number (A-Number)?`;
-    }
-    if (/^uscis online account number$/i.test(cleanLower)) {
-        return `What is ${possessiveName} USCIS Online Account Number?`;
-    }
-    if (/^u\.?s\.?\s*social security number(\s*\(if any\))?$/i.test(cleanLower) || /^social security number/i.test(cleanLower)) {
-        return `What is ${possessiveName} U.S. Social Security Number?`;
-    }
-    if (/^class of admission$/i.test(cleanLower)) {
-        return `What is ${possessiveName} Class of Admission?`;
-    }
-    if (/^date of admission$/i.test(cleanLower)) {
-        return `What was ${possessiveName} Date of Admission?`;
-    }
-    if (/^mother'?s first name$/i.test(cleanLower)) {
-        return `What is ${possessiveName} mother's first name?`;
-    }
-    if (/^father'?s first name$/i.test(cleanLower)) {
-        return `What is ${possessiveName} father's first name?`;
-    }
-    if (/^ethnicity$/i.test(cleanLower)) {
-        return `What is ${possessiveName} ethnicity?`;
-    }
-    if (/^race$/i.test(cleanLower)) {
-        return `What is ${possessiveName} race?`;
-    }
-    if (/^daytime telephone number$/i.test(cleanLower) || /^daytime phone number$/i.test(cleanLower)) {
-        return `What is ${possessiveName} daytime phone number?`;
-    }
-    if (/^mobile telephone number$/i.test(cleanLower) || /^mobile phone number$/i.test(cleanLower)) {
-        return `What is ${possessiveName} mobile phone number?`;
-    }
-    if (/^email address$/i.test(cleanLower)) {
-        return `What is ${possessiveName} email address?`;
-    }
-
-    // Conversational grammar transformations
-    if (/^have you ever\b/i.test(trimmed)) {
-        return trimmed.replace(/^have you ever\b/i, `Has ${name} ever`);
-    }
-    if (/^have you\b/i.test(trimmed)) {
-        return trimmed.replace(/^have you\b/i, `Has ${name}`);
-    }
-    if (/^are you currently\b/i.test(trimmed)) {
-        return trimmed.replace(/^are you currently\b/i, `Is ${name} currently`);
-    }
-    if (/^are you\b/i.test(trimmed)) {
-        return trimmed.replace(/^are you\b/i, `Is ${name}`);
-    }
-    if (/^do you currently\b/i.test(trimmed)) {
-        return trimmed.replace(/^do you currently\b/i, `Does ${name} currently`);
-    }
-    if (/^do you\b/i.test(trimmed)) {
-        return trimmed.replace(/^do you\b/i, `Does ${name}`);
-    }
-
-    return trimmed.replace(/\byour\b/gi, possessiveName).replace(/\byou\b/gi, name);
-}
-
-/**
- * Builds clean, major steps based directly on database form sections
- */
-function buildFormSteps(formSchema: any, applicantName: string): SubStep[] {
-    const steps: SubStep[] = [];
-    const name = capitalizeName(applicantName);
-
-    // Step 1: Personal & Basic Information
-    steps.push({
-        id: 'basic-info',
-        sectionTitle: 'Personal Information',
-        subSectionTitle: `${name}'s Basic Information`,
-        tabLabel: 'Personal Information',
-        questions: [
-            {
-                field_name: 'firstName',
-                question_text: 'What is the applicant\'s First Name?',
-                field_type: 'text',
-                is_required: true,
-                placeholder: 'e.g. Mohamed'
-            },
-            {
-                field_name: 'lastName',
-                question_text: 'What is the applicant\'s Last Name?',
-                field_type: 'text',
-                is_required: true,
-                placeholder: 'e.g. Bah'
-            },
-            {
-                field_name: 'email',
-                question_text: `What is ${name}'s Email Address?`,
-                field_type: 'email',
-                is_required: true,
-                placeholder: 'e.g. name@example.com'
-            },
-            {
-                field_name: 'phone',
-                question_text: `What is ${name}'s Phone Number?`,
-                field_type: 'tel',
-                is_required: true,
-                placeholder: '+1 (555) 000-0000'
-            },
-            {
-                field_name: 'dob',
-                question_text: `What is ${name}'s Date of Birth?`,
-                field_type: 'date',
-                is_required: true
-            }
-        ]
-    });
-
-    if (!formSchema?.sections) return steps;
-
-    const seenFields = new Set<string>(['firstname', 'lastname', 'email', 'phone']);
-
-    // Group each database section cleanly into 1 step
-    formSchema.sections.forEach((section: any, idx: number) => {
-        const questions = (section.questions || []).filter((q: any) => {
-            const fn = (q.field_name || '').toLowerCase();
-            if (seenFields.has(fn)) return false;
-            seenFields.add(fn);
-            return true;
-        });
-
-        if (questions.length === 0) return;
-
-        const cleanTitle = section.title.replace(/^Part\s*\d+\.?\s*/i, '').trim();
-
-        steps.push({
-            id: `sec-${section.id || idx}`,
-            sectionTitle: section.title,
-            subSectionTitle: `${name}'s ${cleanTitle}`,
-            tabLabel: cleanTitle || `Step ${idx + 2}`,
-            questions: questions
-        });
-    });
-
-    return steps;
-}
+import { SubStep, capitalizeName, personalizeQuestionText, buildFormSteps } from '../formsEngine';
 
 export default function DynamicFormEnginePage() {
     const params = useParams();
@@ -230,8 +19,12 @@ export default function DynamicFormEnginePage() {
     const [error, setError] = useState('');
     const [applicationId, setApplicationId] = useState<number | null>(null);
 
+    const searchParams = useSearchParams();
+    const initialStep = searchParams?.get('step');
+    const mode = searchParams?.get('mode');
+    
     const [formData, setFormData] = useState<any>({});
-    const [currentStepIndex, setCurrentStepIndex] = useState(0);
+    const [currentStepIndex, setCurrentStepIndex] = useState(initialStep ? parseInt(initialStep, 10) : 0);
     const [unitsState, setUnitsState] = useState<{ [key: string]: string }>({});
     const [isSaving, setIsSaving] = useState(false);
     const [saveError, setSaveError] = useState('');
@@ -280,10 +73,13 @@ export default function DynamicFormEnginePage() {
                         // Restore saved form data if exists
                         if (app.form_data && typeof app.form_data === 'object' && Object.keys(app.form_data).length > 0) {
                             const { _current_step, ...savedFormData } = app.form_data;
-                            setFormData((prev: any) => ({ ...savedFormData, ...prev }));
-                            // Restore saved step index
-                            if (typeof _current_step === 'number' && _current_step > 0) {
-                                setCurrentStepIndex(_current_step);
+                            setFormData((prev: any) => ({ ...savedFormData, _current_step, ...prev }));
+                            const stepKey = `_current_step_${slug}`;
+                            const fallback = typeof _current_step === 'number' ? _current_step : 0;
+                            const savedStep = typeof savedFormData[stepKey] === 'number' ? savedFormData[stepKey] : fallback;
+                            // Only restore saved step index if URL didn't provide one
+                            if (!initialStep && savedStep > 0) {
+                                setCurrentStepIndex(savedStep);
                             }
                         }
                     }
@@ -332,8 +128,13 @@ export default function DynamicFormEnginePage() {
         // Validate required fields in the current step
         const missingFields = currentStep.questions.filter((q: any) => {
             if (q.is_required) {
-                const val = formData[q.field_name];
-                if (val === undefined || val === null || val === '') return true;
+                if (q.field_type === 'name_group') {
+                    // Check first and last name for name_group type
+                    if (!formData.firstName || !formData.lastName) return true;
+                } else {
+                    const val = formData[q.field_name];
+                    if (val === undefined || val === null || val === '') return true;
+                }
             }
             return false;
         });
@@ -346,20 +147,27 @@ export default function DynamicFormEnginePage() {
 
         setIsSaving(true);
         try {
-            const nextStepIndex = currentStepIndex < steps.length - 1 ? currentStepIndex + 1 : currentStepIndex;
+            const proposedNextStep = currentStepIndex + 1;
+            const stepKey = `_current_step_${slug}`;
+            const fallback = typeof formData._current_step === 'number' ? formData._current_step : 0;
+            const newMaxStep = Math.max(formData[stepKey] || fallback, proposedNextStep);
 
             // Save progress to backend
             if (applicationId) {
                 await api.put(`/applications/${applicationId}/save-progress`, {
-                    form_data: formData,
-                    current_step: nextStepIndex,
+                    form_data: { ...formData, [stepKey]: newMaxStep, _current_step: newMaxStep },
+                    current_step: newMaxStep,
                 });
+                setFormData((prev: any) => ({ ...prev, [stepKey]: newMaxStep, _current_step: newMaxStep }));
             }
 
-            if (currentStepIndex < steps.length - 1) {
-                setCurrentStepIndex(nextStepIndex);
+            if (mode === 'edit') {
+                router.push('/dashboard/get-started/overview');
+            } else if (currentStepIndex < steps.length - 1) {
+                setCurrentStepIndex(currentStepIndex + 1);
             } else {
-                router.push('/dashboard/get-started/document-upload');
+                // Return to overview dashboard after finishing a section
+                router.push('/dashboard/get-started/overview');
             }
         } catch (err) {
             console.error('Error saving step', err);
@@ -416,44 +224,7 @@ export default function DynamicFormEnginePage() {
 
     return (
         <div className={styles.pageWrapper}>
-            {/* Top Packet Header Bar */}
-            <div className={styles.headerBannerCard}>
-                <div className={styles.headerContentRow}>
-                    <div className={styles.headerLeftGroup}>
-                        <button 
-                            type="button" 
-                            className={styles.packetBackBtn}
-                            onClick={handlePrev}
-                            title="Go Back"
-                        >
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                                <line x1="19" y1="12" x2="5" y2="12"></line>
-                                <polyline points="12 19 5 12 12 5"></polyline>
-                            </svg>
-                        </button>
-                        <div className={styles.headerTitleGroup}>
-                            <h1 className={styles.packetTitle}>{packetHeaderTitle}</h1>
-                            <p className={styles.packetSubtitle}>
-                                Step {currentStepIndex + 1} of {totalSteps} &bull; {currentStep?.tabLabel}
-                            </p>
-                        </div>
-                    </div>
 
-                    <div className={styles.progressCounterGroup}>
-                        <div className={styles.progressBadge}>
-                            <span>{progressPercent}% Completed</span>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Progress Bar Track */}
-                <div className={styles.progressBarTrack}>
-                    <div 
-                        className={styles.progressBarFill} 
-                        style={{ width: `${progressPercent}%` }} 
-                    />
-                </div>
-            </div>
 
             {/* Horizontal Step Tabs Strip */}
             <div className={styles.tabsContainer}>
@@ -474,7 +245,7 @@ export default function DynamicFormEnginePage() {
                             >
                                 <span className={styles.tabStepNum}>{idx + 1}</span>
                                 <span>{step.tabLabel}</span>
-                                {isCompleted && <span className={styles.tabCheckSmall}>&check;</span>}
+                                {isCompleted && <span className={styles.tabCheckSmall}>{"\u2713"}</span>}
                             </button>
                         );
                     })}
@@ -514,11 +285,16 @@ export default function DynamicFormEnginePage() {
                         {currentStep?.questions?.map((q: any, idx: number) => {
                             const personalizedLabel = personalizeQuestionText(q.question_text, applicantFullName);
                             const val = formData[q.field_name];
-                            const isAnswered = val !== undefined && val !== '' && val !== null;
                             const isHeightQuestion = /height/i.test(q.field_name) || /height/i.test(q.question_text);
                             const isWeightQuestion = /weight/i.test(q.field_name) || /weight/i.test(q.question_text);
                             const isFullWidth = isHeightQuestion || isWeightQuestion || q.field_type === 'textarea' || q.field_type === 'radio' || (q.options && q.options.length > 2);
                             const currentUnit = unitsState[q.field_name] || (isHeightQuestion ? 'cm' : 'kg');
+
+                            // Determine if this question is answered for the checkmark
+                            let isAnswered = val !== undefined && val !== '' && val !== null;
+                            if (q.field_type === 'name_group') {
+                                isAnswered = !!(formData.firstName && formData.lastName);
+                            }
 
                             // Height conversion notice
                             let heightNotice = null;
@@ -552,11 +328,22 @@ export default function DynamicFormEnginePage() {
                                 }
                             }
 
+                            // Parse Image from Help Text
+                            const imageMatch = q.help_text ? q.help_text.match(/\[IMAGE:(.+?)\]/) : null;
+                            const imageUrl = imageMatch ? imageMatch[1] : null;
+                            const cleanHelpText = q.help_text ? q.help_text.replace(/\[IMAGE:.+?\]/, '') : null;
+
                             return (
                                 <div 
                                     key={q.field_name || idx}
                                     className={`${styles.questionBlock} ${isFullWidth ? styles.questionBlockFullWidth : ''}`}
                                 >
+                                    {imageUrl && (
+                                        <div style={{ marginBottom: '1rem' }}>
+                                            <img src={imageUrl} alt="Helper Instruction" style={{ maxWidth: '100%', borderRadius: '8px', display: 'block', margin: '0 auto' }} />
+                                        </div>
+                                    )}
+
                                     <div className={styles.questionHeaderRow}>
                                         <div className={isAnswered ? styles.statusCheckCircle : styles.statusCheckEmpty}>
                                             {isAnswered ? '\u2713' : (idx + 1)}
@@ -687,7 +474,109 @@ export default function DynamicFormEnginePage() {
                                                     />
                                                 )}
 
-                                                {/* Radio Group */}
+                                                {/* Custom Name Group Box Layout */}
+                                                {q.field_type === 'name_group' && (
+                                                    <div className={styles.nameGroupContainer}>
+                                                        <div className={styles.nameInputBox}>
+                                                            <span className={styles.nameInputLabel}>First Name</span>
+                                                            <input
+                                                                type="text"
+                                                                className={`${styles.nameInputField} ${formData.firstName ? styles.nameInputFieldFilled : ''}`}
+                                                                placeholder="e.g. Mohamed"
+                                                                value={formData.firstName || ''}
+                                                                onChange={(e) => handleChange('firstName', e.target.value)}
+                                                                required={q.is_required}
+                                                            />
+                                                        </div>
+                                                        <div className={styles.nameInputBox}>
+                                                            <span className={styles.nameInputLabel}>Middle Name</span>
+                                                            <input
+                                                                type="text"
+                                                                className={`${styles.nameInputField} ${formData.middleName ? styles.nameInputFieldFilled : ''}`}
+                                                                placeholder=""
+                                                                value={formData.middleName || ''}
+                                                                onChange={(e) => handleChange('middleName', e.target.value)}
+                                                            />
+                                                        </div>
+                                                        <div className={styles.nameInputBox}>
+                                                            <span className={styles.nameInputLabel}>Last Name</span>
+                                                            <input
+                                                                type="text"
+                                                                className={`${styles.nameInputField} ${formData.lastName ? styles.nameInputFieldFilled : ''}`}
+                                                                placeholder="e.g. Bah"
+                                                                value={formData.lastName || ''}
+                                                                onChange={(e) => handleChange('lastName', e.target.value)}
+                                                                required={q.is_required}
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                )}
+
+                                                {/* Yes/No Large Toggles */}
+                                                {q.field_type === 'radio_yes_no' && (
+                                                    <div className={styles.yesNoGroup}>
+                                                        {q.options?.map((opt: any) => {
+                                                            const isChecked = formData[q.field_name] === opt.option_value;
+                                                            return (
+                                                                <label 
+                                                                    key={opt.option_value} 
+                                                                    className={`${styles.yesNoOption} ${isChecked ? styles.yesNoOptionActive : ''}`}
+                                                                >
+                                                                    <div className={styles.yesNoRadioCircle}></div>
+                                                                    <span>{opt.option_label}</span>
+                                                                    <input
+                                                                        type="radio"
+                                                                        name={q.field_name}
+                                                                        value={opt.option_value}
+                                                                        checked={isChecked}
+                                                                        onChange={(e) => handleChange(q.field_name, e.target.value)}
+                                                                        style={{ display: 'none' }}
+                                                                    />
+                                                                </label>
+                                                            );
+                                                        })}
+                                                    </div>
+                                                )}
+
+                                                {/* Gender Icon Toggles */}
+                                                {q.field_type === 'radio_gender' && (
+                                                    <div className={styles.genderGroup}>
+                                                        {q.options?.map((opt: any) => {
+                                                            const isChecked = formData[q.field_name] === opt.option_value;
+                                                            return (
+                                                                <label 
+                                                                    key={opt.option_value} 
+                                                                    className={`${styles.genderOption} ${isChecked ? styles.genderOptionActive : ''}`}
+                                                                >
+                                                                    <div className={styles.genderIcon}>
+                                                                        {opt.option_value === 'Female' ? (
+                                                                            <svg viewBox="0 0 24 24" fill="currentColor" width="28" height="28">
+                                                                                <path d="M12 2C8.13 2 5 5.13 5 9c0 2.38 1.19 4.47 3 5.74V17c0 1.1.9 2 2 2h4c1.1 0 2-.9 2-2v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.87-3.13-7-7-7zm0 12c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/>
+                                                                                <path d="M12 18v4m-2-2h4" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                                                                            </svg>
+                                                                        ) : (
+                                                                            <svg viewBox="0 0 24 24" fill="currentColor" width="28" height="28">
+                                                                                <path d="M12 2C8.13 2 5 5.13 5 9c0 2.38 1.19 4.47 3 5.74V17c0 1.1.9 2 2 2h4c1.1 0 2-.9 2-2v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.87-3.13-7-7-7zm0 12c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/>
+                                                                                <path d="M12 2v6m4-4L12 2 8 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                                                                            </svg>
+                                                                        )}
+                                                                    </div>
+                                                                    <span>{opt.option_label}</span>
+                                                                    <input
+                                                                        type="radio"
+                                                                        name={q.field_name}
+                                                                        value={opt.option_value}
+                                                                        checked={isChecked}
+                                                                        onChange={(e) => handleChange(q.field_name, e.target.value)}
+                                                                        style={{ display: 'none' }}
+                                                                    />
+                                                                </label>
+                                                            );
+                                                        })}
+                                                    </div>
+                                                )}
+
+                                                {/* Radio Group Standard */}
                                                 {q.field_type === 'radio' && (
                                                     <div className={styles.radioGrid}>
                                                         {q.options?.map((opt: any) => {
@@ -741,9 +630,9 @@ export default function DynamicFormEnginePage() {
                                             </div>
                                         )}
 
-                                        {q.help_text && (
+                                        {cleanHelpText && (
                                             <p className={styles.helperNotice}>
-                                                {personalizeQuestionText(q.help_text, applicantFullName)}
+                                                {personalizeQuestionText(cleanHelpText, applicantFullName)}
                                             </p>
                                         )}
                                     </div>
@@ -760,7 +649,8 @@ export default function DynamicFormEnginePage() {
                             onClick={handlePrev} 
                             disabled={isSaving}
                         >
-                            &larr; {currentStepIndex === 0 ? 'Exit' : 'Previous'}
+                            <span className={styles.btnIcon}>&larr;</span>
+                            <span className={styles.btnText}>{currentStepIndex === 0 ? 'Exit' : 'Previous'}</span>
                         </button>
                         <button 
                             type="button" 
@@ -768,40 +658,11 @@ export default function DynamicFormEnginePage() {
                             onClick={handleNext} 
                             disabled={isSaving}
                         >
-                            {isSaving ? 'Saving...' : (currentStepIndex === totalSteps - 1 ? 'Finish and Continue' : 'Save and Continue')}
+                            {/* Assuming there might be a gear or loading icon here, separating text cleanly */}
+                            <span className={styles.btnText}>
+                                {isSaving ? 'Saving...' : (currentStepIndex === totalSteps - 1 ? 'Finish and Continue' : 'Save and Continue')}
+                            </span>
                         </button>
-                    </div>
-                </div>
-
-                {/* Right Side Helper / Tips Panel */}
-                <div className={styles.tipsSidePanel}>
-                    <div className={styles.tipsCard}>
-                        <div className={styles.tipsHeaderRow}>
-                            <div className={styles.tipsIconBox}>💡</div>
-                            <h4 className={styles.tipsTitle}>Form Guide & Tips</h4>
-                        </div>
-                        <p className={styles.tipsText}>
-                            Your progress is automatically saved as you complete each section. You can return to review or update your answers at any time.
-                        </p>
-
-                        <div className={styles.tipsFeatureList}>
-                            <div className={styles.tipsFeatureItem}>
-                                <span className={styles.tipsFeatureDot} />
-                                <span>Double check dates and legal spellings against official documents.</span>
-                            </div>
-                            <div className={styles.tipsFeatureItem}>
-                                <span className={styles.tipsFeatureDot} />
-                                <span>Unit conversions (cm/in, kg/lbs) are handled automatically for final USCIS forms.</span>
-                            </div>
-                        </div>
-
-                        <div className={styles.securityBadgeRow}>
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2d9a8d" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                            </svg>
-                            <span>Bank-level 256-Bit Data Encryption</span>
-                        </div>
                     </div>
                 </div>
             </div>

@@ -1,0 +1,288 @@
+.pageWrapper {
+    width: 100%;
+    min-height: 100vh;
+    background-color: #f8fafc;
+    padding-bottom: 6rem;
+    font-family: 'Outfit', sans-serif;
+}
+
+/* Tabs */
+.tabsContainer {
+    width: 100%;
+    background: #ffffff;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.tabsTrack {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.tabsTrack::-webkit-scrollbar {
+    display: none;
+}
+
+.tabBtn {
+    padding: 1.2rem 1.5rem;
+    background: none;
+    border: none;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #64748b;
+    cursor: pointer;
+    white-space: nowrap;
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s ease;
+}
+
+.tabBtn:hover {
+    color: #1e293b;
+}
+
+.tabBtnActive {
+    color: #115e59;
+    border-bottom-color: #115e59;
+}
+
+/* Main Layout */
+.layoutContainer {
+    max-width: 1100px;
+    margin: 2rem auto 0;
+    padding: 0 1.5rem;
+}
+
+/* Section Box */
+.sectionBlock {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.sectionHeader {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.25rem;
+}
+
+.sectionTitle {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #334155;
+    margin: 0;
+}
+
+.statusCompleted {
+    color: #10b981;
+    font-weight: 500;
+}
+
+.sectionDesc {
+    font-size: 0.9rem;
+    color: #64748b;
+    margin: 0 0 1.25rem 0;
+}
+
+.sectionActionRow {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+/* Buttons */
+.btnAction {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 38px;
+    padding: 0 1.5rem;
+    border-radius: 4px;
+    border: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btnStart {
+    background: #FF6B35;
+    background: linear-gradient(135deg, #FF6B35 0%, #F0501A 100%);
+    color: #ffffff;
+}
+
+.btnStart:hover {
+    background: linear-gradient(135deg, #F0501A 0%, #D94514 100%);
+}
+
+.btnEdit {
+    background: #f5a623;
+    color: #ffffff;
+    border: none;
+}
+
+.btnEdit:hover {
+    background: #e59613;
+}
+
+/* Bottom Nav */
+.bottomNav {
+    max-width: 1100px;
+    margin: 2rem auto;
+    padding: 0 1.5rem;
+    display: flex;
+    justify-content: space-between;
+}
+
+.btnNav {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 42px;
+    padding: 0 1.75rem;
+    background: linear-gradient(135deg, #FF6B35 0%, #F0501A 100%);
+    color: #ffffff;
+    font-size: 0.95rem;
+    font-weight: 500;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 12px rgba(240, 80, 26, 0.2);
+}
+
+.btnNav:hover {
+    background: linear-gradient(135deg, #F0501A 0%, #D94514 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(240, 80, 26, 0.3);
+}
+
+/* Dynamic Header Styles */
+.dynamicHeader {
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.dynamicHeaderTitle {
+    font-size: 1.5rem;
+    color: #4b9e94;
+    font-weight: 400;
+    margin-bottom: 1rem;
+}
+
+.progressRow {
+    width: 100%;
+    padding-top: 0.75rem;
+    border-top: 1px solid #E2E8F0;
+    margin-bottom: 2rem;
+}
+
+.progressTrack {
+    position: relative;
+    width: 100%;
+    height: 42px;
+    background: #E2E8F0;
+    border-radius: 999px;
+    overflow: hidden;
+    display: flex;
+    align-items: stretch;
+}
+
+.progressSegment {
+    flex: 1 1 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #E2E8F0;
+    color: #475569;
+    min-width: 0;
+    padding: 0 0.25rem;
+}
+
+.progressSegmentActive {
+    background: linear-gradient(90deg, #F97316 0%, #FB923C 100%);
+    color: #ffffff;
+}
+
+.progressLabel {
+    display: block;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: inherit;
+    white-space: nowrap;
+    text-align: center;
+    font-family: "Segoe UI", sans-serif;
+    transform: translateY(1px);
+}
+
+.progressLabelActive {
+    color: #ffffff;
+}
+
+.illustrationContainer {
+    display: flex;
+    justify-content: flex-start;
+    margin-bottom: 2rem;
+}
+
+/* Completed Applicant Box */
+.completedBox {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    margin-bottom: 1.25rem;
+    background-color: #fafafa;
+    gap: 1rem;
+}
+
+.completedBoxText {
+    font-size: 0.95rem;
+    color: #334155;
+    word-break: break-word;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .completedBox {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+    
+    .btnAction {
+        width: 100%;
+    }
+    
+    .sectionActionRow {
+        width: 100%;
+    }
+}
+
+@media (max-width: 640px) {
+    .progressTrack {
+        height: 24px;
+    }
+    
+    .progressLabel {
+        font-size: 0.6rem;
+    }
+    
+    .dynamicHeaderTitle {
+        font-size: 1.25rem;
+    }
+    
+    .sectionTitle {
+        font-size: 1rem;
+    }
+}

@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import api from "@/lib/api";
 import { useAuth } from '@/contexts/AuthContext';
@@ -16,6 +16,7 @@ interface SidebarProps {
 
 export default function Sidebar({ isOpen = false, onClose }: SidebarProps) {
     const pathname = usePathname();
+    const searchParams = useSearchParams();
     const isGetStartedFlow = pathname.startsWith('/dashboard/get-started');
     const { logout, user } = useAuth();
 
@@ -45,11 +46,18 @@ export default function Sidebar({ isOpen = false, onClose }: SidebarProps) {
             path: '/dashboard/get-started',
             isCurrent: pathname === '/dashboard/get-started',
         },
-        ...formsList.map((form, index) => ({
-            label: `Step ${index + 2}: ${form.name.replace(/^Form\s+/i, '')}`,
-            path: form.path,
-            isCurrent: pathname === form.path || pathname === `/dashboard/get-started/dynamic/${form.code}`,
-        })),
+        ...formsList.map((form, index) => {
+            const formCode = form.code;
+            const isOverview = pathname === '/dashboard/get-started/overview';
+            const currentFormCode = searchParams?.get('form');
+            const isActiveOverview = isOverview && (currentFormCode === formCode || (!currentFormCode && index === 0));
+            
+            return {
+                label: `Step ${index + 2}: ${form.name.replace(/^Form\s+/i, '')}`,
+                path: `/dashboard/get-started/overview?form=${formCode}`,
+                isCurrent: isActiveOverview || pathname === `/dashboard/get-started/dynamic/${formCode}`,
+            };
+        }),
         {
             label: `Step ${formsList.length + 2}: Document Upload`,
             path: '/dashboard/get-started/document-upload',
@@ -74,6 +82,14 @@ export default function Sidebar({ isOpen = false, onClose }: SidebarProps) {
                 <div className={styles.logoMarkWrap}>
                     <Image src="/horizonlogo.png" alt="Horizon Pathways" width={150} height={40} className="object-contain" />
                 </div>
+                {isOpen && (
+                    <button className={styles.closeSidebarBtn} onClick={onClose} aria-label="Close Sidebar">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </button>
+                )}
             </div>
 
             {isGetStartedFlow ? (

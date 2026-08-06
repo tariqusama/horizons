@@ -179,6 +179,20 @@ export default function GetStartedPage() {
 
     const welcomeContent = getWelcomeContent();
 
+    const isApplicantOnly = (() => {
+        const title = application?.title?.toLowerCase() || '';
+        if (
+            title.includes('n-400') || title.includes('naturalization') || title.includes('citizenship') ||
+            title.includes('daca') || title.includes('821d') ||
+            title.includes('replace') || title.includes('fix') || title.includes('green card') || title.includes('i-90') ||
+            title.includes('remove conditions') || title.includes('i-751') ||
+            title.includes('renewal')
+        ) {
+            return true;
+        }
+        return false;
+    })();
+
     if (showWelcome) {
         return (
             <div style={{ width: '100%', maxWidth: '1000px', margin: '0 auto', padding: '32px 20px', fontFamily: '"Segoe UI", Roboto, Helvetica, Arial, sans-serif', background: '#F8FAFC', color: '#0F172A' }}>
@@ -329,13 +343,17 @@ export default function GetStartedPage() {
                 <h2 className={styles.beginHeader}>Let&apos;s Begin Your Immigration Application.</h2>
                 <div className={styles.infoGrid}>
                     <div className={styles.infoCard}>
-                        <span className={styles.infoCardLabel}>Petitioner&apos;s Full Legal Name</span>
+                        <span className={styles.infoCardLabel}>
+                            {isApplicantOnly ? "Applicant's Full Legal Name" : "Petitioner's Full Legal Name"}
+                        </span>
                         <div className={styles.infoCardValue}>{user?.name || 'Pending'}</div>
                     </div>
-                    <div className={styles.infoCard}>
-                        <span className={styles.infoCardLabel}>Beneficiary&apos;s Full Legal Name</span>
-                        <div className={styles.infoCardValue}>To be provided</div>
-                    </div>
+                    {!isApplicantOnly && (
+                        <div className={styles.infoCard}>
+                            <span className={styles.infoCardLabel}>Beneficiary&apos;s Full Legal Name</span>
+                            <div className={styles.infoCardValue}>To be provided</div>
+                        </div>
+                    )}
                 </div>
             </div>
 
@@ -349,10 +367,12 @@ export default function GetStartedPage() {
                 </p>
                 <div className={styles.confirmationActions}>
                     <button className={styles.confirmPrimary} onClick={handleConfirm}>
-                        ✓ Yes, I can confirm
+                        <span className={styles.btnIcon}>✓</span>
+                        <span className={styles.btnText}>Yes, I can confirm</span>
                     </button>
                     <button className={styles.confirmSecondary} onClick={handleWrongPackage}>
-                        ✕ No, I selected the wrong package
+                        <span className={styles.btnIcon}>✕</span>
+                        <span className={styles.btnText}>No, I selected the wrong package</span>
                     </button>
                 </div>
             </div>
