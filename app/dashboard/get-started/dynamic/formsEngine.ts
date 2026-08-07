@@ -87,46 +87,52 @@ export function personalizeQuestionText(text: string, applicantName: string): st
     return trimmed.replace(/\byour\b/gi, possessiveName).replace(/\byou\b/gi, name);
 }
 
-export function buildFormSteps(formSchema: any, applicantName: string): SubStep[] {
+export function buildFormSteps(formSchema: any, applicantName: string, slug?: string): SubStep[] {
     const steps: SubStep[] = [];
     const name = capitalizeName(applicantName);
+
+    const questions: any[] = [
+        {
+            field_name: 'name_group',
+            question_text: `What is the full legal name of ${name}?`,
+            field_type: 'name_group',
+            is_required: true,
+            help_text: `This is the Applicant's CURRENT full legal name, including first, middle, and last names.`
+        }
+    ];
+
+    if (slug === 'i-90' || slug === 'n-400' || slug === 'i-751') {
+        questions.push({
+            field_name: 'sameNameAsCard',
+            question_text: `Is this the same name that is on ${name}'s Green Card?`,
+            field_type: 'radio_yes_no',
+            is_required: true,
+            help_text: `Just answer 'No' if ${name}'s name has changed since the Green Card was issued.`,
+            options: [
+                { option_label: 'Yes', option_value: 'Yes' },
+                { option_label: 'No', option_value: 'No' }
+            ]
+        });
+    }
+
+    questions.push({
+        field_name: 'gender',
+        question_text: `What is ${name.endsWith('s') ? name + "'" : name + "'s"} sex?`,
+        field_type: 'radio_gender',
+        is_required: true,
+        help_text: `USCIS allows individuals to self-identify their gender marker. The selected gender will not be required to match the gender marker from their supporting documentation, and no additional documentation will be required. Currently, USCIS only recognizes two sexes 'Male' and 'Female'.`,
+        options: [
+            { option_label: 'Female', option_value: 'Female' },
+            { option_label: 'Male', option_value: 'Male' }
+        ]
+    });
 
     steps.push({
         id: 'basic-info',
         sectionTitle: 'Personal Information',
         subSectionTitle: `${name}'s Basic Information`,
         tabLabel: 'Personal Information',
-        questions: [
-            {
-                field_name: 'name_group',
-                question_text: `What is the full legal name of ${name}?`,
-                field_type: 'name_group',
-                is_required: true,
-                help_text: `This is the Applicant's CURRENT full legal name, including first, middle, and last names.`
-            },
-            {
-                field_name: 'sameNameAsCard',
-                question_text: `Is this the same name that is on ${name}'s Green Card?`,
-                field_type: 'radio_yes_no',
-                is_required: true,
-                help_text: `Just answer 'No' if ${name}'s name has changed since the Green Card was issued.`,
-                options: [
-                    { option_label: 'Yes', option_value: 'Yes' },
-                    { option_label: 'No', option_value: 'No' }
-                ]
-            },
-            {
-                field_name: 'gender',
-                question_text: `What is ${name.endsWith('s') ? name + "'" : name + "'s"} sex?`,
-                field_type: 'radio_gender',
-                is_required: true,
-                help_text: `USCIS allows individuals to self-identify their gender marker. The selected gender will not be required to match the gender marker from their supporting documentation, and no additional documentation will be required. Currently, USCIS only recognizes two sexes 'Male' and 'Female'.`,
-                options: [
-                    { option_label: 'Female', option_value: 'Female' },
-                    { option_label: 'Male', option_value: 'Male' }
-                ]
-            }
-        ]
+        questions: questions
     });
 
     if (!formSchema?.sections) return steps;

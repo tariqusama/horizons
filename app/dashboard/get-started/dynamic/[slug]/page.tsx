@@ -116,7 +116,7 @@ export default function DynamicFormEnginePage() {
     const applicantRawName = [formData.firstName, formData.lastName].filter(Boolean).join(' ').trim() || user?.name || '';
     const applicantFullName = capitalizeName(applicantRawName);
 
-    const steps = formSchema ? buildFormSteps(formSchema, applicantFullName) : [];
+    const steps = formSchema ? buildFormSteps(formSchema, applicantFullName, slug) : [];
     const currentStep = steps[currentStepIndex] || steps[0];
     const totalSteps = steps.length;
     const progressPercent = totalSteps > 0 ? Math.round(((currentStepIndex + 1) / totalSteps) * 100) : 0;
