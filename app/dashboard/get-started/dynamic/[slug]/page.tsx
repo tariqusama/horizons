@@ -129,8 +129,9 @@ export default function DynamicFormEnginePage() {
         const missingFields = currentStep.questions.filter((q: any) => {
             if (q.is_required) {
                 if (q.field_type === 'name_group') {
-                    // Check first and last name for name_group type
-                    if (!formData.firstName || !formData.lastName) return true;
+                    const firstKey = q.field_name === 'legalName' ? 'firstName' : `${q.field_name}_first`;
+                    const lastKey = q.field_name === 'legalName' ? 'lastName' : `${q.field_name}_last`;
+                    if (!formData[firstKey] || !formData[lastKey]) return true;
                 } else {
                     const val = formData[q.field_name];
                     if (val === undefined || val === null || val === '') return true;
@@ -293,7 +294,9 @@ export default function DynamicFormEnginePage() {
                             // Determine if this question is answered for the checkmark
                             let isAnswered = val !== undefined && val !== '' && val !== null;
                             if (q.field_type === 'name_group') {
-                                isAnswered = !!(formData.firstName && formData.lastName);
+                                const firstKey = q.field_name === 'legalName' ? 'firstName' : `${q.field_name}_first`;
+                                const lastKey = q.field_name === 'legalName' ? 'lastName' : `${q.field_name}_last`;
+                                isAnswered = !!(formData[firstKey] && formData[lastKey]);
                             }
 
                             // Height conversion notice
@@ -477,38 +480,47 @@ export default function DynamicFormEnginePage() {
                                                 {/* Custom Name Group Box Layout */}
                                                 {q.field_type === 'name_group' && (
                                                     <div className={styles.nameGroupContainer}>
-                                                        <div className={styles.nameInputBox}>
-                                                            <span className={styles.nameInputLabel}>First Name</span>
-                                                            <input
-                                                                type="text"
-                                                                className={`${styles.nameInputField} ${formData.firstName ? styles.nameInputFieldFilled : ''}`}
-                                                                placeholder="e.g. Mohamed"
-                                                                value={formData.firstName || ''}
-                                                                onChange={(e) => handleChange('firstName', e.target.value)}
-                                                                required={q.is_required}
-                                                            />
-                                                        </div>
-                                                        <div className={styles.nameInputBox}>
-                                                            <span className={styles.nameInputLabel}>Middle Name</span>
-                                                            <input
-                                                                type="text"
-                                                                className={`${styles.nameInputField} ${formData.middleName ? styles.nameInputFieldFilled : ''}`}
-                                                                placeholder=""
-                                                                value={formData.middleName || ''}
-                                                                onChange={(e) => handleChange('middleName', e.target.value)}
-                                                            />
-                                                        </div>
-                                                        <div className={styles.nameInputBox}>
-                                                            <span className={styles.nameInputLabel}>Last Name</span>
-                                                            <input
-                                                                type="text"
-                                                                className={`${styles.nameInputField} ${formData.lastName ? styles.nameInputFieldFilled : ''}`}
-                                                                placeholder="e.g. Bah"
-                                                                value={formData.lastName || ''}
-                                                                onChange={(e) => handleChange('lastName', e.target.value)}
-                                                                required={q.is_required}
-                                                            />
-                                                        </div>
+                                                        {(() => {
+                                                            const firstKey = q.field_name === 'legalName' ? 'firstName' : `${q.field_name}_first`;
+                                                            const middleKey = q.field_name === 'legalName' ? 'middleName' : `${q.field_name}_middle`;
+                                                            const lastKey = q.field_name === 'legalName' ? 'lastName' : `${q.field_name}_last`;
+                                                            return (
+                                                                <>
+                                                                    <div className={styles.nameInputBox}>
+                                                                        <span className={styles.nameInputLabel}>First Name</span>
+                                                                        <input
+                                                                            type="text"
+                                                                            className={`${styles.nameInputField} ${formData[firstKey] ? styles.nameInputFieldFilled : ''}`}
+                                                                            placeholder="e.g. Mohamed"
+                                                                            value={formData[firstKey] || ''}
+                                                                            onChange={(e) => handleChange(firstKey, e.target.value)}
+                                                                            required={q.is_required}
+                                                                        />
+                                                                    </div>
+                                                                    <div className={styles.nameInputBox}>
+                                                                        <span className={styles.nameInputLabel}>Middle Name</span>
+                                                                        <input
+                                                                            type="text"
+                                                                            className={`${styles.nameInputField} ${formData[middleKey] ? styles.nameInputFieldFilled : ''}`}
+                                                                            placeholder=""
+                                                                            value={formData[middleKey] || ''}
+                                                                            onChange={(e) => handleChange(middleKey, e.target.value)}
+                                                                        />
+                                                                    </div>
+                                                                    <div className={styles.nameInputBox}>
+                                                                        <span className={styles.nameInputLabel}>Last Name</span>
+                                                                        <input
+                                                                            type="text"
+                                                                            className={`${styles.nameInputField} ${formData[lastKey] ? styles.nameInputFieldFilled : ''}`}
+                                                                            placeholder="e.g. Bah"
+                                                                            value={formData[lastKey] || ''}
+                                                                            onChange={(e) => handleChange(lastKey, e.target.value)}
+                                                                            required={q.is_required}
+                                                                        />
+                                                                    </div>
+                                                                </>
+                                                            );
+                                                        })()}
                                                     </div>
                                                 )}
 
