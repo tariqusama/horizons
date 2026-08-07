@@ -27,22 +27,22 @@ export const createUser = async (data: any): Promise<User> => {
 };
 
 export const updateUserRole = async (id: number, role: string): Promise<User> => {
-    const response = await api.put(`/api/admin/users/${id}/role`, { role });
+    const response = await api.put(`/admin/users/${id}/role`, { role });
     return response.data.user;
 };
 
 export const getUser = async (id: number): Promise<User> => {
-    const response = await api.get(`/api/admin/users/${id}`);
+    const response = await api.get(`/admin/users/${id}`);
     return response.data;
 };
 
 export const updateUserProfile = async (id: number, data: any): Promise<User> => {
-    const response = await api.put(`/api/admin/users/${id}`, data);
+    const response = await api.put(`/admin/users/${id}`, data);
     return response.data.user;
 };
 
 export const updateUserStatus = async (id: number, status: string): Promise<User> => {
-    const response = await api.put(`/api/admin/users/${id}/status`, { status });
+    const response = await api.put(`/admin/users/${id}/status`, { status });
     return response.data.user;
 };
 
@@ -51,5 +51,5 @@ export const resendVerification = async (email: string): Promise<void> => {
 };
 
 export const deleteUser = async (id: number): Promise<void> => {
-    await api.delete(`/api/admin/users/${id}`);
+    await api.delete(`/admin/users/${id}`);
 };

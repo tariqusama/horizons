@@ -50,7 +50,7 @@ export default function AdminRolesPage() {
 
     const assignments = users.filter(u => {
         const r = (u.role || '').toLowerCase();
-        return r !== 'client' && r !== 'read-only viewer' && r !== '';
+        return r !== 'client' && r !== 'user' && r !== 'read-only viewer' && r !== '';
     }).map(u => {
         const r = (u.role || '').toLowerCase();
         let normalizedRole = "Case Manager";
