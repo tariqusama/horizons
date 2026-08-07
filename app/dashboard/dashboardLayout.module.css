@@ -181,10 +181,10 @@
 
 .packetTitle {
   margin: 0 0 1.25rem;
-  font-size: clamp(1.35rem, 1.5vw, 1.8rem);
-  line-height: 1.12;
-  font-weight: 800;
-  letter-spacing: -0.03em;
+  font-size: clamp(1.1rem, 1.25vw, 1.35rem);
+  line-height: 1.2;
+  font-weight: 700;
+  letter-spacing: -0.02em;
   color: #1B2559;
 }
 
