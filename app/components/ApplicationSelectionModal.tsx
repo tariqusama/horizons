@@ -240,7 +240,7 @@ const CheckoutForm = ({ selectedSubPlan, selectedTier, handleClose, getSelectedA
                         </div>
                     </div>
                     <span className="text-[13px] text-[#5A6579]">
-                        I agree to the Horizon Pathways <a href="https://horizonpathways.us/terms" className="underline">Terms and Conditions</a>
+                        I agree to the Horizon Pathways <a href="/terms" target="_blank" rel="noopener noreferrer" className="underline">Terms and Conditions</a>
                     </span>
                 </label>
 
