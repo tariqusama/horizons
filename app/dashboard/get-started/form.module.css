@@ -12,8 +12,15 @@
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* Header & Progress Bar */
@@ -37,7 +44,7 @@
     margin-bottom: 3rem;
     overflow: hidden;
     position: relative;
-    box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 .progressBar {
@@ -48,16 +55,26 @@
     transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
 }
+
 .progressBar::after {
     content: "";
     position: absolute;
-    top: 0; left: 0; bottom: 0; right: 0;
-    background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0) 100%);
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.4) 50%, rgba(255, 255, 255, 0) 100%);
     animation: shimmer 2s infinite linear;
 }
+
 @keyframes shimmer {
-    0% { transform: translateX(-100%); }
-    100% { transform: translateX(100%); }
+    0% {
+        transform: translateX(-100%);
+    }
+
+    100% {
+        transform: translateX(100%);
+    }
 }
 
 .pageTitle {
@@ -96,7 +113,10 @@
 .formSection::before {
     content: '';
     position: absolute;
-    top: 0; left: 0; right: 0; height: 6px;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 6px;
     background: linear-gradient(90deg, #3b82f6, #8b5cf6, #ec4899);
 }
 
@@ -166,7 +186,7 @@
     color: #0f172a;
     outline: none;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
     font-family: inherit;
 }
 
@@ -178,7 +198,7 @@
 .input:focus {
     background-color: #ffffff;
     border-color: #8b5cf6;
-    box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.15), inset 0 2px 4px rgba(0,0,0,0.01);
+    box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.15), inset 0 2px 4px rgba(0, 0, 0, 0.01);
 }
 
 .radioGroup {
@@ -257,7 +277,7 @@
     transition: color 0.2s;
 }
 
-.dateInput:focus + .calendarIcon {
+.dateInput:focus+.calendarIcon {
     color: #8b5cf6;
 }
 
@@ -286,10 +306,12 @@
     transition: all 0.2s;
     font-family: inherit;
 }
+
 .btnPrev:hover:not(:disabled) {
     background-color: #f1f5f9;
     color: #0f172a;
 }
+
 .btnPrev:disabled {
     opacity: 0.5;
     cursor: not-allowed;
@@ -317,6 +339,7 @@
     box-shadow: 0 8px 24px rgba(37, 99, 235, 0.4);
     background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
 }
+
 .btnNext:disabled {
     opacity: 0.7;
     cursor: not-allowed;
@@ -327,12 +350,15 @@
         grid-template-columns: 1fr;
         gap: 1.5rem;
     }
+
     .formGroupFull {
         grid-column: span 1;
     }
+
     .formSection {
         padding: 2rem 1.5rem;
     }
+
     .radioGroup {
         grid-template-columns: 1fr;
     }
@@ -347,17 +373,20 @@
     padding: 1rem 1.5rem;
     margin-bottom: 2rem;
 }
+
 .alertTitle {
     color: #c2410c;
     font-weight: 700;
     font-size: 0.95rem;
     margin: 0 0 0.25rem 0;
 }
+
 .alertDesc {
     color: #c2410c;
     font-size: 0.9rem;
     margin: 0;
 }
+
 .uploadGroup {
     margin-bottom: 2rem;
     border: 1px solid rgba(226, 232, 240, 0.6);
@@ -366,6 +395,7 @@
     background: rgba(255, 255, 255, 0.5);
     backdrop-filter: blur(8px);
 }
+
 .uploadGroupHeader {
     background-color: rgba(248, 250, 252, 0.8);
     padding: 1rem 1.5rem;
@@ -374,6 +404,7 @@
     color: #0f172a;
     border-bottom: 1px solid rgba(226, 232, 240, 0.6);
 }
+
 .uploadRow {
     display: flex;
     justify-content: space-between;
@@ -382,33 +413,41 @@
     border-bottom: 1px solid rgba(241, 245, 249, 0.6);
     transition: background-color 0.2s ease;
 }
+
 .uploadRow:hover {
     background-color: rgba(255, 255, 255, 0.8);
 }
+
 .uploadRow:last-child {
     border-bottom: none;
 }
+
 .uploadInfo {
     display: flex;
     align-items: center;
     gap: 0.75rem;
 }
+
 .statusIcon {
     color: #cbd5e1;
     flex-shrink: 0;
 }
+
 .uploadText {
     font-size: 0.9rem;
     color: #334155;
     line-height: 1.4;
 }
+
 .requiredText {
-    color: #ea580c; 
+    color: #ea580c;
     font-weight: 600;
 }
+
 .optionalText {
     color: #94a3b8;
 }
+
 .btnUpload {
     display: flex;
     align-items: center;
@@ -422,20 +461,23 @@
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
+
 .btnUpload:hover {
     background-color: #f8fafc;
     border-color: #8b5cf6;
     color: #8b5cf6;
     box-shadow: 0 4px 12px rgba(139, 92, 246, 0.15);
 }
+
 .progressSection {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
     margin-bottom: 2.5rem;
 }
+
 .progressHeader {
     display: flex;
     justify-content: space-between;
@@ -465,13 +507,13 @@
     border: 1px solid rgba(226, 232, 240, 0.6);
     border-radius: 1rem;
     padding: 1.5rem;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .reviewBlock:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 30px rgba(0,0,0,0.05);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
 }
 
 .reviewHeader {
@@ -633,10 +675,12 @@
     margin-bottom: 0.6rem;
     letter-spacing: 0.02em;
 }
+
 .topHeader span:last-child {
     color: #f97316;
     font-weight: 700;
 }
+
 .progressBarContainer {
     height: 10px;
     background-color: #f1f5f9;
@@ -646,6 +690,7 @@
     box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.06);
     border: 1px solid #e2e8f0;
 }
+
 .progressBar {
     height: 100%;
     background: linear-gradient(90deg, #f97316 0%, #fb923c 100%);
@@ -664,6 +709,7 @@
     position: relative;
     overflow: hidden;
 }
+
 .pageHeader::before {
     content: '';
     position: absolute;
@@ -673,6 +719,7 @@
     height: 100%;
     background: linear-gradient(180deg, #f97316 0%, #ea580c 100%);
 }
+
 .pageTitleText {
     font-size: 1.65rem;
     color: #0f172a;
@@ -680,6 +727,7 @@
     margin: 0;
     letter-spacing: -0.02em;
 }
+
 .pageSubtitleText {
     font-size: 0.925rem;
     color: #64748b;
@@ -696,16 +744,19 @@
     box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.03), 0 2px 6px -1px rgba(0, 0, 0, 0.02);
     transition: all 0.25s ease;
 }
+
 .formQuestion:hover {
     box-shadow: 0 10px 25px -4px rgba(0, 0, 0, 0.05), 0 4px 10px -2px rgba(0, 0, 0, 0.02);
     border-color: #cbd5e1;
 }
+
 .questionHeader {
     display: flex;
     align-items: center;
     gap: 0.75rem;
     margin-bottom: 0.35rem;
 }
+
 .questionCheck {
     width: 32px;
     height: 32px;
@@ -717,10 +768,12 @@
     justify-content: center;
     flex-shrink: 0;
 }
+
 .questionCheck svg {
     width: 18px;
     height: 18px;
 }
+
 .questionText {
     font-size: 1.15rem;
     font-weight: 600;
@@ -728,6 +781,7 @@
     margin: 0;
     letter-spacing: -0.01em;
 }
+
 .questionSubtext {
     font-size: 0.875rem;
     color: #64748b;
@@ -742,12 +796,14 @@
     grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
     gap: 1.25rem;
 }
+
 .screenshotInputWrapper {
     display: flex;
     flex-direction: column;
     flex: 1;
     min-width: 240px;
 }
+
 .screenshotInputLabel {
     font-size: 0.875rem;
     font-weight: 600;
@@ -757,6 +813,7 @@
     align-items: center;
     gap: 0.25rem;
 }
+
 .screenshotInput {
     width: 100%;
     border: 1.5px solid #cbd5e1;
@@ -769,10 +826,12 @@
     transition: all 0.2s ease;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
 }
+
 .screenshotInput:hover {
     border-color: #94a3b8;
     background-color: #ffffff;
 }
+
 .screenshotInput:focus {
     background-color: #ffffff;
     border-color: #f97316;
@@ -787,6 +846,7 @@
     gap: 1rem;
     margin-top: 1rem;
 }
+
 .radioCircle {
     display: flex;
     align-items: center;
@@ -801,13 +861,16 @@
     background: #f8fafc;
     transition: all 0.2s ease;
 }
+
 .radioCircle:hover {
     border-color: #cbd5e1;
     background: #ffffff;
 }
+
 .radioCircle input {
     display: none;
 }
+
 .radioIndicator {
     width: 20px;
     height: 20px;
@@ -819,11 +882,13 @@
     transition: all 0.2s ease;
     flex-shrink: 0;
 }
-.radioCircle input:checked + .radioIndicator {
+
+.radioCircle input:checked+.radioIndicator {
     border-color: #f97316;
     background-color: #f97316;
 }
-.radioCircle input:checked + .radioIndicator::after {
+
+.radioCircle input:checked+.radioIndicator::after {
     content: '';
     position: absolute;
     top: 50%;
@@ -834,7 +899,8 @@
     border-radius: 50%;
     background: #ffffff;
 }
-.radioCircle input:checked ~ span {
+
+.radioCircle input:checked~span {
     color: #ea580c;
     font-weight: 600;
 }
@@ -847,6 +913,7 @@
     gap: 1rem;
     margin-top: 1rem;
 }
+
 .iconRadioCircle {
     display: flex;
     align-items: center;
@@ -861,18 +928,22 @@
     background: #ffffff;
     transition: all 0.2s ease;
 }
+
 .iconRadioCircle:hover {
     border-color: #cbd5e1;
     background: #f8fafc;
 }
+
 .iconRadioCircle input {
     display: none;
 }
-.iconRadioCircle input:checked + .radioIndicator {
+
+.iconRadioCircle input:checked+.radioIndicator {
     border-color: #f97316;
     background-color: #f97316;
 }
-.iconRadioCircle input:checked + .radioIndicator::after {
+
+.iconRadioCircle input:checked+.radioIndicator::after {
     content: '';
     position: absolute;
     top: 50%;
@@ -883,7 +954,8 @@
     border-radius: 50%;
     background: #ffffff;
 }
-.iconRadioCircle input:checked ~ span {
+
+.iconRadioCircle input:checked~span {
     color: #ea580c;
     font-weight: 600;
 }
@@ -900,7 +972,8 @@
     color: #64748b;
     transition: all 0.2s ease;
 }
-.iconRadioCircle input:checked + .genderIcon {
+
+.iconRadioCircle input:checked+.genderIcon {
     border-color: #f97316;
     background-color: #f97316;
     color: #ffffff;
@@ -915,7 +988,11 @@
     padding-top: 1.5rem;
     border-top: 1px solid #e2e8f0;
 }
-.btnTeal, .btnPrimary, .btnNext, .btnSubmit {
+
+.btnTeal,
+.btnPrimary,
+.btnNext,
+.btnSubmit {
     background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%) !important;
     color: #ffffff !important;
     font-weight: 700 !important;
@@ -932,12 +1009,20 @@
     box-shadow: 0 8px 24px -2px rgba(37, 99, 235, 0.4), 0 4px 12px rgba(37, 99, 235, 0.25) !important;
     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
-.btnTeal:hover, .btnPrimary:hover, .btnNext:hover, .btnSubmit:hover {
+
+.btnTeal:hover,
+.btnPrimary:hover,
+.btnNext:hover,
+.btnSubmit:hover {
     transform: translateY(-2px) !important;
     box-shadow: 0 12px 28px -2px rgba(37, 99, 235, 0.55), 0 6px 16px rgba(37, 99, 235, 0.35) !important;
     background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
 }
-.btnTeal:active, .btnPrimary:active, .btnNext:active, .btnSubmit:active {
+
+.btnTeal:active,
+.btnPrimary:active,
+.btnNext:active,
+.btnSubmit:active {
     transform: translateY(0) !important;
 }
 
@@ -1191,6 +1276,7 @@
         flex-direction: column;
         gap: 1rem;
     }
+
     .btnActionDocUpload {
         width: 100%;
     }
@@ -1253,6 +1339,7 @@
         gap: 1rem;
         width: 100%;
     }
+
     .footerScreenshot button {
         width: 100%;
     }
@@ -1268,6 +1355,7 @@
         flex-direction: column-reverse;
         gap: 1rem;
     }
+
     .submitActions button {
         width: 100%;
     }
@@ -1348,6 +1436,7 @@
     flex-shrink: 0;
 }
 
+.btnIconView,
 .btnIconUpdate,
 .btnIconDelete,
 .btnIconUpload {
@@ -1361,6 +1450,17 @@
     cursor: pointer;
     transition: all 0.2s ease;
     flex-shrink: 0;
+}
+
+.btnIconView {
+    background-color: #ea580c;
+    color: #ffffff;
+}
+
+.btnIconView:hover {
+    background-color: #d94514;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(240, 80, 26, 0.3);
 }
 
 .btnIconUpdate {
@@ -1464,8 +1564,13 @@
 }
 
 @keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 .spinIcon {
@@ -1486,8 +1591,15 @@
 }
 
 @keyframes modalSlideIn {
-    from { opacity: 0; transform: scale(0.96) translateY(10px); }
-    to { opacity: 1; transform: scale(1) translateY(0); }
+    from {
+        opacity: 0;
+        transform: scale(0.96) translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
 }
 
 .uploadModalHeader {
@@ -1735,6 +1847,7 @@
 
 /* ===== Upload Modal — Mobile Responsive ===== */
 @media (max-width: 640px) {
+
     /* Overlay aligned to top so modal doesn't clip under browser chrome */
     .modalOverlay {
         align-items: flex-start;

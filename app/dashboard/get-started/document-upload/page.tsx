@@ -8,6 +8,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { getPrevFormPath } from '../formsHelper';
 import { getChecklists } from '@/lib/api/cases';
 import { generateFormChecklist, FormChecklist } from '@/lib/utils/documentHelper';
+import { getStorageUrl } from '@/lib/api';
 
 const sanitize = (str: string) => str.toLowerCase().replace(/[^a-z0-9]/g, '');
 
@@ -172,6 +173,7 @@ function DocumentUploadContent() {
 
     const [checklist, setChecklist] = useState<FormChecklist | null>(null);
     const [fileNames, setFileNames] = useState<Record<string, string>>({});
+    const [filePaths, setFilePaths] = useState<Record<string, string>>({});
     const [isUploading, setIsUploading] = useState<string | null>(null);
     const [uploads, setUploads] = useState<Record<string, boolean>>({});
     const [docIds, setDocIds] = useState<Record<string, number>>({});
@@ -214,6 +216,7 @@ function DocumentUploadContent() {
                         if (doc.file_path) {
                             const filename = doc.file_path.split('/').pop() || 'Uploaded file';
                             setFileNames(prev => ({ ...prev, [key]: filename }));
+                            setFilePaths(prev => ({ ...prev, [key]: doc.file_path }));
                         }
                     }
                 });
@@ -243,8 +246,10 @@ function DocumentUploadContent() {
                 headers: { 'Content-Type': 'multipart/form-data' }
             });
             const newId = res.data?.id || res.data?.document?.id;
+            const newPath = res.data?.file_path || res.data?.document?.file_path;
             setUploads(prev => ({ ...prev, [currentDocKey]: true }));
             setFileNames(prev => ({ ...prev, [currentDocKey]: file.name }));
+            if (newPath) setFilePaths(prev => ({ ...prev, [currentDocKey]: newPath }));
             if (newId) setDocIds(prev => ({ ...prev, [currentDocKey]: newId }));
             if (error) setError(false);
             handleCloseModal();
@@ -261,6 +266,7 @@ function DocumentUploadContent() {
             if (docId) await api.delete(`/documents/${docId}`);
             setUploads(prev => { const n = { ...prev }; delete n[docKey]; return n; });
             setFileNames(prev => { const n = { ...prev }; delete n[docKey]; return n; });
+            setFilePaths(prev => { const n = { ...prev }; delete n[docKey]; return n; });
             setDocIds(prev => { const n = { ...prev }; delete n[docKey]; return n; });
         } catch {
             alert('Failed to delete document. Please try again.');
@@ -348,9 +354,23 @@ function DocumentUploadContent() {
                                                     </div>
                                                 </div>
 
-                                                <div className={styles.uploadActions}>
+                                                <div className={styles.uploadActions} style={{ display: 'flex', gap: '8px' }}>
                                                     {isUploaded ? (
                                                         <>
+                                                            {filePaths[item.key] && (
+                                                                <a 
+                                                                    href={getStorageUrl(filePaths[item.key])} 
+                                                                    target="_blank" 
+                                                                    rel="noopener noreferrer" 
+                                                                    className={styles.btnIconView} 
+                                                                    title="View document"
+                                                                >
+                                                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                                                        <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
+                                                                        <circle cx="12" cy="12" r="3" />
+                                                                    </svg>
+                                                                </a>
+                                                            )}
                                                             <button onClick={() => handleOpenModal(item.key, item.label)} className={styles.btnIconUpdate} title="Update document">
                                                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                                                                     <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
