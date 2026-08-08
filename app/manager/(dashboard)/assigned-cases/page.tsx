@@ -1248,11 +1248,12 @@ export default function AssignedCasesPage() {
                                     });
                                     const progress = totalFields > 0 ? Math.round((completedFields / totalFields) * 100) : 0;
 
-                                    return (
-                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', maxHeight: '420px', overflowY: 'auto', paddingRight: '4px' }}>
-                                            {/* Progress Bar */}
-                                            <div style={{ padding: '16px', background: '#f8fafc', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
-                                                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                                    if (totalFields > 0) {
+                                        return (
+                                            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', maxHeight: '420px', overflowY: 'auto', paddingRight: '4px' }}>
+                                                {/* Progress Bar */}
+                                                <div style={{ padding: '16px', background: '#f8fafc', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
+                                                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
                                                     <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#334155' }}>Application Progress</span>
                                                     <span style={{ fontSize: '0.85rem', fontWeight: 700, color: progress === 100 ? '#10b981' : '#3b82f6' }}>{progress}% ({completedFields}/{totalFields})</span>
                                                 </div>
@@ -1311,6 +1312,7 @@ export default function AssignedCasesPage() {
                                             })}
                                         </div>
                                     );
+                                    }
                                 }
 
                                 if (!formData || Object.keys(formData).length === 0) {
