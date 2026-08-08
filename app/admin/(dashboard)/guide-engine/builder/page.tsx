@@ -573,6 +573,19 @@ function FormBuilderContent() {
                                 </div>
                                 <div>
                                     <label className="block text-sm font-semibold text-[#101F38] mb-1">Helper Image (Optional)</label>
+                                    {newQuestionImageBase64 && (
+                                        <div className="mb-3 relative inline-block">
+                                            <img src={newQuestionImageBase64} alt="Helper Preview" className="max-h-32 rounded-lg border border-[#ECE9E2]" />
+                                            <button 
+                                                type="button"
+                                                onClick={() => setNewQuestionImageBase64('')}
+                                                className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 shadow-md"
+                                                title="Remove Image"
+                                            >
+                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                                            </button>
+                                        </div>
+                                    )}
                                     <input type="file" accept="image/*" onChange={(e) => {
                                         const file = e.target.files?.[0];
                                         if (file) {
@@ -581,9 +594,8 @@ function FormBuilderContent() {
                                                 setNewQuestionImageBase64(reader.result as string);
                                             };
                                             reader.readAsDataURL(file);
-                                        } else {
-                                            setNewQuestionImageBase64('');
                                         }
+                                        e.target.value = '';
                                     }} className="w-full border border-[#ECE9E2] rounded-lg px-3 py-2 text-sm focus:border-orange-500 outline-none file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-orange-50 file:text-orange-600 hover:file:bg-orange-100" />
                                 </div>
                                 <div>
