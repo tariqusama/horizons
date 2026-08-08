@@ -130,7 +130,7 @@ export default function QuestionnaireOverviewPage() {
                             title: "Personal Information",
                             desc: "Basic information about the applicant",
                             status: "pending",
-                            slug: "personal-information",
+                            slug: currentForm.code,
                             stepIndex: 0
                         }]);
                     }
