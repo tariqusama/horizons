@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useAuth } from "@/contexts/AuthContext";
 import Image from "next/image";
 import styles from "./overview.module.css";
 import api from "@/lib/api";
@@ -11,12 +12,14 @@ import { buildFormSteps } from "../dynamic/formsEngine";
 // This layout mimics the provided screenshot for the Questionnaire Overview Dashboard
 export default function QuestionnaireOverviewPage() {
     const router = useRouter();
+    const { user } = useAuth();
     const searchParams = useSearchParams();
     const formCode = searchParams?.get('form');
     
     const [activeTab, setActiveTab] = useState("Immigrant Information");
     const [currentFormCode, setCurrentFormCode] = useState("");
     const [applicationTitle, setApplicationTitle] = useState("");
+    const [application, setApplication] = useState<any>(null);
 
     const [sections, setSections] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -44,15 +47,51 @@ export default function QuestionnaireOverviewPage() {
                     if (name) setApplicantName(name);
 
                     setApplicationTitle(activeApp.title || '');
-                    const forms = getFormsList(activeApp.title, { allowFallback: true });
+                    setApplication(activeApp);
+                    const forms = getFormsList(activeApp, { allowFallback: true });
                     const allSections: any[] = [];
                     
                     const currentForm = forms.find(f => f.code === formCode) || forms[0];
+                    const currentFormIndex = forms.indexOf(currentForm) !== -1 ? forms.indexOf(currentForm) : 0;
+                    const dynamicFormName = forms.length > 1 
+                        ? `${activeApp.title || 'Form Intake'} (Part ${currentFormIndex + 1})`
+                        : activeApp.title || 'Form Intake';
+
                     if (currentForm) {
                         setCurrentFormCode(currentForm.code);
                         try {
                             const schemaRes = await api.get(`/guide-engine/forms/${currentForm.code}`);
                             const schema = schemaRes.data;
+                            
+                            // Determine user role
+                            let userRole = 'petitioner';
+                            if (activeApp.user_id !== user?.id) {
+                                const participant = activeApp.participants?.find((p: any) => p.user_id === user?.id);
+                                if (participant) {
+                                    userRole = participant.role;
+                                }
+                            }
+
+                            // Filter sections based on role
+                            if (schema?.sections) {
+                                schema.sections = schema.sections.filter((section: any) => {
+                                    const roles = section.assignee_roles;
+                                    if (!roles || (Array.isArray(roles) && roles.length === 0)) {
+                                        return userRole === 'petitioner';
+                                    }
+                                    
+                                    let parsedRoles = roles;
+                                    if (typeof roles === 'string') {
+                                        try {
+                                            parsedRoles = JSON.parse(roles);
+                                        } catch (e) {
+                                            parsedRoles = [roles];
+                                        }
+                                    }
+                                    return Array.isArray(parsedRoles) && parsedRoles.includes(userRole);
+                                });
+                            }
+
                             const steps = buildFormSteps(schema, name || 'Applicant');
                             
                             const stepKey = `_current_step_${currentForm.code}`;
@@ -63,7 +102,7 @@ export default function QuestionnaireOverviewPage() {
 
                             steps.forEach((step: any, index: number) => {
                                 allSections.push({
-                                    formName: currentForm.name,
+                                    formName: dynamicFormName,
                                     title: step.sectionTitle,
                                     desc: step.subSectionTitle,
                                     status: index < currentStepIndexInDb ? "completed" : "pending",
@@ -81,7 +120,7 @@ export default function QuestionnaireOverviewPage() {
                         setSections(allSections);
                     } else {
                         setSections([{
-                            formName: "Immigrant Information",
+                            formName: dynamicFormName,
                             title: "Personal Information",
                             desc: "Basic information about the applicant",
                             status: "pending",
@@ -105,7 +144,7 @@ export default function QuestionnaireOverviewPage() {
         if (firstPending) {
             handleNavigate(firstPending.slug, firstPending.stepIndex);
         } else {
-            const forms = getFormsList(applicationTitle, { allowFallback: true });
+            const forms = getFormsList(application, { allowFallback: true });
             const currentIndex = forms.findIndex(f => f.code === currentFormCode);
             if (currentIndex >= 0 && currentIndex < forms.length - 1) {
                 router.push(`/dashboard/get-started/overview?form=${forms[currentIndex + 1].code}`);

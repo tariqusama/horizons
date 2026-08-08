@@ -44,7 +44,7 @@ export const getChecklistKeyFromService = (serviceText: string) => {
     return 'i90'; // fallback to i90 if nothing matched, as this is the most common default
 };
 
-export const resolveDocuments = (latestApp: any, checklistsData: any, uploadedDocs: any[]): Document[] => {
+export const resolveDocuments = (latestApp: any, checklistsData: any, uploadedDocs: any[], userRole: string = 'petitioner'): Document[] => {
     let expectedDocs: Document[] = [];
     
     if (latestApp) {
@@ -56,15 +56,34 @@ export const resolveDocuments = (latestApp: any, checklistsData: any, uploadedDo
         if (matchingChecklist) {
             let tempId = -1000;
             matchingChecklist.sections.forEach((section: any) => {
-                section.documents.forEach((d: any) => {
-                    expectedDocs.push({
-                        id: tempId--,
-                        name: d.name,
-                        status: 'Missing',
-                        file_path: null,
-                        required: d.required === true  // preserve required flag from DB checklist
+                // Filter by role
+                const roles = section.assignee_roles;
+                let isAssigned = false;
+                if (!roles || (Array.isArray(roles) && roles.length === 0)) {
+                    isAssigned = userRole === 'petitioner';
+                } else {
+                    let parsedRoles = roles;
+                    if (typeof roles === 'string') {
+                        try {
+                            parsedRoles = JSON.parse(roles);
+                        } catch (e) {
+                            parsedRoles = [roles];
+                        }
+                    }
+                    isAssigned = Array.isArray(parsedRoles) && parsedRoles.includes(userRole);
+                }
+
+                if (isAssigned) {
+                    section.documents.forEach((d: any) => {
+                        expectedDocs.push({
+                            id: tempId--,
+                            name: d.name,
+                            status: 'Missing',
+                            file_path: null,
+                            required: d.required === true  // preserve required flag from DB checklist
+                        });
                     });
-                });
+                }
             });
         } else {
             expectedDocs = [...defaultChecklist];
@@ -107,7 +126,7 @@ export interface FormChecklist {
     groups: DocGroup[];
 }
 
-export const generateFormChecklist = (latestApp: any, checklistsData: any): FormChecklist | null => {
+export const generateFormChecklist = (latestApp: any, checklistsData: any, userRole: string = 'petitioner'): FormChecklist | null => {
     if (!latestApp) return null;
     
     const serviceText = `${latestApp.title || ''} ${latestApp.service_type || ''}`;
@@ -134,17 +153,37 @@ export const generateFormChecklist = (latestApp: any, checklistsData: any): Form
     }
 
     const requiredKeys: string[] = [];
-    const groups: DocGroup[] = backendChecklist.sections.map((s: any) => {
-        const items = s.documents.map((d: any) => {
-            const key = sanitize(d.name);
-            if (d.required) requiredKeys.push(key);
-            return {
-                key,
-                label: d.name,
-                required: d.required
-            };
-        });
-        return { header: s.title, items };
+    const groups: DocGroup[] = [];
+    
+    backendChecklist.sections.forEach((s: any) => {
+        const roles = s.assignee_roles;
+        let isAssigned = false;
+        if (!roles || (Array.isArray(roles) && roles.length === 0)) {
+            isAssigned = userRole === 'petitioner';
+        } else {
+            let parsedRoles = roles;
+            if (typeof roles === 'string') {
+                try {
+                    parsedRoles = JSON.parse(roles);
+                } catch (e) {
+                    parsedRoles = [roles];
+                }
+            }
+            isAssigned = Array.isArray(parsedRoles) && parsedRoles.includes(userRole);
+        }
+
+        if (isAssigned) {
+            const items = s.documents.map((d: any) => {
+                const key = sanitize(d.name);
+                if (d.required) requiredKeys.push(key);
+                return {
+                    key,
+                    label: d.name,
+                    required: d.required
+                };
+            });
+            groups.push({ header: s.title, items });
+        }
     });
 
     return {

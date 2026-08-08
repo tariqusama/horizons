@@ -5,6 +5,8 @@ import { useParams, useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { getManagerAssignedCases, Application, updateApplication, inviteBeneficiary, getServices, Service } from '@/lib/api/cases';
 import { getStorageUrl } from '@/lib/api';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 export default function CaseReviewPage() {
     const params = useParams();
@@ -29,6 +31,33 @@ export default function CaseReviewPage() {
     const [editFormData, setEditFormData] = useState({ title: '', package_name: '', subtitle: '', amount: 0, paid_amount: 0, receipt_number: '', status: '', progress: '', next_step: '' });
     const [editFormJson, setEditFormJson] = useState<Record<string, any>>({});
     const [servicesList, setServicesList] = useState<Service[]>([]);
+    const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
+
+    const generatePDF = async () => {
+        const element = document.getElementById('pdf-content');
+        if (!element) return;
+        
+        setIsGeneratingPdf(true);
+        try {
+            const canvas = await html2canvas(element, {
+                scale: 2,
+                useCORS: true,
+                logging: false,
+                backgroundColor: '#ffffff'
+            });
+            const imgData = canvas.toDataURL('image/jpeg', 1.0);
+            const pdf = new jsPDF('p', 'mm', 'a4');
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+            
+            pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+            pdf.save(`${caseData?.title || 'Form'}_Data.pdf`);
+        } catch (err) {
+            console.error('Failed to generate PDF:', err);
+        } finally {
+            setIsGeneratingPdf(false);
+        }
+    };
 
     // Revision request modal state
     const [showRevisionModal, setShowRevisionModal] = useState(false);
@@ -831,49 +860,98 @@ export default function CaseReviewPage() {
                                     <p className="text-gray-500 max-w-sm">There is no questionnaire data associated with this application yet.</p>
                                 </div>
                             ) : (
-                                <div className="space-y-4">
-                                    {Object.entries(editFormJson).map(([key, val]) => (
-                                        <div key={key}>
-                                            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">{key}</label>
-                                            {typeof val === 'object' && val !== null ? (
-                                                <textarea
-                                                    value={JSON.stringify(val, null, 2)}
-                                                    onChange={(e) => {
-                                                        try {
-                                                            const parsed = JSON.parse(e.target.value);
-                                                            setEditFormJson({ ...editFormJson, [key]: parsed });
-                                                        } catch (err) {
-                                                            setEditFormJson({ ...editFormJson, [key]: e.target.value });
-                                                        }
-                                                    }}
-                                                    className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3.5 text-sm font-medium text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all min-h-[150px] font-mono text-xs"
-                                                />
-                                            ) : typeof val === 'string' && val.length > 50 ? (
-                                                <textarea
-                                                    value={val}
-                                                    onChange={(e) => setEditFormJson({ ...editFormJson, [key]: e.target.value })}
-                                                    className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3.5 text-sm font-medium text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all min-h-[100px]"
-                                                />
-                                            ) : (
-                                                <input
-                                                    type="text"
-                                                    value={String(val)}
-                                                    onChange={(e) => setEditFormJson({ ...editFormJson, [key]: e.target.value })}
-                                                    className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3.5 text-sm font-medium text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all"
-                                                />
-                                            )}
+                                <div id="pdf-content" className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+                                    {/* Header for PDF with Logo */}
+                                    <div className="flex items-center justify-between mb-8 pb-4 border-b border-gray-100">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center text-white font-black text-2xl shadow-sm">
+                                                H
+                                            </div>
+                                            <div>
+                                                <h2 className="text-xl font-black text-gray-900 tracking-tight">Horizon Pathways</h2>
+                                                <p className="text-xs text-gray-500 font-bold uppercase tracking-wider mt-0.5">Form Data • {caseData.title}</p>
+                                            </div>
                                         </div>
-                                    ))}
+                                        <div className="text-right hidden sm:block">
+                                            <p className="text-sm font-bold text-gray-900">Case #{caseData.receipt_number || caseData.id}</p>
+                                            <p className="text-xs text-gray-500 font-medium">{caseData.user?.name}</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
+                                        {Object.entries(editFormJson).map(([key, val]) => {
+                                            const isObject = typeof val === 'object' && val !== null;
+                                            const isLongString = typeof val === 'string' && val.length > 50;
+                                            const isFullWidth = isObject || isLongString;
+                                            
+                                            // Format key nicely (e.g. NAME_GROUP_FIRST -> Name Group First)
+                                            const displayKey = key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+
+                                            return (
+                                                <div key={key} className={isFullWidth ? "md:col-span-2" : ""}>
+                                                    <label className="block text-[11px] font-black text-gray-500 uppercase tracking-wider mb-1.5">{displayKey}</label>
+                                                    {isObject ? (
+                                                        <textarea
+                                                            value={JSON.stringify(val, null, 2)}
+                                                            onChange={(e) => {
+                                                                try {
+                                                                    const parsed = JSON.parse(e.target.value);
+                                                                    setEditFormJson({ ...editFormJson, [key]: parsed });
+                                                                } catch (err) {
+                                                                    setEditFormJson({ ...editFormJson, [key]: e.target.value });
+                                                                }
+                                                            }}
+                                                            className="w-full bg-gray-50/50 border border-gray-200 rounded-xl p-3 text-sm font-medium text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-500 transition-all min-h-[150px] font-mono text-xs focus:bg-white"
+                                                        />
+                                                    ) : isLongString ? (
+                                                        <textarea
+                                                            value={val as string}
+                                                            onChange={(e) => setEditFormJson({ ...editFormJson, [key]: e.target.value })}
+                                                            className="w-full bg-gray-50/50 border border-gray-200 rounded-xl p-3 text-sm font-medium text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-500 transition-all min-h-[100px] focus:bg-white"
+                                                        />
+                                                    ) : (
+                                                        <input
+                                                            type="text"
+                                                            value={val === 'null' ? '' : String(val)}
+                                                            placeholder={val === 'null' ? 'Not provided' : ''}
+                                                            onChange={(e) => setEditFormJson({ ...editFormJson, [key]: e.target.value })}
+                                                            className="w-full bg-gray-50/50 border border-gray-200 rounded-xl p-3 text-sm font-semibold text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-500 transition-all focus:bg-white placeholder:text-gray-400 placeholder:italic"
+                                                        />
+                                                    )}
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
                                 </div>
                             )}
 
-                            <div className="flex items-center justify-end gap-3 mt-8 pt-6 border-t border-gray-100">
-                                <button type="button" onClick={() => setShowFormModal(false)} className="px-6 py-2 rounded-xl bg-gray-100 text-gray-700 font-bold">Cancel</button>
-                                {Object.keys(editFormJson).length > 0 && (
-                                    <button type="submit" disabled={isUpdating} className="px-6 py-2 rounded-xl bg-orange-600 text-white font-bold">
-                                        {isUpdating ? 'Saving...' : 'Save Form Data'}
-                                    </button>
-                                )}
+                            <div className="flex items-center justify-between mt-8 pt-6 border-t border-gray-100">
+                                <div>
+                                    {Object.keys(editFormJson).length > 0 && (
+                                        <button 
+                                            type="button" 
+                                            onClick={generatePDF}
+                                            disabled={isGeneratingPdf}
+                                            className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-gray-200 bg-white text-gray-700 font-bold hover:bg-gray-50 transition-colors shadow-sm disabled:opacity-50"
+                                        >
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h11"></path>
+                                                <polyline points="17 2 17 8 23 8"></polyline>
+                                                <line x1="12" y1="11" x2="12" y2="17"></line>
+                                                <polyline points="9 14 12 17 15 14"></polyline>
+                                            </svg>
+                                            {isGeneratingPdf ? 'Generating...' : 'Download PDF'}
+                                        </button>
+                                    )}
+                                </div>
+                                <div className="flex items-center gap-3">
+                                    <button type="button" onClick={() => setShowFormModal(false)} className="px-6 py-2.5 rounded-xl bg-gray-100 text-gray-700 font-bold hover:bg-gray-200 transition-colors">Cancel</button>
+                                    {Object.keys(editFormJson).length > 0 && (
+                                        <button type="submit" disabled={isUpdating} className="px-6 py-2.5 rounded-xl bg-gradient-to-b from-orange-500 to-orange-600 text-white font-bold hover:from-orange-600 hover:to-orange-700 shadow-sm transition-all disabled:opacity-50">
+                                            {isUpdating ? 'Saving...' : 'Save Form Data'}
+                                        </button>
+                                    )}
+                                </div>
                             </div>
                         </form>
                     </div>

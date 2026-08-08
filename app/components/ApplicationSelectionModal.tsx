@@ -98,6 +98,7 @@ const CheckoutForm = ({ selectedSubPlan, selectedTier, handleClose, getSelectedA
                 plan: planDescription,
                 goal: selectedSubPlan.subtitle || selectedSubPlan.title,
                 package_name: selectedSubPlan.title,
+                service_id: selectedSubPlan.id
             });
 
             alert('Payment successful! Your application has been submitted.');
@@ -280,7 +281,7 @@ export default function ApplicationSelectionModal({ isOpen, onClose }: Applicati
                 {
                     id: 'spouse',
                     title: 'Petition for a Spouse outside the U.S. – USCIS Petition only',
-                    subtitle: 'I-130 petition for spouse outside the United States',
+                    subtitle: 'Petition for spouse outside the United States',
                     iconType: 'users',
                     basePrice: 549.99,
                     advancedPrice: 789.99,
@@ -291,7 +292,7 @@ export default function ApplicationSelectionModal({ isOpen, onClose }: Applicati
                 {
                     id: 'child',
                     title: 'Petition for a Child outside the U.S. – USCIS Petition only',
-                    subtitle: 'I-130 petition for child outside the United States',
+                    subtitle: 'Petition for child outside the United States',
                     iconType: 'users',
                     basePrice: 549.99,
                     advancedPrice: 789.99,
@@ -302,7 +303,7 @@ export default function ApplicationSelectionModal({ isOpen, onClose }: Applicati
                 {
                     id: 'parent',
                     title: 'Petition for a Parent outside the U.S. – USCIS Petition only',
-                    subtitle: 'I-130 petition for parent outside the United States',
+                    subtitle: 'Petition for parent outside the United States',
                     iconType: 'users',
                     basePrice: 549.99,
                     advancedPrice: 789.99,
@@ -313,7 +314,7 @@ export default function ApplicationSelectionModal({ isOpen, onClose }: Applicati
                 {
                     id: 'sibling',
                     title: 'Petition for a Sibling outside the U.S. – USCIS Petition only',
-                    subtitle: 'I-130 petition for sibling outside the United States',
+                    subtitle: 'Petition for sibling outside the United States',
                     iconType: 'users',
                     basePrice: 549.99,
                     advancedPrice: 789.99,
@@ -336,7 +337,7 @@ export default function ApplicationSelectionModal({ isOpen, onClose }: Applicati
                 {
                     id: 'fiance_petition',
                     title: 'K-1 Fiancé Visa – USCIS Petition only',
-                    subtitle: 'I-129F petition for K-1 fiancé visa',
+                    subtitle: 'Petition for K-1 fiancé visa',
                     iconType: 'heart',
                     basePrice: 549.99,
                     advancedPrice: 849.99,
@@ -359,7 +360,7 @@ export default function ApplicationSelectionModal({ isOpen, onClose }: Applicati
                 {
                     id: 'aos',
                     title: 'Adjustment of Status',
-                    subtitle: 'I-485 application to register permanent residence',
+                    subtitle: 'Application to register permanent residence',
                     iconType: 'home',
                     basePrice: 599.99,
                     advancedPrice: 949.99,
@@ -382,7 +383,7 @@ export default function ApplicationSelectionModal({ isOpen, onClose }: Applicati
                 {
                     id: 'n400',
                     title: 'US Naturalization',
-                    subtitle: 'N-400 application for naturalization',
+                    subtitle: 'Application for naturalization',
                     iconType: 'flag',
                     basePrice: 349.99,
                     advancedPrice: 449.99,
@@ -405,7 +406,7 @@ export default function ApplicationSelectionModal({ isOpen, onClose }: Applicati
                 {
                     id: 'i90',
                     title: 'Green Card Renewal',
-                    subtitle: 'I-90 application to replace permanent resident card',
+                    subtitle: 'Application to replace permanent resident card',
                     iconType: 'creditcard',
                     basePrice: 349.99,
                     advancedPrice: 449.99,
@@ -428,7 +429,7 @@ export default function ApplicationSelectionModal({ isOpen, onClose }: Applicati
                 {
                     id: 'i751',
                     title: 'Removal of Conditions',
-                    subtitle: 'I-751 petition to remove conditions on residence',
+                    subtitle: 'Petition to remove conditions on residence',
                     iconType: 'refresh',
                     basePrice: 399.99,
                     advancedPrice: 499.99,

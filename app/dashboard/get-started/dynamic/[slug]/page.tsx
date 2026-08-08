@@ -6,6 +6,7 @@ import styles from './dynamic.module.css';
 import api from '@/lib/api';
 import { useAuth } from '@/contexts/AuthContext';
 import { SubStep, capitalizeName, personalizeQuestionText, buildFormSteps } from '../formsEngine';
+import { getFormsList } from '../../formsHelper';
 
 export default function DynamicFormEnginePage() {
     const params = useParams();
@@ -17,6 +18,7 @@ export default function DynamicFormEnginePage() {
     const [formSchema, setFormSchema] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+    const [application, setApplication] = useState<any>(null);
     const [applicationId, setApplicationId] = useState<number | null>(null);
 
     const searchParams = useSearchParams();
@@ -48,11 +50,11 @@ export default function DynamicFormEnginePage() {
             try {
                 // Load form schema
                 const res = await api.get(`/guide-engine/forms/${slug}`);
-                setFormSchema(res.data);
+                let schema = res.data;
                 
                 const initialUnits: any = {};
-                if (res.data?.sections) {
-                    res.data.sections.forEach((section: any) => {
+                if (schema?.sections) {
+                    schema.sections.forEach((section: any) => {
                         section.questions?.forEach((q: any) => {
                             if (/height/i.test(q.field_name) || /height/i.test(q.question_text)) {
                                 initialUnits[q.field_name] = 'cm';
@@ -64,15 +66,25 @@ export default function DynamicFormEnginePage() {
                 }
                 setUnitsState(initialUnits);
 
+                let userRole = 'petitioner';
                 // Load existing application progress
                 try {
                     const appRes = await api.get('/applications');
                     if (appRes.data && appRes.data.length > 0) {
-                        const app = appRes.data[0];
-                        setApplicationId(app.id);
+                        const activeApp = appRes.data[0];
+                        setApplication(activeApp);
+                        setApplicationId(activeApp.id);
+                        
+                        if (activeApp.user_id !== user?.id) {
+                            const participant = activeApp.participants?.find((p: any) => p.user_id === user?.id);
+                            if (participant) {
+                                userRole = participant.role;
+                            }
+                        }
+                        
                         // Restore saved form data if exists
-                        if (app.form_data && typeof app.form_data === 'object' && Object.keys(app.form_data).length > 0) {
-                            const { _current_step, ...savedFormData } = app.form_data;
+                        if (activeApp.form_data && typeof activeApp.form_data === 'object' && Object.keys(activeApp.form_data).length > 0) {
+                            const { _current_step, ...savedFormData } = activeApp.form_data;
                             setFormData((prev: any) => ({ ...savedFormData, _current_step, ...prev }));
                             const stepKey = `_current_step_${slug}`;
                             const fallback = typeof _current_step === 'number' ? _current_step : 0;
@@ -86,6 +98,26 @@ export default function DynamicFormEnginePage() {
                 } catch {
                     // Application may not exist yet, that's fine
                 }
+                
+                if (schema?.sections) {
+                    schema.sections = schema.sections.filter((section: any) => {
+                        const roles = section.assignee_roles;
+                        if (!roles || (Array.isArray(roles) && roles.length === 0)) {
+                            return userRole === 'petitioner';
+                        }
+                        
+                        let parsedRoles = roles;
+                        if (typeof roles === 'string') {
+                            try {
+                                parsedRoles = JSON.parse(roles);
+                            } catch (e) {
+                                parsedRoles = [roles];
+                            }
+                        }
+                        return Array.isArray(parsedRoles) && parsedRoles.includes(userRole);
+                    });
+                }
+                setFormSchema(schema);
 
             } catch (err) {
                 console.error(err);
@@ -127,6 +159,11 @@ export default function DynamicFormEnginePage() {
 
         // Validate required fields in the current step
         const missingFields = currentStep.questions.filter((q: any) => {
+            // Form G-1145 conditional logic
+            if (q.field_name !== 'fileG1145' && q.field_name.startsWith('g1145') && formData['fileG1145'] !== 'yes') {
+                return false;
+            }
+
             if (q.is_required) {
                 if (q.field_type === 'name_group') {
                     const firstKey = q.field_name === 'legalName' ? 'firstName' : `${q.field_name}_first`;
@@ -167,8 +204,14 @@ export default function DynamicFormEnginePage() {
             } else if (currentStepIndex < steps.length - 1) {
                 setCurrentStepIndex(currentStepIndex + 1);
             } else {
-                // Return to overview dashboard after finishing a section
-                router.push(`/dashboard/get-started/overview?form=${slug}`);
+                // End of sections -> move to next form or document upload
+                const list = getFormsList(application, { allowFallback: false });
+                const currentIdx = list.findIndex(f => f.code === slug);
+                if (currentIdx >= 0 && currentIdx < list.length - 1) {
+                    router.push(`/dashboard/get-started/overview?form=${list[currentIdx + 1].code}`);
+                } else {
+                    router.push('/dashboard/get-started/document-upload');
+                }
             }
         } catch (err) {
             console.error('Error saving step', err);
@@ -218,10 +261,12 @@ export default function DynamicFormEnginePage() {
 
     const firstNameFormatted = applicantFullName.split(' ')[0] || 'Applicant';
     
-    // Short clean name for mobile header
-    const rawFormName = formSchema.name || 'Application';
-    const formCodeName = slug ? slug.toUpperCase() : 'FORM';
-    const packetHeaderTitle = `${firstNameFormatted}'s ${formCodeName} ${rawFormName} Packet`;
+    const appTitle = application?.package_name || application?.title || 'Form Intake';
+    const forms = getFormsList(application, { allowFallback: true });
+    const currentFormIndex = forms.findIndex(f => f.code === slug);
+    const packetHeaderTitle = forms.length > 1 
+        ? `${firstNameFormatted}'s ${appTitle} (Part ${currentFormIndex + 1}) Packet`
+        : `${firstNameFormatted}'s ${appTitle} Packet`;
 
     return (
         <div className={styles.pageWrapper}>
@@ -335,6 +380,11 @@ export default function DynamicFormEnginePage() {
                             const imageMatch = q.help_text ? q.help_text.match(/\[IMAGE:(.+?)\]/) : null;
                             const imageUrl = imageMatch ? imageMatch[1] : null;
                             const cleanHelpText = q.help_text ? q.help_text.replace(/\[IMAGE:.+?\]/, '') : null;
+
+                            // Form G-1145 conditional logic
+                            if (q.field_name !== 'fileG1145' && q.field_name.startsWith('g1145') && formData['fileG1145'] !== 'yes') {
+                                return null;
+                            }
 
                             return (
                                 <div 

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import api from '@/lib/api';
 import ApplicationSelectionModal from "@/app/components/ApplicationSelectionModal";
+import InviteParticipantModal from "@/components/InviteParticipantModal";
 import { getChecklists } from '@/lib/api/cases';
 import { resolveDocuments } from '@/lib/utils/documentHelper';
 
@@ -19,7 +20,7 @@ const getPlanPrice = (title: string, subtitle: string) => {
         if (isAdvanced) return '$949.99';
         return '$599.99';
     }
-    if (title.includes('Bring a fiancé(e)')) {
+    if (title.includes('Bring a fiancé(e)') || title.includes('Bring a spouse') || title.includes('Bring a sibling') || title.includes('Bring another relative') || title.includes('Petition for a')) {
         if (isPremium) return '$999.99';
         if (isAdvanced) return '$789.99';
         return '$549.99';
@@ -116,6 +117,7 @@ export default function DashboardPage() {
     const router = useRouter();
     const { user } = useAuth();
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
     const [applications, setApplications] = useState<any[]>([]);
     const [documents, setDocuments] = useState<any[]>([]);
     const [messages, setMessages] = useState<any[]>([]);
@@ -128,6 +130,8 @@ export default function DashboardPage() {
     // Use the most recently updated application for the dashboard context
     const latestApplication = applications[0];
     const pendingBalance = latestApplication ? (Number(latestApplication.amount || 0) - Number(latestApplication.paid_amount || 0)) : 0;
+    const ownedApplications = applications.filter(app => app.user_id === user?.id);
+    const isParticipantOnly = applications.length > 0 && ownedApplications.length === 0;
 
     useEffect(() => {
         const loadData = async () => {
@@ -154,7 +158,16 @@ export default function DashboardPage() {
                 const apps = appsRes.data || [];
                 const latestApp = apps.length > 0 ? apps[0] : null;
                 const fetchedUploadedDocs = Array.isArray(docsRes.data) ? docsRes.data : [];
-                const finalDocs = resolveDocuments(latestApp, checklistsData, fetchedUploadedDocs);
+                
+                let userRole = 'petitioner';
+                if (latestApp && user && latestApp.user_id !== user.id) {
+                    const participant = latestApp.participants?.find((p: any) => p.user_id === user.id);
+                    if (participant) {
+                        userRole = participant.role;
+                    }
+                }
+
+                const finalDocs = resolveDocuments(latestApp, checklistsData, fetchedUploadedDocs, userRole);
 
                 setApplications(apps);
                 setDocuments(finalDocs);
@@ -285,18 +298,20 @@ export default function DashboardPage() {
                         <p className="text-xs text-slate-500 mt-1">{activeCount === 0 ? 'No active applications' : `${activeCount} active application${activeCount > 1 ? 's' : ''}`}</p>
                     </div>
 
-                    <div className="rounded-2xl bg-white border border-slate-200/70 p-5 shadow-[0_4px_20px_rgb(0,0,0,0.03)]">
-                        <div className="flex items-start justify-between">
-                            <p className="text-sm font-medium text-slate-600">Total Purchases</p>
-                            <span className="w-9 h-9 rounded-lg flex items-center justify-center bg-emerald-50">
-                                <img src="/shopping-bag.png" alt="Total Purchases" className="w-5 h-5 object-contain" />
-                            </span>
+                    {!isParticipantOnly && (
+                        <div className="rounded-2xl bg-white border border-slate-200/70 p-5 shadow-[0_4px_20px_rgb(0,0,0,0.03)]">
+                            <div className="flex items-start justify-between">
+                                <p className="text-sm font-medium text-slate-600">Total Purchases</p>
+                                <span className="w-9 h-9 rounded-lg flex items-center justify-center bg-emerald-50">
+                                    <img src="/shopping-bag.png" alt="Total Purchases" className="w-5 h-5 object-contain" />
+                                </span>
+                            </div>
+                            <div className="mt-6 flex items-end gap-2">
+                                <p className="text-3xl font-bold text-slate-900">{isLoading ? '–' : ownedApplications.length}</p>
+                            </div>
+                            <p className="text-xs text-slate-500 mt-1">Service packages purchased</p>
                         </div>
-                        <div className="mt-6 flex items-end gap-2">
-                            <p className="text-3xl font-bold text-slate-900">{isLoading ? '–' : applications.length}</p>
-                        </div>
-                        <p className="text-xs text-slate-500 mt-1">Service packages purchased</p>
-                    </div>
+                    )}
 
                     <div className="rounded-2xl bg-white border border-slate-200/70 p-5 shadow-[0_4px_20px_rgb(0,0,0,0.03)]">
                         <div className="flex items-start justify-between">
@@ -311,18 +326,20 @@ export default function DashboardPage() {
                         <p className="text-xs text-slate-500 mt-1">Items requiring attention</p>
                     </div>
 
-                    <div className="rounded-2xl bg-white border border-slate-200/70 p-5 shadow-[0_4px_20px_rgb(0,0,0,0.03)]">
-                        <div className="flex items-start justify-between">
-                            <p className="text-sm font-medium text-slate-600">Success Rate</p>
-                            <span className="w-9 h-9 rounded-lg flex items-center justify-center bg-sky-50">
-                                <img src="/immunity.png" alt="Success Rate" className="w-5 h-5 object-contain" />
-                            </span>
+                    {!isParticipantOnly && (
+                        <div className="rounded-2xl bg-white border border-slate-200/70 p-5 shadow-[0_4px_20px_rgb(0,0,0,0.03)]">
+                            <div className="flex items-start justify-between">
+                                <p className="text-sm font-medium text-slate-600">Success Rate</p>
+                                <span className="w-9 h-9 rounded-lg flex items-center justify-center bg-sky-50">
+                                    <img src="/immunity.png" alt="Success Rate" className="w-5 h-5 object-contain" />
+                                </span>
+                            </div>
+                            <div className="mt-6 flex items-end gap-2">
+                                <p className="text-3xl font-bold text-slate-900">{applications.length > 0 ? '100%' : '0%'}</p>
+                            </div>
+                            <p className="text-xs text-slate-500 mt-1">Application success rate</p>
                         </div>
-                        <div className="mt-6 flex items-end gap-2">
-                            <p className="text-3xl font-bold text-slate-900">{applications.length > 0 ? '100%' : '0%'}</p>
-                        </div>
-                        <p className="text-xs text-slate-500 mt-1">Application success rate</p>
-                    </div>
+                    )}
                 </div>
 
                 <div className="grid gap-6 lg:grid-cols-3">
@@ -371,42 +388,55 @@ export default function DashboardPage() {
                                     <p className="text-sm text-slate-500">Get help from our immigration experts</p>
                                 </div>
                             </button>
+                            {latestApplication && ['i-130', 'i-129f', 'i-485', 'i-751'].includes(latestApplication.form_slug) && (
+                                <button onClick={() => setIsInviteModalOpen(true)} className="w-full flex items-center gap-4 p-4 rounded-2xl border border-slate-100 hover:border-violet-200 hover:bg-violet-50/30 transition text-left">
+                                    <span className="w-12 h-12 rounded-xl flex items-center justify-center bg-violet-50">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-violet-600"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><line x1="19" y1="8" x2="19" y2="14"></line><line x1="22" y1="11" x2="16" y2="11"></line></svg>
+                                    </span>
+                                    <div>
+                                        <p className="font-semibold text-slate-900">Invite Participant</p>
+                                        <p className="text-sm text-slate-500">Invite a joint sponsor or beneficiary</p>
+                                    </div>
+                                </button>
+                            )}
                         </div>
                     </div>
 
                     <div className="space-y-6">
-                        <div className="rounded-3xl bg-white border border-slate-200/70 p-6 shadow-[0_4px_20px_rgb(0,0,0,0.03)]">
-                            <div className="flex items-start gap-3">
-                                <span className="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-100 to-rose-100 flex items-center justify-center p-1">
-                                    <img src="/shopping-cart-new.png" alt="Your Purchases" className="w-8 h-8 object-contain" />
-                                </span>
-                                <div>
-                                    <h3 className="font-bold text-slate-900">Your Purchases</h3>
-                                    <p className="text-xs text-slate-500">View and manage your immigration service purchases</p>
+                        {!isParticipantOnly && (
+                            <div className="rounded-3xl bg-white border border-slate-200/70 p-6 shadow-[0_4px_20px_rgb(0,0,0,0.03)]">
+                                <div className="flex items-start gap-3">
+                                    <span className="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-100 to-rose-100 flex items-center justify-center p-1">
+                                        <img src="/shopping-cart-new.png" alt="Your Purchases" className="w-8 h-8 object-contain" />
+                                    </span>
+                                    <div>
+                                        <h3 className="font-bold text-slate-900">Your Purchases</h3>
+                                        <p className="text-xs text-slate-500">View and manage your immigration service purchases</p>
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="mt-4 border-t border-slate-100 pt-4">
-                                <div className="space-y-3 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
-                                    {applications.length > 0 ? applications.map((app, idx) => (
-                                        <div key={app.id || idx} className="rounded-xl border border-slate-100 p-3 hover:border-orange-200 transition-colors">
-                                            <p className="text-sm font-semibold text-slate-900">{app.title || 'Unknown Application'}</p>
-                                            <div className="flex items-center justify-between mt-2 gap-3">
-                                                <span className="inline-flex items-center rounded-full border border-orange-100 px-2.5 py-0.5 text-[10px] font-semibold bg-orange-50 text-orange-600">
-                                                    {app.subtitle ? app.subtitle.replace('Plan: ', '') : 'Advanced Plan'}
-                                                </span>
-                                                <span className="text-sm font-bold text-orange-600">
-                                                    {app.amount ? `$${Number(app.amount).toFixed(2)}` : getPlanPrice(app.title, app.subtitle)}
-                                                </span>
+                                <div className="mt-4 border-t border-slate-100 pt-4">
+                                    <div className="space-y-3 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
+                                        {ownedApplications.length > 0 ? ownedApplications.map((app, idx) => (
+                                            <div key={app.id || idx} className="rounded-xl border border-slate-100 p-3 hover:border-orange-200 transition-colors">
+                                                <p className="text-sm font-semibold text-slate-900">{app.title || 'Unknown Application'}</p>
+                                                <div className="flex items-center justify-between mt-2 gap-3">
+                                                    <span className="inline-flex items-center rounded-full border border-orange-100 px-2.5 py-0.5 text-[10px] font-semibold bg-orange-50 text-orange-600">
+                                                        {app.subtitle ? app.subtitle.replace('Plan: ', '') : 'Advanced Plan'}
+                                                    </span>
+                                                    <span className="text-sm font-bold text-orange-600">
+                                                        {app.amount ? `$${Number(app.amount).toFixed(2)}` : getPlanPrice(app.title, app.subtitle)}
+                                                    </span>
+                                                </div>
                                             </div>
-                                        </div>
-                                    )) : (
-                                        <div className="rounded-xl border border-slate-100 p-3 text-center">
-                                            <p className="text-sm font-semibold text-slate-500">No applications yet</p>
-                                        </div>
-                                    )}
+                                        )) : (
+                                            <div className="rounded-xl border border-slate-100 p-3 text-center">
+                                                <p className="text-sm font-semibold text-slate-500">No applications yet</p>
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        )}
 
                         <div className="rounded-3xl bg-white border border-slate-200/70 p-6 sm:p-8 shadow-[0_4px_20px_rgb(0,0,0,0.03)]">
                             <div className="pb-4 border-b border-slate-100">
@@ -505,25 +535,43 @@ export default function DashboardPage() {
                     </div>
                 </div>
 
+            {!isParticipantOnly && (
                 <div className="rounded-3xl bg-white border border-slate-200/70 p-6 sm:p-8 shadow-[0_4px_20px_rgb(0,0,0,0.03)]">
-                    <h2 className="text-xl font-bold text-slate-900">Immigration Journey</h2>
-                    <div className="mt-4 border-t border-slate-100 pt-5">
-                        <h3 className="font-semibold text-slate-900">Continue Your Immigration Journey with Horizon Pathways</h3>
-                        <p className="mt-2 text-sm text-slate-600 leading-relaxed max-w-3xl">
-                            Whether you're ready to remove the conditions on your Green Card, apply for U.S. citizenship, renew your Green Card, or begin another immigration process, Horizon Pathways makes it easy to manage all your cases in one secure account. Continue your immigration journey by adding your next application directly from your dashboard.
+                    <h2 className="text-xl font-bold text-slate-900 mb-2">Immigration Journey</h2>
+                    
+                    <div className="mt-6 border-t border-slate-100 pt-6">
+                        <h3 className="text-sm font-bold text-slate-900 mb-2">Continue Your Immigration Journey with Horizon Pathways</h3>
+                        <p className="text-sm text-slate-500 mb-6 leading-relaxed max-w-3xl">
+                            Whether you're ready to remove the conditions on your Green Card, apply for U.S. citizenship, renew your Green Card, or begin another immigration process, Horizon Pathways makes it easy to manage all your cases in one secure account. 
+                            Continue your immigration journey by adding your next application directly from your dashboard.
                         </p>
-                        <button className="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium h-10 px-4 py-2 mt-6 rounded-xl bg-slate-900 hover:bg-slate-800 text-white gap-2"
-                            onClick={() => setIsModalOpen(true)}>
-                            <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+                        
+                        <button
+                            onClick={() => setIsModalOpen(true)}
+                            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-slate-900 text-white text-sm font-semibold hover:bg-slate-800 transition shadow-sm"
+                        >
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
                             </svg>
                             Start Your Next Application
                         </button>
                     </div>
                 </div>
+            )}
             </div>
 
             <ApplicationSelectionModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+            
+            {latestApplication && ['i-130', 'i-129f', 'i-485', 'i-751'].includes(latestApplication.form_slug) && (
+                <InviteParticipantModal 
+                    isOpen={isInviteModalOpen} 
+                    onClose={() => setIsInviteModalOpen(false)} 
+                    applicationId={latestApplication.id}
+                    applicationTitle={latestApplication.title}
+                    applicationSlug={latestApplication.form_slug}
+                />
+            )}
 
             {showChatError && (
                 <div style={{

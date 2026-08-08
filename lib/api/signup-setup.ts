@@ -5,6 +5,7 @@ export interface SignupGoal {
     title: string;
     image_url: string | null;
     order_index: number;
+    default_service_id?: number | null;
     questions?: SignupQuestion[];
 }
 
@@ -15,8 +16,19 @@ export interface SignupQuestion {
     options: any[] | null;
     disqualifying_options: string[] | null;
     skip_to_end_options: string[] | null;
+    service_mappings?: Record<string, number> | null;
     order_index: number;
 }
+
+export interface Service {
+    id: number;
+    title: string;
+}
+
+export const getServices = async (): Promise<Service[]> => {
+    const res = await api.get('/services');
+    return res.data;
+};
 
 export const getSignupGoals = async (): Promise<SignupGoal[]> => {
     const res = await api.get('/admin/signup-goals');

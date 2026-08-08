@@ -61,21 +61,8 @@ export default function GetStartedPage() {
     };
 
     const handleContinueToForm = () => {
-        let slug = "i-90"; // default fallback
-
-        if (application?.title) {
-            const title = application.title.toLowerCase();
-            if (title.includes('n-400') || title.includes('naturalization') || title.includes('citizenship')) {
-                slug = "n-400";
-            } else if (title.includes('fiancé') || title.includes('fiance') || title.includes('spouse') || title.includes('relative')) {
-                slug = "i-130";
-            } else if (title.includes('daca') || title.includes('821d')) {
-                slug = "i-821d";
-            } else if (title.includes('replace') || title.includes('fix') || title.includes('green card') || title.includes('i-90')) {
-                slug = "i-90";
-            }
-        }
-
+        // Use the dynamically computed form_slug from the backend, default to i-90
+        const slug = application?.form_slug || "i-90";
         router.push(`/dashboard/get-started/dynamic/${slug}`);
     };
 
@@ -113,11 +100,10 @@ export default function GetStartedPage() {
             </div>
         );
     }
-
     const getWelcomeContent = () => {
-        const title = application?.title?.toLowerCase() || '';
+        const slug = application?.form_slug || '';
 
-        if (title.includes('n-400') || title.includes('naturalization') || title.includes('citizenship')) {
+        if (slug === 'n-400') {
             return {
                 title: "Congratulations!",
                 p1: "You are taking the first step towards U.S. citizenship. We are so excited to work with you to make your immigration dreams a reality.",
@@ -131,11 +117,11 @@ export default function GetStartedPage() {
                     "You must demonstrate good moral character and an attachment to the principles of the U.S. Constitution."
                 ]
             };
-        } else if (title.includes('fiancé') || title.includes('fiance') || title.includes('spouse') || title.includes('relative') || title.includes('i-130')) {
+        } else if (slug === 'i-130' || slug === 'i-129f') {
             return {
                 title: "Congratulations!",
                 p1: "You are taking the first step towards reuniting with your family in the U.S. We are so excited to work with you to make your immigration dreams a reality.",
-                p2: "Horizon Pathways has helped thousands of families successfully stay together through the filing of Family-Based Immigration Petitions (like the I-130).",
+                p2: "Horizon Pathways has helped thousands of families successfully stay together through the filing of Family-Based Immigration Petitions.",
                 p3: "Pay close attention to the information in this section, as it will guide you through how to use Horizon Pathways.",
                 eligibilityTitle: "Am I Eligible to Petition a Relative?",
                 eligibilityText: "You are eligible to petition for a relative if you are a U.S. citizen or a lawful permanent resident and can prove a qualifying family relationship.",
@@ -145,7 +131,7 @@ export default function GetStartedPage() {
                     "You will need to provide proof of your U.S. citizenship or green card status, as well as proof of the family relationship."
                 ]
             };
-        } else if (title.includes('daca') || title.includes('821d')) {
+        } else if (slug === 'i-821d') {
             return {
                 title: "Congratulations!",
                 p1: "You are taking the first step towards renewing your DACA status. We are so excited to work with you to make your immigration dreams a reality.",
@@ -180,17 +166,8 @@ export default function GetStartedPage() {
     const welcomeContent = getWelcomeContent();
 
     const isApplicantOnly = (() => {
-        const title = application?.title?.toLowerCase() || '';
-        if (
-            title.includes('n-400') || title.includes('naturalization') || title.includes('citizenship') ||
-            title.includes('daca') || title.includes('821d') ||
-            title.includes('replace') || title.includes('fix') || title.includes('green card') || title.includes('i-90') ||
-            title.includes('remove conditions') || title.includes('i-751') ||
-            title.includes('renewal')
-        ) {
-            return true;
-        }
-        return false;
+        const slug = application?.form_slug || '';
+        return !['i-130', 'i-129f'].includes(slug);
     })();
 
     if (showWelcome) {
@@ -279,6 +256,10 @@ export default function GetStartedPage() {
 
     const dynamicPackageName = application?.title || checklist?.description || 'immigration application';
     const welcomeText = `Welcome to your ${dynamicPackageName}. This section is designed to help you know how our software works and where to get started. Click the “Start Here” button below to begin.`;
+    
+    const petitionerName = application?.user?.name || (application?.user_id === user?.id ? user?.name : 'Pending');
+    const beneficiaryParticipant = application?.participants?.find((p: any) => p.role === 'beneficiary');
+    const beneficiaryName = beneficiaryParticipant?.user?.name || 'To be provided';
 
     return (
         <div className={styles.stepPageWrapper}>
@@ -346,12 +327,12 @@ export default function GetStartedPage() {
                         <span className={styles.infoCardLabel}>
                             {isApplicantOnly ? "Applicant's Full Legal Name" : "Petitioner's Full Legal Name"}
                         </span>
-                        <div className={styles.infoCardValue}>{user?.name || 'Pending'}</div>
+                        <div className={styles.infoCardValue}>{petitionerName}</div>
                     </div>
                     {!isApplicantOnly && (
                         <div className={styles.infoCard}>
                             <span className={styles.infoCardLabel}>Beneficiary&apos;s Full Legal Name</span>
-                            <div className={styles.infoCardValue}>To be provided</div>
+                            <div className={styles.infoCardValue}>{beneficiaryName}</div>
                         </div>
                     )}
                 </div>
@@ -362,9 +343,7 @@ export default function GetStartedPage() {
                 <p className={styles.confirmationText}>
                     Can you confirm this package is for {packageDescription}?
                 </p>
-                <p className={styles.confirmationSubtext}>
-                    This package includes: {includedForms}.
-                </p>
+
                 <div className={styles.confirmationActions}>
                     <button className={styles.confirmPrimary} onClick={handleConfirm}>
                         <span className={styles.btnIcon}>✓</span>

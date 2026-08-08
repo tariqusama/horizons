@@ -4,6 +4,7 @@ import api from "@/lib/api";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import ApplicationSelectionModal from "@/app/components/ApplicationSelectionModal";
+import InviteParticipantModal from "@/components/InviteParticipantModal";
 
 interface Application {
     id: number;
@@ -13,6 +14,7 @@ interface Application {
     progress: string;
     next_step: string;
     created_at: string;
+    form_slug?: string;
 }
 
 const getApplicationStatusMeta = (status?: string) => {
@@ -41,6 +43,8 @@ export default function DashboardApplicationsPage() {
     const [applications, setApplications] = useState<Application[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
+    const [selectedApplicationForInvite, setSelectedApplicationForInvite] = useState<Application | null>(null);
     const [showChatError, setShowChatError] = useState(false);
     const router = useRouter();
 
@@ -199,7 +203,19 @@ export default function DashboardApplicationsPage() {
                                     ))}
                                 </ul>
 
-                                <div className="mt-6 pt-4 border-t border-gray-200/60 flex justify-end">
+                                <div className="mt-6 pt-4 border-t border-gray-200/60 flex flex-col sm:flex-row justify-end gap-3">
+                                    {['i-130', 'i-129f', 'i-485', 'i-751'].includes(app.form_slug || '') && (
+                                        <button
+                                            onClick={() => {
+                                                setSelectedApplicationForInvite(app);
+                                                setIsInviteModalOpen(true);
+                                            }}
+                                            className="bg-violet-50 text-violet-700 hover:bg-violet-100 font-semibold py-2.5 px-6 rounded-lg transition-colors flex items-center justify-center space-x-2"
+                                        >
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><line x1="19" y1="8" x2="19" y2="14"></line><line x1="22" y1="11" x2="16" y2="11"></line></svg>
+                                            <span>Invite Participant</span>
+                                        </button>
+                                    )}
                                     <button
                                         onClick={() => handleStartApplication(app)}
                                         className="bg-[#1B3A64] hover:bg-[#152e52] text-white font-semibold py-2.5 px-6 rounded-lg transition-colors flex items-center space-x-2 shadow-sm"
@@ -220,6 +236,19 @@ export default function DashboardApplicationsPage() {
             </div>
 
             <ApplicationSelectionModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+
+            {selectedApplicationForInvite && (
+                <InviteParticipantModal
+                    isOpen={isInviteModalOpen}
+                    onClose={() => {
+                        setIsInviteModalOpen(false);
+                        setSelectedApplicationForInvite(null);
+                    }}
+                    applicationId={selectedApplicationForInvite.id}
+                    applicationTitle={selectedApplicationForInvite.title}
+                    applicationSlug={selectedApplicationForInvite.form_slug}
+                />
+            )}
 
             {showChatError && (
                 <div style={{

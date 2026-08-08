@@ -149,7 +149,10 @@ function PreviewModal({ doc, onClose }: PreviewModalProps) {
     );
 }
 
+import { useAuth } from '@/contexts/AuthContext';
+
 export default function DashboardDocumentsPage() {
+    const { user } = useAuth();
     const [documents, setDocuments] = useState<Document[]>([]);
     const [activeChecklist, setActiveChecklist] = useState<any>(null);
     const [uploadedDocs, setUploadedDocs] = useState<Document[]>([]);
@@ -174,13 +177,41 @@ export default function DashboardDocumentsPage() {
             const fetchedUploadedDocs = Array.isArray(docsRes.data) ? docsRes.data : [];
             setUploadedDocs(fetchedUploadedDocs);
 
+            let userRole = 'petitioner';
+            if (latestApp && latestApp.user_id !== user?.id) {
+                const participant = latestApp.participants?.find((p: any) => p.user_id === user?.id);
+                if (participant) {
+                    userRole = participant.role;
+                }
+            }
+
             // Resolve the active checklist (same logic as the form's generateFormChecklist)
             if (latestApp) {
                 const serviceText = `${latestApp.title || ''} ${latestApp.service_type || ''}`;
                 const checklistKey = getChecklistKeyFromService(serviceText);
                 const matchingChecklist = checklistKey ? checklistsData[checklistKey] : null;
                 if (matchingChecklist) {
-                    setActiveChecklist(matchingChecklist);
+                    // Filter sections by role
+                    const filteredChecklist = {
+                        ...matchingChecklist,
+                        sections: matchingChecklist.sections.filter((section: any) => {
+                            const roles = section.assignee_roles;
+                            if (!roles || (Array.isArray(roles) && roles.length === 0)) {
+                                return userRole === 'petitioner';
+                            }
+                            
+                            let parsedRoles = roles;
+                            if (typeof roles === 'string') {
+                                try {
+                                    parsedRoles = JSON.parse(roles);
+                                } catch (e) {
+                                    parsedRoles = [roles];
+                                }
+                            }
+                            return Array.isArray(parsedRoles) && parsedRoles.includes(userRole);
+                        })
+                    };
+                    setActiveChecklist(filteredChecklist);
                 } else {
                     setActiveChecklist(null);
                 }
@@ -188,7 +219,7 @@ export default function DashboardDocumentsPage() {
                 setActiveChecklist(null);
             }
 
-            const finalDocs = resolveDocuments(latestApp, checklistsData, fetchedUploadedDocs);
+            const finalDocs = resolveDocuments(latestApp, checklistsData, fetchedUploadedDocs, userRole);
             setDocuments(finalDocs);
         }).catch(err => {
             console.error('Failed to fetch documents or applications', err);

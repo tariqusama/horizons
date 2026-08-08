@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState, ReactNode } from 'react';
 import { getServices, createService, updateService, deleteService, Service } from '../../../../lib/api/services';
+import { getSignupGoals, SignupGoal } from '../../../../lib/api/signup-setup';
 import api from '../../../../lib/api';
 
 const PANEL_TABS = ['Guide Engine', 'Forms Tracker', 'Fees', 'Lockbox'] as const;
@@ -38,16 +39,19 @@ function EmptyStatePanel({
     icon,
     title,
     subtitle,
+    action
 }: {
     icon: ReactNode;
     title: string;
     subtitle: string;
+    action?: ReactNode;
 }) {
     return (
         <div className="rounded-2xl bg-[#F7F5F0] py-14 px-6 flex flex-col items-center justify-center text-center">
             <span className="text-[#B4B2A9] mb-4">{icon}</span>
             <p className="text-sm font-bold text-[#101F38] mb-1">{title}</p>
-            <p className="text-xs text-[#5B6472] font-medium">{subtitle}</p>
+            <p className="text-xs text-[#5B6472] font-medium mb-4">{subtitle}</p>
+            {action}
         </div>
     );
 }
@@ -285,17 +289,24 @@ function GuideEngineTab({ services }: { services: Service[] }) {
     }, []);
 
     const handleRunAnalysis = async () => {
+        alert('Run Analysis button clicked!');
+        console.log('Run Analysis button clicked!');
         setIsAnalyzing(true);
         try {
-            await fetch('/api/admin/guide-engine/analyze', {
-                method: 'POST',
-                headers: { 'Authorization': `Bearer ${localStorage.getItem('adminToken')}` }
-            });
+            console.log('Calling api.post(/admin/guide-engine/analyze)');
+            const res = await api.post('/admin/guide-engine/analyze');
+            console.log('Analyze API response:', res.data);
+            
+            console.log('Fetching updated stats...');
             await fetchStats();
+            console.log('Stats fetched successfully');
+            alert('Analysis complete! Check the UI.');
         } catch (e) {
             console.error('Failed to run analysis', e);
+            alert('Error running analysis: ' + (e as any).message);
         } finally {
             setIsAnalyzing(false);
+            console.log('Set isAnalyzing back to false');
         }
     };
 
@@ -324,7 +335,8 @@ function GuideEngineTab({ services }: { services: Service[] }) {
                     <button
                         onClick={handleRunAnalysis}
                         disabled={isAnalyzing}
-                        className="inline-flex items-center gap-2 text-sm font-semibold text-white bg-gradient-to-b from-orange-500 to-orange-600 rounded-full px-4 py-2 hover:bg-[#D1644C] transition-colors disabled:opacity-50"
+                        style={{ pointerEvents: 'auto' }}
+                        className="relative z-50 inline-flex items-center gap-2 text-sm font-semibold text-white bg-gradient-to-b from-orange-500 to-orange-600 rounded-full px-4 py-2 hover:bg-[#D1644C] transition-colors disabled:opacity-50"
                     >
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
                             <path d="M8 5v14l11-7Z" />
@@ -429,6 +441,16 @@ function GuideEngineTab({ services }: { services: Service[] }) {
                             }
                             title="No field changes detected yet"
                             subtitle="Run analysis to detect form changes"
+                            action={
+                                <button
+                                    onClick={handleRunAnalysis}
+                                    disabled={isAnalyzing}
+                                    style={{ pointerEvents: 'auto' }}
+                                    className="relative z-50 inline-flex items-center gap-2 text-sm font-semibold text-white bg-gradient-to-b from-orange-500 to-orange-600 rounded-full px-4 py-2 hover:bg-[#D1644C] transition-colors disabled:opacity-50"
+                                >
+                                    {isAnalyzing ? 'Analyzing...' : 'Run analysis now'}
+                                </button>
+                            }
                         />
                     )}
                 </div>
@@ -501,7 +523,7 @@ function GuideEngineTab({ services }: { services: Service[] }) {
     );
 }
 
-function FormsTrackerTab({ services, onRefresh, onEdit, onDelete, onAdd }: { services: Service[], onRefresh: () => void, onEdit: (s: Service) => void, onDelete: (id: number) => void, onAdd: () => void }) {
+function FormsTrackerTab({ services, goals, onRefresh, onEdit, onDelete, onAdd }: { services: Service[], goals: SignupGoal[], onRefresh: () => void, onEdit: (s: Service) => void, onDelete: (id: number) => void, onAdd: () => void }) {
     return (
         <div>
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-5">
@@ -522,17 +544,18 @@ function FormsTrackerTab({ services, onRefresh, onEdit, onDelete, onAdd }: { ser
                 <div className="rounded-2xl border border-[#ECE9E2] bg-white p-8 text-center text-sm text-[#5B6472]">No form data available.</div>
             ) : (
                 <div className="rounded-2xl border border-[#ECE9E2] overflow-x-auto bg-white">
-                <div className="min-w-[900px]">
-                    <div className="grid grid-cols-[1fr_2fr_1fr_1fr_1fr_120px] gap-4 px-5 py-3 bg-[#F7F5F0] text-xs font-semibold text-[#5B6472]">
+                <div className="min-w-[1050px]">
+                    <div className="grid grid-cols-[1fr_2fr_1fr_1fr_1fr_1.5fr_120px] gap-4 px-5 py-3 bg-[#F7F5F0] text-xs font-semibold text-[#5B6472]">
                         <span>Form</span>
                         <span>Description</span>
                         <span>Fee</span>
                         <span>Processing</span>
                         <span>Builder</span>
+                        <span>Connected Goal</span>
                         <span className="text-right">Actions</span>
                     </div>
                     {services.map((service) => (
-                        <div key={service.id} className="grid grid-cols-[1fr_2fr_1fr_1fr_1fr_120px] gap-4 px-5 py-4 border-t border-[#ECE9E2] text-sm text-[#3B4251] items-center">
+                        <div key={service.id} className="grid grid-cols-[1fr_2fr_1fr_1fr_1fr_1.5fr_120px] gap-4 px-5 py-4 border-t border-[#ECE9E2] text-sm text-[#3B4251] items-center">
                             <span className="font-bold text-[#101F38]">{service.title}</span>
                             <span className="text-[#5B6472] truncate">{service.subtitle || 'Standard form guidance'}</span>
                             <span className="font-bold">${Number(String(service.starting_price).replace(/[^0-9.-]+/g,"")).toFixed(2)}</span>
@@ -540,6 +563,24 @@ function FormsTrackerTab({ services, onRefresh, onEdit, onDelete, onAdd }: { ser
                             <a href={`/admin/guide-engine/builder?serviceId=${service.id}`} className="text-xs font-bold text-orange-500 hover:underline">
                                 Form Builder &rarr;
                             </a>
+                            <div className="flex flex-col gap-1">
+                                {(() => {
+                                    const connected = goals.filter(g => 
+                                        g.default_service_id === service.id || 
+                                        g.questions?.some(q => (Object.values(q.service_mappings || {}) as any[]).includes(String(service.id)) || (Object.values(q.service_mappings || {}) as any[]).includes(service.id))
+                                    );
+                                    if (connected.length === 0) return <span className="text-[11px] text-[#8A8F98] italic">Unassigned</span>;
+                                    return (
+                                        <div className="flex flex-wrap gap-1">
+                                            {connected.map(c => (
+                                                <span key={c.id} className="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-[10px] font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10 text-center leading-tight">
+                                                    Goal: {c.title}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    );
+                                })()}
+                            </div>
                             <div className="flex items-center justify-end gap-2">
                                 <button onClick={() => onEdit(service)} className="text-[#5B6472] hover:text-orange-500 transition-colors p-1" title="Edit">
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9" /><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" /></svg>
@@ -583,7 +624,7 @@ function FeesTab({ services, onRefresh, onEdit, onDelete, onAdd }: { services: S
             ) : (
                 <div className="rounded-2xl border border-[#ECE9E2] bg-white p-5 space-y-4">
                     {services.map((service) => (
-                        <div key={service.id} className="rounded-2xl border border-[#ECE9E2] hover:border-orange-500/30 transition-colors p-4 flex items-center justify-between gap-4 group">
+                        <div key={service.id} className="rounded-2xl border border-[#ECE9E2] hover:border-orange-500/30 transition-colors p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 group">
                             <div>
                                 <p className="text-sm font-bold text-[#101F38]">{service.title}</p>
                                 <p className="text-xs text-[#5B6472]">{service.subtitle || 'USCIS filing fee details'}</p>
@@ -593,7 +634,7 @@ function FeesTab({ services, onRefresh, onEdit, onDelete, onAdd }: { services: S
                                     <p className="font-black text-[#101F38]">${Number(service.starting_price).toFixed(2)}</p>
                                     <p className="text-[10px] uppercase tracking-wider text-[#8A8F98]">{service.processing_time || 'Standard'}</p>
                                 </div>
-                                <div className="flex flex-col gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <div className="flex sm:flex-col gap-2 sm:gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity mt-2 sm:mt-0">
                                     <button onClick={() => onEdit(service)} className="text-[#5B6472] hover:text-orange-500 transition-colors" title="Edit">
                                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9" /><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" /></svg>
                                     </button>
@@ -750,6 +791,7 @@ function LockboxTab() {
 export default function AdminGuideEnginePage() {
     const [activeTab, setActiveTab] = useState<PanelTab>('Guide Engine');
     const [services, setServices] = useState<Service[]>([]);
+    const [goals, setGoals] = useState<SignupGoal[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
 
@@ -759,8 +801,9 @@ export default function AdminGuideEnginePage() {
     const load = async () => {
         setLoading(true);
         try {
-            const s = await getServices();
+            const [s, g] = await Promise.all([getServices(), getSignupGoals()]);
             setServices(s);
+            setGoals(g);
             setError('');
         } catch (err: any) {
             console.error('Failed to load services for guide engine', err);
@@ -915,7 +958,7 @@ export default function AdminGuideEnginePage() {
                                 <div className="mt-6">
                                     {activeTab === 'Guide Engine' && (
                                         <div className="space-y-8">
-                                            <div className="flex items-center justify-between">
+                                            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                                                 <div className="space-y-2">
                                                     <h1 className="text-4xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">Guide Engine</h1>
                                                     <p className="text-base text-slate-500">Automatically sync form changes and generate intake fields</p>
@@ -1059,7 +1102,7 @@ export default function AdminGuideEnginePage() {
                                         </div>
                                     )}
 
-                                    {activeTab === 'Forms Tracker' && <FormsTrackerTab services={services} onRefresh={load} onEdit={openEditService} onDelete={handleDeleteService} onAdd={openAddService} />}
+                                    {activeTab === 'Forms Tracker' && <FormsTrackerTab services={services} goals={goals} onRefresh={load} onEdit={openEditService} onDelete={handleDeleteService} onAdd={openAddService} />}
                                     {activeTab === 'Fees' && <FeesTab services={services} onRefresh={load} onEdit={openEditService} onDelete={handleDeleteService} onAdd={openAddService} />}
                                     {activeTab === 'Lockbox' && <LockboxTab />}
                                 </div>

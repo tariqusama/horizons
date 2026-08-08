@@ -105,23 +105,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         await initCsrf();
         const res = await api.post('/login', data);
         const user = res.data.user ?? res.data;
-        
+
         const normalizedRole = (user.role || '').toString().trim().toLowerCase();
-        const isAdminRole = normalizedRole.includes('admin') || 
-                            normalizedRole.includes('manager') || 
-                            normalizedRole.includes('attorney') || 
-                            normalizedRole.includes('paralegal') || 
-                            normalizedRole.includes('practitioner') ||
-                            normalizedRole.includes('pationer') ||
-                            normalizedRole.includes('printing');
+        const isAdminRole = normalizedRole.includes('admin') ||
+            normalizedRole.includes('manager') ||
+            normalizedRole.includes('attorney') ||
+            normalizedRole.includes('paralegal') ||
+            normalizedRole.includes('practitioner') ||
+            normalizedRole.includes('pationer') ||
+            normalizedRole.includes('printing');
 
         if (portal === 'admin' && !isAdminRole) {
-            await api.post('/logout').catch(() => {});
+            await api.post('/logout').catch(() => { });
             throw new Error('Unauthorized: This portal is restricted to staff and administrators.');
         }
 
         if (portal === 'normal' && isAdminRole) {
-            await api.post('/logout').catch(() => {});
+            await api.post('/logout').catch(() => { });
             throw new Error('Please use the Admin Sign In portal.');
         }
 

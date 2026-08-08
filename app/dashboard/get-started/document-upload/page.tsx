@@ -4,6 +4,7 @@ import React, { useState, useRef, useEffect, useCallback, Suspense } from 'react
 import { useRouter, useSearchParams } from 'next/navigation';
 import api from '@/lib/api';
 import styles from '../form.module.css';
+import { useAuth } from '@/contexts/AuthContext';
 import { getPrevFormPath } from '../formsHelper';
 import { getChecklists } from '@/lib/api/cases';
 import { generateFormChecklist, FormChecklist } from '@/lib/utils/documentHelper';
@@ -167,6 +168,7 @@ function UploadModal({ docLabel, existingFileName, onClose, onUpload, isUploadin
 function DocumentUploadContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
+    const { user } = useAuth();
 
     const [checklist, setChecklist] = useState<FormChecklist | null>(null);
     const [fileNames, setFileNames] = useState<Record<string, string>>({});
@@ -175,6 +177,7 @@ function DocumentUploadContent() {
     const [docIds, setDocIds] = useState<Record<string, number>>({});
     const [error, setError] = useState(false);
     const [applicationTitle, setApplicationTitle] = useState('');
+    const [application, setApplication] = useState<any>(null);
     const [expandedGroup, setExpandedGroup] = useState<number | null>(null);
     const [modalDoc, setModalDoc] = useState<{ key: string; label: string } | null>(null);
 
@@ -182,11 +185,23 @@ function DocumentUploadContent() {
         Promise.all([api.get('/applications'), getChecklists()])
             .then(([appsRes, checklistsData]) => {
                 const app = appsRes.data?.[0] ?? null;
-                if (app) setApplicationTitle(app.title || '');
-                const generated = generateFormChecklist(app, checklistsData);
-                setChecklist(generated ?? { title: "Document Upload", subtitle: "", requiredKeys: [], groups: [] });
+                if (app) {
+                    setApplicationTitle(app.title || '');
+                    setApplication(app);
+                    
+                    let userRole = 'petitioner';
+                    if (app.user_id !== user?.id) {
+                        const participant = app.participants?.find((p: any) => p.user_id === user?.id);
+                        if (participant) {
+                            userRole = participant.role;
+                        }
+                    }
+
+                    const generated = generateFormChecklist(app, checklistsData, userRole);
+                    setChecklist(generated ?? { title: "Document Upload", subtitle: "", requiredKeys: [], groups: [] });
+                }
             }).catch(() => { });
-    }, [searchParams]);
+    }, [searchParams, user]);
 
     useEffect(() => {
         api.get('/documents').then(res => {
@@ -371,7 +386,11 @@ function DocumentUploadContent() {
                 })}
 
                 <div className={styles.footerScreenshotDocUpload}>
-                    <button onClick={() => { router.push(getPrevFormPath('/dashboard/get-started/document-upload', applicationTitle)); }} className={styles.btnActionDocUpload}>
+                    <button 
+                        type="button" 
+                        className={styles.btnActionDocUpload}
+                        onClick={() => router.push(getPrevFormPath('/dashboard/get-started/document-upload', application))}
+                    >
                         ← Previous
                     </button>
                     <button onClick={handleNext} className={styles.btnActionDocUpload}>

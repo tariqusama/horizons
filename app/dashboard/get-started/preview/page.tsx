@@ -11,6 +11,7 @@ export default function ApplicationPreviewPage() {
     const router = useRouter();
     const [previewData, setPreviewData] = useState<any>({});
     const [applicationTitle, setApplicationTitle] = useState('');
+    const [application, setApplication] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [noData, setNoData] = useState(false);
 
@@ -20,6 +21,7 @@ export default function ApplicationPreviewPage() {
                 if (res.data && res.data.length > 0) {
                     const app = res.data[0];
                     setApplicationTitle(app.title || '');
+                    setApplication(app);
                     if (app.form_data && typeof app.form_data === 'object' && Object.keys(app.form_data).length > 0) {
                         setPreviewData(app.form_data);
                     } else {
@@ -42,7 +44,7 @@ export default function ApplicationPreviewPage() {
         key.replace(/([A-Z])/g, ' $1').replace(/_/g, ' ').trim().toUpperCase();
 
     const getFirstFormRoute = () => {
-        const firstForm = getFormsList(applicationTitle, { allowFallback: false })[0];
+        const firstForm = getFormsList(application, { allowFallback: false })[0];
         if (firstForm) return firstForm.path;
         return '/dashboard/get-started';
     };
@@ -62,7 +64,7 @@ export default function ApplicationPreviewPage() {
     };
 
     const nestedSections = Object.keys(previewData).filter(k => typeof previewData[k] === 'object' && previewData[k] !== null);
-    const flatFields = Object.keys(previewData).filter(k => k !== '_current_step' && typeof previewData[k] !== 'object' && previewData[k] !== null && previewData[k] !== '');
+    const flatFields = Object.keys(previewData).filter(k => !k.startsWith('_current_step') && typeof previewData[k] !== 'object' && previewData[k] !== null && previewData[k] !== '');
 
     return (
         <div className={styles.pageWrapper}>
@@ -115,7 +117,7 @@ export default function ApplicationPreviewPage() {
                         {nestedSections.map(key => {
                             const meta = formSectionMap[key];
                             const sectionData = previewData[key];
-                            const fields = Object.keys(sectionData).filter(f => f !== '_current_step' && sectionData[f] !== null && sectionData[f] !== '' && typeof sectionData[f] !== 'object');
+                            const fields = Object.keys(sectionData).filter(f => !f.startsWith('_current_step') && sectionData[f] !== null && sectionData[f] !== '' && typeof sectionData[f] !== 'object');
                             if (!fields.length) return null;
                             return (
                                 <div key={key} className={styles.previewSection}>
@@ -171,7 +173,7 @@ export default function ApplicationPreviewPage() {
                 {!loading && (
                     <div className={styles.previewPageFooter}>
                         <button
-                            onClick={() => router.push(getPrevFormPath('/dashboard/get-started/preview', applicationTitle))}
+                            onClick={() => router.push(getPrevFormPath('/dashboard/get-started/preview', application))}
                             className={styles.btnPreviewBack}
                         >
                             ← Previous

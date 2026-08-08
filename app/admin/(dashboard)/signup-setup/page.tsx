@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { getSignupGoals, createSignupGoal, updateSignupGoal, deleteSignupGoal, createSignupQuestion, updateSignupQuestion, deleteSignupQuestion, SignupGoal, SignupQuestion } from '../../../../lib/api/signup-setup';
+import { getSignupGoals, createSignupGoal, updateSignupGoal, deleteSignupGoal, createSignupQuestion, updateSignupQuestion, deleteSignupQuestion, SignupGoal, SignupQuestion, getServices, Service } from '../../../../lib/api/signup-setup';
 
 const Icon = {
     target: (p: any) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...p}><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg>,
@@ -16,16 +16,19 @@ function GoalModal({
     isOpen,
     onClose,
     onSave,
-    goal = null
+    goal = null,
+    services
 }: {
     isOpen: boolean;
     onClose: () => void;
     onSave: (data: Partial<SignupGoal>) => Promise<void>;
     goal?: SignupGoal | null;
+    services: Service[];
 }) {
     const [title, setTitle] = useState('');
     const [imageUrl, setImageUrl] = useState('');
     const [orderIndex, setOrderIndex] = useState(0);
+    const [defaultServiceId, setDefaultServiceId] = useState<number | ''>('');
     const [saving, setSaving] = useState(false);
 
     useEffect(() => {
@@ -33,10 +36,12 @@ function GoalModal({
             setTitle(goal.title);
             setImageUrl(goal.image_url || '');
             setOrderIndex(goal.order_index);
+            setDefaultServiceId(goal.default_service_id || '');
         } else {
             setTitle('');
             setImageUrl('');
             setOrderIndex(0);
+            setDefaultServiceId('');
         }
     }, [goal, isOpen]);
 
@@ -46,7 +51,7 @@ function GoalModal({
         e.preventDefault();
         setSaving(true);
         try {
-            await onSave({ title, image_url: imageUrl || null, order_index: orderIndex });
+            await onSave({ title, image_url: imageUrl || null, order_index: orderIndex, default_service_id: defaultServiceId || null });
             onClose();
         } catch (err) {
             console.error(err);
@@ -58,7 +63,7 @@ function GoalModal({
 
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4">
-            <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden">
+            <div className="bg-white rounded-2xl shadow-xl w-full max-w-xl overflow-hidden">
                 <div className="px-6 py-4 border-b border-slate-200 flex justify-between items-center">
                     <h2 className="text-lg font-bold text-slate-900">{goal ? 'Edit Goal' : 'Add Goal'}</h2>
                     <button onClick={onClose} className="text-slate-400 hover:text-slate-900 transition-colors">
@@ -78,6 +83,16 @@ function GoalModal({
                         <label className="block text-xs font-semibold text-slate-900 mb-1">Order Index</label>
                         <input required type="number" value={orderIndex} onChange={e => setOrderIndex(parseInt(e.target.value))} className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-indigo-500" />
                     </div>
+                    <div>
+                        <label className="block text-xs font-semibold text-slate-900 mb-1">Default Service (Optional)</label>
+                        <select value={defaultServiceId} onChange={e => setDefaultServiceId(e.target.value ? parseInt(e.target.value) : '')} className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-indigo-500 text-ellipsis overflow-hidden whitespace-nowrap pr-8">
+                            <option value="">-- No Default Service --</option>
+                            {services && services.map(s => (
+                                <option key={s.id} value={s.id}>{s.title}</option>
+                            ))}
+                        </select>
+                        <p className="text-xs text-slate-500 mt-1">If set, this service will be assigned by default when the user selects this goal.</p>
+                    </div>
                     <div className="pt-4 flex justify-end gap-3">
                         <button type="button" onClick={onClose} className="px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50 rounded-lg transition-colors">Cancel</button>
                         <button type="submit" disabled={saving} className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg disabled:opacity-50">
@@ -94,18 +109,21 @@ function QuestionModal({
     isOpen,
     onClose,
     onSave,
-    question = null
+    question = null,
+    services
 }: {
     isOpen: boolean;
     onClose: () => void;
     onSave: (data: Partial<SignupQuestion>) => Promise<void>;
     question?: SignupQuestion | null;
+    services: Service[];
 }) {
     const [questionText, setQuestionText] = useState('');
     const [optionsText, setOptionsText] = useState('');
     const [disqualifyingText, setDisqualifyingText] = useState('');
     const [skipToEndText, setSkipToEndText] = useState('');
     const [orderIndex, setOrderIndex] = useState(0);
+    const [serviceMappings, setServiceMappings] = useState<Record<string, number>>({});
     const [saving, setSaving] = useState(false);
 
     useEffect(() => {
@@ -115,12 +133,14 @@ function QuestionModal({
             setDisqualifyingText(question.disqualifying_options ? question.disqualifying_options.join(', ') : '');
             setSkipToEndText(question.skip_to_end_options ? question.skip_to_end_options.join(', ') : '');
             setOrderIndex(question.order_index);
+            setServiceMappings(question.service_mappings || {});
         } else {
             setQuestionText('');
             setOptionsText('');
             setDisqualifyingText('');
             setSkipToEndText('');
             setOrderIndex(0);
+            setServiceMappings({});
         }
     }, [question, isOpen]);
 
@@ -139,6 +159,7 @@ function QuestionModal({
                 options: options.length > 0 ? options : null,
                 disqualifying_options: disqualifying.length > 0 ? disqualifying : null,
                 skip_to_end_options: skipToEnd.length > 0 ? skipToEnd : null,
+                service_mappings: Object.keys(serviceMappings).length > 0 ? serviceMappings : null,
                 order_index: orderIndex
             });
             onClose();
@@ -152,7 +173,7 @@ function QuestionModal({
 
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4">
-            <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden">
+            <div className="bg-white rounded-2xl shadow-xl w-full max-w-2xl overflow-hidden">
                 <div className="px-6 py-4 border-b border-slate-200 flex justify-between items-center">
                     <h2 className="text-lg font-bold text-slate-900">{question ? 'Edit Question' : 'Add Question'}</h2>
                     <button onClick={onClose} className="text-slate-400 hover:text-slate-900 transition-colors">
@@ -182,6 +203,40 @@ function QuestionModal({
                         <label className="block text-xs font-semibold text-slate-900 mb-1">Order Index</label>
                         <input required type="number" value={orderIndex} onChange={e => setOrderIndex(parseInt(e.target.value))} className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-indigo-500" />
                     </div>
+
+                    {optionsText.trim() && (
+                        <div className="pt-4 border-t border-slate-100">
+                            <label className="block text-xs font-semibold text-slate-900 mb-2">Service Route Overrides (Optional)</label>
+                            <p className="text-xs text-slate-500 mb-3">If a user selects one of these options, override the goal's default service.</p>
+                            
+                            <div className="space-y-3">
+                                {optionsText.split(',').map(s => s.trim()).filter(Boolean).map(opt => (
+                                    <div key={opt} className="flex flex-col sm:flex-row gap-2 sm:items-center">
+                                        <div className="text-sm font-medium w-32 shrink-0">{opt} ➔ </div>
+                                        <select 
+                                            value={serviceMappings[opt] || ''} 
+                                            onChange={e => {
+                                                const val = e.target.value;
+                                                setServiceMappings(prev => {
+                                                    const next = { ...prev };
+                                                    if (val) next[opt] = parseInt(val);
+                                                    else delete next[opt];
+                                                    return next;
+                                                });
+                                            }}
+                                            className="flex-1 border border-slate-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-indigo-500 text-ellipsis overflow-hidden whitespace-nowrap pr-8"
+                                        >
+                                            <option value="">-- No Override --</option>
+                                            {services && services.map(s => (
+                                                <option key={s.id} value={s.id}>{s.title}</option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
                     <div className="pt-4 flex justify-end gap-3">
                         <button type="button" onClick={onClose} className="px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50 rounded-lg transition-colors">Cancel</button>
                         <button type="submit" disabled={saving} className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg disabled:opacity-50">
@@ -196,6 +251,7 @@ function QuestionModal({
 
 export default function SignupSetupPage() {
     const [goals, setGoals] = useState<SignupGoal[]>([]);
+    const [services, setServices] = useState<Service[]>([]);
     const [loading, setLoading] = useState(true);
     const [expandedGoals, setExpandedGoals] = useState<Record<number, boolean>>({});
 
@@ -219,8 +275,13 @@ export default function SignupSetupPage() {
     const loadData = async () => {
         try {
             setLoading(true);
-            const data = await getSignupGoals();
+            const [data, srvData] = await Promise.all([
+                getSignupGoals(),
+                getServices()
+            ]);
+            
             setGoals(data || []);
+            setServices(srvData || []);
 
             // Auto expand all goals initially
             if (Object.keys(expandedGoals).length === 0 && data) {
@@ -397,19 +458,23 @@ export default function SignupSetupPage() {
                 )}
             </div>
 
-            <GoalModal
-                isOpen={isGoalModalOpen}
-                onClose={() => setIsGoalModalOpen(false)}
-                onSave={handleSaveGoal}
-                goal={editingGoal}
+            <GoalModal 
+                isOpen={isGoalModalOpen} 
+                onClose={() => setIsGoalModalOpen(false)} 
+                onSave={handleSaveGoal} 
+                goal={editingGoal} 
+                services={services}
             />
-
-            <QuestionModal
-                isOpen={isQuestionModalOpen}
-                onClose={() => setIsQuestionModalOpen(false)}
-                onSave={handleSaveQuestion}
-                question={editingQuestion}
-            />
+            
+            {isQuestionModalOpen && (
+                <QuestionModal 
+                    isOpen={isQuestionModalOpen} 
+                    onClose={() => setIsQuestionModalOpen(false)} 
+                    onSave={handleSaveQuestion} 
+                    question={editingQuestion} 
+                    services={services}
+                />
+            )}
 
             {deleteTarget && (
                 <div className="fixed inset-0 z-[110] flex items-center justify-center bg-slate-900/60 backdrop-blur-md p-4 transition-all">

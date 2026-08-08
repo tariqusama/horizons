@@ -89,14 +89,20 @@ const getPackagePricing = (selectedGoal: string | null, answers: Record<number, 
     }
   }
 
-  if (selectedGoal === "Bring a fiancé(e) or spouse/relative to the U.S.") {
-    if (answers[1] === "Spouse" || answers[1] === "Fiancé(e)") {
-      return { title: "Petition for a Spouse outside the U.S. – USCIS Petition only", basic: "$549.99", advanced: "$789.99", premium: "$999.99" };
-    }
+  if (selectedGoal === "Bring a fiancé(e) to the U.S.") {
+    return { title: "Petition for a Fiancé(e) outside the U.S. – USCIS Petition only", basic: "$549.99", advanced: "$789.99", premium: "$999.99" };
+  }
+  if (selectedGoal === "Bring a spouse to the U.S.") {
+    return { title: "Petition for a Spouse outside the U.S. – USCIS Petition only", basic: "$549.99", advanced: "$789.99", premium: "$999.99" };
+  }
+  if (selectedGoal === "Bring a sibling to the U.S.") {
+    return { title: "Petition for a Sibling outside the U.S. – USCIS Petition only", basic: "$549.99", advanced: "$789.99", premium: "$999.99" };
+  }
+  if (selectedGoal === "Bring another relative to the U.S.") {
     if (answers[1] === "Child/Step Child") {
       return { title: "Petition for a Child outside the U.S. – USCIS Petition only", basic: "$549.99", advanced: "$789.99", premium: "$999.99" };
     }
-    if (answers[1] === "Parent" || answers[1] === "Sibling") {
+    if (answers[1] === "Parent") {
       return { title: "Petition for a Parent outside the U.S. – USCIS Petition only", basic: "$549.99", advanced: "$789.99", premium: "$999.99" };
     }
   }
@@ -163,23 +169,26 @@ function SignupFlowContent() {
     let baseQuestions = [...(pathways[selectedGoal] || [])];
     if (selectedGoal === "Replace or fix a Green Card") {
       if (answers[3] === "Card Expired or Expiring Soon") baseQuestions.push({ question: "dummy", options: [] });
-    } else if (selectedGoal === "Bring a fiancé(e) or spouse/relative to the U.S.") {
-      if (answers[1] === "Fiancé(e)") {
-        baseQuestions.push({ question: "dummy", options: [] });
-        if (answers[2] === "Yes") {
-          baseQuestions.push({ question: "dummy", options: [] });
-          if (answers[3] === "Yes") {
-            baseQuestions.push({ question: "dummy", options: [] });
-            if (answers[4] === "Yes") baseQuestions.push({ question: "dummy", options: [] });
-          }
-        }
-      } else if (answers[1] === "Spouse") {
+    } else if (selectedGoal === "Bring a fiancé(e) to the U.S.") {
+      baseQuestions.push({ question: "dummy", options: [] });
+      if (answers[1] === "Yes") {
         baseQuestions.push({ question: "dummy", options: [] });
         if (answers[2] === "Yes") {
           baseQuestions.push({ question: "dummy", options: [] });
           if (answers[3] === "Yes") baseQuestions.push({ question: "dummy", options: [] });
         }
-      } else if (answers[1] === "Child/Step Child") {
+      }
+    } else if (selectedGoal === "Bring a spouse to the U.S.") {
+      baseQuestions.push({ question: "dummy", options: [] });
+      if (answers[1] === "Yes") {
+        baseQuestions.push({ question: "dummy", options: [] });
+        if (answers[2] === "Yes") baseQuestions.push({ question: "dummy", options: [] });
+      }
+    } else if (selectedGoal === "Bring a sibling to the U.S.") {
+      baseQuestions.push({ question: "dummy", options: [] });
+      if (answers[1] === "Yes") baseQuestions.push({ question: "dummy", options: [] });
+    } else if (selectedGoal === "Bring another relative to the U.S.") {
+      if (answers[1] === "Child/Step Child") {
         baseQuestions.push({ question: "dummy", options: [] });
         if (answers[2] === "Yes") {
           baseQuestions.push({ question: "dummy", options: [] });
@@ -194,9 +203,6 @@ function SignupFlowContent() {
           baseQuestions.push({ question: "dummy", options: [] });
           if (answers[3] === "Yes") baseQuestions.push({ question: "dummy", options: [] });
         }
-      } else if (answers[1] === "Sibling") {
-        baseQuestions.push({ question: "dummy", options: [] });
-        if (answers[2] === "Yes") baseQuestions.push({ question: "dummy", options: [] });
       }
     } else if (selectedGoal === "Adjust status to permanent resident / get a Green Card while in US") {
       if (answers[3] === "Family") {
@@ -564,76 +570,112 @@ function SignupFlowContent() {
           disqualifyingOptions: ["2 years"]
         });
       }
-    } else if (selectedGoal === "Bring a fiancé(e) or spouse/relative to the U.S.") {
-      if (answers[1] === "Fiancé(e)") {
+    } else if (selectedGoal === "Bring a fiancé(e) to the U.S.") {
+      baseQuestions.push({
+        question: "Are you a citizen of the United States?",
+        options: ["Yes", "No"],
+        disqualifyingOptions: ["No"]
+      });
+
+      if (answers[1] === "Yes") {
         baseQuestions.push({
-          question: "Are you a citizen of the United States?",
+          question: "Is your fiancé currently outside of the United States?",
           options: ["Yes", "No"],
           disqualifyingOptions: ["No"]
         });
 
         if (answers[2] === "Yes") {
           baseQuestions.push({
-            question: "Is your fiancé currently outside of the United States?",
+            question: "Have you met your fiancé in person in the past two years?",
             options: ["Yes", "No"],
             disqualifyingOptions: ["No"]
           });
 
           if (answers[3] === "Yes") {
             baseQuestions.push({
-              question: "Have you met your fiancé in person in the past two years?",
+              question: "Are you and your fiancé(e) legally free to marry? (This means being single, lawfully divorced, or separated)",
               options: ["Yes", "No"],
               disqualifyingOptions: ["No"]
             });
 
             if (answers[4] === "Yes") {
               baseQuestions.push({
-                question: "Are you and your fiancé(e) legally free to marry? (This means being single, lawfully divorced, or separated)",
+                question: "Do you and your fiancé plan to get married within 90 days of arriving in the US?",
                 options: ["Yes", "No"],
                 disqualifyingOptions: ["No"]
               });
-
-              if (answers[5] === "Yes") {
-                baseQuestions.push({
-                  question: "Do you and your fiancé plan to get married within 90 days of arriving in the US?",
-                  options: ["Yes", "No"],
-                  disqualifyingOptions: ["No"]
-                });
-              }
             }
           }
         }
-      } else if (answers[1] === "Spouse") {
+      }
+    } else if (selectedGoal === "Bring a spouse to the U.S.") {
+      baseQuestions.push({
+        question: "Are you a United States citizen or a legal permanent resident?",
+        options: ["Yes", "No"],
+        disqualifyingOptions: ["No"]
+      });
+
+      if (answers[1] === "Yes") {
         baseQuestions.push({
-          question: "Are you a United States citizen or a legal permanent resident?",
+          question: "Are you at least or will be 18 years old by the time you apply to USCIS?",
           options: ["Yes", "No"],
           disqualifyingOptions: ["No"]
         });
 
         if (answers[2] === "Yes") {
           baseQuestions.push({
-            question: "Are you at least or will be 18 years old by the time you apply to USCIS?",
+            question: "Are you currently residing in the United States or have a US domicile? (US military members and employees working for the US government abroad can also select YES)",
             options: ["Yes", "No"],
             disqualifyingOptions: ["No"]
           });
 
           if (answers[3] === "Yes") {
             baseQuestions.push({
-              question: "Are you currently residing in the United States or have a US domicile? (US military members and employees working for the US government abroad can also select YES)",
+              question: "Is your marriage legitimate and Bona fide?",
               options: ["Yes", "No"],
               disqualifyingOptions: ["No"]
             });
-
-            if (answers[4] === "Yes") {
-              baseQuestions.push({
-                question: "Is your marriage legitimate and Bona fide?",
-                options: ["Yes", "No"],
-                disqualifyingOptions: ["No"]
-              });
-            }
           }
         }
-      } else if (answers[1] === "Child/Step Child") {
+      }
+    } else if (selectedGoal === "Bring a sibling to the U.S.") {
+      baseQuestions.push({
+        question: "Are you at least 21 years of age?",
+        options: ["Yes", "No"],
+        disqualifyingOptions: ["No"]
+      });
+
+      if (answers[1] === "Yes") {
+        baseQuestions.push({
+          question: "Are you a United States Citizen?",
+          options: ["Yes", "No"],
+          disqualifyingOptions: ["No"]
+        });
+
+        if (answers[2] === "Yes") {
+          baseQuestions.push({
+            question: "Are you related to your sibling in one of these ways?",
+            options: ["You share at least one biological parent", "You are half-siblings", "You are step-siblings", "You are adopted siblings", "One of the above"],
+            disqualifyingOptions: ["One of the above"]
+          });
+
+          if (answers[3] === "You are step-siblings") {
+            baseQuestions.push({
+              question: "Were your parents married to each other before your 18th birthday?",
+              options: ["Yes", "No"],
+              disqualifyingOptions: ["No"]
+            });
+          } else if (answers[3] === "You are adopted siblings") {
+            baseQuestions.push({
+              question: "Were you or your sibling adopted before the age of 16?",
+              options: ["Yes", "No"],
+              disqualifyingOptions: ["No"]
+            });
+          }
+        }
+      }
+    } else if (selectedGoal === "Bring another relative to the U.S.") {
+      if (answers[1] === "Child/Step Child") {
         baseQuestions.push({
           question: "Are you currently residing in the United States or have a US domicile? (US military members and employees working for the US government abroad can also select YES)",
           options: ["Yes", "No"],
@@ -683,42 +725,6 @@ function SignupFlowContent() {
               options: ["Yes", "No"],
               disqualifyingOptions: ["No"]
             });
-          }
-        }
-      } else if (answers[1] === "Sibling") {
-        baseQuestions.push({
-          question: "Are you at least 21 years of age?",
-          options: ["Yes", "No"],
-          disqualifyingOptions: ["No"]
-        });
-
-        if (answers[2] === "Yes") {
-          baseQuestions.push({
-            question: "Are you a United States Citizen?",
-            options: ["Yes", "No"],
-            disqualifyingOptions: ["No"]
-          });
-
-          if (answers[3] === "Yes") {
-            baseQuestions.push({
-              question: "Are you related to your sibling in one of these ways?",
-              options: ["You share at least one biological parent", "You are half-siblings", "You are step-siblings", "You are adopted siblings", "One of the above"],
-              disqualifyingOptions: ["One of the above"]
-            });
-
-            if (answers[4] === "You are step-siblings") {
-              baseQuestions.push({
-                question: "Were your parents married to each other before your 18th birthday?",
-                options: ["Yes", "No"],
-                disqualifyingOptions: ["No"]
-              });
-            } else if (answers[4] === "You are adopted siblings") {
-              baseQuestions.push({
-                question: "Were you or your sibling adopted before the age of 16?",
-                options: ["Yes", "No"],
-                disqualifyingOptions: ["No"]
-              });
-            }
           }
         }
       }

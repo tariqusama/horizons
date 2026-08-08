@@ -22,7 +22,9 @@ const getTimelineEstimate = (goal: string) => {
   const normalized = goal.toLowerCase();
   if (/citizenship|naturalization/.test(normalized)) return '6-10 months';
   if (/fianc|k-1/.test(normalized)) return '8-14 months';
-  if (/green card|permanent resident/.test(normalized)) return '12-18 months';
+  if (/spouse|marriage|green card|permanent resident/.test(normalized)) return '12-18 months';
+  if (/sibling/.test(normalized)) return '10-15+ years';
+  if (/parent|child|relative/.test(normalized)) return '12-24 months';
   if (/remove conditions|conditional lpr/.test(normalized)) return '10-14 months';
   if (/daca/.test(normalized)) return '6-10 months';
   if (/asylum|refugee/.test(normalized)) return '10-16 months';

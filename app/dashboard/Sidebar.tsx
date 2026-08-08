@@ -21,6 +21,7 @@ export default function Sidebar({ isOpen = false, onClose }: SidebarProps) {
     const { logout, user } = useAuth();
 
     const [goalTitle, setGoalTitle] = useState<string>('');
+    const [application, setApplication] = useState<any>(null);
     const [completedForms, setCompletedForms] = useState<string[]>([]);
 
     useEffect(() => {
@@ -29,6 +30,7 @@ export default function Sidebar({ isOpen = false, onClose }: SidebarProps) {
                 if (res.data && res.data.length > 0) {
                     const latest = res.data[0];
                     setGoalTitle(latest.title || '');
+                    setApplication(latest);
                     // derive completed forms from application.form_data keys
                     const fd = latest.form_data || {};
                     const keys = Object.keys(fd || {}).map(k => k.toLowerCase());
@@ -38,7 +40,7 @@ export default function Sidebar({ isOpen = false, onClose }: SidebarProps) {
         }
     }, [isGetStartedFlow]);
 
-    const formsList = getFormsList(goalTitle, { allowFallback: false });
+    const formsList = getFormsList(application, { allowFallback: false });
 
     const stepItems = [
         {
@@ -52,8 +54,13 @@ export default function Sidebar({ isOpen = false, onClose }: SidebarProps) {
             const currentFormCode = searchParams?.get('form');
             const isActiveOverview = isOverview && (currentFormCode === formCode || (!currentFormCode && index === 0));
             
+            const appTitle = application?.package_name || application?.title || 'Form Intake';
+            const labelStr = formsList.length > 1 
+                ? `Step ${index + 2}: ${appTitle} (Part ${index + 1})`
+                : `Step ${index + 2}: ${appTitle}`;
+            
             return {
-                label: `Step ${index + 2}: ${form.name.replace(/^Form\s+/i, '')}`,
+                label: labelStr,
                 path: `/dashboard/get-started/overview?form=${formCode}`,
                 isCurrent: isActiveOverview || pathname === `/dashboard/get-started/dynamic/${formCode}`,
             };

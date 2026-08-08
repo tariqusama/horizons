@@ -10,12 +10,19 @@ function FormBuilderContent() {
     const router = useRouter();
 
     const [form, setForm] = useState<any>(null);
+    const [allForms, setAllForms] = useState<any[]>([]);
+    const [serviceForms, setServiceForms] = useState<any[]>([]);
+    const [activeFormId, setActiveFormId] = useState<number | null>(null);
+    const [showCreateForm, setShowCreateForm] = useState(false);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
 
     const [isCreating, setIsCreating] = useState(false);
     const [newFormName, setNewFormName] = useState('');
     const [newFormSlug, setNewFormSlug] = useState('');
+
+    const [isConnecting, setIsConnecting] = useState(false);
+    const [connectFormId, setConnectFormId] = useState('');
 
     // Modal States
     const [isSectionModalOpen, setIsSectionModalOpen] = useState(false);
@@ -31,55 +38,145 @@ function FormBuilderContent() {
     const [newQuestionOptions, setNewQuestionOptions] = useState([{ label: '', value: '' }]);
     const [editingQuestionId, setEditingQuestionId] = useState<number | null>(null);
 
-    // Load Form Data
-    const loadForm = async () => {
-        setLoading(true);
+    // Custom Dialog Modal State
+    const [dialogState, setDialogState] = useState<{
+        isOpen: boolean;
+        type: 'alert' | 'confirm';
+        title: string;
+        message: string;
+        onConfirm?: () => void;
+    }>({
+        isOpen: false,
+        type: 'alert',
+        title: '',
+        message: ''
+    });
+
+    const showAlert = (title: string, message: string) => {
+        setDialogState({ isOpen: true, type: 'alert', title, message });
+    };
+
+    const showConfirm = (title: string, message: string, onConfirm: () => void) => {
+        setDialogState({ isOpen: true, type: 'confirm', title, message, onConfirm });
+    };
+
+    const closeDialog = () => {
+        setDialogState(prev => ({ ...prev, isOpen: false }));
+    };
+
+    const loadAllForms = async () => {
         try {
-            // First get all forms and see if one matches this serviceId
             const res = await api.get('/admin/guide-engine/forms');
-            const existingForm = res.data.find((f: any) => f.service_id === Number(serviceId));
+            setAllForms(res.data);
             
-            if (existingForm) {
-                // Fetch the full form with sections and questions
-                const fullFormRes = await api.get(`/admin/guide-engine/forms/${existingForm.id}`);
-                setForm(fullFormRes.data);
-            } else {
-                setForm(null);
-            }
+            const matchingForms = res.data.filter((f: any) => f.services?.some((s:any) => s.id === Number(serviceId)));
+            setServiceForms(matchingForms);
+            
+            return matchingForms;
         } catch (err: any) {
             console.error(err);
             setError('Failed to load form data.');
-        } finally {
             setLoading(false);
+            return [];
         }
     };
 
     useEffect(() => {
         if (serviceId) {
-            loadForm();
+            loadAllForms().then(matchingForms => {
+                if (matchingForms.length > 0 && !activeFormId) {
+                    setActiveFormId(matchingForms[0].id);
+                } else if (matchingForms.length === 0) {
+                    setForm(null);
+                    setLoading(false);
+                }
+            });
         } else {
             setLoading(false);
             setError('No Service ID provided.');
         }
     }, [serviceId]);
 
+    useEffect(() => {
+        if (activeFormId) {
+            api.get(`/admin/guide-engine/forms/${activeFormId}`)
+                .then(res => {
+                    setForm(res.data);
+                })
+                .catch(err => console.error(err))
+                .finally(() => setLoading(false));
+        }
+    }, [activeFormId]);
+
     const handleCreateForm = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsCreating(true);
         try {
-            await api.post('/admin/guide-engine/forms', {
+            const newForm = await api.post('/admin/guide-engine/forms', {
                 service_id: Number(serviceId),
                 name: newFormName,
                 slug: newFormSlug,
                 description: 'Dynamic form generated from admin.'
             });
-            await loadForm();
+            setShowCreateForm(false);
+            setNewFormName('');
+            setNewFormSlug('');
+            setActiveFormId(newForm.data.id);
+            // activeFormId change will trigger single form load via useEffect
+            loadAllForms();
         } catch (err: any) {
             console.error(err);
-            alert('Failed to create form.');
+            showAlert('Error', 'Failed to create form.');
         } finally {
             setIsCreating(false);
         }
+    };
+
+    const handleConnectForm = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!connectFormId) return;
+        setIsConnecting(true);
+        try {
+            await api.post(`/admin/guide-engine/forms/${connectFormId}/connect`, {
+                service_id: Number(serviceId)
+            });
+            setShowCreateForm(false);
+            setConnectFormId('');
+            setActiveFormId(Number(connectFormId));
+            loadAllForms(); // Reload to fetch the new links
+        } catch (err: any) {
+            console.error(err);
+            showAlert('Error', 'Failed to connect form.');
+        } finally {
+            setIsConnecting(false);
+        }
+    };
+
+    const handleUnlinkForm = (formId: number) => {
+        showConfirm(
+            "Unlink Form",
+            "Are you sure you want to unlink this form from the current service? This will not delete the form itself.",
+            async () => {
+                try {
+                    await api.post(`/admin/guide-engine/forms/${formId}/unlink`, {
+                        service_id: Number(serviceId)
+                    });
+                    
+                    const matchingForms = await loadAllForms();
+                    if (activeFormId === formId) {
+                        if (matchingForms.length > 0) {
+                            setActiveFormId(matchingForms[0].id);
+                        } else {
+                            setActiveFormId(null);
+                            setForm(null);
+                        }
+                    }
+                } catch (err) {
+                    console.error(err);
+                    showAlert("Error", "Failed to unlink form.");
+                }
+            }
+        );
     };
 
     const openSectionModal = () => {
@@ -95,22 +192,28 @@ function FormBuilderContent() {
                 order: form.sections?.length || 0
             });
             setIsSectionModalOpen(false);
-            loadForm();
+            // Refresh single form
+            api.get(`/admin/guide-engine/forms/${activeFormId}`).then(res => setForm(res.data));
         } catch (err) {
             console.error(err);
-            alert("Failed to add section.");
+            showAlert("Error", "Failed to add section.");
         }
     };
 
-    const handleDeleteSection = async (sectionId: number) => {
-        if (!window.confirm("Are you sure you want to delete this section?")) return;
-        try {
-            await api.delete(`/admin/guide-engine/sections/${sectionId}`);
-            loadForm();
-        } catch (err) {
-            console.error(err);
-            alert("Failed to delete section.");
-        }
+    const handleDeleteSection = (sectionId: number) => {
+        showConfirm(
+            "Delete Section",
+            "Are you sure you want to delete this section?",
+            async () => {
+                try {
+                    await api.delete(`/admin/guide-engine/sections/${sectionId}`);
+                    api.get(`/admin/guide-engine/forms/${activeFormId}`).then(res => setForm(res.data));
+                } catch (err) {
+                    console.error(err);
+                    showAlert("Error", "Failed to delete section.");
+                }
+            }
+        );
     };
 
     const openQuestionModal = (sectionId: number) => {
@@ -188,22 +291,27 @@ function FormBuilderContent() {
             }
             
             setIsQuestionModalOpen(false);
-            loadForm();
+            api.get(`/admin/guide-engine/forms/${activeFormId}`).then(res => setForm(res.data));
         } catch (err) {
             console.error(err);
-            alert("Failed to add question.");
+            showAlert("Error", "Failed to add question.");
         }
     };
 
-    const handleDeleteQuestion = async (questionId: number) => {
-        if (!window.confirm("Are you sure you want to delete this question?")) return;
-        try {
-            await api.delete(`/admin/guide-engine/questions/${questionId}`);
-            loadForm();
-        } catch (err) {
-            console.error(err);
-            alert("Failed to delete question.");
-        }
+    const handleDeleteQuestion = (questionId: number) => {
+        showConfirm(
+            "Delete Question",
+            "Are you sure you want to delete this question?",
+            async () => {
+                try {
+                    await api.delete(`/admin/guide-engine/questions/${questionId}`);
+                    api.get(`/admin/guide-engine/forms/${activeFormId}`).then(res => setForm(res.data));
+                } catch (err) {
+                    console.error(err);
+                    showAlert("Error", "Failed to delete question.");
+                }
+            }
+        );
     };
 
     if (loading) {
@@ -223,35 +331,140 @@ function FormBuilderContent() {
                 <h1 className="text-2xl font-black text-[#101F38]">Form Builder</h1>
             </div>
 
-            {!form ? (
-                <div className="bg-white p-6 rounded-2xl border border-[#ECE9E2] max-w-md">
-                    <h2 className="text-lg font-bold text-[#101F38] mb-4">Initialize Form</h2>
-                    <p className="text-sm text-[#5B6472] mb-6">This service doesn't have a dynamic form attached yet. Let's create one.</p>
-                    <form onSubmit={handleCreateForm} className="space-y-4">
-                        <div>
-                            <label className="block text-xs font-semibold text-[#101F38] mb-1">Form Name</label>
-                            <input required value={newFormName} onChange={e => setNewFormName(e.target.value)} placeholder="e.g., I-90 Green Card Renewal" className="w-full border border-[#ECE9E2] rounded-lg px-3 py-2 text-sm focus:border-orange-500 outline-none" />
-                        </div>
-                        <div>
-                            <label className="block text-xs font-semibold text-[#101F38] mb-1">URL Slug</label>
-                            <input required value={newFormSlug} onChange={e => setNewFormSlug(e.target.value)} placeholder="e.g., i-90" className="w-full border border-[#ECE9E2] rounded-lg px-3 py-2 text-sm focus:border-orange-500 outline-none" />
-                        </div>
-                        <button type="submit" disabled={isCreating} className="w-full py-2 bg-orange-500 text-white rounded-lg font-semibold hover:bg-orange-600 transition-colors">
-                            {isCreating ? 'Creating...' : 'Create Form'}
-                        </button>
-                    </form>
+            {!form && serviceForms.length === 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {/* Create New Form */}
+                    <div className="bg-white p-6 rounded-2xl border border-[#ECE9E2]">
+                        <h2 className="text-lg font-bold text-[#101F38] mb-4">Initialize Form</h2>
+                        <p className="text-sm text-[#5B6472] mb-6">This service doesn't have a dynamic form attached yet. Let's create one.</p>
+                        <form onSubmit={handleCreateForm} className="space-y-4">
+                            <div>
+                                <label className="block text-xs font-semibold text-[#101F38] mb-1">Form Name</label>
+                                <input required value={newFormName} onChange={e => setNewFormName(e.target.value)} placeholder="e.g., I-130 Petition" className="w-full border border-[#ECE9E2] rounded-lg px-3 py-2 text-sm focus:border-orange-500 outline-none" />
+                            </div>
+                            <div>
+                                <label className="block text-xs font-semibold text-[#101F38] mb-1">URL Slug</label>
+                                <input required value={newFormSlug} onChange={e => setNewFormSlug(e.target.value)} placeholder="e.g., i-130" className="w-full border border-[#ECE9E2] rounded-lg px-3 py-2 text-sm focus:border-orange-500 outline-none" />
+                            </div>
+                            <button type="submit" disabled={isCreating} className="w-full py-2 bg-orange-500 text-white rounded-lg font-semibold hover:bg-orange-600 transition-colors">
+                                {isCreating ? 'Creating...' : 'Create Form'}
+                            </button>
+                        </form>
+                    </div>
+
+                    {/* Connect Existing Form */}
+                    <div className="bg-white p-6 rounded-2xl border border-[#ECE9E2]">
+                        <h2 className="text-lg font-bold text-[#101F38] mb-4">Connect Existing Form</h2>
+                        <p className="text-sm text-[#5B6472] mb-6">Or reuse a form that was created for another service.</p>
+                        <form onSubmit={handleConnectForm} className="space-y-4">
+                            <div>
+                                <label className="block text-xs font-semibold text-[#101F38] mb-1">Select Form</label>
+                                <select required value={connectFormId} onChange={e => setConnectFormId(e.target.value)} className="w-full border border-[#ECE9E2] rounded-lg px-3 py-2 text-sm focus:border-orange-500 outline-none">
+                                    <option value="" disabled>Select an existing form...</option>
+                                    {allForms.filter(f => !serviceForms.find(sf => sf.id === f.id)).map(f => (
+                                        <option key={f.id} value={f.id}>{f.name} (/{f.slug})</option>
+                                    ))}
+                                </select>
+                            </div>
+                            <div className="pt-[62px]">
+                                <button type="submit" disabled={isConnecting || !connectFormId} className="w-full py-2 bg-[#1b2559] text-white rounded-lg font-semibold hover:bg-[#101F38] transition-colors disabled:bg-gray-300">
+                                    {isConnecting ? 'Connecting...' : 'Connect Form'}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             ) : (
                 <div className="space-y-6">
-                    <div className="bg-white p-6 rounded-2xl border border-[#ECE9E2] flex justify-between items-center">
-                        <div>
-                            <h2 className="text-xl font-bold text-[#101F38]">{form.name}</h2>
-                            <p className="text-sm text-[#5B6472]">Slug: /{form.slug}</p>
-                        </div>
-                        <button onClick={openSectionModal} className="px-4 py-2 bg-[#1b2559] text-white rounded-lg text-sm font-semibold hover:bg-[#101F38] transition-colors">
-                            + Add Section (Step)
+                    {/* Multi-Form Tab Strip */}
+                    <div className="flex flex-wrap gap-2 mb-6">
+                        {serviceForms.map(f => (
+                            <button 
+                                key={f.id}
+                                onClick={() => { setActiveFormId(f.id); setShowCreateForm(false); }}
+                                className={`px-4 py-2 rounded-lg text-sm font-bold border transition-colors ${activeFormId === f.id && !showCreateForm ? 'bg-[#101F38] text-white border-[#101F38]' : 'bg-white text-[#5B6472] border-[#ECE9E2] hover:bg-gray-50'}`}
+                            >
+                                {f.name}
+                            </button>
+                        ))}
+                        <button 
+                            onClick={() => setShowCreateForm(true)}
+                            className={`px-4 py-2 rounded-lg text-sm font-bold border border-dashed transition-colors ${showCreateForm ? 'bg-orange-50 text-orange-600 border-orange-500' : 'bg-transparent text-orange-500 border-orange-500 hover:bg-orange-50'}`}
+                        >
+                            + Add Another Form
                         </button>
                     </div>
+
+                    {showCreateForm ? (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {/* Create New Form */}
+                            <div className="bg-white p-6 rounded-2xl border border-[#ECE9E2]">
+                                <h2 className="text-lg font-bold text-[#101F38] mb-4">Create New Form</h2>
+                                <p className="text-sm text-[#5B6472] mb-6">Create a brand new form for this service.</p>
+                                <form onSubmit={handleCreateForm} className="space-y-4">
+                                    <div>
+                                        <label className="block text-xs font-semibold text-[#101F38] mb-1">Form Name</label>
+                                        <input required value={newFormName} onChange={e => setNewFormName(e.target.value)} placeholder="e.g., I-485 Green Card" className="w-full border border-[#ECE9E2] rounded-lg px-3 py-2 text-sm focus:border-orange-500 outline-none" />
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-semibold text-[#101F38] mb-1">URL Slug</label>
+                                        <input required value={newFormSlug} onChange={e => setNewFormSlug(e.target.value)} placeholder="e.g., i-485" className="w-full border border-[#ECE9E2] rounded-lg px-3 py-2 text-sm focus:border-orange-500 outline-none" />
+                                    </div>
+                                    <div className="flex gap-2">
+                                        <button type="button" onClick={() => setShowCreateForm(false)} className="w-1/3 py-2 bg-gray-100 text-[#5B6472] rounded-lg font-semibold hover:bg-gray-200 transition-colors">
+                                            Cancel
+                                        </button>
+                                        <button type="submit" disabled={isCreating} className="w-2/3 py-2 bg-orange-500 text-white rounded-lg font-semibold hover:bg-orange-600 transition-colors">
+                                            {isCreating ? 'Creating...' : 'Create Form'}
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+
+                            {/* Connect Existing Form */}
+                            <div className="bg-white p-6 rounded-2xl border border-[#ECE9E2]">
+                                <h2 className="text-lg font-bold text-[#101F38] mb-4">Connect Existing Form</h2>
+                                <p className="text-sm text-[#5B6472] mb-6">Reuse a form that was created for another service.</p>
+                                <form onSubmit={handleConnectForm} className="space-y-4">
+                                    <div>
+                                        <label className="block text-xs font-semibold text-[#101F38] mb-1">Select Form</label>
+                                        <select required value={connectFormId} onChange={e => setConnectFormId(e.target.value)} className="w-full border border-[#ECE9E2] rounded-lg px-3 py-2 text-sm focus:border-orange-500 outline-none">
+                                            <option value="" disabled>Select an existing form...</option>
+                                            {allForms.filter(f => !serviceForms.find(sf => sf.id === f.id)).map(f => (
+                                                <option key={f.id} value={f.id}>{f.name} (/{f.slug})</option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                    <div className="flex gap-2 pt-[62px]">
+                                        <button type="button" onClick={() => setShowCreateForm(false)} className="w-1/3 py-2 bg-gray-100 text-[#5B6472] rounded-lg font-semibold hover:bg-gray-200 transition-colors">
+                                            Cancel
+                                        </button>
+                                        <button type="submit" disabled={isConnecting || !connectFormId} className="w-2/3 py-2 bg-[#1b2559] text-white rounded-lg font-semibold hover:bg-[#101F38] transition-colors disabled:bg-gray-300">
+                                            {isConnecting ? 'Connecting...' : 'Connect Form'}
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    ) : form && (
+                        <>
+                            <div className="bg-white p-6 rounded-2xl border border-[#ECE9E2] flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                                <div>
+                                    <h2 className="text-xl font-bold text-[#101F38] flex items-center gap-2">
+                                        {form.name}
+                                        <span className="bg-gray-100 text-gray-500 text-xs px-2 py-1 rounded">Shared across {form.services?.length || 1} services</span>
+                                    </h2>
+                                    <p className="text-sm text-[#5B6472]">Slug: /{form.slug}</p>
+                                </div>
+                                <div className="flex gap-2">
+                                    <button onClick={() => handleUnlinkForm(form.id)} className="px-4 py-2 border border-red-200 text-red-500 rounded-lg text-sm font-semibold hover:bg-red-50 transition-colors">
+                                        Unlink Form
+                                    </button>
+                                    <button onClick={openSectionModal} className="px-4 py-2 bg-[#1b2559] text-white rounded-lg text-sm font-semibold hover:bg-[#101F38] transition-colors">
+                                        + Add Section (Step)
+                                    </button>
+                                </div>
+                            </div>
 
                     {(!form.sections || form.sections.length === 0) ? (
                         <div className="text-center p-8 text-[#5B6472] bg-white rounded-2xl border border-[#ECE9E2]">
@@ -265,7 +478,7 @@ function FormBuilderContent() {
                         <div className="space-y-6">
                             {form.sections.map((section: any, index: number) => (
                                 <div key={section.id} className="bg-white rounded-2xl border border-[#ECE9E2] overflow-hidden shadow-sm">
-                                    <div className="bg-[#F8F9FA] px-6 py-4 border-b border-[#ECE9E2] flex justify-between items-center">
+                                    <div className="bg-[#F8F9FA] px-6 py-4 border-b border-[#ECE9E2] flex flex-col sm:flex-row justify-between sm:items-center gap-4">
                                         <h3 className="font-bold text-[#101F38]">Step {index + 1}: {section.title}</h3>
                                         <div className="flex gap-2">
                                             <button onClick={() => openQuestionModal(section.id)} className="px-3 py-1.5 bg-orange-500 text-white rounded-md text-xs font-semibold hover:bg-orange-600">
@@ -283,10 +496,10 @@ function FormBuilderContent() {
                                         ) : (
                                             <div className="space-y-4">
                                                 {section.questions?.map((q: any) => (
-                                                    <div key={q.id} className="border border-[#ECE9E2] rounded-xl p-4 hover:border-orange-500/30 transition-colors flex justify-between items-start">
+                                                    <div key={q.id} className="border border-[#ECE9E2] rounded-xl p-4 hover:border-orange-500/30 transition-colors flex flex-col sm:flex-row justify-between sm:items-center gap-4">
                                                         <div>
                                                             <p className="font-bold text-[#101F38] mb-1">{q.question_text}</p>
-                                                            <div className="flex gap-3 text-xs text-[#5B6472]">
+                                                            <div className="flex flex-wrap gap-2 text-xs text-[#5B6472] mt-2">
                                                                 <span className="bg-gray-100 px-2 py-0.5 rounded">Field: {q.field_name}</span>
                                                                 <span className="bg-blue-50 text-blue-600 px-2 py-0.5 rounded">Type: {q.field_type}</span>
                                                                 {q.is_required && <span className="bg-red-50 text-red-600 px-2 py-0.5 rounded">Required</span>}
@@ -309,6 +522,8 @@ function FormBuilderContent() {
                             ))}
                         </div>
                     )}
+                    </>
+                )}
                 </div>
             )}
 
@@ -345,8 +560,9 @@ function FormBuilderContent() {
                                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
                             </button>
                         </div>
-                        <div className="p-6 overflow-y-auto">
-                            <form id="question-form" onSubmit={handleAddQuestionSubmit} className="space-y-4">
+                        <form id="question-form" onSubmit={handleAddQuestionSubmit} className="flex flex-col overflow-hidden">
+                            <div className="p-6 overflow-y-auto">
+                                <div className="space-y-4">
                                 <div>
                                     <label className="block text-sm font-semibold text-[#101F38] mb-1">Question Text</label>
                                     <input autoFocus required value={newQuestionText} onChange={e => setNewQuestionText(e.target.value)} placeholder="e.g. What is your height?" className="w-full border border-[#ECE9E2] rounded-lg px-3 py-2 text-sm focus:border-orange-500 outline-none" />
@@ -388,7 +604,7 @@ function FormBuilderContent() {
                                     <div className="mt-4 p-4 bg-gray-50 rounded-xl border border-gray-100">
                                         <label className="block text-sm font-semibold text-[#101F38] mb-2">Options</label>
                                         {newQuestionOptions.map((opt, i) => (
-                                            <div key={i} className="flex gap-2 mb-2">
+                                            <div key={i} className="flex flex-col sm:flex-row gap-2 mb-2 sm:items-center">
                                                 <input required placeholder="Label (e.g. Male)" value={opt.label} onChange={(e) => {
                                                     const copy = [...newQuestionOptions];
                                                     copy[i].label = e.target.value;
@@ -409,11 +625,45 @@ function FormBuilderContent() {
                                         </button>
                                     </div>
                                 )}
-                            </form>
+                                </div>
+                            </div>
+                            <div className="p-6 border-t border-[#ECE9E2] bg-gray-50 flex gap-3 justify-end shrink-0">
+                                <button type="button" onClick={() => setIsQuestionModalOpen(false)} className="px-4 py-2 text-sm font-semibold text-[#5B6472] bg-white border border-[#ECE9E2] rounded-lg hover:bg-gray-50">Cancel</button>
+                                <button type="submit" className="px-4 py-2 text-sm font-semibold text-white bg-orange-500 rounded-lg hover:bg-orange-600">{editingQuestionId ? 'Update Question' : 'Save Question'}</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+
+            {/* Custom Dialog Modal */}
+            {dialogState.isOpen && (
+                <div className="fixed inset-0 z-[60] flex items-center justify-center bg-[#101F38]/50 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+                    <div className="bg-white rounded-2xl w-full max-w-sm shadow-2xl overflow-hidden transform transition-all">
+                        <div className="p-6">
+                            <h3 className="text-xl font-bold text-[#101F38] mb-2">{dialogState.title}</h3>
+                            <p className="text-[#5B6472] text-sm">{dialogState.message}</p>
                         </div>
-                        <div className="p-6 border-t border-[#ECE9E2] bg-gray-50 flex gap-3 justify-end shrink-0">
-                            <button type="button" onClick={() => setIsQuestionModalOpen(false)} className="px-4 py-2 text-sm font-semibold text-[#5B6472] bg-white border border-[#ECE9E2] rounded-lg hover:bg-gray-50">Cancel</button>
-                            <button type="submit" form="question-form" className="px-4 py-2 text-sm font-semibold text-white bg-orange-500 rounded-lg hover:bg-orange-600">{editingQuestionId ? 'Update Question' : 'Save Question'}</button>
+                        <div className="px-6 py-4 bg-gray-50 border-t border-[#ECE9E2] flex gap-3 justify-end">
+                            {dialogState.type === 'confirm' && (
+                                <button 
+                                    onClick={closeDialog} 
+                                    className="px-4 py-2 text-sm font-semibold text-[#5B6472] bg-white border border-[#ECE9E2] rounded-lg hover:bg-gray-100 transition-colors"
+                                >
+                                    Cancel
+                                </button>
+                            )}
+                            <button 
+                                onClick={() => {
+                                    if (dialogState.type === 'confirm' && dialogState.onConfirm) {
+                                        dialogState.onConfirm();
+                                    }
+                                    closeDialog();
+                                }} 
+                                className="px-4 py-2 text-sm font-semibold text-white bg-orange-500 rounded-lg hover:bg-orange-600 transition-colors"
+                            >
+                                {dialogState.type === 'confirm' ? 'Confirm' : 'OK'}
+                            </button>
                         </div>
                     </div>
                 </div>
