@@ -20,6 +20,7 @@ export default function QuestionnaireOverviewPage() {
     const [currentFormCode, setCurrentFormCode] = useState("");
     const [applicationTitle, setApplicationTitle] = useState("");
     const [application, setApplication] = useState<any>(null);
+    const [currentStepTitle, setCurrentStepTitle] = useState("Step 2");
 
     const [sections, setSections] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -53,9 +54,14 @@ export default function QuestionnaireOverviewPage() {
                     
                     const currentForm = forms.find(f => f.code === formCode) || forms[0];
                     const currentFormIndex = forms.indexOf(currentForm) !== -1 ? forms.indexOf(currentForm) : 0;
+                    
+                    setCurrentStepTitle(`Step ${currentFormIndex + 2}`);
+                    
                     const dynamicFormName = forms.length > 1 
                         ? `${activeApp.title || 'Form Intake'} (Part ${currentFormIndex + 1})`
                         : activeApp.title || 'Form Intake';
+                        
+                    setActiveTab(currentForm ? currentForm.name : dynamicFormName);
 
                     if (currentForm) {
                         setCurrentFormCode(currentForm.code);
@@ -166,7 +172,7 @@ export default function QuestionnaireOverviewPage() {
             <div className={styles.layoutContainer}>
                 {/* Dynamic Header */}
                 <div className={styles.dynamicHeader}>
-                    <h1 className={styles.dynamicHeaderTitle}>Step 2: {activeTab}</h1>
+                    <h1 className={styles.dynamicHeaderTitle}>{currentStepTitle}: {activeTab}</h1>
                     
                     <div className={styles.progressRow}>
                         <div className={styles.progressTrack} aria-label="Application progress bar">

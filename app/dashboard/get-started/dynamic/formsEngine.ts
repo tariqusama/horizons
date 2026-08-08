@@ -137,7 +137,7 @@ export function buildFormSteps(formSchema: any, applicantName: string, slug?: st
 
     if (!formSchema?.sections) return steps;
 
-    const seenFields = new Set<string>(['firstname', 'lastname', 'email', 'phone']);
+    const seenFields = new Set<string>(['firstname', 'lastname']);
 
     formSchema.sections.forEach((section: any, idx: number) => {
         const questions = (section.questions || []).filter((q: any) => {
