@@ -100,7 +100,7 @@ export default function AdminCaseAssignmentsPage() {
     const handleAssign = async (caseId: number, managerId: number | null) => {
         try {
             await assignCaseManager(caseId, managerId);
-            loadData();
+            setCases(prevCases => prevCases.map(c => c.id === caseId ? { ...c, manager_id: managerId } : c));
         } catch (error) {
             console.error('Failed to assign manager:', error);
             alert('Failed to assign manager');
