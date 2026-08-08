@@ -204,7 +204,7 @@ export default function DashboardApplicationsPage() {
                                 </ul>
 
                                 <div className="mt-6 pt-4 border-t border-gray-200/60 flex flex-col sm:flex-row justify-end gap-3">
-                                    {['i-130', 'i-129f', 'i-485', 'i-751'].includes(app.form_slug || '') && (
+                                    {['i-130', 'i-129f', 'i-485', 'i-751'].includes(app.form_slug || '') && statusMeta.label === 'In Progress' && (
                                         <button
                                             onClick={() => {
                                                 setSelectedApplicationForInvite(app);
