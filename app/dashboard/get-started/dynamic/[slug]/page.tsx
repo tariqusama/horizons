@@ -192,10 +192,17 @@ export default function DynamicFormEnginePage() {
 
             // Save progress to backend
             if (applicationId) {
-                await api.put(`/applications/${applicationId}/save-progress`, {
+                const savePromise = api.put(`/applications/${applicationId}/save-progress`, {
                     form_data: { ...formData, [stepKey]: newMaxStep, _current_step: newMaxStep },
                     current_step: newMaxStep,
                 });
+
+                if (mode === 'edit' || currentStepIndex >= steps.length - 1) {
+                    await savePromise;
+                } else {
+                    savePromise.catch((err: any) => console.error('Background save failed', err));
+                }
+
                 setFormData((prev: any) => ({ ...prev, [stepKey]: newMaxStep, _current_step: newMaxStep }));
             }
 
