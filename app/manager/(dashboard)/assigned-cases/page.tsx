@@ -1222,7 +1222,14 @@ export default function AssignedCasesPage() {
                             )}
 
                             {selectedActionInfo === 'View submitted intake information' && (() => {
-                                const formData = selectedCase?.form_data || {};
+                                let formData = selectedCase?.form_data || {};
+                                if (typeof formData === 'string') {
+                                    try {
+                                        formData = JSON.parse(formData);
+                                    } catch (e) {
+                                        formData = {};
+                                    }
+                                }
                                 const palette = [
                                     { bg: 'linear-gradient(135deg,#fff7ed,#ffedd5)', border: '#fed7aa', label: '#c2410c', value: '#9a3412', dot: '#f97316' },
                                     { bg: 'linear-gradient(135deg,#eff6ff,#dbeafe)', border: '#bfdbfe', label: '#1d4ed8', value: '#1e3a8a', dot: '#3b82f6' },
