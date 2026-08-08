@@ -1274,7 +1274,7 @@ export default function AssignedCasesPage() {
                                                 const p = palette[sectionIdx % palette.length];
                                                 
                                                 return (
-                                                    <div key={section.id || sectionIdx} style={{ borderRadius: '20px', overflow: 'hidden', border: `1.5px solid ${p.border}`, boxShadow: '0 4px 16px rgba(15,23,42,0.07)' }}>
+                                                    <div key={section.id || sectionIdx} style={{ flexShrink: 0, borderRadius: '20px', overflow: 'hidden', border: `1.5px solid ${p.border}`, boxShadow: '0 4px 16px rgba(15,23,42,0.07)' }}>
                                                         <div style={{ background: p.bg, padding: '14px 18px', display: 'flex', alignItems: 'center', gap: '10px', borderBottom: `1.5px solid ${p.border}` }}>
                                                             <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: p.dot, flexShrink: 0, boxShadow: `0 0 6px ${p.dot}` }}></span>
                                                             <span style={{ fontSize: '0.72rem', fontWeight: 800, letterSpacing: '0.1em', textTransform: 'uppercase', color: p.label }}>{section.title}</span>
@@ -1347,7 +1347,7 @@ export default function AssignedCasesPage() {
                                             const isNested = typeof sectionVal === 'object' && sectionVal !== null && !Array.isArray(sectionVal);
                                             const nestedEntries = isNested ? Object.entries(sectionVal as Record<string, any>) : null;
                                             return (
-                                                <div key={sectionKey} style={{ borderRadius: '20px', overflow: 'hidden', border: `1.5px solid ${p.border}`, boxShadow: '0 4px 16px rgba(15,23,42,0.07)' }}>
+                                                <div key={sectionKey} style={{ flexShrink: 0, borderRadius: '20px', overflow: 'hidden', border: `1.5px solid ${p.border}`, boxShadow: '0 4px 16px rgba(15,23,42,0.07)' }}>
                                                     {/* Section header */}
                                                     <div style={{ background: p.bg, padding: '14px 18px', display: 'flex', alignItems: 'center', gap: '10px', borderBottom: `1.5px solid ${p.border}` }}>
                                                         <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: p.dot, flexShrink: 0, boxShadow: `0 0 6px ${p.dot}` }}></span>
