@@ -39,7 +39,7 @@ function AssignDropdown({
                 className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-lg border border-gray-200 bg-white text-sm font-semibold text-gray-800 shadow-sm hover:border-gray-300 transition-colors"
             >
                 <span className={value ? "text-gray-900" : "text-gray-400 italic font-medium"}>
-                    {value ? managers.find(m => m.id === value)?.name : "Unassigned"}
+                    {value ? (managers.find(m => m.id === value)?.name || "Unknown Manager") : "Unassigned"}
                 </span>
                 <Icon.chevronDown width={14} height={14} className="text-gray-400 shrink-0" />
             </button>
@@ -88,7 +88,10 @@ export default function AdminCaseAssignmentsPage() {
             
             // Only include users with the "Case Manager" role
             const validUsers = Array.isArray(usersData) ? usersData : [];
-            setManagers(validUsers.filter((u: any) => ((u.role || '').toLowerCase().includes('case manager'))));
+            setManagers(validUsers.filter((u: any) => {
+                const role = (u.role || '').toLowerCase();
+                return role.includes('case manager') || role.includes('case-manager');
+            }));
         } catch (error) {
             console.error('Failed to load data:', error);
         }

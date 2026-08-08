@@ -255,7 +255,7 @@ export default function AssignedCasesPage() {
                     getManagerMessages(selectedCase.id),
                     getManagerDocuments(selectedCase.id),
                 ]);
-                
+
                 if (selectedCase.form_slug) {
                     try {
                         const schema = await getFormSchema(selectedCase.form_slug);
@@ -713,10 +713,10 @@ export default function AssignedCasesPage() {
                                         placeholder="Type a message..."
                                         className="flex-1 min-w-0 bg-[#F7F5F0] rounded-full border border-[#ECE9E2] px-4 py-2.5 text-sm text-[#101F38] outline-none focus:border-orange-500"
                                     />
-                                    <input 
-                                        type="file" 
-                                        id="file-upload-assigned" 
-                                        className="hidden" 
+                                    <input
+                                        type="file"
+                                        id="file-upload-assigned"
+                                        className="hidden"
                                         onChange={(e) => {
                                             if (e.target.files && e.target.files[0]) {
                                                 setSelectedFile(e.target.files[0]);
@@ -724,7 +724,7 @@ export default function AssignedCasesPage() {
                                             }
                                         }}
                                     />
-                                    <button 
+                                    <button
                                         type="button"
                                         onClick={() => document.getElementById('file-upload-assigned')?.click()}
                                         className="text-[#8A8F98] hover:text-[#101F38] transition-colors shrink-0 p-2 relative"
@@ -811,7 +811,7 @@ export default function AssignedCasesPage() {
                                                                 if (uploadedMatch) {
                                                                     return (
                                                                         <a href={getStorageUrl(uploadedMatch.file_path)} target="_blank" rel="noopener noreferrer" className="shrink-0 inline-flex items-center gap-1.5 rounded-full bg-orange-50 px-3 py-1.5 text-xs font-semibold text-orange-600 hover:bg-orange-100 hover:text-orange-700 transition-colors relative z-10" onClick={(e) => e.stopPropagation()}>
-                                                                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                                                                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" /></svg>
                                                                             Preview
                                                                         </a>
                                                                     );
@@ -1162,7 +1162,7 @@ export default function AssignedCasesPage() {
                                                 display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0
                                             }}>
                                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+                                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" />
                                                 </svg>
                                             </span>
                                             <span style={{ fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#94a3b8' }}>Name</span>
@@ -1183,7 +1183,7 @@ export default function AssignedCasesPage() {
                                                 display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0
                                             }}>
                                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#059669" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>
+                                                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" /><polyline points="22,6 12,13 2,6" />
                                                 </svg>
                                             </span>
                                             <span style={{ fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#94a3b8' }}>Email</span>
@@ -1204,7 +1204,7 @@ export default function AssignedCasesPage() {
                                                 display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0
                                             }}>
                                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.4 2 2 0 0 1 3.58 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.16 6.16l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                                                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.4 2 2 0 0 1 3.58 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.16 6.16l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
                                                 </svg>
                                             </span>
                                             <span style={{ fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#94a3b8' }}>Phone</span>
@@ -1261,64 +1261,64 @@ export default function AssignedCasesPage() {
                                                 {/* Progress Bar */}
                                                 <div style={{ padding: '16px', background: '#f8fafc', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
                                                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                                                    <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#334155' }}>Application Progress</span>
-                                                    <span style={{ fontSize: '0.85rem', fontWeight: 700, color: progress === 100 ? '#10b981' : '#3b82f6' }}>{progress}% ({completedFields}/{totalFields})</span>
-                                                </div>
-                                                <div style={{ width: '100%', height: '8px', background: '#e2e8f0', borderRadius: '4px', overflow: 'hidden' }}>
-                                                    <div style={{ width: `${progress}%`, height: '100%', background: progress === 100 ? '#10b981' : '#3b82f6', borderRadius: '4px', transition: 'width 0.3s' }}></div>
-                                                </div>
-                                            </div>
-
-                                            {caseFormSchema.sections.map((section: any, sectionIdx: number) => {
-                                                if (!section.questions || section.questions.length === 0) return null;
-                                                const p = palette[sectionIdx % palette.length];
-                                                
-                                                return (
-                                                    <div key={section.id || sectionIdx} style={{ flexShrink: 0, borderRadius: '20px', overflow: 'hidden', border: `1.5px solid ${p.border}`, boxShadow: '0 4px 16px rgba(15,23,42,0.07)' }}>
-                                                        <div style={{ background: p.bg, padding: '14px 18px', display: 'flex', alignItems: 'center', gap: '10px', borderBottom: `1.5px solid ${p.border}` }}>
-                                                            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: p.dot, flexShrink: 0, boxShadow: `0 0 6px ${p.dot}` }}></span>
-                                                            <span style={{ fontSize: '0.72rem', fontWeight: 800, letterSpacing: '0.1em', textTransform: 'uppercase', color: p.label }}>{section.title}</span>
-                                                            <span style={{ marginLeft: 'auto', fontSize: '0.68rem', fontWeight: 700, background: 'rgba(255,255,255,0.7)', color: p.label, padding: '2px 10px', borderRadius: '20px', border: `1px solid ${p.border}` }}>
-                                                                {section.questions.length} fields
-                                                            </span>
-                                                        </div>
-                                                        <div style={{ background: '#ffffff' }}>
-                                                            {section.questions.map((q: any, fieldIdx: number) => {
-                                                                if (q.field_name === 'name_group') return null;
-                                                                const fieldVal = formData[q.field_name];
-                                                                const isEmpty = fieldVal === undefined || fieldVal === null || String(fieldVal).trim() === '';
-                                                                return (
-                                                                    <div key={q.id || fieldIdx} className={`flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1.5 sm:gap-4 px-4 py-3 sm:px-5 sm:py-3.5 transition-colors ${fieldIdx < section.questions.length - 1 ? 'border-b border-[#f1f5f9]' : ''}`}>
-                                                                        <span className="text-[0.78rem] font-semibold text-[#64748b] sm:min-w-[120px] shrink-0" style={{ maxWidth: '60%' }}>
-                                                                            {q.question_text || q.field_name}
-                                                                        </span>
-                                                                        <div className="flex sm:justify-end w-full sm:w-auto">
-                                                                            {isEmpty ? (
-                                                                                <span style={{ fontSize: '0.72rem', fontWeight: 600, background: '#fef2f2', color: '#991b1b', padding: '3px 10px', borderRadius: '20px', border: '1px solid #fecaca' }}>Missing</span>
-                                                                            ) : (
-                                                                                <span style={{
-                                                                                    display: 'inline-block',
-                                                                                    fontSize: '0.85rem', fontWeight: 700,
-                                                                                    color: '#0f172a',
-                                                                                    wordBreak: 'break-word',
-                                                                                    background: p.bg,
-                                                                                    padding: '4px 14px',
-                                                                                    borderRadius: '20px',
-                                                                                    border: `1px solid ${p.border}`,
-                                                                                }}>
-                                                                                    {typeof fieldVal === 'object' ? JSON.stringify(fieldVal) : String(fieldVal)}
-                                                                                </span>
-                                                                            )}
-                                                                        </div>
-                                                                    </div>
-                                                                );
-                                                            })}
-                                                        </div>
+                                                        <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#334155' }}>Application Progress</span>
+                                                        <span style={{ fontSize: '0.85rem', fontWeight: 700, color: progress === 100 ? '#10b981' : '#3b82f6' }}>{progress}% ({completedFields}/{totalFields})</span>
                                                     </div>
-                                                );
-                                            })}
-                                        </div>
-                                    );
+                                                    <div style={{ width: '100%', height: '8px', background: '#e2e8f0', borderRadius: '4px', overflow: 'hidden' }}>
+                                                        <div style={{ width: `${progress}%`, height: '100%', background: progress === 100 ? '#10b981' : '#3b82f6', borderRadius: '4px', transition: 'width 0.3s' }}></div>
+                                                    </div>
+                                                </div>
+
+                                                {caseFormSchema.sections.map((section: any, sectionIdx: number) => {
+                                                    if (!section.questions || section.questions.length === 0) return null;
+                                                    const p = palette[sectionIdx % palette.length];
+
+                                                    return (
+                                                        <div key={section.id || sectionIdx} style={{ flexShrink: 0, borderRadius: '20px', overflow: 'hidden', border: `1.5px solid ${p.border}`, boxShadow: '0 4px 16px rgba(15,23,42,0.07)' }}>
+                                                            <div style={{ background: p.bg, padding: '14px 18px', display: 'flex', alignItems: 'center', gap: '10px', borderBottom: `1.5px solid ${p.border}` }}>
+                                                                <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: p.dot, flexShrink: 0, boxShadow: `0 0 6px ${p.dot}` }}></span>
+                                                                <span style={{ fontSize: '0.72rem', fontWeight: 800, letterSpacing: '0.1em', textTransform: 'uppercase', color: p.label }}>{section.title}</span>
+                                                                <span style={{ marginLeft: 'auto', fontSize: '0.68rem', fontWeight: 700, background: 'rgba(255,255,255,0.7)', color: p.label, padding: '2px 10px', borderRadius: '20px', border: `1px solid ${p.border}` }}>
+                                                                    {section.questions.length} fields
+                                                                </span>
+                                                            </div>
+                                                            <div style={{ background: '#ffffff' }}>
+                                                                {section.questions.map((q: any, fieldIdx: number) => {
+                                                                    if (q.field_name === 'name_group') return null;
+                                                                    const fieldVal = formData[q.field_name];
+                                                                    const isEmpty = fieldVal === undefined || fieldVal === null || String(fieldVal).trim() === '';
+                                                                    return (
+                                                                        <div key={q.id || fieldIdx} className={`flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1.5 sm:gap-4 px-4 py-3 sm:px-5 sm:py-3.5 transition-colors ${fieldIdx < section.questions.length - 1 ? 'border-b border-[#f1f5f9]' : ''}`}>
+                                                                            <span className="text-[0.78rem] font-semibold text-[#64748b] sm:min-w-[120px] shrink-0" style={{ maxWidth: '60%' }}>
+                                                                                {q.question_text || q.field_name}
+                                                                            </span>
+                                                                            <div className="flex sm:justify-end w-full sm:w-auto">
+                                                                                {isEmpty ? (
+                                                                                    <span style={{ fontSize: '0.72rem', fontWeight: 600, background: '#fef2f2', color: '#991b1b', padding: '3px 10px', borderRadius: '20px', border: '1px solid #fecaca' }}>Missing</span>
+                                                                                ) : (
+                                                                                    <span style={{
+                                                                                        display: 'inline-block',
+                                                                                        fontSize: '0.85rem', fontWeight: 700,
+                                                                                        color: '#0f172a',
+                                                                                        wordBreak: 'break-word',
+                                                                                        background: p.bg,
+                                                                                        padding: '4px 14px',
+                                                                                        borderRadius: '20px',
+                                                                                        border: `1px solid ${p.border}`,
+                                                                                    }}>
+                                                                                        {typeof fieldVal === 'object' ? JSON.stringify(fieldVal) : String(fieldVal)}
+                                                                                    </span>
+                                                                                )}
+                                                                            </div>
+                                                                        </div>
+                                                                    );
+                                                                })}
+                                                            </div>
+                                                        </div>
+                                                    );
+                                                })}
+                                            </div>
+                                        );
                                     }
                                 }
 
@@ -1412,7 +1412,7 @@ export default function AssignedCasesPage() {
                                                             {doc.file_path && (
                                                                 <div className="flex items-center gap-2 shrink-0">
                                                                     <a href={getStorageUrl(doc.file_path)} target="_blank" rel="noopener noreferrer" className="text-sm font-semibold text-orange-600 hover:text-orange-700 flex items-center gap-1 bg-orange-50 px-3 py-1.5 rounded-full transition-colors hover:bg-orange-100">
-                                                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                                                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" /></svg>
                                                                         Preview
                                                                     </a>
                                                                     <a href={getStorageUrl(doc.file_path)} onClick={(e) => forceDownload(e as any, getStorageUrl(doc.file_path!), doc.name || doc.file_path?.split('/').pop() || 'document')} className="text-sm font-semibold text-blue-600 hover:text-blue-700 flex items-center gap-1 bg-blue-50 px-3 py-1.5 rounded-full transition-colors hover:bg-blue-100 cursor-pointer">
@@ -1438,7 +1438,7 @@ export default function AssignedCasesPage() {
                                 <div className="space-y-4">
                                     <div className="rounded-3xl border border-slate-200 bg-slate-50 p-6 shadow-sm">
                                         <p className="text-sm font-semibold text-slate-900 mb-2">Service Type: {selectedCase?.service_type || 'N/A'}</p>
-                                        
+
                                         {(() => {
                                             const completed = uploadedDocuments.filter(doc => !!doc.file_path).map(doc => doc.name);
                                             const missing = uploadedDocuments.filter(doc => !doc.file_path).map(doc => doc.name);
@@ -1447,7 +1447,7 @@ export default function AssignedCasesPage() {
                                                 <div className="mt-4 space-y-6">
                                                     <div>
                                                         <h4 className="text-sm font-bold text-emerald-700 mb-2 flex items-center gap-2">
-                                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
                                                             Completed Documents ({completed.length})
                                                         </h4>
                                                         <ul className="space-y-2">
@@ -1458,10 +1458,10 @@ export default function AssignedCasesPage() {
                                                             )) : <li className="text-sm text-slate-500">No required documents uploaded yet.</li>}
                                                         </ul>
                                                     </div>
-                                                    
+
                                                     <div>
                                                         <h4 className="text-sm font-bold text-orange-600 mb-2 flex items-center gap-2">
-                                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" /></svg>
                                                             Missing Required Documents ({missing.length})
                                                         </h4>
                                                         <ul className="space-y-2">
