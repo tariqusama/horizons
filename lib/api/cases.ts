@@ -38,6 +38,7 @@ export interface Application {
         created_at: string;
     }>;
     form_data?: Record<string, any>;
+    form_slug?: string;
     user?: {
         id: number;
         name: string;
@@ -221,5 +222,10 @@ export const getServices = async (): Promise<Service[]> => {
 
 export const getChecklists = async (): Promise<Record<string, any>> => {
     const response = await api.get('/checklists');
+    return response.data;
+};
+
+export const getFormSchema = async (slug: string): Promise<any> => {
+    const response = await api.get(`/guide-engine/forms/${slug}`);
     return response.data;
 };

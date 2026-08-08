@@ -14,6 +14,7 @@ import {
     Application,
     DocumentPayload,
     getChecklists,
+    getFormSchema,
 } from '@/lib/api/cases';
 import { getStorageUrl } from '@/lib/api';
 import { getChecklistKeyFromService, forceDownload } from '@/lib/utils/documentHelper';
@@ -133,6 +134,7 @@ export default function AssignedCasesPage() {
     const [escalationMessage, setEscalationMessage] = useState('');
     const [isEscalating, setIsEscalating] = useState(false);
     const [isResolving, setIsResolving] = useState(false);
+    const [caseFormSchema, setCaseFormSchema] = useState<any>(null);
 
     const selectedCase = useMemo(
         () => cases.find((c) => c.id === selectedCaseId) ?? cases[0] ?? null,
@@ -253,6 +255,18 @@ export default function AssignedCasesPage() {
                     getManagerMessages(selectedCase.id),
                     getManagerDocuments(selectedCase.id),
                 ]);
+                
+                if (selectedCase.form_slug) {
+                    try {
+                        const schema = await getFormSchema(selectedCase.form_slug);
+                        setCaseFormSchema(schema);
+                    } catch (err) {
+                        console.error('Failed to load form schema:', err);
+                        setCaseFormSchema(null);
+                    }
+                } else {
+                    setCaseFormSchema(null);
+                }
 
                 const mappedMessages: ChatMessage[] = messages.map((message) => {
                     const from = message.is_admin ? 'staff' : 'client';
@@ -1208,7 +1222,7 @@ export default function AssignedCasesPage() {
                             )}
 
                             {selectedActionInfo === 'View submitted intake information' && (() => {
-                                const formData = selectedCase?.form_data;
+                                const formData = selectedCase?.form_data || {};
                                 const palette = [
                                     { bg: 'linear-gradient(135deg,#fff7ed,#ffedd5)', border: '#fed7aa', label: '#c2410c', value: '#9a3412', dot: '#f97316' },
                                     { bg: 'linear-gradient(135deg,#eff6ff,#dbeafe)', border: '#bfdbfe', label: '#1d4ed8', value: '#1e3a8a', dot: '#3b82f6' },
@@ -1217,6 +1231,88 @@ export default function AssignedCasesPage() {
                                     { bg: 'linear-gradient(135deg,#fff1f2,#ffe4e6)', border: '#fecdd3', label: '#be123c', value: '#881337', dot: '#f43f5e' },
                                     { bg: 'linear-gradient(135deg,#f0fdfa,#ccfbf1)', border: '#99f6e4', label: '#0f766e', value: '#134e4a', dot: '#14b8a6' },
                                 ];
+
+                                if (caseFormSchema && caseFormSchema.sections) {
+                                    // Calculate progress
+                                    let totalFields = 0;
+                                    let completedFields = 0;
+                                    caseFormSchema.sections.forEach((section: any) => {
+                                        section.questions?.forEach((q: any) => {
+                                            if (q.field_name && q.field_name !== 'name_group') {
+                                                totalFields++;
+                                                if (formData[q.field_name] !== undefined && formData[q.field_name] !== null && String(formData[q.field_name]).trim() !== '') {
+                                                    completedFields++;
+                                                }
+                                            }
+                                        });
+                                    });
+                                    const progress = totalFields > 0 ? Math.round((completedFields / totalFields) * 100) : 0;
+
+                                    return (
+                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', maxHeight: '420px', overflowY: 'auto', paddingRight: '4px' }}>
+                                            {/* Progress Bar */}
+                                            <div style={{ padding: '16px', background: '#f8fafc', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
+                                                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                                                    <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#334155' }}>Application Progress</span>
+                                                    <span style={{ fontSize: '0.85rem', fontWeight: 700, color: progress === 100 ? '#10b981' : '#3b82f6' }}>{progress}% ({completedFields}/{totalFields})</span>
+                                                </div>
+                                                <div style={{ width: '100%', height: '8px', background: '#e2e8f0', borderRadius: '4px', overflow: 'hidden' }}>
+                                                    <div style={{ width: `${progress}%`, height: '100%', background: progress === 100 ? '#10b981' : '#3b82f6', borderRadius: '4px', transition: 'width 0.3s' }}></div>
+                                                </div>
+                                            </div>
+
+                                            {caseFormSchema.sections.map((section: any, sectionIdx: number) => {
+                                                if (!section.questions || section.questions.length === 0) return null;
+                                                const p = palette[sectionIdx % palette.length];
+                                                
+                                                return (
+                                                    <div key={section.id || sectionIdx} style={{ borderRadius: '20px', overflow: 'hidden', border: `1.5px solid ${p.border}`, boxShadow: '0 4px 16px rgba(15,23,42,0.07)' }}>
+                                                        <div style={{ background: p.bg, padding: '14px 18px', display: 'flex', alignItems: 'center', gap: '10px', borderBottom: `1.5px solid ${p.border}` }}>
+                                                            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: p.dot, flexShrink: 0, boxShadow: `0 0 6px ${p.dot}` }}></span>
+                                                            <span style={{ fontSize: '0.72rem', fontWeight: 800, letterSpacing: '0.1em', textTransform: 'uppercase', color: p.label }}>{section.title}</span>
+                                                            <span style={{ marginLeft: 'auto', fontSize: '0.68rem', fontWeight: 700, background: 'rgba(255,255,255,0.7)', color: p.label, padding: '2px 10px', borderRadius: '20px', border: `1px solid ${p.border}` }}>
+                                                                {section.questions.length} fields
+                                                            </span>
+                                                        </div>
+                                                        <div style={{ background: '#ffffff' }}>
+                                                            {section.questions.map((q: any, fieldIdx: number) => {
+                                                                if (q.field_name === 'name_group') return null;
+                                                                const fieldVal = formData[q.field_name];
+                                                                const isEmpty = fieldVal === undefined || fieldVal === null || String(fieldVal).trim() === '';
+                                                                return (
+                                                                    <div key={q.id || fieldIdx} className={`flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1.5 sm:gap-4 px-4 py-3 sm:px-5 sm:py-3.5 transition-colors ${fieldIdx < section.questions.length - 1 ? 'border-b border-[#f1f5f9]' : ''}`}>
+                                                                        <span className="text-[0.78rem] font-semibold text-[#64748b] sm:min-w-[120px] shrink-0" style={{ maxWidth: '60%' }}>
+                                                                            {q.question_text || q.field_name}
+                                                                        </span>
+                                                                        <div className="flex sm:justify-end w-full sm:w-auto">
+                                                                            {isEmpty ? (
+                                                                                <span style={{ fontSize: '0.72rem', fontWeight: 600, background: '#fef2f2', color: '#991b1b', padding: '3px 10px', borderRadius: '20px', border: '1px solid #fecaca' }}>Missing</span>
+                                                                            ) : (
+                                                                                <span style={{
+                                                                                    display: 'inline-block',
+                                                                                    fontSize: '0.85rem', fontWeight: 700,
+                                                                                    color: '#0f172a',
+                                                                                    wordBreak: 'break-word',
+                                                                                    background: p.bg,
+                                                                                    padding: '4px 14px',
+                                                                                    borderRadius: '20px',
+                                                                                    border: `1px solid ${p.border}`,
+                                                                                }}>
+                                                                                    {typeof fieldVal === 'object' ? JSON.stringify(fieldVal) : String(fieldVal)}
+                                                                                </span>
+                                                                            )}
+                                                                        </div>
+                                                                    </div>
+                                                                );
+                                                            })}
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    );
+                                }
+
                                 if (!formData || Object.keys(formData).length === 0) {
                                     return (
                                         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px 20px', gap: '16px' }}>
