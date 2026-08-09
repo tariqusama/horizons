@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import api from '@/lib/api';
-import jsPDF from 'jspdf';
+import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
 export default function AdminCaseDetailPage() {
     const params = useParams();
@@ -45,6 +45,7 @@ export default function AdminCaseDetailPage() {
             pdf.save(`${caseData?.title || 'Form'}_Data.pdf`);
         } catch (err) {
             console.error('Failed to generate PDF:', err);
+            alert('Failed to generate PDF. See console for details.');
         } finally {
             setIsGeneratingPdf(false);
         }

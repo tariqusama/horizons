@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { getManagerAssignedCases, Application, updateApplication, inviteBeneficiary, getServices, Service } from '@/lib/api/cases';
 import { getStorageUrl } from '@/lib/api';
-import jsPDF from 'jspdf';
+import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
 
 export default function CaseReviewPage() {
@@ -54,6 +54,7 @@ export default function CaseReviewPage() {
             pdf.save(`${caseData?.title || 'Form'}_Data.pdf`);
         } catch (err) {
             console.error('Failed to generate PDF:', err);
+            alert('Failed to generate PDF. See console for details.');
         } finally {
             setIsGeneratingPdf(false);
         }
