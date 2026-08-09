@@ -112,6 +112,7 @@ export interface DocItem {
     key: string;
     label: string;
     required: boolean;
+    hint?: string;
 }
 
 export interface DocGroup {
@@ -179,7 +180,8 @@ export const generateFormChecklist = (latestApp: any, checklistsData: any, userR
                 return {
                     key,
                     label: d.name,
-                    required: d.required
+                    required: d.required,
+                    hint: d.hint || undefined
                 };
             });
             groups.push({ header: s.title, items });

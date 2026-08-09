@@ -182,6 +182,7 @@ function DocumentUploadContent() {
     const [application, setApplication] = useState<any>(null);
     const [expandedGroup, setExpandedGroup] = useState<number | null>(null);
     const [modalDoc, setModalDoc] = useState<{ key: string; label: string } | null>(null);
+    const [activeHint, setActiveHint] = useState<string | null>(null);
 
     useEffect(() => {
         Promise.all([api.get('/applications'), getChecklists()])
@@ -348,6 +349,34 @@ function DocumentUploadContent() {
                                                                 : <span className={styles.optionalText}>Optional</span>
                                                             }
                                                         </span>
+                                                        {item.hint && (
+                                                            <div style={{ marginTop: '4px' }}>
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={() => setActiveHint(activeHint === item.key ? null : item.key)}
+                                                                    style={{
+                                                                        display: 'inline-flex', alignItems: 'center', gap: '4px',
+                                                                        fontSize: '11px', color: '#2563eb', background: 'none',
+                                                                        border: 'none', cursor: 'pointer', padding: '0', fontWeight: 500
+                                                                    }}
+                                                                >
+                                                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                                                        <circle cx="12" cy="12" r="10" /><line x1="12" y1="16" x2="12" y2="12" /><line x1="12" y1="8" x2="12.01" y2="8" />
+                                                                    </svg>
+                                                                    {activeHint === item.key ? 'Hide guide' : 'What to upload?'}
+                                                                </button>
+                                                                {activeHint === item.key && (
+                                                                    <div style={{
+                                                                        marginTop: '8px', padding: '10px 14px',
+                                                                        background: '#eff6ff', border: '1px solid #bfdbfe',
+                                                                        borderRadius: '8px', fontSize: '12.5px',
+                                                                        color: '#1e40af', lineHeight: '1.6', maxWidth: '520px'
+                                                                    }}>
+                                                                        {item.hint}
+                                                                    </div>
+                                                                )}
+                                                            </div>
+                                                        )}
                                                         {isUploaded && fileNames[item.key] && (
                                                             <div className={styles.uploadedFileName}>{fileNames[item.key]}</div>
                                                         )}
