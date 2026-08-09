@@ -425,7 +425,7 @@ export default function ApplicationSelectionModal({ isOpen, onClose }: Applicati
                                     <p className="text-sm text-[#5A6579] mb-4">{goal.desc}</p>
                                     {goal.tags.length > 0 && (
                                         <div className="flex gap-2 flex-wrap">
-                                            {goal.tags.map(tag => (
+                                            {goal.tags.map((tag: string) => (
                                                 <span key={tag} className="bg-[#f1f5f9] text-[#475569] text-xs px-3 py-1 rounded-full font-medium">{tag}</span>
                                             ))}
                                         </div>
