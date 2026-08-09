@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { loadStripe } from '@stripe/stripe-js';
 import { CardElement, Elements, useElements, useStripe } from '@stripe/react-stripe-js';
@@ -274,181 +274,74 @@ export default function ApplicationSelectionModal({ isOpen, onClose }: Applicati
         wants_household_member: false
     });
 
-    if (!isOpen) return null;
+    const [goals, setGoals] = useState<any[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
 
-    const goals = [
-        {
-            id: 'family',
-            title: 'Family-Based Immigration',
-            emoji: '👨‍👩‍👧‍👦',
-            desc: 'For U.S. citizens and permanent residents petitioning eligible family members from abroad',
-            tags: ['Spouse', 'Parent', 'Child', 'Sibling'],
-            headerPill: 'Family Petitions (Outside U.S.)',
-            headerTitle: 'Family Petitions',
-            headerSubtitle: 'Petition for family members currently living outside the United States',
-            subPlans: [
-                {
-                    id: 'spouse',
-                    title: 'Petition for a Spouse outside the U.S. – USCIS Petition only',
-                    subtitle: 'Petition for spouse outside the United States',
-                    iconType: 'users',
-                    basePrice: 549.99,
-                    advancedPrice: 789.99,
-                    premiumPrice: 999.99,
-                    processingTime: '12-33 months',
-                    requirements: ['Legal marriage to U.S. citizen/resident', 'Marriage validity in place of occurrence', 'Financial sponsorship capability']
-                },
-                {
-                    id: 'child',
-                    title: 'Petition for a Child outside the U.S. – USCIS Petition only',
-                    subtitle: 'Petition for child outside the United States',
-                    iconType: 'users',
-                    basePrice: 549.99,
-                    advancedPrice: 789.99,
-                    premiumPrice: 999.99,
-                    processingTime: '12-20 months',
-                    requirements: ['Valid parent-child relationship', 'Currently outside United States', 'No criminal or immigration bars']
-                },
-                {
-                    id: 'parent',
-                    title: 'Petition for a Parent outside the U.S. – USCIS Petition only',
-                    subtitle: 'Petition for parent outside the United States',
-                    iconType: 'users',
-                    basePrice: 549.99,
-                    advancedPrice: 789.99,
-                    premiumPrice: 999.99,
-                    processingTime: '12-20 months',
-                    requirements: ['Valid parent-child relationship', 'Currently outside United States', 'No criminal or immigration bars']
-                },
-                {
-                    id: 'sibling',
-                    title: 'Petition for a Sibling outside the U.S. – USCIS Petition only',
-                    subtitle: 'Petition for sibling outside the United States',
-                    iconType: 'users',
-                    basePrice: 549.99,
-                    advancedPrice: 789.99,
-                    premiumPrice: 999.99,
-                    processingTime: '10-15 years',
-                    requirements: ['Both petitioner and beneficiary 21+', 'Proof of shared parent', 'Currently outside United States']
-                }
-            ]
-        },
-        {
-            id: 'fiance',
-            title: 'Fiancé (K-1) Visa',
-            emoji: '💍',
-            desc: 'Bring your fiancé(e) to the United States to get married and apply for permanent residence.',
-            tags: [],
-            headerPill: 'Fiancé Visa',
-            headerTitle: 'Fiancé (K-1) Visa',
-            headerSubtitle: 'Bring your fiancé(e) to the United States',
-            subPlans: [
-                {
-                    id: 'fiance_petition',
-                    title: 'K-1 Fiancé Visa – USCIS Petition only',
-                    subtitle: 'Petition for K-1 fiancé visa',
-                    iconType: 'heart',
-                    basePrice: 549.99,
-                    advancedPrice: 849.99,
-                    premiumPrice: 1049.99,
-                    processingTime: '8-12 months',
-                    requirements: ['Both parties free to marry', 'Met in person within 2 years', 'Intent to marry within 90 days']
-                }
-            ]
-        },
-        {
-            id: 'adjustment',
-            title: 'Adjustment of Status (Green Card)',
-            emoji: '🏡',
-            desc: 'Apply for a Green Card from within the United States through an eligible category.',
-            tags: [],
-            headerPill: 'Green Card',
-            headerTitle: 'Adjustment of Status',
-            headerSubtitle: 'Apply for a Green Card from within the United States',
-            subPlans: [
-                {
-                    id: 'aos',
-                    title: 'Adjustment of Status',
-                    subtitle: 'Application to register permanent residence',
-                    iconType: 'home',
-                    basePrice: 599.99,
-                    advancedPrice: 949.99,
-                    premiumPrice: 1249.99,
-                    processingTime: '12-24 months',
-                    requirements: ['Currently in the US', 'Entered lawfully', 'Visa number immediately available']
-                }
-            ]
-        },
-        {
-            id: 'naturalization',
-            title: 'Naturalization (Citizenship)',
-            emoji: '🇺🇸',
-            desc: 'Apply to become a U.S. citizen if you meet the eligibility requirements.',
-            tags: [],
-            headerPill: 'Citizenship',
-            headerTitle: 'US Naturalization',
-            headerSubtitle: 'Apply to become a U.S. citizen',
-            subPlans: [
-                {
-                    id: 'n400',
-                    title: 'US Naturalization',
-                    subtitle: 'Application for naturalization',
-                    iconType: 'flag',
-                    basePrice: 349.99,
-                    advancedPrice: 449.99,
-                    premiumPrice: 649.99,
-                    processingTime: '6-10 months',
-                    requirements: ['At least 18 years old', 'Permanent resident for 3-5 years', 'Continuous residence and physical presence']
-                }
-            ]
-        },
-        {
-            id: 'renewal',
-            title: 'Green Card Renewal or Replacement',
-            emoji: '💳',
-            desc: 'Renew or replace your Permanent Resident Card if it has expired or has been lost.',
-            tags: [],
-            headerPill: 'Green Card Renewal',
-            headerTitle: 'Renew or Replace Green Card',
-            headerSubtitle: 'Renew or replace your expired or lost card',
-            subPlans: [
-                {
-                    id: 'i90',
-                    title: 'Green Card Renewal',
-                    subtitle: 'Application to replace permanent resident card',
-                    iconType: 'creditcard',
-                    basePrice: 349.99,
-                    advancedPrice: 449.99,
-                    premiumPrice: 599.99,
-                    processingTime: '6-9 months',
-                    requirements: ['Current card expired or expiring within 6 months', 'Card was lost, stolen, or destroyed']
-                }
-            ]
-        },
-        {
-            id: 'conditions',
-            title: 'Removal of Conditions on Residence',
-            emoji: '🔄',
-            desc: 'Remove the conditions on your two-year conditional Green Card.',
-            tags: [],
-            headerPill: 'Condition Removal',
-            headerTitle: 'Removal of Conditions',
-            headerSubtitle: 'Remove the conditions on your two-year conditional Green Card',
-            subPlans: [
-                {
-                    id: 'i751',
-                    title: 'Removal of Conditions',
-                    subtitle: 'Petition to remove conditions on residence',
-                    iconType: 'refresh',
-                    basePrice: 399.99,
-                    advancedPrice: 499.99,
-                    premiumPrice: 699.99,
-                    processingTime: '18-24 months',
-                    requirements: ['Conditional resident status', 'Filing within 90 days before card expires', 'Still married to same US citizen']
-                }
-            ]
-        }
-    ];
+    useEffect(() => {
+        if (!isOpen) return;
+        const fetchServices = async () => {
+            setIsLoading(true);
+            try {
+                const res = await api.get('/public/services');
+                const data = res.data;
+                const dynamicGoals = data.map((cat: any) => {
+                    let emoji = '📄';
+                    if (cat.title.includes('Family')) emoji = '👨‍👩‍👧‍👦';
+                    else if (cat.title.includes('Fianc')) emoji = '💍';
+                    else if (cat.title.includes('Adjustment')) emoji = '🏡';
+                    else if (cat.title.includes('Renew')) emoji = '💳';
+                    else if (cat.title.includes('Other')) emoji = '🇺🇸';
+
+                    return {
+                        id: cat.id,
+                        title: cat.title,
+                        emoji,
+                        desc: cat.subtitle,
+                        tags: [],
+                        headerPill: cat.pill_text || cat.title,
+                        headerTitle: cat.title,
+                        headerSubtitle: cat.subtitle,
+                        subPlans: cat.services.map((srv: any) => {
+                            const basicPkg = srv.packages.find((p: any) => p.name.includes('Basic'));
+                            const advancedPkg = srv.packages.find((p: any) => p.name.includes('Advanced'));
+                            const premiumPkg = srv.packages.find((p: any) => p.name.includes('Premium'));
+                            
+                            let requirements = [];
+                            try {
+                                if (typeof srv.requirements === 'string') {
+                                    requirements = JSON.parse(srv.requirements);
+                                } else if (Array.isArray(srv.requirements)) {
+                                    requirements = srv.requirements;
+                                }
+                            } catch (e) {
+                                requirements = [];
+                            }
+
+                            return {
+                                id: srv.id,
+                                title: srv.title,
+                                subtitle: srv.subtitle,
+                                iconType: 'users',
+                                basePrice: basicPkg ? basicPkg.price : parseFloat((srv.starting_price || '$0').replace(/[^0-9.]/g, '')),
+                                advancedPrice: advancedPkg ? advancedPkg.price : 0,
+                                premiumPrice: premiumPkg ? premiumPkg.price : 0,
+                                processingTime: srv.processing_time,
+                                requirements: requirements
+                            };
+                        })
+                    };
+                });
+                setGoals(dynamicGoals);
+            } catch (err) {
+                console.error('Failed to fetch services:', err);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        fetchServices();
+    }, [isOpen]);
+
+    if (!isOpen) return null;
 
     const getIcon = (type: string, className: string) => {
         switch (type) {
