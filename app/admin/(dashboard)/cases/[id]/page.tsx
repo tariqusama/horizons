@@ -6,7 +6,8 @@ import { useParams } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import api from '@/lib/api';
 import { jsPDF } from 'jspdf';
-import html2canvas from 'html2canvas';
+import { toPng } from 'html-to-image';
+
 export default function AdminCaseDetailPage() {
     const params = useParams();
     const id = params.id as string;
@@ -30,18 +31,25 @@ export default function AdminCaseDetailPage() {
         
         setIsGeneratingPdf(true);
         try {
-            const canvas = await html2canvas(element, {
-                scale: 2,
-                useCORS: true,
-                logging: false,
-                backgroundColor: '#ffffff'
+            const dataUrl = await toPng(element, {
+                pixelRatio: 2,
+                backgroundColor: '#ffffff',
+                style: {
+                    transform: 'scale(1)',
+                    transformOrigin: 'top left',
+                }
             });
-            const imgData = canvas.toDataURL('image/jpeg', 1.0);
             const pdf = new jsPDF('p', 'mm', 'a4');
             const pdfWidth = pdf.internal.pageSize.getWidth();
-            const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
             
-            pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+            // Need image dimensions to calculate height
+            const img = new Image();
+            img.src = dataUrl;
+            await new Promise(resolve => img.onload = resolve);
+            
+            const pdfHeight = (img.height * pdfWidth) / img.width;
+            
+            pdf.addImage(dataUrl, 'PNG', 0, 0, pdfWidth, pdfHeight);
             pdf.save(`${caseData?.title || 'Form'}_Data.pdf`);
         } catch (err) {
             console.error('Failed to generate PDF:', err);

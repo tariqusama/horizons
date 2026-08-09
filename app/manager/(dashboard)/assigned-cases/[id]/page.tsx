@@ -6,7 +6,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { getManagerAssignedCases, Application, updateApplication, inviteBeneficiary, getServices, Service } from '@/lib/api/cases';
 import { getStorageUrl } from '@/lib/api';
 import { jsPDF } from 'jspdf';
-import html2canvas from 'html2canvas';
+import { toPng } from 'html-to-image';
+
 
 export default function CaseReviewPage() {
     const params = useParams();
@@ -39,18 +40,24 @@ export default function CaseReviewPage() {
         
         setIsGeneratingPdf(true);
         try {
-            const canvas = await html2canvas(element, {
-                scale: 2,
-                useCORS: true,
-                logging: false,
-                backgroundColor: '#ffffff'
+            const dataUrl = await toPng(element, {
+                pixelRatio: 2,
+                backgroundColor: '#ffffff',
+                style: {
+                    transform: 'scale(1)',
+                    transformOrigin: 'top left',
+                }
             });
-            const imgData = canvas.toDataURL('image/jpeg', 1.0);
             const pdf = new jsPDF('p', 'mm', 'a4');
             const pdfWidth = pdf.internal.pageSize.getWidth();
-            const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
             
-            pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+            const img = new Image();
+            img.src = dataUrl;
+            await new Promise(resolve => img.onload = resolve);
+            
+            const pdfHeight = (img.height * pdfWidth) / img.width;
+            
+            pdf.addImage(dataUrl, 'PNG', 0, 0, pdfWidth, pdfHeight);
             pdf.save(`${caseData?.title || 'Form'}_Data.pdf`);
         } catch (err) {
             console.error('Failed to generate PDF:', err);
