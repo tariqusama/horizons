@@ -27,6 +27,8 @@ export default function DynamicFormEnginePage() {
     
     const [formData, setFormData] = useState<any>({});
     const [currentStepIndex, setCurrentStepIndex] = useState(initialStep ? parseInt(initialStep, 10) : 0);
+    const [subStepIndex, setSubStepIndex] = useState(0);
+    const QUESTIONS_PER_PAGE = 7;
     const [unitsState, setUnitsState] = useState<{ [key: string]: string }>({});
     const [isSaving, setIsSaving] = useState(false);
     const [saveError, setSaveError] = useState('');
@@ -157,8 +159,12 @@ export default function DynamicFormEnginePage() {
         if (steps.length === 0) return;
         setSaveError('');
 
+        const allQuestions = currentStep?.questions || [];
+        const totalSubSteps = Math.ceil(allQuestions.length / QUESTIONS_PER_PAGE);
+        const paginatedQuestions = allQuestions.slice(subStepIndex * QUESTIONS_PER_PAGE, (subStepIndex + 1) * QUESTIONS_PER_PAGE);
+
         // Validate required fields in the current step
-        const missingFields = currentStep.questions.filter((q: any) => {
+        const missingFields = paginatedQuestions.filter((q: any) => {
             // Form G-1145 conditional logic
             if (q.field_name !== 'fileG1145' && q.field_name.startsWith('g1145') && formData['fileG1145'] !== 'yes') {
                 return false;
@@ -208,8 +214,11 @@ export default function DynamicFormEnginePage() {
 
             if (mode === 'edit') {
                 router.push(`/dashboard/get-started/overview?form=${slug}`);
+            } else if (subStepIndex < totalSubSteps - 1) {
+                setSubStepIndex(subStepIndex + 1);
             } else if (currentStepIndex < steps.length - 1) {
                 setCurrentStepIndex(currentStepIndex + 1);
+                setSubStepIndex(0);
             } else {
                 // End of sections -> move to next form or document upload
                 const list = getFormsList(application, { allowFallback: false });
@@ -230,8 +239,13 @@ export default function DynamicFormEnginePage() {
     };
 
     const handlePrev = () => {
-        if (currentStepIndex > 0) {
+        if (subStepIndex > 0) {
+            setSubStepIndex(subStepIndex - 1);
+        } else if (currentStepIndex > 0) {
+            const prevStep = steps[currentStepIndex - 1];
+            const prevTotalSubSteps = Math.ceil((prevStep?.questions || []).length / QUESTIONS_PER_PAGE);
             setCurrentStepIndex(currentStepIndex - 1);
+            setSubStepIndex(prevTotalSubSteps > 0 ? prevTotalSubSteps - 1 : 0);
         } else {
             router.push(`/dashboard/get-started/overview?form=${slug}`);
         }
@@ -293,6 +307,7 @@ export default function DynamicFormEnginePage() {
                                 className={`${styles.tabItem} ${isActive ? styles.tabItemActive : ''} ${isCompleted ? styles.tabItemCompleted : ''}`}
                                 onClick={() => {
                                     setCurrentStepIndex(idx);
+                                    setSubStepIndex(0);
                                     window.scrollTo({ top: 0, behavior: 'smooth' });
                                 }}
                             >
@@ -312,7 +327,16 @@ export default function DynamicFormEnginePage() {
                     {/* Page Section Header */}
                     <div className={styles.sectionHeader}>
                         <h2 className={styles.sectionMainTitle}>{currentStep?.sectionTitle}</h2>
-                        <p className={styles.sectionSubtitle}>{currentStep?.subSectionTitle}</p>
+                        {(() => {
+                            const totalSubSteps = Math.ceil((currentStep?.questions || []).length / QUESTIONS_PER_PAGE);
+                            return totalSubSteps > 1 ? (
+                                <p className={styles.sectionSubtitle} style={{ fontWeight: 600, color: '#F0501A' }}>
+                                    {currentStep?.subSectionTitle ? currentStep.subSectionTitle + ' — ' : ''}Part {subStepIndex + 1} of {totalSubSteps}
+                                </p>
+                            ) : (
+                                <p className={styles.sectionSubtitle}>{currentStep?.subSectionTitle}</p>
+                            );
+                        })()}
                         <hr className={styles.sectionDivider} />
                     </div>
 
@@ -335,8 +359,14 @@ export default function DynamicFormEnginePage() {
 
                     {/* Questions in 2-Column Grid Layout */}
                     <div className={styles.questionsGrid}>
-                        {currentStep?.questions?.map((q: any, idx: number) => {
-                            const personalizedLabel = personalizeQuestionText(q.question_text, applicantFullName);
+                        {(() => {
+                            const allQuestions = currentStep?.questions || [];
+                            const paginatedQuestions = allQuestions.slice(subStepIndex * QUESTIONS_PER_PAGE, (subStepIndex + 1) * QUESTIONS_PER_PAGE);
+                            const startingIdx = subStepIndex * QUESTIONS_PER_PAGE;
+                            
+                            return paginatedQuestions.map((q: any, i: number) => {
+                                const idx = startingIdx + i;
+                                const personalizedLabel = personalizeQuestionText(q.question_text, applicantFullName);
                             const val = formData[q.field_name];
                             const isHeightQuestion = /height/i.test(q.field_name) || /height/i.test(q.question_text);
                             const isWeightQuestion = /weight/i.test(q.field_name) || /weight/i.test(q.question_text);
@@ -391,6 +421,16 @@ export default function DynamicFormEnginePage() {
                             // Form G-1145 conditional logic
                             if (q.field_name !== 'fileG1145' && q.field_name.startsWith('g1145') && formData['fileG1145'] !== 'yes') {
                                 return null;
+                            }
+
+                            if (q.field_type === 'heading') {
+                                return (
+                                    <div key={q.field_name || idx} style={{ gridColumn: '1 / -1', marginTop: '1.5rem', marginBottom: '0.5rem', backgroundColor: '#f8fafc', padding: '1rem', borderRadius: '8px', borderLeft: '4px solid #F0501A' }}>
+                                        <h3 style={{ fontSize: '1.1rem', fontWeight: 600, color: '#1e293b', lineHeight: '1.5' }}>
+                                            {personalizedLabel}
+                                        </h3>
+                                    </div>
+                                );
                             }
 
                             return (
@@ -707,10 +747,11 @@ export default function DynamicFormEnginePage() {
                                     </div>
                                 </div>
                             );
-                        })}
+                        });
+                        })()}
                     </div>
 
-                    {/* Footer Action Buttons */}
+                    {/* Navigation Buttons */}
                     <div className={styles.footerActions}>
                         <button 
                             type="button" 
