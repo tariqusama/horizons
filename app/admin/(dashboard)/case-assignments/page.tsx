@@ -22,30 +22,56 @@ function AssignDropdown({
 }) {
     const [open, setOpen] = useState(false);
     const ref = useRef<HTMLDivElement>(null);
+    const buttonRef = useRef<HTMLButtonElement>(null);
+    const [coords, setCoords] = useState({ top: 0, left: 0, width: 0 });
 
     useEffect(() => {
         const handler = (e: MouseEvent) => {
             if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
         };
         document.addEventListener("mousedown", handler);
-        return () => document.removeEventListener("mousedown", handler);
-    }, []);
+        
+        // Update coords on scroll if open
+        const scrollHandler = () => {
+            if (open && buttonRef.current) {
+                const rect = buttonRef.current.getBoundingClientRect();
+                setCoords({ top: rect.bottom + 6, left: rect.left, width: rect.width });
+            }
+        };
+        window.addEventListener("scroll", scrollHandler, true);
+        
+        return () => {
+            document.removeEventListener("mousedown", handler);
+            window.removeEventListener("scroll", scrollHandler, true);
+        };
+    }, [open]);
+
+    useEffect(() => {
+        if (open && buttonRef.current) {
+            const rect = buttonRef.current.getBoundingClientRect();
+            setCoords({ top: rect.bottom + 6, left: rect.left, width: rect.width });
+        }
+    }, [open]);
 
     return (
-        <div className="relative w-56" ref={ref}>
+        <div className="w-56" ref={ref}>
             <button
+                ref={buttonRef}
                 type="button"
                 onClick={() => setOpen(!open)}
                 className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-lg border border-gray-200 bg-white text-sm font-semibold text-gray-800 shadow-sm hover:border-gray-300 transition-colors"
             >
-                <span className={value ? "text-gray-900" : "text-gray-400 italic font-medium"}>
+                <span className={value ? "text-gray-900" : "text-gray-400 italic font-medium truncate pr-2"}>
                     {value ? (managers.find(m => m.id === value)?.name || "Unknown Manager") : "Unassigned"}
                 </span>
                 <Icon.chevronDown width={14} height={14} className="text-gray-400 shrink-0" />
             </button>
 
             {open && (
-                <div className="absolute z-20 mt-1.5 w-full bg-white border border-gray-200 rounded-lg shadow-lg py-1 max-h-64 overflow-auto">
+                <div 
+                    className="fixed z-[100] bg-white border border-gray-200 rounded-lg shadow-lg py-1 max-h-64 overflow-auto"
+                    style={{ top: coords.top, left: coords.left, width: coords.width }}
+                >
                     <button
                         onClick={() => { onChange(null); setOpen(false); }}
                         className={`w-full flex items-center gap-2.5 px-3.5 py-2.5 text-sm font-bold text-left ${value === null ? "bg-[#1B3A64] text-white" : "text-gray-700 hover:bg-gray-50"
@@ -58,11 +84,11 @@ function AssignDropdown({
                         <button
                             key={i}
                             onClick={() => { onChange(m.id); setOpen(false); }}
-                            className={`w-full flex items-center gap-2.5 px-3.5 py-2.5 text-sm font-semibold text-left ${value === m.id ? "bg-[#1B3A64] text-white" : "text-gray-700 hover:bg-gray-50"
+                            className={`w-full flex items-center gap-2.5 px-3.5 py-2.5 text-sm font-semibold text-left truncate ${value === m.id ? "bg-[#1B3A64] text-white" : "text-gray-700 hover:bg-gray-50"
                                 }`}
                         >
                             <span className="w-3.5 shrink-0">{value === m.id && <Icon.check width={12} height={12} />}</span>
-                            {m.name}
+                            <span className="truncate">{m.name}</span>
                         </button>
                     ))}
                 </div>
