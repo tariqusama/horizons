@@ -56,8 +56,21 @@ export default function CaseReviewPage() {
             await new Promise(resolve => img.onload = resolve);
             
             const pdfHeight = (img.height * pdfWidth) / img.width;
+            const pageHeight = pdf.internal.pageSize.getHeight();
             
-            pdf.addImage(dataUrl, 'PNG', 0, 0, pdfWidth, pdfHeight);
+            let heightLeft = pdfHeight;
+            let position = 0;
+            
+            pdf.addImage(dataUrl, 'PNG', 0, position, pdfWidth, pdfHeight);
+            heightLeft -= pageHeight;
+            
+            while (heightLeft > 0) {
+                position = heightLeft - pdfHeight;
+                pdf.addPage();
+                pdf.addImage(dataUrl, 'PNG', 0, position, pdfWidth, pdfHeight);
+                heightLeft -= pageHeight;
+            }
+            
             pdf.save(`${caseData?.title || 'Form'}_Data.pdf`);
         } catch (err) {
             console.error('Failed to generate PDF:', err);
