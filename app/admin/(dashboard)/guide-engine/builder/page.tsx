@@ -504,6 +504,15 @@ function FormBuilderContent() {
                                                                 <span className="bg-blue-50 text-blue-600 px-2 py-0.5 rounded">Type: {q.field_type}</span>
                                                                 {q.is_required && <span className="bg-red-50 text-red-600 px-2 py-0.5 rounded">Required</span>}
                                                             </div>
+                                                            {q.options && q.options.length > 0 && (
+                                                                <div className="mt-3 flex flex-wrap gap-2">
+                                                                    {q.options.map((opt: any, idx: number) => (
+                                                                        <span key={idx} className="bg-orange-50 text-orange-800 text-[11px] px-2 py-1 rounded border border-orange-100">
+                                                                            <span className="font-semibold">{opt.option_label}</span> <span className="text-orange-400">({opt.option_value})</span>
+                                                                        </span>
+                                                                    ))}
+                                                                </div>
+                                                            )}
                                                         </div>
                                                         <div className="flex gap-2">
                                                             <button onClick={() => openEditQuestionModal(section.id, q)} className="text-[#9CA3AF] hover:text-blue-500 transition-colors" title="Edit Question">
@@ -553,15 +562,15 @@ function FormBuilderContent() {
             {/* Question Modal */}
             {isQuestionModalOpen && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#101F38]/50 backdrop-blur-sm p-4">
-                    <div className="bg-white rounded-2xl w-full max-w-lg shadow-xl overflow-hidden max-h-[90vh] flex flex-col">
+                    <div className="bg-white rounded-2xl w-full max-w-2xl shadow-xl overflow-hidden max-h-[90vh] flex flex-col">
                         <div className="p-6 border-b border-[#ECE9E2] flex justify-between items-center shrink-0">
                             <h3 className="text-lg font-bold text-[#101F38]">{editingQuestionId ? 'Edit Question' : 'Add New Question'}</h3>
                             <button onClick={() => setIsQuestionModalOpen(false)} className="text-[#9CA3AF] hover:text-[#101F38]">
                                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
                             </button>
                         </div>
-                        <form id="question-form" onSubmit={handleAddQuestionSubmit} className="flex flex-col overflow-hidden">
-                            <div className="p-6 overflow-y-auto">
+                        <form id="question-form" onSubmit={handleAddQuestionSubmit} className="flex flex-col overflow-hidden min-h-[300px]">
+                            <div className="p-6 overflow-y-auto overflow-x-hidden">
                                 <div className="space-y-4">
                                 <div>
                                     <label className="block text-sm font-semibold text-[#101F38] mb-1">Question Text</label>
