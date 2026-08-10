@@ -691,7 +691,7 @@ export default function ApplicationSelectionModal({ isOpen, onClose }: Applicati
                 )}
 
                 {view === 'questionnaire' && selectedSubPlan && (
-                    <div className="w-full max-w-[95vw] sm:max-w-[86vw] lg:max-w-[40rem] flex flex-col bg-[#F5F5F5] rounded-3xl overflow-hidden shadow-lg animate-in fade-in duration-200 relative my-4 sm:my-8">
+                    <div className="w-full max-w-[95vw] sm:max-w-[86vw] lg:max-w-[40rem] max-h-[92vh] flex flex-col bg-[#F5F5F5] rounded-3xl overflow-hidden shadow-lg animate-in fade-in duration-200 relative my-4 sm:my-8">
                         <div className="flex flex-col items-start justify-between px-4 sm:px-6 md:px-10 pt-6 sm:pt-8 pb-4">
                             <h2 className="tracking-tight text-2xl font-bold text-slate-900 mb-1">Tell us about your needs</h2>
                             <p className="text-sm text-slate-500">We will dynamically add optional forms to your package based on your answers below.</p>
@@ -702,7 +702,7 @@ export default function ApplicationSelectionModal({ isOpen, onClose }: Applicati
                         
                         <div className="border-t border-slate-200 mx-4 sm:mx-6 md:mx-10"></div>
                         
-                        <div className="px-4 sm:px-6 md:px-10 py-6 space-y-6">
+                        <div className="px-4 sm:px-6 md:px-10 py-6 space-y-6 overflow-y-auto flex-1 custom-scrollbar">
                             
                             {/* G-1145 is standard for most forms */}
                             <div className="bg-white p-5 rounded-2xl border border-slate-200/70 shadow-sm">
