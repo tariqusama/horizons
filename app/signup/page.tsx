@@ -329,7 +329,7 @@ function SignupFlowContent() {
     setIsRegistering(true);
     try {
       await api.post('/auth/send-otp', { email });
-      setCurrentStep(questions.length + 4);
+      setCurrentStep(questions.length + 3);
     } catch (err: any) {
       setError(err.response?.data?.message || 'Failed to send verification code');
     } finally {
@@ -348,7 +348,7 @@ function SignupFlowContent() {
     setIsRegistering(true);
     try {
       await api.post('/auth/verify-otp', { email, otp: code });
-      setCurrentStep(questions.length + 5);
+      setCurrentStep(questions.length + 4);
     } catch (err: any) {
       setError(err.response?.data?.message || 'Invalid or expired code');
     } finally {
@@ -1112,90 +1112,6 @@ function SignupFlowContent() {
     }
 
     if (currentStep === questions.length + 2) {
-      const derivedServiceId = getServiceId(selectedGoal, answers);
-      return (
-        <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 w-full max-w-[700px] mx-auto bg-white rounded-[24px] shadow-sm border border-gray-100 p-8">
-          <div className="text-center mb-8">
-            <h2 className="text-2xl font-black text-[#101F38] mb-2 tracking-tight">Tell us about your needs</h2>
-            <p className="text-sm text-[#5B6472] font-medium">Please answer these quick questions so we can generate the right optional forms for you.</p>
-          </div>
-          <div className="space-y-6 text-left">
-            <div className="flex flex-col gap-2">
-              <label className="text-[15px] font-bold text-[#101F38]">Do you want text/email notifications when USCIS accepts your application? (Form G-1145)</label>
-              <div className="flex gap-4">
-                <label className="flex items-center gap-2 text-sm font-medium text-slate-700 cursor-pointer hover:text-orange-600 transition">
-                  <input type="radio" name="g1145" className="accent-orange-500 w-4 h-4" checked={questionnaireAnswers.wants_g1145} onChange={() => setQuestionnaireAnswers(prev => ({ ...prev, wants_g1145: true }))} /> Yes
-                </label>
-                <label className="flex items-center gap-2 text-sm font-medium text-slate-700 cursor-pointer hover:text-orange-600 transition">
-                  <input type="radio" name="g1145" className="accent-orange-500 w-4 h-4" checked={!questionnaireAnswers.wants_g1145} onChange={() => setQuestionnaireAnswers(prev => ({ ...prev, wants_g1145: false }))} /> No
-                </label>
-              </div>
-            </div>
-            {derivedServiceId === 'aos' && (
-              <>
-                <div className="flex flex-col gap-2">
-                  <label className="text-[15px] font-bold text-[#101F38]">Do you want to apply for a Work Permit? (Form I-765)</label>
-                  <p className="text-xs text-slate-500 font-medium">Allows you to work legally in the U.S. while your case is pending.</p>
-                  <div className="flex gap-4">
-                    <label className="flex items-center gap-2 text-sm font-medium text-slate-700 cursor-pointer hover:text-orange-600 transition">
-                      <input type="radio" name="ead" className="accent-orange-500 w-4 h-4" checked={questionnaireAnswers.wants_ead} onChange={() => setQuestionnaireAnswers(prev => ({ ...prev, wants_ead: true }))} /> Yes
-                    </label>
-                    <label className="flex items-center gap-2 text-sm font-medium text-slate-700 cursor-pointer hover:text-orange-600 transition">
-                      <input type="radio" name="ead" className="accent-orange-500 w-4 h-4" checked={!questionnaireAnswers.wants_ead} onChange={() => setQuestionnaireAnswers(prev => ({ ...prev, wants_ead: false }))} /> No
-                    </label>
-                  </div>
-                </div>
-                <div className="flex flex-col gap-2">
-                  <label className="text-[15px] font-bold text-[#101F38]">Do you want to apply for a Travel Document? (Form I-131)</label>
-                  <p className="text-xs text-slate-500 font-medium">Allows you to travel outside the U.S. while your case is pending.</p>
-                  <div className="flex gap-4">
-                    <label className="flex items-center gap-2 text-sm font-medium text-slate-700 cursor-pointer hover:text-orange-600 transition">
-                      <input type="radio" name="ap" className="accent-orange-500 w-4 h-4" checked={questionnaireAnswers.wants_ap} onChange={() => setQuestionnaireAnswers(prev => ({ ...prev, wants_ap: true }))} /> Yes
-                    </label>
-                    <label className="flex items-center gap-2 text-sm font-medium text-slate-700 cursor-pointer hover:text-orange-600 transition">
-                      <input type="radio" name="ap" className="accent-orange-500 w-4 h-4" checked={!questionnaireAnswers.wants_ap} onChange={() => setQuestionnaireAnswers(prev => ({ ...prev, wants_ap: false }))} /> No
-                    </label>
-                  </div>
-                </div>
-                <div className="flex flex-col gap-2 mt-6 pt-6 border-t border-slate-100">
-                  <h4 className="text-sm font-black text-slate-800 uppercase tracking-wider mb-2">Financial Sponsorship</h4>
-                  <label className="text-[15px] font-bold text-[#101F38]">Will you use a Joint Sponsor because the petitioner's income is not enough? (Form I-864)</label>
-                  <div className="flex gap-4">
-                    <label className="flex items-center gap-2 text-sm font-medium text-slate-700 cursor-pointer hover:text-orange-600 transition">
-                      <input type="radio" name="joint" className="accent-orange-500 w-4 h-4" checked={questionnaireAnswers.wants_joint_sponsor} onChange={() => setQuestionnaireAnswers(prev => ({ ...prev, wants_joint_sponsor: true }))} /> Yes
-                    </label>
-                    <label className="flex items-center gap-2 text-sm font-medium text-slate-700 cursor-pointer hover:text-orange-600 transition">
-                      <input type="radio" name="joint" className="accent-orange-500 w-4 h-4" checked={!questionnaireAnswers.wants_joint_sponsor} onChange={() => setQuestionnaireAnswers(prev => ({ ...prev, wants_joint_sponsor: false }))} /> No
-                    </label>
-                  </div>
-                </div>
-                <div className="flex flex-col gap-2">
-                  <label className="text-[15px] font-bold text-[#101F38]">Will a Household Member combine their income with the petitioner's? (Form I-864A)</label>
-                  <div className="flex gap-4">
-                    <label className="flex items-center gap-2 text-sm font-medium text-slate-700 cursor-pointer hover:text-orange-600 transition">
-                      <input type="radio" name="household" className="accent-orange-500 w-4 h-4" checked={questionnaireAnswers.wants_household_member} onChange={() => setQuestionnaireAnswers(prev => ({ ...prev, wants_household_member: true }))} /> Yes
-                    </label>
-                    <label className="flex items-center gap-2 text-sm font-medium text-slate-700 cursor-pointer hover:text-orange-600 transition">
-                      <input type="radio" name="household" className="accent-orange-500 w-4 h-4" checked={!questionnaireAnswers.wants_household_member} onChange={() => setQuestionnaireAnswers(prev => ({ ...prev, wants_household_member: false }))} /> No
-                    </label>
-                  </div>
-                </div>
-              </>
-            )}
-          </div>
-          <div className="mt-10">
-            <button
-              onClick={() => setCurrentStep(prev => prev + 1)}
-              className="w-full bg-gradient-to-b from-orange-500 to-orange-600 hover:bg-[#C93500] text-white font-bold py-3.5 rounded-[16px] transition-colors shadow-sm"
-            >
-              Continue to Create Account
-            </button>
-          </div>
-        </div>
-      );
-    }
-
-    if (currentStep === questions.length + 3) {
       return (
         <div className="min-h-screen bg-[#F5F5F5] flex items-center justify-center p-4 sm:p-6 lg:p-10">
           <div className="w-full min-h-[680px] sm:min-h-[760px] max-w-[1440px] bg-[#F5F5F5] lg:rounded-[40px] overflow-hidden grid grid-cols-1 lg:grid-cols-2 shadow-[0_25px_80px_-20px_rgba(0,0,0,0.12)]">
@@ -1453,7 +1369,7 @@ function SignupFlowContent() {
       );
     }
 
-    if (currentStep === questions.length + 4) {
+    if (currentStep === questions.length + 3) {
       return (
         <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-[480px] mx-auto">
           <div className="bg-white border border-gray-200 rounded-[12px] p-8 md:p-10 shadow-sm text-center">
@@ -1508,7 +1424,7 @@ function SignupFlowContent() {
             </button>
 
             <button
-              onClick={() => setCurrentStep(questions.length + 3)} // Go back to account details
+              onClick={() => setCurrentStep(questions.length + 2)} // Go back to account details
               className="text-orange-500 hover:text-[#C93500] text-sm sm:text-[14px] font-medium transition-colors"
             >
               Use a different email address
@@ -1518,7 +1434,7 @@ function SignupFlowContent() {
       );
     }
 
-    if (currentStep === questions.length + 5) {
+    if (currentStep === questions.length + 4) {
       const addons = [
         { id: 'translation', name: 'Document Translation (per page)', description: 'Professional translation of additional document pages', price: 25 },
         { id: 'notary', name: 'Certified Copy & E-Notary', description: 'Certified copies of your documents, Electronic notary services', price: 15 },

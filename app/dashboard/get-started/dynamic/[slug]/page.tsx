@@ -224,7 +224,14 @@ export default function DynamicFormEnginePage() {
                 const list = getFormsList(application, { allowFallback: false });
                 const currentIdx = list.findIndex(f => f.code === slug);
                 if (currentIdx >= 0 && currentIdx < list.length - 1) {
-                    router.push(`/dashboard/get-started/overview?form=${list[currentIdx + 1].code}`);
+                    const nextCode = list[currentIdx + 1].code;
+                    if (nextCode.startsWith('ask-')) {
+                        router.push(`/dashboard/get-started/optional-forms?ask=${nextCode.replace('ask-', '')}`);
+                    } else if (nextCode === 'optional-forms') {
+                        router.push('/dashboard/get-started/optional-forms');
+                    } else {
+                        router.push(`/dashboard/get-started/overview?form=${nextCode}`);
+                    }
                 } else {
                     router.push('/dashboard/get-started/document-upload');
                 }

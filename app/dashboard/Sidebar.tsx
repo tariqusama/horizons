@@ -55,14 +55,25 @@ export default function Sidebar({ isOpen = false, onClose }: SidebarProps) {
             const isActiveOverview = isOverview && (currentFormCode === formCode || (!currentFormCode && index === 0));
             
             const appTitle = application?.package_name || application?.title || 'Form Intake';
-            const labelStr = formsList.length > 1 
-                ? `Step ${index + 2}: ${appTitle} (Part ${index + 1})`
-                : `Step ${index + 2}: ${appTitle}`;
             
+            const isOptionalFlow = formCode.startsWith('ask-') || ['g-1145', 'i-765', 'i-131', 'i-864a'].includes(formCode);
+            const labelStr = isOptionalFlow 
+                ? `Step ${index + 2}: ${form.name}`
+                : (formsList.length > 1 
+                ? `Step ${index + 2}: ${appTitle} (Part ${index + 1})`
+                : `Step ${index + 2}: ${appTitle}`);
+            
+            const isAsk = formCode.startsWith('ask-');
+            const askParam = isAsk ? formCode.replace('ask-', '') : '';
+            const path = isAsk ? `/dashboard/get-started/optional-forms?ask=${askParam}` : `/dashboard/get-started/overview?form=${formCode}`;
+            
+            // Check if current URL matches the ask param exactly
+            const isAskCurrent = isAsk && pathname === '/dashboard/get-started/optional-forms' && searchParams?.get('ask') === askParam;
+
             return {
                 label: labelStr,
-                path: `/dashboard/get-started/overview?form=${formCode}`,
-                isCurrent: isActiveOverview || pathname === `/dashboard/get-started/dynamic/${formCode}`,
+                path: path,
+                isCurrent: isAsk ? isAskCurrent : (isActiveOverview || pathname === `/dashboard/get-started/dynamic/${formCode}`),
             };
         }),
         {

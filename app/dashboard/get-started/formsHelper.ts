@@ -72,31 +72,45 @@ export function getFormsList(app: any, options?: { allowFallback?: boolean }): F
     const titleRaw = typeof app === 'string' ? app : (app?.title || '');
     const isAos = titleRaw.toLowerCase().includes('adjust') || titleRaw.toLowerCase().includes('485') || baseForms.some(f => f.code === 'i-485');
     
+    const formData = app?.form_data || {};
+    
+    // 1. ALL APPLICATIONS: Filter out G-1145 from the beginning, we will ask it at the end.
+    baseForms = baseForms.filter(f => f.code !== 'g-1145');
+    
+    const optionalForms = [];
+
+    // CONDITIONAL FORMS WORKFLOW for Adjustment of Status (AOS)
     if (isAos) {
-        // Remove I-765 and I-131 from the default list
-        baseForms = baseForms.filter(f => f.code !== 'i-765' && f.code !== 'i-131');
+        // Remove AOS optional forms from the default list so we can sequence them properly
+        baseForms = baseForms.filter(f => !['i-765', 'i-131', 'i-864a', 'i-864-joint'].includes(f.code));
         
-        // Add them back ONLY IF the user opted in via the I-485 optional questions
-        const formData = app?.form_data || {};
-        
-        // Insert them right before G-1145 if it exists, otherwise at the end
-        const insertIndex = baseForms.findIndex(f => f.code === 'g-1145');
-        const targetIndex = insertIndex !== -1 ? insertIndex : baseForms.length;
-        
-        const optionalForms = [];
-        if (formData.wants_i765 === 'yes' || formData.wants_ead === true || formData.wants_ead === 'yes') {
+        // 1. I-765
+        optionalForms.push({ path: '/dashboard/get-started/optional-forms?ask=i-765', code: 'ask-i-765', name: 'Optional Form: I-765' });
+        if (formData.wants_ead === true || formData.wants_ead === 'yes' || formData.wants_i765 === 'yes') {
             optionalForms.push({ path: '/dashboard/get-started/dynamic/i-765', code: 'i-765', name: 'Form I-765 (Work Permit)' });
         }
-        if (formData.wants_i131 === 'yes' || formData.wants_ap === true || formData.wants_ap === 'yes') {
+
+        // 2. I-131
+        optionalForms.push({ path: '/dashboard/get-started/optional-forms?ask=i-131', code: 'ask-i-131', name: 'Optional Form: I-131' });
+        if (formData.wants_ap === true || formData.wants_ap === 'yes' || formData.wants_i131 === 'yes') {
             optionalForms.push({ path: '/dashboard/get-started/dynamic/i-131', code: 'i-131', name: 'Form I-131 (Advance Parole)' });
         }
+
+        // 3. I-864A
+        optionalForms.push({ path: '/dashboard/get-started/optional-forms?ask=i-864a', code: 'ask-i-864a', name: 'Optional Form: I-864A' });
         if (formData.wants_household_member === true || formData.wants_household_member === 'yes') {
             optionalForms.push({ path: '/dashboard/get-started/dynamic/i-864a', code: 'i-864a', name: 'Form I-864A (Contract Between Sponsor and Household Member)' });
         }
-        
-        if (optionalForms.length > 0) {
-            baseForms.splice(targetIndex, 0, ...optionalForms);
-        }
+    }
+    
+    // G-1145 is asked for ALL applications at the very end
+    optionalForms.push({ path: '/dashboard/get-started/optional-forms?ask=g-1145', code: 'ask-g-1145', name: 'Optional Form: G-1145' });
+    if (formData.wants_g1145 === true || formData.wants_g1145 === 'yes') {
+        optionalForms.push({ path: '/dashboard/get-started/dynamic/g-1145', code: 'g-1145', name: 'Form G-1145 (e-Notification)' });
+    }
+    
+    if (optionalForms.length > 0) {
+        baseForms.splice(baseForms.length, 0, ...optionalForms);
     }
 
     return baseForms;

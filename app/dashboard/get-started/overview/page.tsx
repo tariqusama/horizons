@@ -153,7 +153,14 @@ export default function QuestionnaireOverviewPage() {
             const forms = getFormsList(application, { allowFallback: true });
             const currentIndex = forms.findIndex(f => f.code === currentFormCode);
             if (currentIndex >= 0 && currentIndex < forms.length - 1) {
-                router.push(`/dashboard/get-started/overview?form=${forms[currentIndex + 1].code}`);
+                const nextCode = forms[currentIndex + 1].code;
+                if (nextCode.startsWith('ask-')) {
+                    router.push(`/dashboard/get-started/optional-forms?ask=${nextCode.replace('ask-', '')}`);
+                } else if (nextCode === 'optional-forms') {
+                    router.push('/dashboard/get-started/optional-forms');
+                } else {
+                    router.push(`/dashboard/get-started/overview?form=${nextCode}`);
+                }
             } else {
                 router.push('/dashboard/get-started/document-upload');
             }

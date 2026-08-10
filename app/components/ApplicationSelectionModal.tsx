@@ -383,7 +383,7 @@ export default function ApplicationSelectionModal({ isOpen, onClose }: Applicati
 
     const handleSelectTier = (tier: string) => {
         setSelectedTier(tier);
-        setView('questionnaire');
+        setView('agreement');
     };
 
     const handleContinueToAgreement = () => {
@@ -686,99 +686,6 @@ export default function ApplicationSelectionModal({ isOpen, onClose }: Applicati
                                     I Agree & Continue
                                 </button>
                             </div>
-                        </div>
-                    </div>
-                )}
-
-                {view === 'questionnaire' && selectedSubPlan && (
-                    <div className="w-full max-w-[95vw] sm:max-w-[86vw] lg:max-w-[40rem] max-h-[92vh] flex flex-col bg-[#F5F5F5] rounded-3xl overflow-hidden shadow-lg animate-in fade-in duration-200 relative my-4 sm:my-8">
-                        <div className="flex flex-col items-start justify-between px-4 sm:px-6 md:px-10 pt-6 sm:pt-8 pb-4 pr-12 sm:pr-16 relative">
-                            <h2 className="tracking-tight text-xl sm:text-2xl font-bold text-slate-900 mb-1">Tell us about your needs</h2>
-                            <p className="text-xs sm:text-sm text-slate-500">We will dynamically add optional forms to your package based on your answers below.</p>
-                            <button onClick={handleClose} className="absolute top-4 right-4 sm:top-6 sm:right-6 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-slate-900 hover:bg-slate-800 text-white flex items-center justify-center transition" aria-label="Close">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 sm:w-5 sm:h-5"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
-                            </button>
-                        </div>
-                        
-                        <div className="border-t border-slate-200 mx-4 sm:mx-6 md:mx-10"></div>
-                        
-                        <div className="px-4 sm:px-6 md:px-10 py-6 space-y-6 overflow-y-auto flex-1 custom-scrollbar">
-                            
-                            {/* G-1145 is standard for most forms */}
-                            <div className="bg-white p-5 rounded-2xl border border-slate-200/70 shadow-sm">
-                                <h3 className="font-semibold text-slate-900 mb-2">Electronic Notifications</h3>
-                                <p className="text-sm text-slate-600 mb-4">Would you like to receive electronic notifications (text/email) when your application is accepted?</p>
-                                <div className="flex gap-4">
-                                    <label className="flex items-center gap-2 cursor-pointer">
-                                        <input type="radio" name="g1145" checked={questionnaireAnswers.wants_g1145} onChange={() => setQuestionnaireAnswers({...questionnaireAnswers, wants_g1145: true})} className="w-4 h-4 text-orange-600 focus:ring-orange-500" />
-                                        <span className="text-sm font-medium">Yes</span>
-                                    </label>
-                                    <label className="flex items-center gap-2 cursor-pointer">
-                                        <input type="radio" name="g1145" checked={!questionnaireAnswers.wants_g1145} onChange={() => setQuestionnaireAnswers({...questionnaireAnswers, wants_g1145: false})} className="w-4 h-4 text-orange-600 focus:ring-orange-500" />
-                                        <span className="text-sm font-medium">No</span>
-                                    </label>
-                                </div>
-                            </div>
-
-                            {/* EAD and AP for AOS specifically */}
-                            {(selectedSubPlan.id === 'aos' || selectedSubPlan.title.includes('Adjustment of Status') || selectedSubPlan.title.includes('DACA')) && (
-                                <>
-                                    <div className="bg-white p-5 rounded-2xl border border-slate-200/70 shadow-sm">
-                                        <h3 className="font-semibold text-slate-900 mb-2">Work Permit</h3>
-                                        <p className="text-sm text-slate-600 mb-4">Would you like to apply for an Employment Authorization Document while your application is pending?</p>
-                                        <div className="flex gap-4">
-                                            <label className="flex items-center gap-2 cursor-pointer">
-                                                <input type="radio" name="ead" checked={questionnaireAnswers.wants_ead} onChange={() => setQuestionnaireAnswers({...questionnaireAnswers, wants_ead: true})} className="w-4 h-4 text-orange-600 focus:ring-orange-500" />
-                                                <span className="text-sm font-medium">Yes</span>
-                                            </label>
-                                            <label className="flex items-center gap-2 cursor-pointer">
-                                                <input type="radio" name="ead" checked={!questionnaireAnswers.wants_ead} onChange={() => setQuestionnaireAnswers({...questionnaireAnswers, wants_ead: false})} className="w-4 h-4 text-orange-600 focus:ring-orange-500" />
-                                                <span className="text-sm font-medium">No</span>
-                                            </label>
-                                        </div>
-                                    </div>
-                                </>
-                            )}
-                            
-                            {(selectedSubPlan.id === 'aos' || selectedSubPlan.title.includes('Adjustment of Status')) && (
-                                <>
-                                    <div className="bg-white p-5 rounded-2xl border border-slate-200/70 shadow-sm">
-                                        <h3 className="font-semibold text-slate-900 mb-2">Advance Parole</h3>
-                                        <p className="text-sm text-slate-600 mb-4">Would you like to apply for a travel document so you may travel internationally while your application is pending?</p>
-                                        <div className="flex gap-4">
-                                            <label className="flex items-center gap-2 cursor-pointer">
-                                                <input type="radio" name="ap" checked={questionnaireAnswers.wants_ap} onChange={() => setQuestionnaireAnswers({...questionnaireAnswers, wants_ap: true})} className="w-4 h-4 text-orange-600 focus:ring-orange-500" />
-                                                <span className="text-sm font-medium">Yes</span>
-                                            </label>
-                                            <label className="flex items-center gap-2 cursor-pointer">
-                                                <input type="radio" name="ap" checked={!questionnaireAnswers.wants_ap} onChange={() => setQuestionnaireAnswers({...questionnaireAnswers, wants_ap: false})} className="w-4 h-4 text-orange-600 focus:ring-orange-500" />
-                                                <span className="text-sm font-medium">No</span>
-                                            </label>
-                                        </div>
-                                    </div>
-
-                                    <div className="bg-white p-5 rounded-2xl border border-slate-200/70 shadow-sm">
-                                        <h3 className="font-semibold text-slate-900 mb-2">Financial Sponsorship</h3>
-                                        <p className="text-sm text-slate-600 mb-4">Will you require a Joint Sponsor or use income/assets from a Household Member to meet the financial sponsorship requirements?</p>
-                                        <div className="space-y-3">
-                                            <label className="flex items-center gap-3 cursor-pointer">
-                                                <input type="checkbox" checked={questionnaireAnswers.wants_joint_sponsor} onChange={(e) => setQuestionnaireAnswers({...questionnaireAnswers, wants_joint_sponsor: e.target.checked})} className="w-4 h-4 rounded text-orange-600 focus:ring-orange-500 border-slate-300" />
-                                                <span className="text-sm text-slate-700">Yes, I will need a Joint Sponsor</span>
-                                            </label>
-                                            <label className="flex items-center gap-3 cursor-pointer">
-                                                <input type="checkbox" checked={questionnaireAnswers.wants_household_member} onChange={(e) => setQuestionnaireAnswers({...questionnaireAnswers, wants_household_member: e.target.checked})} className="w-4 h-4 rounded text-orange-600 focus:ring-orange-500 border-slate-300" />
-                                                <span className="text-sm text-slate-700">Yes, I will use a Household Member's income</span>
-                                            </label>
-                                        </div>
-                                    </div>
-                                </>
-                            )}
-                        </div>
-                        
-                        <div className="px-4 sm:px-6 md:px-10 py-6 bg-slate-50 border-t border-slate-200">
-                            <button onClick={handleContinueToAgreement} className="w-full py-3.5 rounded-xl bg-gradient-to-b from-slate-800 to-slate-900 hover:from-slate-900 hover:to-black text-white font-semibold flex items-center justify-center gap-2 transition shadow-lg">
-                                Continue <span aria-hidden="true">→</span>
-                            </button>
                         </div>
                     </div>
                 )}
