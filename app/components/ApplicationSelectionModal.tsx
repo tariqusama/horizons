@@ -692,11 +692,11 @@ export default function ApplicationSelectionModal({ isOpen, onClose }: Applicati
 
                 {view === 'questionnaire' && selectedSubPlan && (
                     <div className="w-full max-w-[95vw] sm:max-w-[86vw] lg:max-w-[40rem] max-h-[92vh] flex flex-col bg-[#F5F5F5] rounded-3xl overflow-hidden shadow-lg animate-in fade-in duration-200 relative my-4 sm:my-8">
-                        <div className="flex flex-col items-start justify-between px-4 sm:px-6 md:px-10 pt-6 sm:pt-8 pb-4">
-                            <h2 className="tracking-tight text-2xl font-bold text-slate-900 mb-1">Tell us about your needs</h2>
-                            <p className="text-sm text-slate-500">We will dynamically add optional forms to your package based on your answers below.</p>
-                            <button onClick={handleClose} className="absolute top-6 right-6 w-10 h-10 rounded-full bg-slate-900 hover:bg-slate-800 text-white flex items-center justify-center transition" aria-label="Close">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+                        <div className="flex flex-col items-start justify-between px-4 sm:px-6 md:px-10 pt-6 sm:pt-8 pb-4 pr-12 sm:pr-16 relative">
+                            <h2 className="tracking-tight text-xl sm:text-2xl font-bold text-slate-900 mb-1">Tell us about your needs</h2>
+                            <p className="text-xs sm:text-sm text-slate-500">We will dynamically add optional forms to your package based on your answers below.</p>
+                            <button onClick={handleClose} className="absolute top-4 right-4 sm:top-6 sm:right-6 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-slate-900 hover:bg-slate-800 text-white flex items-center justify-center transition" aria-label="Close">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 sm:w-5 sm:h-5"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
                             </button>
                         </div>
                         
