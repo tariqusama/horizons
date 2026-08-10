@@ -179,6 +179,21 @@ function FormBuilderContent() {
         );
     };
 
+    const handleToggleRequired = async (formId: number) => {
+        try {
+            await api.post(`/admin/guide-engine/forms/${formId}/toggle-required`, {
+                service_id: Number(serviceId)
+            });
+            // Refresh form details to reflect updated pivot state
+            const res = await api.get(`/admin/guide-engine/forms/${formId}`);
+            setForm(res.data);
+            loadAllForms(); // Refresh all forms if necessary for the list
+        } catch (err) {
+            console.error(err);
+            showAlert("Error", "Failed to toggle required status.");
+        }
+    };
+
     const openSectionModal = () => {
         setNewSectionTitle('');
         setIsSectionModalOpen(true);
@@ -384,7 +399,7 @@ function FormBuilderContent() {
                                 onClick={() => { setActiveFormId(f.id); setShowCreateForm(false); }}
                                 className={`px-4 py-2 rounded-lg text-sm font-bold border transition-colors ${activeFormId === f.id && !showCreateForm ? 'bg-[#101F38] text-white border-[#101F38]' : 'bg-white text-[#5B6472] border-[#ECE9E2] hover:bg-gray-50'}`}
                             >
-                                {f.name}
+                                {f.slug.toUpperCase()} - {f.name}
                             </button>
                         ))}
                         <button 
@@ -448,15 +463,29 @@ function FormBuilderContent() {
                         </div>
                     ) : form && (
                         <>
-                            <div className="bg-white p-6 rounded-2xl border border-[#ECE9E2] flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                                <div className="bg-white p-6 rounded-2xl border border-[#ECE9E2] flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                                 <div>
                                     <h2 className="text-xl font-bold text-[#101F38] flex items-center gap-2">
-                                        {form.name}
+                                        {form.slug.toUpperCase()} - {form.name}
                                         <span className="bg-gray-100 text-gray-500 text-xs px-2 py-1 rounded">Shared across {form.services?.length || 1} services</span>
+                                        {(() => {
+                                            const pivot = form.services?.find((s:any) => s.id === Number(serviceId))?.pivot;
+                                            if (pivot) {
+                                                return pivot.is_required ? (
+                                                    <span className="bg-red-100 text-red-700 text-xs px-2 py-1 rounded font-bold">Required Form</span>
+                                                ) : (
+                                                    <span className="bg-emerald-100 text-emerald-700 text-xs px-2 py-1 rounded font-bold">Optional Form</span>
+                                                );
+                                            }
+                                            return null;
+                                        })()}
                                     </h2>
                                     <p className="text-sm text-[#5B6472]">Slug: /{form.slug}</p>
                                 </div>
                                 <div className="flex gap-2">
+                                    <button onClick={() => handleToggleRequired(form.id)} className="px-4 py-2 border border-slate-200 text-slate-700 rounded-lg text-sm font-semibold hover:bg-slate-50 transition-colors">
+                                        Toggle Required
+                                    </button>
                                     <button onClick={() => handleUnlinkForm(form.id)} className="px-4 py-2 border border-red-200 text-red-500 rounded-lg text-sm font-semibold hover:bg-red-50 transition-colors">
                                         Unlink Form
                                     </button>

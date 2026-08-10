@@ -84,11 +84,14 @@ export function getFormsList(app: any, options?: { allowFallback?: boolean }): F
         const targetIndex = insertIndex !== -1 ? insertIndex : baseForms.length;
         
         const optionalForms = [];
-        if (formData.wants_i765 === 'yes') {
+        if (formData.wants_i765 === 'yes' || formData.wants_ead === true || formData.wants_ead === 'yes') {
             optionalForms.push({ path: '/dashboard/get-started/dynamic/i-765', code: 'i-765', name: 'Form I-765 (Work Permit)' });
         }
-        if (formData.wants_i131 === 'yes') {
+        if (formData.wants_i131 === 'yes' || formData.wants_ap === true || formData.wants_ap === 'yes') {
             optionalForms.push({ path: '/dashboard/get-started/dynamic/i-131', code: 'i-131', name: 'Form I-131 (Advance Parole)' });
+        }
+        if (formData.wants_household_member === true || formData.wants_household_member === 'yes') {
+            optionalForms.push({ path: '/dashboard/get-started/dynamic/i-864a', code: 'i-864a', name: 'Form I-864A (Contract Between Sponsor and Household Member)' });
         }
         
         if (optionalForms.length > 0) {
