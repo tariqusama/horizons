@@ -1,25 +1,55 @@
-const featuredStories = [
+const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+const getVideoUrl = (filename: string) => `${BACKEND_URL}/storage/testmonials/${encodeURIComponent(filename)}`;
+
+const videoStories = [
     {
         name: 'Mark Harrison',
         route: 'IR-5 Parent Visa',
         origin: 'United Kingdom',
-        quote: '"They made bringing me to America simpler, less stressful, and ultimately successful."',
-        image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=900&q=80',
+        videoUrl: 'Mark_.mp4',
     },
     {
-        name: 'Rachael Thompson',
-        route: 'IR-1 & IR-2 Family Visas',
-        origin: 'Sierra Leone',
-        quote: '"They made the process feel easier and more manageable every step of the way."',
-        image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=900&q=80',
+        name: 'Judith',
+        route: 'Client Testimony',
+        origin: 'Approved',
+        videoUrl: 'Horizon Pathways Testimony Judith .MP4',
     },
     {
-        name: 'Emily & Michał',
-        route: 'Adjustment of Status → Removal of Conditions',
-        origin: 'New York',
-        quote: '"A long-term relationship built on trust, support, and guidance—smooth from ESTA to Green Card and beyond."',
-        image: 'https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?auto=format&fit=crop&w=900&q=80',
+        name: 'Client Story 1',
+        route: 'Client Testimony',
+        origin: 'Approved',
+        videoUrl: 'Main_Video_1_.mp4',
     },
+    {
+        name: 'Client Story 2',
+        route: 'Client Testimony',
+        origin: 'Approved',
+        videoUrl: 'HP_2.mp4',
+    },
+    {
+        name: 'Client Story 3',
+        route: 'Client Testimony',
+        origin: 'Approved',
+        videoUrl: 'IMG_1500.MOV',
+    },
+    {
+        name: 'Client Story 4',
+        route: 'Client Testimony',
+        origin: 'Approved',
+        videoUrl: 'IMG_3241.MOV',
+    },
+    {
+        name: 'Client Story 5',
+        route: 'Client Testimony',
+        origin: 'Approved',
+        videoUrl: 'IMG_4779.MOV',
+    },
+    {
+        name: 'Client Story 6',
+        route: 'Client Testimony',
+        origin: 'Approved',
+        videoUrl: 'IMG_8409.MOV',
+    }
 ];
 
 const reviewCards = [
@@ -128,43 +158,33 @@ export default function TestimonialsPage() {
                     <div className="mb-14 md:mb-20">
                         <div className="grid gap-6 md:grid-cols-1 xl:grid-cols-[2fr_1fr]">
                             <div className="group relative overflow-hidden rounded-[30px] border border-[#E9EDF4] bg-white shadow-[0_18px_50px_rgba(27,58,100,0.08)]">
-                                <div className="relative min-h-[320px] overflow-hidden sm:min-h-[360px] md:min-h-[420px]">
-                                    <img
-                                        src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1200&q=80"
-                                        alt="Immigration attorney introduction"
-                                        className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                                <div className="relative min-h-[320px] sm:min-h-[360px] md:min-h-[420px] bg-black flex flex-col justify-center">
+                                    <video
+                                        src={getVideoUrl("Immigration Attorney.mp4")}
+                                        className="w-full max-h-[420px] object-contain"
+                                        controls
+                                        preload="metadata"
                                     />
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-                                    <div className="absolute inset-0 flex items-center justify-center">
-                                        <div className="flex h-20 w-20 items-center justify-center rounded-full bg-[#E3623D] text-white shadow-2xl transition-transform duration-300 group-hover:scale-110 md:h-24 md:w-24">
-                                            <span className="text-2xl">▶</span>
-                                        </div>
+                                    <div className="absolute left-6 top-6 rounded-full bg-white/95 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#0A192F] shadow-sm pointer-events-none z-10">
+                                        One of our immigration attorneys
                                     </div>
                                 </div>
-                                <div className="absolute left-6 top-6 rounded-full bg-white/95 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#0A192F] shadow-sm">
-                                    One of our immigration attorneys
-                                </div>
-                                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent px-6 py-6 text-white md:px-8 md:py-8">
+                                <div className="bg-[#0A192F] px-6 py-6 text-white md:px-8 md:py-8">
                                     <p className="mb-2 text-xs uppercase tracking-[0.24em] text-white/70">Welcome to The Guided Path</p>
                                     <h3 className="text-2xl font-bold md:text-3xl">A personal welcome and a look at how our attorney-reviewed process protects your case from day one.</h3>
                                 </div>
                             </div>
 
-                            <div className="space-y-4">
-                                {featuredStories.map((story) => (
+                            <div className="space-y-4 max-h-[600px] overflow-y-auto pr-2">
+                                {videoStories.map((story) => (
                                     <div key={story.name} className="flex flex-col overflow-hidden rounded-[24px] border border-[#E9EDF4] bg-white shadow-sm transition hover:shadow-md md:flex-row">
-                                        <div className="relative h-48 w-full overflow-hidden md:h-24 md:w-28">
-                                            <img
-                                                src={story.image}
-                                                alt={story.name}
-                                                className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                                        <div className="relative h-48 w-full overflow-hidden md:h-24 md:w-32 bg-black flex-shrink-0">
+                                            <video
+                                                src={getVideoUrl(story.videoUrl)}
+                                                className="h-full w-full object-cover"
+                                                controls
+                                                preload="metadata"
                                             />
-                                            <div className="absolute inset-0 bg-black/25" />
-                                            <div className="absolute inset-0 flex items-center justify-center">
-                                                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/90 text-[#E3623D] shadow-lg">
-                                                    <span className="text-xl">▶</span>
-                                                </div>
-                                            </div>
                                         </div>
                                         <div className="flex-1 p-4">
                                             <div className="text-sm font-semibold text-[#0A192F]">{story.name}</div>
@@ -174,7 +194,7 @@ export default function TestimonialsPage() {
                                     </div>
                                 ))}
 
-                                <div className="mt-2">
+                                <div className="mt-2 text-center">
                                     <button className="inline-flex items-center gap-2 text-sm font-semibold text-[#0A192F] transition hover:text-[#E3623D]">
                                         <span>View More Stories</span>
                                         <span>→</span>
