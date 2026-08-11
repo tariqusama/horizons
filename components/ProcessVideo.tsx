@@ -49,7 +49,7 @@ export default function ProcessVideo() {
         {/* Video Player */}
         <div className="relative w-full max-w-[900px] mx-auto aspect-[16/9] bg-black rounded-2xl overflow-hidden mb-8 shadow-[0_20px_40px_-10px_rgba(27,58,100,0.2)] border border-[#EDEFF3]">
           <iframe 
-            src="https://www.youtube.com/embed/5iU9YL3bz30?si=QlRLnqyLaHhpnf42" 
+            src="https://www.youtube.com/embed/5iU9YL3bz30" 
             title="Video Walkthrough" 
             frameBorder="0" 
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 

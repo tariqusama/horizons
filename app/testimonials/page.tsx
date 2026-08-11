@@ -173,12 +173,15 @@ export default function TestimonialsPage() {
                                 <div className="relative min-h-[240px] sm:min-h-[320px] md:min-h-[420px] bg-black flex flex-col justify-center">
                                     <video
                                         key={activeVideo.videoUrl}
-                                        src={getVideoUrl(activeVideo.videoUrl)}
                                         className="w-full max-h-[60vh] md:max-h-[420px] object-contain"
                                         controls
                                         autoPlay={activeVideo.videoUrl !== 'Immigration Attorney.mp4'}
                                         preload="metadata"
-                                    />
+                                        playsInline
+                                    >
+                                        <source src={getVideoUrl(activeVideo.videoUrl)} type="video/mp4" />
+                                        <source src={getVideoUrl(activeVideo.videoUrl)} type="video/quicktime" />
+                                    </video>
                                     <div className="absolute left-4 top-4 md:left-6 md:top-6 rounded-full bg-white/95 px-3 py-1.5 md:px-4 md:py-2 text-[9px] md:text-[11px] font-semibold uppercase tracking-[0.2em] text-[#0A192F] shadow-sm pointer-events-none z-10">
                                         {activeVideo.origin}
                                     </div>
@@ -196,10 +199,14 @@ export default function TestimonialsPage() {
                                 >
                                     <div className="relative h-20 w-28 sm:h-24 sm:w-32 bg-black flex-shrink-0">
                                         <video
-                                            src={getVideoUrl(mainAttorneyVideo.videoUrl)}
                                             className="h-full w-full object-cover opacity-80"
                                             preload="metadata"
-                                        />
+                                            playsInline
+                                            muted
+                                        >
+                                            <source src={getVideoUrl(mainAttorneyVideo.videoUrl)} type="video/mp4" />
+                                            <source src={getVideoUrl(mainAttorneyVideo.videoUrl)} type="video/quicktime" />
+                                        </video>
                                         <div className="absolute inset-0 flex items-center justify-center">
                                             <div className="flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-full bg-white/90 text-[#E3623D] shadow-lg">
                                                 <span className="text-sm sm:text-lg flex items-center justify-center translate-x-[2px]">▶</span>
@@ -220,10 +227,14 @@ export default function TestimonialsPage() {
                                     >
                                         <div className="relative h-20 w-28 sm:h-24 sm:w-32 bg-black flex-shrink-0">
                                             <video
-                                                src={getVideoUrl(story.videoUrl)}
                                                 className="h-full w-full object-cover opacity-80"
                                                 preload="metadata"
-                                            />
+                                                playsInline
+                                                muted
+                                            >
+                                                <source src={getVideoUrl(story.videoUrl)} type="video/mp4" />
+                                                <source src={getVideoUrl(story.videoUrl)} type="video/quicktime" />
+                                            </video>
                                             <div className="absolute inset-0 flex items-center justify-center">
                                                 <div className="flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-full bg-white/90 text-[#E3623D] shadow-lg">
                                                     <span className="text-sm sm:text-lg flex items-center justify-center translate-x-[2px]">▶</span>
