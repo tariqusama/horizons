@@ -1,5 +1,15 @@
+'use client';
+import React, { useState } from 'react';
+
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
 const getVideoUrl = (filename: string) => `${BACKEND_URL}/storage/testmonials/${encodeURIComponent(filename)}`;
+
+const mainAttorneyVideo = {
+    name: 'Welcome to The Guided Path',
+    route: 'A personal welcome and a look at how our attorney-reviewed process protects your case from day one.',
+    origin: 'One of our immigration attorneys',
+    videoUrl: 'Immigration Attorney.mp4'
+};
 
 const videoStories = [
     {
@@ -92,6 +102,8 @@ const reviewCards = [
 ];
 
 export default function TestimonialsPage() {
+    const [activeVideo, setActiveVideo] = useState(mainAttorneyVideo);
+
     return (
         <main className="min-h-screen bg-white text-[#0A192F]">
             <section className="relative overflow-hidden bg-[#06132a] pt-24 pb-16 md:pt-32 md:pb-24">
@@ -158,48 +170,73 @@ export default function TestimonialsPage() {
                     <div className="mb-14 md:mb-20">
                         <div className="grid gap-6 md:grid-cols-1 xl:grid-cols-[2fr_1fr]">
                             <div className="group relative overflow-hidden rounded-[30px] border border-[#E9EDF4] bg-white shadow-[0_18px_50px_rgba(27,58,100,0.08)]">
-                                <div className="relative min-h-[320px] sm:min-h-[360px] md:min-h-[420px] bg-black flex flex-col justify-center">
+                                <div className="relative min-h-[240px] sm:min-h-[320px] md:min-h-[420px] bg-black flex flex-col justify-center">
                                     <video
-                                        src={getVideoUrl("Immigration Attorney.mp4")}
-                                        className="w-full max-h-[420px] object-contain"
+                                        key={activeVideo.videoUrl}
+                                        src={getVideoUrl(activeVideo.videoUrl)}
+                                        className="w-full max-h-[60vh] md:max-h-[420px] object-contain"
                                         controls
+                                        autoPlay={activeVideo.videoUrl !== 'Immigration Attorney.mp4'}
                                         preload="metadata"
                                     />
-                                    <div className="absolute left-6 top-6 rounded-full bg-white/95 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#0A192F] shadow-sm pointer-events-none z-10">
-                                        One of our immigration attorneys
+                                    <div className="absolute left-4 top-4 md:left-6 md:top-6 rounded-full bg-white/95 px-3 py-1.5 md:px-4 md:py-2 text-[9px] md:text-[11px] font-semibold uppercase tracking-[0.2em] text-[#0A192F] shadow-sm pointer-events-none z-10">
+                                        {activeVideo.origin}
                                     </div>
                                 </div>
-                                <div className="bg-[#0A192F] px-6 py-6 text-white md:px-8 md:py-8">
-                                    <p className="mb-2 text-xs uppercase tracking-[0.24em] text-white/70">Welcome to The Guided Path</p>
-                                    <h3 className="text-2xl font-bold md:text-3xl">A personal welcome and a look at how our attorney-reviewed process protects your case from day one.</h3>
+                                <div className="bg-[#0A192F] px-5 py-5 text-white md:px-8 md:py-8">
+                                    <p className="mb-2 text-xs uppercase tracking-[0.24em] text-white/70">{activeVideo.name}</p>
+                                    <h3 className="text-2xl font-bold md:text-3xl">{activeVideo.route}</h3>
                                 </div>
                             </div>
 
-                            <div className="space-y-4 max-h-[600px] overflow-y-auto pr-2">
+                            <div className="space-y-3 md:space-y-4 max-h-[400px] md:max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">
+                                <div 
+                                    onClick={() => setActiveVideo(mainAttorneyVideo)}
+                                    className={`cursor-pointer flex flex-row items-center overflow-hidden rounded-[16px] md:rounded-[24px] border ${activeVideo.videoUrl === mainAttorneyVideo.videoUrl ? 'border-[#E3623D] ring-2 ring-[#E3623D]/20' : 'border-[#E9EDF4]'} bg-white shadow-sm transition hover:shadow-md`}
+                                >
+                                    <div className="relative h-20 w-28 sm:h-24 sm:w-32 bg-black flex-shrink-0">
+                                        <video
+                                            src={getVideoUrl(mainAttorneyVideo.videoUrl)}
+                                            className="h-full w-full object-cover opacity-80"
+                                            preload="metadata"
+                                        />
+                                        <div className="absolute inset-0 flex items-center justify-center">
+                                            <div className="flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-full bg-white/90 text-[#E3623D] shadow-lg">
+                                                <span className="text-sm sm:text-lg flex items-center justify-center translate-x-[2px]">▶</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="flex-1 p-3 sm:p-4 flex flex-col justify-center min-w-0">
+                                        <div className="text-xs sm:text-sm font-semibold text-[#0A192F] truncate">Attorney Introduction</div>
+                                        <div className="mt-0.5 sm:mt-1 text-[9px] sm:text-[11px] uppercase tracking-[0.2em] text-[#5A6579] truncate">Welcome to the Guided Path</div>
+                                    </div>
+                                </div>
+
                                 {videoStories.map((story) => (
-                                    <div key={story.name} className="flex flex-col overflow-hidden rounded-[24px] border border-[#E9EDF4] bg-white shadow-sm transition hover:shadow-md md:flex-row">
-                                        <div className="relative h-48 w-full overflow-hidden md:h-24 md:w-32 bg-black flex-shrink-0">
+                                    <div 
+                                        key={story.name} 
+                                        onClick={() => setActiveVideo(story)}
+                                        className={`cursor-pointer flex flex-row items-center overflow-hidden rounded-[16px] md:rounded-[24px] border ${activeVideo.videoUrl === story.videoUrl ? 'border-[#E3623D] ring-2 ring-[#E3623D]/20' : 'border-[#E9EDF4]'} bg-white shadow-sm transition hover:shadow-md`}
+                                    >
+                                        <div className="relative h-20 w-28 sm:h-24 sm:w-32 bg-black flex-shrink-0">
                                             <video
                                                 src={getVideoUrl(story.videoUrl)}
-                                                className="h-full w-full object-cover"
-                                                controls
+                                                className="h-full w-full object-cover opacity-80"
                                                 preload="metadata"
                                             />
+                                            <div className="absolute inset-0 flex items-center justify-center">
+                                                <div className="flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-full bg-white/90 text-[#E3623D] shadow-lg">
+                                                    <span className="text-sm sm:text-lg flex items-center justify-center translate-x-[2px]">▶</span>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div className="flex-1 p-4">
-                                            <div className="text-sm font-semibold text-[#0A192F]">{story.name}</div>
-                                            <div className="mt-1 text-[11px] uppercase tracking-[0.24em] text-[#5A6579]">Approved · {story.origin}</div>
-                                            <div className="mt-3 text-sm text-[#5A6579]">{story.route}</div>
+                                        <div className="flex-1 p-3 sm:p-4 min-w-0">
+                                            <div className="text-xs sm:text-sm font-semibold text-[#0A192F] truncate">{story.name}</div>
+                                            <div className="mt-0.5 sm:mt-1 text-[9px] sm:text-[11px] uppercase tracking-[0.2em] text-[#5A6579] truncate">Approved · {story.origin}</div>
+                                            <div className="mt-1 sm:mt-2 text-[10px] sm:text-sm text-[#5A6579] truncate">{story.route}</div>
                                         </div>
                                     </div>
                                 ))}
-
-                                <div className="mt-2 text-center">
-                                    <button className="inline-flex items-center gap-2 text-sm font-semibold text-[#0A192F] transition hover:text-[#E3623D]">
-                                        <span>View More Stories</span>
-                                        <span>→</span>
-                                    </button>
-                                </div>
                             </div>
                         </div>
                     </div>
