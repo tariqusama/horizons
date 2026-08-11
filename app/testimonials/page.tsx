@@ -252,24 +252,7 @@ export default function TestimonialsPage() {
                     <div className="mx-auto mb-10 max-w-3xl text-center md:mb-12">
                         <h2 className="mb-4 px-4 text-3xl font-bold md:text-5xl">Success Stories from Our Clients</h2>
                         <p className="mb-6 px-4 text-base text-[#5A6579] md:text-lg">Real, verified reviews from clients on Trustpilot and Google</p>
-                        <div className="inline-flex items-center gap-1 rounded-full border border-[#D6DCE7] bg-white p-1 shadow-sm">
-                            <a
-                                href="https://www.trustpilot.com/review/horizonpathways.us"
-                                target="_blank"
-                                rel="noreferrer"
-                                className="rounded-full bg-[#00b67a] px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-[#00a56b]"
-                            >
-                                Trustpilot
-                            </a>
-                            <a
-                                href="https://maps.app.goo.gl/bdsBtS4HTrg6g1PX6?g_st=iw"
-                                target="_blank"
-                                rel="noreferrer"
-                                className="rounded-full px-4 py-2 text-sm font-semibold text-[#0A192F] transition-colors hover:bg-[#F4F7FB]"
-                            >
-                                Google
-                            </a>
-                        </div>
+
                     </div>
 
                     <div className="mx-auto grid max-w-7xl gap-6 md:grid-cols-2 lg:grid-cols-3 md:gap-8">
