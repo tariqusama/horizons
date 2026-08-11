@@ -246,6 +246,8 @@ function SignupFlowContent() {
   const [isRegistering, setIsRegistering] = useState(false);
   const [selectedAddons, setSelectedAddons] = useState<string[]>([]);
   const [addonQuantities, setAddonQuantities] = useState<Record<string, number>>({});
+  const [discountCode, setDiscountCode] = useState<string>('');
+  const [discountApplied, setDiscountApplied] = useState(false);
 
   const [questionnaireAnswers, setQuestionnaireAnswers] = useState({
     wants_g1145: true,
@@ -372,7 +374,47 @@ function SignupFlowContent() {
   const handleStripeCheckout = async () => {
     setIsRegistering(true);
     setError('');
+
     try {
+      // If discount bypass is active, just register and redirect
+      if (discountApplied) {
+        try {
+          const addonsList = [
+            { id: 'translation', name: 'Document Translation (per page)', price: 25 },
+            { id: 'notary', name: 'Certified Copy & E-Notary', price: 15 },
+            { id: 'expedited', name: 'Expedited Form Preparation (48hrs)', price: 100 }
+          ];
+          const addonsData = selectedAddons.map(id => ({
+            id,
+            name: addonsList.find(a => a.id === id)?.name || id,
+            quantity: addonQuantities[id] || 1
+          }));
+
+          await register({
+            first_name: firstName,
+            last_name: lastName,
+            name: `${firstName} ${lastName}`,
+            email,
+            password,
+            password_confirmation: confirmPassword,
+            goal: selectedGoal || '',
+            plan: selectedPlanName,
+            amount: 0,
+            addons: addonsData,
+            discount_code: discountApplied ? discountCode : undefined,
+            questionnaire: questionnaireAnswers,
+            service_id: getServiceId(selectedGoal, answers)
+          }, true);
+          
+          window.location.href = '/dashboard';
+          return;
+        } catch (err: any) {
+          setError(err.response?.data?.message || err.message || 'Registration failed');
+          setIsRegistering(false);
+          return;
+        }
+      }
+
       // 1. Register the user so their account exists when they return from Stripe
       // Prepare payment sum
       const baseAmount = parseFloat(selectedPlanPrice.replace('$', '')) || 0;
@@ -1443,7 +1485,10 @@ function SignupFlowContent() {
 
       const baseAmount = parseFloat(selectedPlanPrice.replace('$', '')) || 0;
       const addonsTotal = selectedAddons.reduce((sum, addonId) => sum + ((addons.find(a => a.id === addonId)?.price || 0) * (addonQuantities[addonId] || 1)), 0);
-      const totalAmount = baseAmount + addonsTotal;
+      let totalAmount = baseAmount + addonsTotal;
+      if (discountApplied) {
+        totalAmount = 0;
+      }
 
       const toggleAddon = (id: string) => {
         setSelectedAddons(prev => {
@@ -1575,9 +1620,43 @@ function SignupFlowContent() {
                   })}
                 </div>
 
-                <div className="border-t border-gray-200 pt-4 mb-6 flex justify-between items-center">
-                  <div className="text-[#101F38] font-bold text-sm sm:text-[16px]">Total</div>
-                  <div className="text-2xl sm:text-[24px] font-black text-[#101F38]">${totalAmount.toFixed(2)}</div>
+                <div className="border-t border-gray-200 pt-4 mb-4">
+                  <div className="flex gap-2 mb-4">
+                    <input
+                      type="text"
+                      placeholder="Discount code"
+                      value={discountCode}
+                      onChange={(e) => setDiscountCode(e.target.value)}
+                      disabled={discountApplied}
+                      className="flex-1 rounded-md border border-gray-200 px-3 py-2 text-sm outline-none transition focus:border-orange-500 disabled:bg-gray-100"
+                    />
+                    <button
+                      onClick={() => {
+                        if (discountCode.trim().toUpperCase() === 'TEST100') {
+                          setDiscountApplied(true);
+                          setError('');
+                        } else {
+                          setError('Invalid discount code');
+                        }
+                      }}
+                      disabled={!discountCode || discountApplied}
+                      className="rounded-md bg-gray-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-gray-800 disabled:opacity-50"
+                    >
+                      Apply
+                    </button>
+                  </div>
+                  
+                  {discountApplied && (
+                    <div className="flex justify-between items-center mb-2 text-green-600 text-sm">
+                      <span>Discount (TEST100)</span>
+                      <span>-100%</span>
+                    </div>
+                  )}
+
+                  <div className="flex justify-between items-center mb-2">
+                    <div className="text-[#101F38] font-bold text-sm sm:text-[16px]">Total</div>
+                    <div className="text-2xl sm:text-[24px] font-black text-[#101F38]">${totalAmount.toFixed(2)}</div>
+                  </div>
                 </div>
 
                 {error && <div className="text-red-500 text-sm sm:text-[14px] font-medium mb-4 text-center">{error}</div>}
