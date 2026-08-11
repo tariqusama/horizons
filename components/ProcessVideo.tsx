@@ -24,7 +24,7 @@ export default function ProcessVideo() {
   const VIDEO_URL = 'https://youtu.be/5iU9YL3bz30?si=QlRLnqyLaHhpnf42';
 
   return (
-    <section className="w-full bg-white">
+    <section id="video-tour" className="w-full bg-white">
       <div className="py-16 px-6 md:px-12 lg:px-16 max-w-[1400px] mx-auto text-center">
         <h2 className="text-2xl md:text-[28px] font-bold text-[#0A192F] mb-3 tracking-tight">
           Video Walkthrough: See the Process in Action
