@@ -21,7 +21,7 @@ export default function ProcessVideo() {
   ];
 
   // Replace this URL with the actual online video link you want to use
-  const VIDEO_URL = 'https://horizons-tau-three.vercel.app/video-tour';
+  const VIDEO_URL = 'https://youtu.be/5iU9YL3bz30?si=QlRLnqyLaHhpnf42';
 
   return (
     <section className="w-full bg-white">
@@ -47,38 +47,15 @@ export default function ProcessVideo() {
         </div>
 
         {/* Video Player */}
-        <div className="relative w-full max-w-[900px] mx-auto aspect-[16/9] bg-[#0A192F] rounded-2xl overflow-hidden mb-8 shadow-[0_20px_40px_-10px_rgba(27,58,100,0.2)] border border-[#EDEFF3]">
-          <img
-            src="/immigration-consultation-tvHQGT_i.jpg"
-            alt="Video tour thumbnail"
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
-
-          <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm rounded-lg px-3 py-1.5 text-[#0A192F] font-bold text-[13px]">
-            Horizon Pathways
-          </div>
-
-          <div className="absolute inset-0 flex items-center justify-center">
-            <a
-              href={VIDEO_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Watch video tour"
-              className="w-16 h-16 bg-orange-500 rounded-full flex items-center justify-center shadow-[0_0_0_10px_rgba(227,98,61,0.25)] hover:scale-105 transition-transform"
-            >
-              <Play size={24} color="white" fill="white" className="ml-0.5" />
-            </a>
-          </div>
-
-          <div className="absolute bottom-5 left-5 text-left">
-            <p className="text-white/80 text-[11px] font-bold uppercase tracking-wider">
-              How It Works
-            </p>
-            <p className="text-white font-bold text-[18px]">
-              Step-by-Step Guide
-            </p>
-          </div>
+        <div className="relative w-full max-w-[900px] mx-auto aspect-[16/9] bg-black rounded-2xl overflow-hidden mb-8 shadow-[0_20px_40px_-10px_rgba(27,58,100,0.2)] border border-[#EDEFF3]">
+          <iframe 
+            src="https://www.youtube.com/embed/5iU9YL3bz30?si=QlRLnqyLaHhpnf42" 
+            title="Video Walkthrough" 
+            frameBorder="0" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+            allowFullScreen
+            className="absolute top-0 left-0 w-full h-full"
+          ></iframe>
         </div>
 
         {/* Items row */}
