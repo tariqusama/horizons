@@ -12,10 +12,14 @@ const defaultTimelineEstimates: Record<string, string> = {
   citizenship: '6-10 months',
 };
 
-const defaultCaseTypes = [
-  { value: 'marriage', label: 'Marriage Green Card' },
-  { value: 'fiance', label: 'K-1 Fiance Visa' },
-  { value: 'citizenship', label: 'Citizenship & Naturalization' },
+const staticCaseTypes = [
+  { value: 'Replace or fix a Green Card', label: 'Replace or fix a Green Card' },
+  { value: 'Bring a fiancé(e) to the U.S.', label: 'Bring a fiancé(e) to the U.S.' },
+  { value: 'Bring a spouse to the U.S.', label: 'Bring a spouse to the U.S.' },
+  { value: 'Bring a sibling to the U.S.', label: 'Bring a sibling to the U.S.' },
+  { value: 'Bring a Child to the US', label: 'Bring a Child to the US' },
+  { value: 'Bring a Parent to the US', label: 'Bring a Parent to the US' },
+  { value: 'Adjust status to permanent resident / get a Green Card while in US', label: 'Adjust status to permanent resident / get a Green Card while in US' },
 ];
 
 const getTimelineEstimate = (goal: string) => {
@@ -33,25 +37,11 @@ const getTimelineEstimate = (goal: string) => {
 };
 
 export default function TimelineSection() {
-  const [caseTypes, setCaseTypes] = useState<{ value: string; label: string }[]>(defaultCaseTypes);
+  const caseTypes = staticCaseTypes;
   const [selectedType, setSelectedType] = useState('');
   const [calculatedTime, setCalculatedTime] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState('');
   const [isFetchingTime, setIsFetchingTime] = useState(false);
-
-  useEffect(() => {
-    api.get('/public/signup-pathways')
-      .then((res) => {
-        const goals = Array.isArray(res.data.goals) ? res.data.goals : [];
-        if (goals.length > 0) {
-          setCaseTypes(goals.map((goal: string) => ({ value: goal, label: goal })));
-        }
-      })
-      .catch((err) => {
-        console.error('Failed to load case types for timeline:', err);
-      });
-
-  }, []);
 
   const handleCalculate = async () => {
     if (!selectedType) {
