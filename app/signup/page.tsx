@@ -1527,7 +1527,10 @@ function SignupFlowContent() {
               </div>
 
               <div className="rounded-lg border border-gray-200 bg-white p-6">
-                <h3 className="mb-4 text-lg font-semibold text-gray-900">Additional Services</h3>
+                <h3 className="mb-2 text-lg font-semibold text-gray-900">Optional Additional Services</h3>
+                <p className="mb-4 text-sm text-gray-500">
+                  These services are completely optional and are not required to complete your application. Select them only if you need the additional assistance.
+                </p>
                 <div className="space-y-3">
                   {addons.map(addon => (
                     <div
