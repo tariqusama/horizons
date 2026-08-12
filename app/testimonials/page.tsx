@@ -1,66 +1,6 @@
 'use client';
-import React, { useState } from 'react';
-
-const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
-const getVideoUrl = (filename: string) => `${BACKEND_URL}/storage/testmonials/${encodeURIComponent(filename)}`;
-
-const mainAttorneyVideo = {
-    name: 'Welcome to The Guided Path',
-    route: 'A personal welcome and a look at how our attorney-reviewed process protects your case from day one.',
-    origin: 'One of our immigration attorneys',
-    videoUrl: 'Immigration Attorney.mp4'
-};
-
-const videoStories = [
-    {
-        name: 'Mark Harrison',
-        route: 'IR-5 Parent Visa',
-        origin: 'United Kingdom',
-        videoUrl: 'Mark_.mp4',
-    },
-    {
-        name: 'Judith',
-        route: 'Client Testimony',
-        origin: 'Approved',
-        videoUrl: 'Horizon Pathways Testimony Judith .MP4',
-    },
-    {
-        name: 'Client Story 1',
-        route: 'Client Testimony',
-        origin: 'Approved',
-        videoUrl: 'Main_Video_1_.mp4',
-    },
-    {
-        name: 'Client Story 2',
-        route: 'Client Testimony',
-        origin: 'Approved',
-        videoUrl: 'HP_2.mp4',
-    },
-    {
-        name: 'Client Story 3',
-        route: 'Client Testimony',
-        origin: 'Approved',
-        videoUrl: 'IMG_1500.MOV',
-    },
-    {
-        name: 'Client Story 4',
-        route: 'Client Testimony',
-        origin: 'Approved',
-        videoUrl: 'IMG_3241.MOV',
-    },
-    {
-        name: 'Client Story 5',
-        route: 'Client Testimony',
-        origin: 'Approved',
-        videoUrl: 'IMG_4779.MOV',
-    },
-    {
-        name: 'Client Story 6',
-        route: 'Client Testimony',
-        origin: 'Approved',
-        videoUrl: 'IMG_8409.MOV',
-    }
-];
+import React from 'react';
+import VideoTestimonialsSection from '@/components/VideoTestimonialsSection';
 
 const reviewCards = [
     {
@@ -102,8 +42,6 @@ const reviewCards = [
 ];
 
 export default function TestimonialsPage() {
-    const [activeVideo, setActiveVideo] = useState(mainAttorneyVideo);
-
     return (
         <main className="min-h-screen bg-white text-[#0A192F]">
             <section className="relative overflow-hidden bg-[#06132a] pt-24 pb-16 md:pt-32 md:pb-24">
@@ -155,103 +93,7 @@ export default function TestimonialsPage() {
                 <div className="absolute top-0 right-0 h-[450px] w-[450px] rounded-full bg-gradient-to-br from-[#F8E0D2] to-[#FFF4EE] blur-3xl" />
                 <div className="absolute bottom-0 left-0 h-[350px] w-[350px] rounded-full bg-gradient-to-tr from-[#F8E0D2] to-[#EEF5FF] blur-3xl" />
 
-                <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6 lg:px-8">
-                    <div className="mx-auto mb-12 max-w-3xl text-center">
-                        <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-[#E9D2C2] bg-white/80 px-5 py-2 text-xs font-bold uppercase tracking-[0.18em] text-[#E3623D]">
-                            <span className="text-base">▶</span>
-                            <span>Watch Real Stories</span>
-                        </div>
-                        <h2 className="mb-4 text-3xl font-bold md:text-5xl">Hear It From Our Attorney &amp; Clients</h2>
-                        <p className="text-base text-[#5A6579] md:text-lg">
-                            Personal video introductions from one of our immigration attorneys and approved clients sharing their journey.
-                        </p>
-                    </div>
-
-                    <div className="mb-14 md:mb-20">
-                        <div className="grid gap-6 md:grid-cols-1 xl:grid-cols-[2fr_1fr]">
-                            <div className="group relative overflow-hidden rounded-[30px] border border-[#E9EDF4] bg-white shadow-[0_18px_50px_rgba(27,58,100,0.08)]">
-                                <div className="relative min-h-[240px] sm:min-h-[320px] md:min-h-[420px] bg-black flex flex-col justify-center">
-                                    <video
-                                        key={activeVideo.videoUrl}
-                                        className="w-full max-h-[60vh] md:max-h-[420px] object-contain"
-                                        controls
-                                        autoPlay={activeVideo.videoUrl !== 'Immigration Attorney.mp4'}
-                                        preload="metadata"
-                                        playsInline
-                                    >
-                                        <source src={getVideoUrl(activeVideo.videoUrl)} type="video/mp4" />
-                                        <source src={getVideoUrl(activeVideo.videoUrl)} type="video/quicktime" />
-                                    </video>
-                                    <div className="absolute left-4 top-4 md:left-6 md:top-6 rounded-full bg-white/95 px-3 py-1.5 md:px-4 md:py-2 text-[9px] md:text-[11px] font-semibold uppercase tracking-[0.2em] text-[#0A192F] shadow-sm pointer-events-none z-10">
-                                        {activeVideo.origin}
-                                    </div>
-                                </div>
-                                <div className="bg-[#0A192F] px-5 py-5 text-white md:px-8 md:py-8">
-                                    <p className="mb-2 text-xs uppercase tracking-[0.24em] text-white/70">{activeVideo.name}</p>
-                                    <h3 className="text-2xl font-bold md:text-3xl">{activeVideo.route}</h3>
-                                </div>
-                            </div>
-
-                            <div className="space-y-3 md:space-y-4 max-h-[400px] md:max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">
-                                <div 
-                                    onClick={() => setActiveVideo(mainAttorneyVideo)}
-                                    className={`cursor-pointer flex flex-row items-center overflow-hidden rounded-[16px] md:rounded-[24px] border ${activeVideo.videoUrl === mainAttorneyVideo.videoUrl ? 'border-[#E3623D] ring-2 ring-[#E3623D]/20' : 'border-[#E9EDF4]'} bg-white shadow-sm transition hover:shadow-md`}
-                                >
-                                    <div className="relative h-20 w-28 sm:h-24 sm:w-32 bg-black flex-shrink-0">
-                                        <video
-                                            className="h-full w-full object-cover opacity-80"
-                                            preload="metadata"
-                                            playsInline
-                                            muted
-                                        >
-                                            <source src={getVideoUrl(mainAttorneyVideo.videoUrl)} type="video/mp4" />
-                                            <source src={getVideoUrl(mainAttorneyVideo.videoUrl)} type="video/quicktime" />
-                                        </video>
-                                        <div className="absolute inset-0 flex items-center justify-center">
-                                            <div className="flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-full bg-white/90 text-[#E3623D] shadow-lg">
-                                                <span className="text-sm sm:text-lg flex items-center justify-center translate-x-[2px]">▶</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="flex-1 p-3 sm:p-4 flex flex-col justify-center min-w-0">
-                                        <div className="text-xs sm:text-sm font-semibold text-[#0A192F] truncate">Attorney Introduction</div>
-                                        <div className="mt-0.5 sm:mt-1 text-[9px] sm:text-[11px] uppercase tracking-[0.2em] text-[#5A6579] truncate">Welcome to the Guided Path</div>
-                                    </div>
-                                </div>
-
-                                {videoStories.map((story) => (
-                                    <div 
-                                        key={story.name} 
-                                        onClick={() => setActiveVideo(story)}
-                                        className={`cursor-pointer flex flex-row items-center overflow-hidden rounded-[16px] md:rounded-[24px] border ${activeVideo.videoUrl === story.videoUrl ? 'border-[#E3623D] ring-2 ring-[#E3623D]/20' : 'border-[#E9EDF4]'} bg-white shadow-sm transition hover:shadow-md`}
-                                    >
-                                        <div className="relative h-20 w-28 sm:h-24 sm:w-32 bg-black flex-shrink-0">
-                                            <video
-                                                className="h-full w-full object-cover opacity-80"
-                                                preload="metadata"
-                                                playsInline
-                                                muted
-                                            >
-                                                <source src={getVideoUrl(story.videoUrl)} type="video/mp4" />
-                                                <source src={getVideoUrl(story.videoUrl)} type="video/quicktime" />
-                                            </video>
-                                            <div className="absolute inset-0 flex items-center justify-center">
-                                                <div className="flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-full bg-white/90 text-[#E3623D] shadow-lg">
-                                                    <span className="text-sm sm:text-lg flex items-center justify-center translate-x-[2px]">▶</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="flex-1 p-3 sm:p-4 min-w-0">
-                                            <div className="text-xs sm:text-sm font-semibold text-[#0A192F] truncate">{story.name}</div>
-                                            <div className="mt-0.5 sm:mt-1 text-[9px] sm:text-[11px] uppercase tracking-[0.2em] text-[#5A6579] truncate">Approved · {story.origin}</div>
-                                            <div className="mt-1 sm:mt-2 text-[10px] sm:text-sm text-[#5A6579] truncate">{story.route}</div>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <VideoTestimonialsSection />
             </section>
 
             <section className="relative overflow-hidden bg-[#F8FBFF] py-16 md:py-24">

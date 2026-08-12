@@ -1,26 +1,5 @@
-const featuredStories = [
-    {
-        name: 'Mark Harrison',
-        route: 'IR-5 Parent Visa',
-        origin: 'United Kingdom',
-        quote: '"They made bringing me to America simpler, less stressful, and ultimately successful."',
-        image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=900&q=80',
-    },
-    {
-        name: 'Rachael Thompson',
-        route: 'IR-1 & IR-2 Family Visas',
-        origin: 'Sierra Leone',
-        quote: '"They made the process feel easier and more manageable every step of the way."',
-        image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=900&q=80',
-    },
-    {
-        name: 'Emily & Michał',
-        route: 'Adjustment of Status → Removal of Conditions',
-        origin: 'New York',
-        quote: '"A long-term relationship built on trust, support, and guidance—smooth from ESTA to Green Card and beyond."',
-        image: 'https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?auto=format&fit=crop&w=900&q=80',
-    },
-];
+import React from 'react';
+import VideoTestimonialsSection from '@/components/VideoTestimonialsSection';
 
 const reviewCards = [
     {
@@ -91,93 +70,7 @@ export default function SuccessStoriesPage() {
                 <div className="absolute top-0 right-0 h-[450px] w-[450px] rounded-full bg-gradient-to-br from-[#F8E0D2] to-[#FFF4EE] blur-3xl" />
                 <div className="absolute bottom-0 left-0 h-[350px] w-[350px] rounded-full bg-gradient-to-tr from-[#F8E0D2] to-[#EEF5FF] blur-3xl" />
 
-                <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6 lg:px-8">
-                    <div className="mx-auto mb-12 max-w-3xl text-center">
-                        <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-[#E9D2C2] bg-white/80 px-5 py-2 text-xs font-bold uppercase tracking-[0.18em] text-[#E3623D]">
-                            <span className="text-base">▶</span>
-                            <span>Watch Real Stories</span>
-                        </div>
-                        <h2 className="mb-4 text-3xl font-bold md:text-5xl">Hear It From Our Attorney &amp; Clients</h2>
-                        <p className="text-base text-[#5A6579] md:text-lg">
-                            Personal video introductions from one of our immigration attorneys and approved clients sharing their journey.
-                        </p>
-                    </div>
-
-                    <div className="mb-14 md:mb-20">
-                        <div className="group relative overflow-hidden rounded-[28px] border border-[#F3C3A8] bg-gradient-to-br from-[#FDF5EE] to-[#FDFDFF] shadow-[0_18px_50px_rgba(27,58,100,0.08)]">
-                            <div className="grid gap-6 items-stretch md:grid-cols-2">
-                                <div className="relative min-h-[280px] sm:min-h-[340px] overflow-hidden bg-slate-100 md:min-h-[420px]">
-                                    <img
-                                        src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1200&q=80"
-                                        alt="Immigration attorney introduction"
-                                        className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
-                                    />
-                                    <div className="absolute inset-0 bg-gradient-to-r from-black/40 via-black/10 to-transparent" />
-                                    <div className="absolute inset-0 flex items-center justify-center">
-                                        <div className="flex h-20 w-20 items-center justify-center rounded-full bg-white/95 text-[#E3623D] shadow-2xl transition-transform duration-300 group-hover:scale-110 md:h-24 md:w-24">
-                                            <span className="ml-1 text-2xl">▶</span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="flex flex-col justify-center p-6 text-left md:p-12">
-                                    <div className="mb-4 inline-flex w-fit items-center gap-2 rounded-full bg-[#FBE8DD] px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.16em] text-[#E3623D]">
-                                        <span>✦</span>
-                                        <span>Attorney Welcome</span>
-                                    </div>
-                                    <h3 className="mb-3 text-2xl font-bold md:text-3xl">One of our Immigration Attorneys</h3>
-                                    <p className="mb-4 text-sm font-semibold text-[#E3623D]">Licensed U.S. Immigration Attorney</p>
-                                    <p className="mb-6 text-base leading-relaxed text-[#5A6579] md:text-lg">
-                                        A personal welcome and a look at how our attorney-reviewed process protects your case from day one.
-                                    </p>
-                                    <button className="inline-flex w-fit items-center justify-center rounded-md bg-gradient-to-r from-[#E3623D] to-[#2F6FDB] px-8 py-3 text-sm font-semibold text-white shadow-lg transition-all duration-300 hover:scale-105">
-                                        <span className="mr-2 text-base">▶</span>
-                                        Watch Introduction
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 md:gap-8">
-                        {featuredStories.map((story, index) => (
-                            <div
-                                key={story.name}
-                                className="group overflow-hidden rounded-[28px] border border-[#F1D7C7] bg-white shadow-[0_12px_35px_rgba(27,58,100,0.06)] transition-all duration-500 hover:-translate-y-1 hover:border-[#E3623D]"
-                            >
-                                <div className="relative aspect-video overflow-hidden bg-slate-100">
-                                    <img
-                                        src={story.image}
-                                        alt={story.name}
-                                        className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
-                                    />
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
-                                    <div className="absolute inset-0 flex items-center justify-center">
-                                        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-white/95 text-[#E3623D] shadow-2xl transition-transform duration-300 group-hover:scale-110 md:h-20 md:w-20">
-                                            <span className="ml-1 text-xl">▶</span>
-                                        </div>
-                                    </div>
-                                    <div className="absolute left-4 top-4 rounded-full border border-[#E4B89E] bg-white/95 px-3 py-1 text-[11px] font-semibold text-[#E3623D]">
-                                        Approved · {story.origin}
-                                    </div>
-                                </div>
-
-                                <div className="p-5 md:p-6">
-                                    <div className="mb-2 text-lg font-bold text-[#0A192F] group-hover:text-[#E3623D]">{story.name}</div>
-                                    <div className="mb-3 text-sm text-[#5A6579]">{story.route}</div>
-                                    <p className="text-sm leading-relaxed text-[#5A6579]">{story.quote}</p>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-
-                    <div className="mt-12 flex justify-center">
-                        <button className="inline-flex items-center gap-2 rounded-full border border-[#E3623D]/30 bg-white px-8 py-3 text-sm font-semibold text-[#E3623D] transition-all duration-300 hover:scale-[1.02] hover:border-[#E3623D] hover:bg-[#FFF7F2]">
-                            <span>View 5 More Stories</span>
-                            <span>⌄</span>
-                        </button>
-                    </div>
-                </div>
+                <VideoTestimonialsSection />
             </section>
 
             <section className="relative overflow-hidden bg-[#F8FBFF] py-16 md:py-24">
