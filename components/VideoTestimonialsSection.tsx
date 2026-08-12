@@ -44,7 +44,7 @@ const videoStories: Story[] = [
     route: 'Adjustment of Status → Removal of Conditions',
     origin: 'New York',
     badge: 'Approved · New York',
-    videoUrl: 'IMG_8409.MOV',
+    videoUrl: 'IMG_8409.MP4',
     quote: '"A long-term relationship built on trust, support, and guidance - smooth from ESTA to Green Card and beyond."',
   },
   {
@@ -60,7 +60,7 @@ const videoStories: Story[] = [
     route: 'F-1 → Adjustment of Status',
     origin: 'China',
     badge: 'Approved · China',
-    videoUrl: 'IMG_1500.MOV',
+    videoUrl: 'IMG_1500.MP4',
     quote: '"A simpler, more affordable path from F-1 to Green Card - with Chinese document translation included."',
   },
   {
@@ -68,7 +68,7 @@ const videoStories: Story[] = [
     route: 'U.S. Naturalization',
     origin: 'U.S. Citizen',
     badge: 'Approved · U.S. Citizen',
-    videoUrl: 'IMG_3241.MOV',
+    videoUrl: 'IMG_3241.MP4',
     quote: '"From dream to citizenship - guided through filing, documents, and interview prep every step of the way."',
   },
   {
@@ -76,7 +76,7 @@ const videoStories: Story[] = [
     route: 'K-1 Fiancé Visa → Adjustment of Status',
     origin: 'Algeria',
     badge: 'Approved · Algeria',
-    videoUrl: 'IMG_4779.MOV',
+    videoUrl: 'IMG_4779.MP4',
     quote: '"An affordable and trustworthy alternative to traditional immigration services - guided from USCIS to NVC to embassy approval, and now my Green Ca..."',
   },
   {
