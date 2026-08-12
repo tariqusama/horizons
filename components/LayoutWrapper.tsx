@@ -4,7 +4,6 @@ import React from 'react';
 import { usePathname } from 'next/navigation';
 import Header from './Header';
 import Footer from './Footer';
-import ChatWidget from './ChatWidget';
 import SessionTimeoutModal from './SessionTimeoutModal';
 
 export default function LayoutWrapper({ children }: { children: React.ReactNode }) {
@@ -27,7 +26,6 @@ export default function LayoutWrapper({ children }: { children: React.ReactNode 
         {children}
       </main>
       {!hideShell && <Footer />}
-      {!hideShell && <ChatWidget />}
       <SessionTimeoutModal />
     </>
   );

@@ -24,28 +24,32 @@ body {
 }
 
 /* Custom Orange Scrollbar */
-* {
+html, body {
   scrollbar-width: thin;
   scrollbar-color: #FF4500 #f1f1f1;
 }
 
-*::-webkit-scrollbar {
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 
-*::-webkit-scrollbar-track {
+html::-webkit-scrollbar-track,
+body::-webkit-scrollbar-track {
   background: #f1f1f1;
   border-radius: 4px;
 }
 
-*::-webkit-scrollbar-thumb {
+html::-webkit-scrollbar-thumb,
+body::-webkit-scrollbar-thumb {
   background: #FF4500;
   border-radius: 4px;
   border: 2px solid #f1f1f1;
 }
 
-*::-webkit-scrollbar-thumb:hover {
+html::-webkit-scrollbar-thumb:hover,
+body::-webkit-scrollbar-thumb:hover {
   background: #E03E00;
 }
 

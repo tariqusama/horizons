@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import LayoutWrapper from "@/components/LayoutWrapper";
 import { AuthProvider } from "@/contexts/AuthContext";
@@ -49,6 +50,7 @@ export default function RootLayout({
             </LayoutWrapper>
           </AuthProvider>
         </AlertProvider>
+        <Script src="//code.tidio.co/09r1t1s3uxdlfvmkh3crhe3rmk8vck9w.js" strategy="lazyOnload" />
       </body>
     </html>
   );
