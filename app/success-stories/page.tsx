@@ -70,7 +70,9 @@ export default function SuccessStoriesPage() {
                 <div className="absolute top-0 right-0 h-[450px] w-[450px] rounded-full bg-gradient-to-br from-[#F8E0D2] to-[#FFF4EE] blur-3xl" />
                 <div className="absolute bottom-0 left-0 h-[350px] w-[350px] rounded-full bg-gradient-to-tr from-[#F8E0D2] to-[#EEF5FF] blur-3xl" />
 
-                <VideoTestimonialsSection />
+                <div className="relative z-10">
+                    <VideoTestimonialsSection />
+                </div>
             </section>
 
             <section className="relative overflow-hidden bg-[#F8FBFF] py-16 md:py-24">

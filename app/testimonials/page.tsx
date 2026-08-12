@@ -93,10 +93,12 @@ export default function TestimonialsPage() {
                 <div className="absolute top-0 right-0 h-[450px] w-[450px] rounded-full bg-gradient-to-br from-[#F8E0D2] to-[#FFF4EE] blur-3xl" />
                 <div className="absolute bottom-0 left-0 h-[350px] w-[350px] rounded-full bg-gradient-to-tr from-[#F8E0D2] to-[#EEF5FF] blur-3xl" />
 
-                <VideoTestimonialsSection />
+                <div className="relative z-10">
+                    <VideoTestimonialsSection />
+                </div>
             </section>
 
-            <section className="relative overflow-hidden bg-[#F8FBFF] py-16 md:py-24">
+            <section id="reviews" className="relative overflow-hidden bg-[#F8FBFF] py-16 md:py-24">
                 <div className="absolute inset-0 opacity-5" aria-hidden="true">
                     <div className="h-full w-full bg-[linear-gradient(rgba(0,0,0,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.03)_1px,transparent_1px)] bg-[size:28px_28px]" />
                 </div>
