@@ -6,13 +6,13 @@ const getVideoUrl = (filename: string) => `${BACKEND_URL}/storage/testmonials/${
 
 const files = [
   'Mark_.mp4',
-  'Horizon Pathways Testimony Judith .MP4',
+  'Horizon Pathways Testimony Judith .mp4',
   'Main_Video_1_.mp4',
   'HP_2.mp4',
-  'IMG_1500.MOV',
-  'IMG_3241.MOV',
-  'IMG_4779.MOV',
-  'IMG_8409.MOV'
+  'IMG_1500.mp4',
+  'IMG_3241.mp4',
+  'IMG_4779.mp4',
+  'IMG_8409.mp4'
 ];
 
 export default function TestVideosPage() {

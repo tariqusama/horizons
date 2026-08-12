@@ -36,7 +36,7 @@ const videoStories: Story[] = [
     route: 'IR-1 & IR-2 Family Visas',
     origin: 'Sierra Leone',
     badge: 'Petition Approved · Sierra Leone',
-    videoUrl: 'Horizon Pathways Testimony Judith .MP4',
+    videoUrl: 'Horizon Pathways Testimony Judith .mp4',
     quote: '"They made the process feel easier and more manageable every step of the way."',
   },
   {
@@ -44,7 +44,7 @@ const videoStories: Story[] = [
     route: 'Adjustment of Status → Removal of Conditions',
     origin: 'New York',
     badge: 'Approved · New York',
-    videoUrl: 'IMG_8409.MP4',
+    videoUrl: 'IMG_8409.mp4',
     quote: '"A long-term relationship built on trust, support, and guidance - smooth from ESTA to Green Card and beyond."',
   },
   {
@@ -60,7 +60,7 @@ const videoStories: Story[] = [
     route: 'F-1 → Adjustment of Status',
     origin: 'China',
     badge: 'Approved · China',
-    videoUrl: 'IMG_1500.MP4',
+    videoUrl: 'IMG_1500.mp4',
     quote: '"A simpler, more affordable path from F-1 to Green Card - with Chinese document translation included."',
   },
   {
@@ -68,7 +68,7 @@ const videoStories: Story[] = [
     route: 'U.S. Naturalization',
     origin: 'U.S. Citizen',
     badge: 'Approved · U.S. Citizen',
-    videoUrl: 'IMG_3241.MP4',
+    videoUrl: 'IMG_3241.mp4',
     quote: '"From dream to citizenship - guided through filing, documents, and interview prep every step of the way."',
   },
   {
@@ -76,7 +76,7 @@ const videoStories: Story[] = [
     route: 'K-1 Fiancé Visa → Adjustment of Status',
     origin: 'Algeria',
     badge: 'Approved · Algeria',
-    videoUrl: 'IMG_4779.MP4',
+    videoUrl: 'IMG_4779.mp4',
     quote: '"An affordable and trustworthy alternative to traditional immigration services - guided from USCIS to NVC to embassy approval, and now my Green Ca..."',
   },
   {
