@@ -16,10 +16,12 @@ interface Story {
 }
 
 const mainAttorneyVideo = {
-  name: 'Welcome to The Guided Path',
-  route: 'A personal welcome and a look at how our attorney-reviewed process protects your case from day one.',
+  name: 'One of our Immigration Attorneys',
+  route: 'Licensed U.S. Immigration Attorney',
   origin: 'One of our immigration attorneys',
-  videoUrl: 'Immigration Attorney.mp4'
+  badge: 'Attorney Welcome',
+  videoUrl: 'Immigration Attorney.mp4',
+  quote: 'A personal welcome and a look at how our attorney-reviewed process protects your case from day one.',
 };
 
 const videoStories: Story[] = [
@@ -90,33 +92,24 @@ const videoStories: Story[] = [
 ];
 
 export default function VideoTestimonialsSection() {
-  const [isPlayingAttorney, setIsPlayingAttorney] = useState(false);
-  const [playingCardIndex, setPlayingCardIndex] = useState<number | null>(null);
+  const [activeVideo, setActiveVideo] = useState<Story | typeof mainAttorneyVideo>(mainAttorneyVideo);
+  const [isPlaying, setIsPlaying] = useState(false);
   const [showAllStories, setShowAllStories] = useState(false);
 
-  const attorneyVideoRef = useRef<HTMLVideoElement>(null);
-  const clientVideoRefs = useRef<(HTMLVideoElement | null)[]>([]);
+  const topPlayerRef = useRef<HTMLDivElement>(null);
 
-  // Stop attorney video when a client video plays
-  useEffect(() => {
-    if (playingCardIndex !== null && isPlayingAttorney) {
-      setIsPlayingAttorney(false);
-    }
-  }, [playingCardIndex]);
-
-  // Stop client video when attorney video plays
-  useEffect(() => {
-    if (isPlayingAttorney && playingCardIndex !== null) {
-      setPlayingCardIndex(null);
-    }
-  }, [isPlayingAttorney]);
-
-  const handlePlayAttorney = () => {
-    setIsPlayingAttorney(true);
+  const handlePlayMain = () => {
+    setIsPlaying(true);
   };
 
-  const handlePlayClient = (idx: number) => {
-    setPlayingCardIndex(idx);
+  const handleSelectVideo = (story: Story) => {
+    setActiveVideo(story);
+    setIsPlaying(true);
+    // Smooth scroll up to the main player
+    if (topPlayerRef.current) {
+      const y = topPlayerRef.current.getBoundingClientRect().top + window.scrollY - 100;
+      window.scrollTo({ top: y, behavior: 'smooth' });
+    }
   };
 
   const getMimeType = (filename: string) => {
@@ -142,47 +135,36 @@ export default function VideoTestimonialsSection() {
         </p>
       </div>
 
-      {/* Main Attorney Welcome Card */}
-      <div className="mb-14 md:mb-20">
+      {/* Main Video Card */}
+      <div className="mb-14 md:mb-20" ref={topPlayerRef}>
         <div className="group relative overflow-hidden rounded-[24px] border border-[#E9D2C2] bg-white shadow-[0_12px_40px_rgba(27,58,100,0.04)]">
           <div className="grid gap-0 items-stretch md:grid-cols-2">
             {/* Left side: Video Player */}
             <div className="relative min-h-[320px] md:min-h-[460px] bg-black flex flex-col justify-center overflow-hidden">
-              {isPlayingAttorney ? (
+              {isPlaying ? (
                 <video
-                  ref={attorneyVideoRef}
+                  key={activeVideo.videoUrl}
                   className="w-full h-full object-contain md:max-h-[460px]"
                   controls
                   autoPlay
                   preload="metadata"
                   playsInline
                 >
-                  <source src={getVideoUrl(mainAttorneyVideo.videoUrl)} type={getMimeType(mainAttorneyVideo.videoUrl)} />
+                  <source src={getVideoUrl(activeVideo.videoUrl)} type={getMimeType(activeVideo.videoUrl)} />
                 </video>
               ) : (
                 <div
-                  onClick={handlePlayAttorney}
+                  onClick={handlePlayMain}
                   className="relative w-full h-full cursor-pointer group/player flex items-center justify-center min-h-[320px] md:min-h-[460px]"
                 >
-                  {/* Blurred fill layer so there's never letterbox bars, but nothing gets cropped */}
                   <video
-                    className="absolute inset-0 w-full h-full object-cover scale-110 blur-2xl opacity-40"
-                    preload="metadata"
-                    playsInline
-                    muted
-                    aria-hidden="true"
-                    tabIndex={-1}
-                  >
-                    <source src={getVideoUrl(mainAttorneyVideo.videoUrl) + '#t=1.5'} type={getMimeType(mainAttorneyVideo.videoUrl)} />
-                  </video>
-                  {/* Foreground: full, uncropped frame */}
-                  <video
+                    key={activeVideo.videoUrl + '-thumb'}
                     className="relative z-[1] w-full h-full object-contain"
                     preload="metadata"
                     playsInline
                     muted
                   >
-                    <source src={getVideoUrl(mainAttorneyVideo.videoUrl) + '#t=1.5'} type={getMimeType(mainAttorneyVideo.videoUrl)} />
+                    <source src={getVideoUrl(activeVideo.videoUrl) + '#t=1.5'} type={getMimeType(activeVideo.videoUrl)} />
                   </video>
                   {/* Dark overlay */}
                   <div className="absolute inset-0 z-[2] bg-black/10 group-hover/player:bg-black/20 transition-colors duration-300" />
@@ -196,28 +178,30 @@ export default function VideoTestimonialsSection() {
             </div>
 
             {/* Right side: Welcome Info */}
-            <div className="flex flex-col justify-center p-8 text-left md:p-12 bg-[#FCF6F2]/30">
+            <div className="flex flex-col justify-center p-8 text-left md:p-12 bg-[#FCF6F2]/30 transition-all duration-300">
               <div className="mb-4 inline-flex w-fit items-center gap-1.5 rounded-full bg-[#FFF0E6] border border-[#F3C3A8]/45 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.12em] text-[#E3623D]">
                 <Sparkles size={12} className="fill-[#E3623D] stroke-none" />
-                <span>Attorney Welcome</span>
+                <span>{activeVideo.badge}</span>
               </div>
               <h3 className="mb-3 text-2xl font-extrabold text-[#0A192F] md:text-3xl tracking-tight leading-tight">
-                One of our Immigration Attorneys
+                {activeVideo.name}
               </h3>
               <p className="mb-4 text-xs font-bold text-[#E3623D] uppercase tracking-wider">
-                Licensed U.S. Immigration Attorney
+                {activeVideo.route}
               </p>
               <p className="mb-8 text-sm leading-relaxed text-[#5A6579] md:text-base">
-                A personal welcome and a look at how our attorney-reviewed process protects your case from day one.
+                {activeVideo.quote}
               </p>
-
-              <button
-                onClick={handlePlayAttorney}
-                className="inline-flex w-fit items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#E3623D] to-[#1A2B4B] hover:scale-105 active:scale-98 text-white font-bold px-7 py-3.5 text-[14px] shadow-md shadow-[#E3623D]/10 transition-all duration-300 group/btn cursor-pointer"
-              >
-                <Play size={14} className="fill-white stroke-none" />
-                <span>Watch Introduction</span>
-              </button>
+              
+              {!isPlaying && (
+                <button
+                  onClick={handlePlayMain}
+                  className="inline-flex w-fit items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#E3623D] to-[#1A2B4B] hover:scale-105 active:scale-98 text-white font-bold px-7 py-3.5 text-[14px] shadow-md shadow-[#E3623D]/10 transition-all duration-300 group/btn cursor-pointer"
+                >
+                  <Play size={14} className="fill-white stroke-none" />
+                  <span>Watch Video</span>
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -225,68 +209,41 @@ export default function VideoTestimonialsSection() {
 
       {/* Grid of Testimonials */}
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 md:gap-8">
-        {visibleStories.map((story, index) => {
-          const isPlaying = playingCardIndex === index;
-          return (
+        {visibleStories.map((story) => (
             <div
               key={story.name}
               className="group flex flex-col overflow-hidden rounded-[24px] border border-[#E9D2C2] bg-white shadow-[0_8px_25px_rgba(27,58,100,0.03)] transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_16px_35px_rgba(27,58,100,0.06)] hover:border-[#E3623D]"
             >
-              {/* Top part: Video Player */}
+              {/* Top part: Video Player Thumbnail */}
               <div className="relative aspect-[4/5] sm:aspect-video w-full bg-black overflow-hidden flex flex-col justify-center">
-                {isPlaying ? (
+                <div
+                  onClick={() => handleSelectVideo(story)}
+                  className="relative w-full h-full cursor-pointer group/player flex items-center justify-center"
+                >
                   <video
-                    ref={(el) => { clientVideoRefs.current[index] = el; }}
                     className="relative z-[1] w-full h-full object-contain"
-                    controls
-                    autoPlay
                     preload="metadata"
                     playsInline
+                    muted
                   >
-                    <source src={getVideoUrl(story.videoUrl)} type={getMimeType(story.videoUrl)} />
+                    <source src={getVideoUrl(story.videoUrl) + '#t=1.5'} type={getMimeType(story.videoUrl)} />
                   </video>
-                ) : (
-                  <div
-                    onClick={() => handlePlayClient(index)}
-                    className="relative w-full h-full cursor-pointer group/player flex items-center justify-center"
-                  >
-                    {/* Blurred fill layer so there's never letterbox bars, but nothing gets cropped */}
-                    <video
-                      className="absolute inset-0 w-full h-full object-cover scale-110 blur-2xl opacity-40"
-                      preload="metadata"
-                      playsInline
-                      muted
-                      aria-hidden="true"
-                      tabIndex={-1}
-                    >
-                      <source src={getVideoUrl(story.videoUrl) + '#t=1.5'} type={getMimeType(story.videoUrl)} />
-                    </video>
-                    {/* Foreground: full, uncropped frame */}
-                    <video
-                      className="relative z-[1] w-full h-full object-contain"
-                      preload="metadata"
-                      playsInline
-                      muted
-                    >
-                      <source src={getVideoUrl(story.videoUrl) + '#t=1.5'} type={getMimeType(story.videoUrl)} />
-                    </video>
-                    {/* Dark overlay */}
-                    <div className="absolute inset-0 z-[2] bg-black/10 group-hover/player:bg-black/20 transition-colors duration-300" />
+                  {/* Dark overlay */}
+                  <div className="absolute inset-0 z-[2] bg-black/10 group-hover/player:bg-black/20 transition-colors duration-300" />
 
-                    {/* Play button overlay */}
-                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[3] flex h-14 w-14 items-center justify-center rounded-full bg-white text-[#E3623D] shadow-lg transition-transform duration-300 group-hover/player:scale-110">
-                      <Play size={18} className="fill-[#E3623D] translate-x-[1px]" />
-                    </div>
+                  {/* Play button overlay */}
+                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[3] flex h-14 w-14 items-center justify-center rounded-full bg-white text-[#E3623D] shadow-lg transition-transform duration-300 group-hover/player:scale-110">
+                    <Play size={18} className="fill-[#E3623D] translate-x-[1px]" />
+                  </div>
 
-                    {/* Badge */}
-                    <div className="absolute left-4 top-4 right-4 z-[3] flex justify-start pointer-events-none">
-                      <div className="rounded-full bg-white/95 border border-[#F3C3A8]/30 px-3 py-1 text-[11px] font-bold text-[#E3623D] flex items-center gap-1 shadow-sm max-w-full pointer-events-auto">
-                        <Sparkles size={10} className="fill-[#E3623D] stroke-none shrink-0" />
-                        <span className="truncate">{story.badge}</span>
-                      </div>
+                  {/* Badge */}
+                  <div className="absolute left-4 top-4 right-4 z-[3] flex justify-start pointer-events-none">
+                    <div className="rounded-full bg-white/95 border border-[#F3C3A8]/30 px-3 py-1 text-[11px] font-bold text-[#E3623D] flex items-center gap-1 shadow-sm max-w-full pointer-events-auto">
+                      <Sparkles size={10} className="fill-[#E3623D] stroke-none shrink-0" />
+                      <span className="truncate">{story.badge}</span>
                     </div>
                   </div>
-                )}
+                </div>
               </div>
 
               {/* Bottom part: Card info */}
@@ -304,8 +261,7 @@ export default function VideoTestimonialsSection() {
                 </div>
               </div>
             </div>
-          );
-        })}
+          ))}
       </div>
 
       {/* View More Button */}
