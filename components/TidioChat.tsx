@@ -21,10 +21,23 @@ export default function TidioChat() {
   const shouldHideChat = hideChatOnPaths.some(path => pathname?.startsWith(path));
 
   if (shouldHideChat) {
-    return null;
+    return (
+      <style>{`
+        #tidio-chat-iframe, #tidio-chat { 
+          display: none !important; 
+        }
+      `}</style>
+    );
   }
 
   return (
-    <Script src="//code.tidio.co/09r1t1s3uxdlfvmkh3crhe3rmk8vck9w.js" strategy="lazyOnload" />
+    <>
+      <style>{`
+        #tidio-chat-iframe, #tidio-chat { 
+          display: block !important; 
+        }
+      `}</style>
+      <Script src="//code.tidio.co/09r1t1s3uxdlfvmkh3crhe3rmk8vck9w.js" strategy="lazyOnload" />
+    </>
   );
 }
