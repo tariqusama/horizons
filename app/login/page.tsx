@@ -32,12 +32,6 @@ export default function LoginPage() {
     <>
       <Header />
       <div className="min-h-screen pt-[120px] bg-[#F5F4F1] flex items-center justify-center p-6">
-        <style>{`
-          @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
-          .font-body { font-family: 'Inter', sans-serif; }
-          .font-mono { font-family: 'IBM Plex Mono', monospace; }
-        `}</style>
-
         <div className="w-full max-w-5xl bg-white rounded-2xl shadow-sm overflow-hidden flex min-h-[660px] font-body">
           {/* Left Column: Gradient visual panel */}
           <div className="hidden lg:flex lg:w-[45%] relative overflow-hidden">
