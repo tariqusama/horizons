@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Elements, useStripe, useElements, CardElement } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 import { useAuth } from '@/contexts/AuthContext';
@@ -133,6 +134,7 @@ const hasStripeEnvKey = Boolean(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
 
 function SignupFlowContent() {
   const { register } = useAuth();
+  const router = useRouter();
   const [currentStep, setCurrentStep] = useState(0); // 0 = Goal selection, 1+ = questions, Final = account creation
   const [selectedGoal, setSelectedGoal] = useState<string | null>(null);
   const [answers, setAnswers] = useState<Record<number, string>>({});
@@ -518,8 +520,9 @@ function SignupFlowContent() {
         addons: addonsData,
         questionnaire: questionnaireAnswers,
         service_id: getServiceId(selectedGoal, answers)
-      });
-      // Context will redirect to /dashboard
+      }, true); // skip default redirect
+      
+      router.push('/welcome');
     } catch (err: any) {
       setError(err.message || err.response?.data?.message || 'Payment or registration failed');
     } finally {
