@@ -1374,8 +1374,8 @@ function SignupFlowContent() {
 
     if (currentStep === questions.length + 3) {
       return (
-        <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-[480px] mx-auto">
-          <div className="bg-white border border-gray-200 rounded-[12px] p-8 md:p-10 shadow-sm text-center">
+        <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 w-full max-w-[480px] mx-auto px-2 sm:px-0">
+          <div className="bg-white border border-gray-200 rounded-[12px] p-5 sm:p-8 md:p-10 shadow-sm text-center">
 
             <div className="w-16 h-16 bg-[#FDF3E4] rounded-full flex items-center justify-center mx-auto mb-6">
               <span className="material-icons text-2xl sm:text-[28px] text-orange-500">mail_outline</span>
@@ -1392,16 +1392,17 @@ function SignupFlowContent() {
               </div>
             )}
 
-            <div className="flex justify-between gap-2 mb-8">
+            <div className="flex justify-between gap-1.5 sm:gap-2 mb-8">
               {otp.map((digit, idx) => (
                 <input
                   key={idx}
                   id={`otp-${idx}`}
                   type="text"
+                  inputMode="numeric"
                   maxLength={1}
                   value={digit}
                   onChange={(e) => handleOtpChange(idx, e.target.value)}
-                  className="w-12 h-14 border border-gray-300 rounded-[8px] text-center text-lg sm:text-[20px] font-bold text-[#101F38] outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-all bg-white"
+                  className="flex-1 min-w-0 max-w-[52px] h-12 sm:h-14 border border-gray-300 rounded-[8px] text-center text-base sm:text-[20px] font-bold text-[#101F38] outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-all bg-white"
                 />
               ))}
             </div>
@@ -1744,7 +1745,7 @@ function SignupFlowContent() {
   };
 
   return (
-    <main className="w-full min-h-screen bg-[#F5F4F1] py-16 px-4 sm:px-6 lg:px-12 flex items-center justify-center">
+    <main className="w-full min-h-screen bg-[#F5F4F1] py-8 sm:py-16 px-4 sm:px-6 lg:px-12 flex items-center justify-center">
 
       {isQuestionsDone ? (
         // Post-Questionnaire Views (Plan Selection, Account, Verification, Payment)
