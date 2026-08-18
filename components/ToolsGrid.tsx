@@ -30,7 +30,8 @@ export default function ToolsGrid() {
       title: "I-94 Travel History Guide",
       description: "Step-by-step guide to retrieve your I-94 arrival/departure records from CBP.",
       time: "3-5 minutes",
-      href: "/free/i-94/start",
+      href: "https://i94.cbp.dhs.gov/home",
+      external: true,
       features: [
         "Interactive guide",
         "CBP portal walkthrough",
@@ -114,10 +115,22 @@ export default function ToolsGrid() {
                 </div>
               </div>
 
-              <Link href={tool.href || "/signup"} className="w-full bg-[#1B3A64] hover:bg-[#0A192F] text-white font-bold py-5 rounded-[20px] transition-all duration-300 flex items-center justify-center space-x-2 mt-auto shadow-[0_15px_30px_rgba(27,58,100,0.2)] hover:shadow-[0_20px_40px_rgba(27,58,100,0.3)] hover:-translate-y-1 text-[17px]">
-                <span>Get Started</span>
-                <span className="material-icons text-[20px] ml-2">arrow_forward</span>
-              </Link>
+              {tool.external ? (
+                <a
+                  href={tool.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full bg-[#1B3A64] hover:bg-[#0A192F] text-white font-bold py-5 rounded-[20px] transition-all duration-300 flex items-center justify-center space-x-2 mt-auto shadow-[0_15px_30px_rgba(27,58,100,0.2)] hover:shadow-[0_20px_40px_rgba(27,58,100,0.3)] hover:-translate-y-1 text-[17px]"
+                >
+                  <span>Get Started</span>
+                  <span className="material-icons text-[20px] ml-2">arrow_forward</span>
+                </a>
+              ) : (
+                <Link href={tool.href || "/signup"} className="w-full bg-[#1B3A64] hover:bg-[#0A192F] text-white font-bold py-5 rounded-[20px] transition-all duration-300 flex items-center justify-center space-x-2 mt-auto shadow-[0_15px_30px_rgba(27,58,100,0.2)] hover:shadow-[0_20px_40px_rgba(27,58,100,0.3)] hover:-translate-y-1 text-[17px]">
+                  <span>Get Started</span>
+                  <span className="material-icons text-[20px] ml-2">arrow_forward</span>
+                </Link>
+              )}
             </div>
           ))}
         </div>

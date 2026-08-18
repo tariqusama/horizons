@@ -271,17 +271,17 @@ export default function G1145Page() {
                   <div className="p-6 lg:p-8">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                       <div>
-                        <label className="block text-sm font-bold text-[#1B3A64] mb-2" htmlFor="firstName">First Name *</label>
+                        <label className="block text-sm font-bold text-[#1B3A64] mb-2" htmlFor="lastName">Applicant/Petitioner Full Last Name *</label>
+                        <input className="w-full h-12 bg-gray-50 border border-gray-200 rounded-lg px-4 focus:outline-none focus:ring-2 focus:ring-[#1B3A64] transition-all" placeholder="Lopez" name="lastName" id="lastName" required />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-bold text-[#1B3A64] mb-2" htmlFor="firstName">Applicant/Petitioner Full First Name *</label>
                         <input className="w-full h-12 bg-gray-50 border border-gray-200 rounded-lg px-4 focus:outline-none focus:ring-2 focus:ring-[#1B3A64] transition-all" placeholder="Maria" name="firstName" id="firstName" required />
                       </div>
                       <div>
-                        <label className="block text-sm font-bold text-[#1B3A64] mb-2" htmlFor="middleName">Middle Name</label>
+                        <label className="block text-sm font-bold text-[#1B3A64] mb-2" htmlFor="middleName">Applicant/Petitioner Full Middle Name</label>
                         <input className="w-full h-12 bg-gray-50 border border-gray-200 rounded-lg px-4 focus:outline-none focus:ring-2 focus:ring-[#1B3A64] transition-all" placeholder="Carmen" name="middleName" id="middleName" />
                         <p className="text-xs text-[#5A6579] mt-2">Leave blank if you don't have a middle name</p>
-                      </div>
-                      <div>
-                        <label className="block text-sm font-bold text-[#1B3A64] mb-2" htmlFor="lastName">Last Name *</label>
-                        <input className="w-full h-12 bg-gray-50 border border-gray-200 rounded-lg px-4 focus:outline-none focus:ring-2 focus:ring-[#1B3A64] transition-all" placeholder="Lopez" name="lastName" id="lastName" required />
                       </div>
                     </div>
                   </div>
@@ -304,9 +304,9 @@ export default function G1145Page() {
                         <p className="text-xs text-[#5A6579] mt-2">You'll receive email notifications here</p>
                       </div>
                       <div>
-                        <label className="block text-sm font-bold text-[#1B3A64] mb-2" htmlFor="mobilePhone">Mobile Phone Number</label>
+                        <label className="block text-sm font-bold text-[#1B3A64] mb-2" htmlFor="mobilePhone">Mobile Phone Number (Text Message)</label>
                         <input className="w-full h-12 bg-gray-50 border border-gray-200 rounded-lg px-4 focus:outline-none focus:ring-2 focus:ring-[#1B3A64] transition-all" placeholder="(555) 123-4567" name="mobilePhone" id="mobilePhone" />
-                        <p className="text-xs text-[#5A6579] mt-2">You'll receive text message alerts here (optional)</p>
+                        <p className="text-xs text-[#5A6579] mt-2">Domestic customers only. Overseas customers receive email only.</p>
                       </div>
                     </div>
                   </div>
@@ -392,9 +392,9 @@ export default function G1145Page() {
                 <h3 className="text-base font-bold text-[#1B3A64]">Personal Information</h3>
               </div>
               <div className="p-6 grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div><span className="text-sm text-gray-500 block">First Name</span><span className="font-medium text-[#1B3A64]">{formData.firstName || '-'}</span></div>
-                <div><span className="text-sm text-gray-500 block">Middle Name</span><span className="font-medium text-[#1B3A64]">{formData.middleName || '-'}</span></div>
-                <div><span className="text-sm text-gray-500 block">Last Name</span><span className="font-medium text-[#1B3A64]">{formData.lastName || '-'}</span></div>
+                <div><span className="text-sm text-gray-500 block">Full Last Name</span><span className="font-medium text-[#1B3A64]">{formData.lastName || '-'}</span></div>
+                <div><span className="text-sm text-gray-500 block">Full First Name</span><span className="font-medium text-[#1B3A64]">{formData.firstName || '-'}</span></div>
+                <div><span className="text-sm text-gray-500 block">Full Middle Name</span><span className="font-medium text-[#1B3A64]">{formData.middleName || '-'}</span></div>
               </div>
             </div>
 
@@ -404,7 +404,7 @@ export default function G1145Page() {
               </div>
               <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div><span className="text-sm text-gray-500 block">Email Address</span><span className="font-medium text-[#1B3A64]">{formData.email || '-'}</span></div>
-                <div><span className="text-sm text-gray-500 block">Mobile Phone Number</span><span className="font-medium text-[#1B3A64]">{formData.mobilePhone || '-'}</span></div>
+                <div><span className="text-sm text-gray-500 block">Mobile Phone Number (Text Message)</span><span className="font-medium text-[#1B3A64]">{formData.mobilePhone || '-'}</span></div>
               </div>
             </div>
 

@@ -1,10 +1,9 @@
 "use client";
 
 import React, { useState } from 'react';
-import Link from 'next/link';
 import {
   Gift, Clock, Shield, CircleAlert, FileText,
-  CircleCheckBig, ArrowRight, User, Phone, MapPin, Mail, Lock, BadgeCheck, Scale, ArrowLeft, Download, UploadCloud
+  CircleCheckBig, ArrowRight, Lock, BadgeCheck, Scale, ArrowLeft, Download, PenLine
 } from 'lucide-react';
 import jsPDF from 'jspdf';
 
@@ -100,18 +99,9 @@ function AddressBlock({ prefix, streetPlaceholder, cityPlaceholder }: { prefix: 
 }
 
 export default function AR11Page() {
-  const [receiptNumber, setReceiptNumber] = useState('');
-  const [receiptNumbers, setReceiptNumbers] = useState<string[]>([]);
   const [agreed, setAgreed] = useState(false);
   const [step, setStep] = useState<'form' | 'review'>('form');
   const [formData, setFormData] = useState<Record<string, any>>({});
-
-  const addReceiptNumber = () => {
-    if (receiptNumber.trim()) {
-      setReceiptNumbers([...receiptNumbers, receiptNumber.trim()]);
-      setReceiptNumber('');
-    }
-  };
 
   const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -146,7 +136,7 @@ export default function AR11Page() {
     let y = 60;
 
     for (const [key, value] of Object.entries(formData)) {
-      const formattedKey = key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+      const formattedKey = key.replace(/_/g, ' ').replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
 
       doc.setFont("helvetica", "bold");
       doc.text(`${formattedKey}:`, 20, y);
@@ -201,31 +191,28 @@ export default function AR11Page() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
               {[
                 {
-                  Icon: Clock, color: "blue", title: "5-10 Minutes",
+                  Icon: Clock, title: "5-10 Minutes",
                   desc: "Quick and easy form completion",
                   gradient: "from-blue-500/10 via-background to-cyan-500/10",
                   iconGradient: "from-blue-500/20 to-cyan-500/20",
                   hoverOverlay: "from-blue-500/20 to-cyan-500/20",
-                  textColor: "text-blue-500",
-                  delay: 0,
+                  textColor: "text-blue-500", delay: 0,
                 },
                 {
-                  Icon: Download, color: "orange", title: "Instant PDF",
+                  Icon: Download, title: "Instant PDF",
                   desc: "Get your filled AR-11 immediately",
                   gradient: "from-orange-500/10 via-background to-amber-500/10",
                   iconGradient: "from-orange-500/20 to-amber-500/20",
                   hoverOverlay: "from-orange-500/20 to-amber-500/20",
-                  textColor: "text-orange-500",
-                  delay: 100,
+                  textColor: "text-orange-500", delay: 100,
                 },
                 {
-                  Icon: Shield, color: "green", title: "100% Free",
+                  Icon: Shield, title: "100% Free",
                   desc: "No hidden fees or charges",
                   gradient: "from-green-500/10 via-background to-emerald-500/10",
                   iconGradient: "from-green-500/20 to-emerald-500/20",
                   hoverOverlay: "from-green-500/20 to-emerald-500/20",
-                  textColor: "text-green-500",
-                  delay: 200,
+                  textColor: "text-green-500", delay: 200,
                 },
               ].map(({ Icon, title, desc, gradient, iconGradient, hoverOverlay, textColor, delay }) => (
                 <div
@@ -264,8 +251,8 @@ export default function AR11Page() {
                 </p>
                 <ul className="space-y-3">
                   {["Missed important USCIS notices", "Delays in case processing", "Potential immigration consequences"].map((item) => (
-                    <li key={item} className="flex items-start gap-3 p-3 rounded-lg bg-destructive/5">
-                      <span className="w-2 h-2 rounded-full bg-destructive mt-2 flex-shrink-0" />
+                    <li key={item} className="flex items-start gap-3 p-3 rounded-lg bg-red-50">
+                      <span className="w-2 h-2 rounded-full bg-red-500 mt-2 flex-shrink-0" />
                       <span className="text-base">{item}</span>
                     </li>
                   ))}
@@ -352,29 +339,35 @@ export default function AR11Page() {
               </div>
 
               <form className="space-y-6" onSubmit={handleFormSubmit}>
-                {/* Personal Information */}
+
+                {/* ── Information About You ── */}
                 <div className="rounded-xl border border-slate-200 bg-slate-50 shadow-sm overflow-hidden">
                   <div className="flex items-center gap-3 px-6 py-4 border-b border-slate-200 bg-slate-100/80">
-                    <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
-                      <User className="w-4 h-4 text-blue-600" />
-                    </div>
                     <div>
-                      <h3 className="text-base font-bold text-[#1B3A64]">Personal Information</h3>
+                      <h3 className="text-base font-bold text-[#1B3A64]">Information About You</h3>
                       <p className="text-xs text-gray-500 mt-0.5">Provide your personal details as they appear on your immigration documents.</p>
                     </div>
                   </div>
                   <div className="p-6 space-y-5">
+                    {/* Family Name | Given Name | Middle Name */}
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      {[["First Name *", "firstName"], ["Middle Name", "middleName"], ["Last Name *", "lastName"]].map(([label, name]) => (
-                        <div key={name} className="space-y-1.5">
-                          <label className="text-sm font-semibold text-gray-700">{label}</label>
-                          <input name={name} className={inputClass} required={label.includes('*')} />
-                        </div>
-                      ))}
+                      <div className="space-y-1.5">
+                        <label className="text-sm font-semibold text-gray-700">Family Name (Last Name) *</label>
+                        <input name="familyName" className={inputClass} required />
+                      </div>
+                      <div className="space-y-1.5">
+                        <label className="text-sm font-semibold text-gray-700">Given Name (First Name) *</label>
+                        <input name="givenName" className={inputClass} required />
+                      </div>
+                      <div className="space-y-1.5">
+                        <label className="text-sm font-semibold text-gray-700">Middle Name (if applicable)</label>
+                        <input name="middleName" className={inputClass} />
+                      </div>
                     </div>
+                    {/* A-Number | Date of Birth */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="space-y-1.5">
-                        <label className="text-sm font-semibold text-gray-700">A-Number (if available)</label>
+                        <label className="text-sm font-semibold text-gray-700">Alien Registration Number (A-Number) (if any)</label>
                         <input name="aNumber" placeholder="A-" className={inputClass} />
                         <p className="text-xs text-gray-400">Your Alien Registration Number (9 digits, starting with A)</p>
                       </div>
@@ -383,60 +376,15 @@ export default function AR11Page() {
                         <input type="date" name="dob" className={inputClass} required />
                       </div>
                     </div>
-                    <div className="space-y-1.5">
-                      <label className="text-sm font-semibold text-gray-700">Country of Birth *</label>
-                      <input name="countryOfBirth" placeholder="United States" className={inputClass} required />
-                    </div>
                   </div>
                 </div>
 
-                {/* Contact Information */}
+                {/* ── Present Physical Address ── */}
                 <div className="rounded-xl border border-slate-200 bg-slate-50 shadow-sm overflow-hidden">
                   <div className="flex items-center gap-3 px-6 py-4 border-b border-slate-200 bg-slate-100/80">
-                    <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
-                      <Phone className="w-4 h-4 text-blue-600" />
-                    </div>
-                    <h3 className="text-base font-bold text-[#1B3A64]">Contact Information</h3>
-                  </div>
-                  <div className="p-6 space-y-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="space-y-1.5">
-                        <label className="text-sm font-semibold text-gray-700">Email Address *</label>
-                        <input type="email" name="email" placeholder="john@example.com" className={inputClass} required />
-                      </div>
-                      <div className="space-y-1.5">
-                        <label className="text-sm font-semibold text-gray-700">Phone Number *</label>
-                        <input type="tel" name="phone" placeholder="(555) 123-4567" className={inputClass} required />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Previous Address */}
-                <div className="rounded-xl border border-slate-200 bg-slate-50 shadow-sm overflow-hidden">
-                  <div className="flex items-center gap-3 px-6 py-4 border-b border-slate-200 bg-slate-100/80">
-                    <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
-                      <MapPin className="w-4 h-4 text-blue-600" />
-                    </div>
                     <div>
-                      <h3 className="text-base font-bold text-[#1B3A64]">Previous Address</h3>
-                      <p className="text-xs text-gray-500 mt-0.5">Enter your address before the change.</p>
-                    </div>
-                  </div>
-                  <div className="p-6">
-                    <AddressBlock prefix="prev" streetPlaceholder="123 Main Street" cityPlaceholder="New York" />
-                  </div>
-                </div>
-
-                {/* Present Address */}
-                <div className="rounded-xl border border-slate-200 bg-slate-50 shadow-sm overflow-hidden">
-                  <div className="flex items-center gap-3 px-6 py-4 border-b border-slate-200 bg-slate-100/80">
-                    <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
-                      <MapPin className="w-4 h-4 text-blue-600" />
-                    </div>
-                    <div>
-                      <h3 className="text-base font-bold text-[#1B3A64]">Present Address (New Address)</h3>
-                      <p className="text-xs text-gray-500 mt-0.5">Enter your current address after the change.</p>
+                      <h3 className="text-base font-bold text-[#1B3A64]">Present Physical Address (New Address)</h3>
+                      <p className="text-xs text-gray-500 mt-0.5">No PO Boxes. Enter your current address after the change.</p>
                     </div>
                   </div>
                   <div className="p-6">
@@ -444,12 +392,9 @@ export default function AR11Page() {
                   </div>
                 </div>
 
-                {/* Mailing Address */}
+                {/* ── Mailing Address ── */}
                 <div className="rounded-xl border border-slate-200 bg-slate-50 shadow-sm overflow-hidden">
                   <div className="flex items-center gap-3 px-6 py-4 border-b border-slate-200 bg-slate-100/80">
-                    <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
-                      <Mail className="w-4 h-4 text-blue-600" />
-                    </div>
                     <div>
                       <h3 className="text-base font-bold text-[#1B3A64]">Mailing Address (Optional)</h3>
                       <p className="text-xs text-gray-500 mt-0.5">Where USCIS should send your correspondence. Leave blank if same as present address.</p>
@@ -460,46 +405,20 @@ export default function AR11Page() {
                   </div>
                 </div>
 
-                {/* Pending USCIS Cases */}
+                {/* ── Previous Physical Address ── */}
                 <div className="rounded-xl border border-slate-200 bg-slate-50 shadow-sm overflow-hidden">
                   <div className="flex items-center gap-3 px-6 py-4 border-b border-slate-200 bg-slate-100/80">
-                    <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
-                      <FileText className="w-4 h-4 text-blue-600" />
-                    </div>
                     <div>
-                      <h3 className="text-base font-bold text-[#1B3A64]">Pending USCIS Cases (Optional)</h3>
-                      <p className="text-xs text-gray-500 mt-0.5">If you have pending applications with USCIS, include their receipt numbers.</p>
+                      <h3 className="text-base font-bold text-[#1B3A64]">Previous Physical Address</h3>
+                      <p className="text-xs text-gray-500 mt-0.5">Enter your address before the change.</p>
                     </div>
                   </div>
-                  <div className="p-6 space-y-3">
-                    <div className="flex flex-col md:flex-row gap-3">
-                      <input
-                        value={receiptNumber}
-                        onChange={(e) => setReceiptNumber(e.target.value)}
-                        placeholder="MSC1234567890"
-                        className={`${inputClass} flex-1`}
-                      />
-                      <button
-                        type="button"
-                        onClick={addReceiptNumber}
-                        className="inline-flex items-center justify-center rounded-md border border-gray-200 bg-white px-4 h-10 text-sm font-semibold text-[#1B3A64] hover:bg-gray-50 transition-colors whitespace-nowrap"
-                      >
-                        + Add Receipt Number
-                      </button>
-                    </div>
-                    {receiptNumbers.length > 0 && (
-                      <ul className="space-y-1">
-                        {receiptNumbers.map((r, i) => (
-                          <li key={i} className="flex items-center gap-2 text-sm p-2 rounded-md bg-gray-50">
-                            <CircleCheckBig className="w-4 h-4 text-blue-600" /> {r}
-                          </li>
-                        ))}
-                      </ul>
-                    )}
+                  <div className="p-6">
+                    <AddressBlock prefix="prev" streetPlaceholder="123 Main Street" cityPlaceholder="New York" />
                   </div>
                 </div>
 
-                {/* Signature & Attestation */}
+                {/* ── Signature & Attestation ── */}
                 <div className="rounded-xl border border-slate-200 bg-slate-50 shadow-sm overflow-hidden">
                   <div className="px-6 py-4 border-b border-slate-200 bg-slate-100/80">
                     <h3 className="text-base font-bold text-[#1B3A64]">Signature &amp; Attestation</h3>
@@ -553,11 +472,13 @@ export default function AR11Page() {
                     </div>
                   </div>
                 </div>
+
               </form>
             </div>
           </>
         )}
 
+        {/* ── Review Step ── */}
         {step === 'review' && (
           <div className="max-w-4xl mx-auto space-y-8 animate-fade-in">
             <button
@@ -574,73 +495,55 @@ export default function AR11Page() {
               </p>
             </div>
 
+            {/* Review: Information About You */}
             <div className="rounded-xl border border-gray-200 bg-white shadow-sm overflow-hidden">
               <div className="px-6 py-4 border-b border-gray-100 bg-gray-50/50">
-                <h3 className="text-base font-bold text-[#1B3A64]">Personal Information</h3>
+                <h3 className="text-base font-bold text-[#1B3A64]">Information About You</h3>
               </div>
               <div className="p-6 grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div><span className="text-sm text-gray-500 block">First Name</span><span className="font-medium">{formData.firstName || '-'}</span></div>
+                <div><span className="text-sm text-gray-500 block">Family Name (Last)</span><span className="font-medium">{formData.familyName || '-'}</span></div>
+                <div><span className="text-sm text-gray-500 block">Given Name (First)</span><span className="font-medium">{formData.givenName || '-'}</span></div>
                 <div><span className="text-sm text-gray-500 block">Middle Name</span><span className="font-medium">{formData.middleName || '-'}</span></div>
-                <div><span className="text-sm text-gray-500 block">Last Name</span><span className="font-medium">{formData.lastName || '-'}</span></div>
                 <div><span className="text-sm text-gray-500 block">A-Number</span><span className="font-medium">{formData.aNumber || '-'}</span></div>
                 <div><span className="text-sm text-gray-500 block">Date of Birth</span><span className="font-medium">{formData.dob || '-'}</span></div>
-                <div><span className="text-sm text-gray-500 block">Country of Birth</span><span className="font-medium">{formData.countryOfBirth || '-'}</span></div>
               </div>
             </div>
 
-            <div className="rounded-xl border border-gray-200 bg-white shadow-sm overflow-hidden">
-              <div className="px-6 py-4 border-b border-gray-100 bg-gray-50/50">
-                <h3 className="text-base font-bold text-[#1B3A64]">Contact Information</h3>
-              </div>
-              <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div><span className="text-sm text-gray-500 block">Email</span><span className="font-medium">{formData.email || '-'}</span></div>
-                <div><span className="text-sm text-gray-500 block">Phone</span><span className="font-medium">{formData.phone || '-'}</span></div>
-              </div>
-            </div>
-
+            {/* Review: Addresses */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div className="rounded-xl border border-gray-200 bg-white shadow-sm overflow-hidden">
-                <div className="px-6 py-4 border-b border-gray-100 bg-gray-50/50">
-                  <h3 className="text-base font-bold text-[#1B3A64]">Previous Address</h3>
+              {[
+                { label: "Present Physical Address", prefix: "pres" },
+                { label: "Mailing Address", prefix: "mail" },
+                { label: "Previous Physical Address", prefix: "prev" },
+              ].map(({ label, prefix }) => (
+                <div key={prefix} className="rounded-xl border border-gray-200 bg-white shadow-sm overflow-hidden">
+                  <div className="px-6 py-4 border-b border-gray-100 bg-gray-50/50">
+                    <h3 className="text-base font-bold text-[#1B3A64]">{label}</h3>
+                  </div>
+                  <div className="p-6 space-y-1">
+                    <p className="font-medium">{formData[`${prefix}_street`] || '-'}</p>
+                    {formData[`${prefix}_unit_type`] && (
+                      <p className="font-medium">{formData[`${prefix}_unit_type`]} {formData[`${prefix}_unit_number`]}</p>
+                    )}
+                    <p className="font-medium">
+                      {[formData[`${prefix}_city`], formData[`${prefix}_state`], formData[`${prefix}_zip`]].filter(Boolean).join(', ') || '-'}
+                    </p>
+                  </div>
                 </div>
-                <div className="p-6 space-y-2">
-                  <p className="font-medium">{formData.prev_street || '-'}</p>
-                  {formData.prev_unit_type && <p className="font-medium">{formData.prev_unit_type} {formData.prev_unit_number}</p>}
-                  <p className="font-medium">{formData.prev_city || '-'}, {formData.prev_state || '-'} {formData.prev_zip || '-'}</p>
-                </div>
-              </div>
-
-              <div className="rounded-xl border border-gray-200 bg-white shadow-sm overflow-hidden">
-                <div className="px-6 py-4 border-b border-gray-100 bg-gray-50/50">
-                  <h3 className="text-base font-bold text-[#1B3A64]">Present Address</h3>
-                </div>
-                <div className="p-6 space-y-2">
-                  <p className="font-medium">{formData.pres_street || '-'}</p>
-                  {formData.pres_unit_type && <p className="font-medium">{formData.pres_unit_type} {formData.pres_unit_number}</p>}
-                  <p className="font-medium">{formData.pres_city || '-'}, {formData.pres_state || '-'} {formData.pres_zip || '-'}</p>
-                </div>
-              </div>
+              ))}
             </div>
 
-            {receiptNumbers.length > 0 && (
-              <div className="rounded-xl border border-gray-200 bg-white shadow-sm overflow-hidden">
-                <div className="px-6 py-4 border-b border-gray-100 bg-gray-50/50">
-                  <h3 className="text-base font-bold text-[#1B3A64]">Pending USCIS Cases</h3>
-                </div>
-                <div className="p-6">
-                  <ul className="list-disc list-inside space-y-1">
-                    {receiptNumbers.map((r, i) => (
-                      <li key={i} className="font-medium">{r}</li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-            )}
-
-            <div className="flex justify-center pt-8">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
+              <button
+                onClick={() => setStep('form')}
+                className="inline-flex items-center justify-center rounded-xl border-2 border-gray-300 bg-white text-gray-700 h-12 px-8 text-base font-semibold hover:bg-gray-50 transition-all duration-200"
+              >
+                <PenLine className="w-4 h-4 mr-2" />
+                Edit Form
+              </button>
               <button
                 onClick={handleDownloadPDF}
-                className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white h-14 px-10 text-lg font-bold hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 shadow-lg shadow-blue-500/30"
+                className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white h-12 px-10 text-base font-bold hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 shadow-lg shadow-blue-500/30"
               >
                 <Download className="w-5 h-5 mr-3" />
                 Download PDF
@@ -653,4 +556,3 @@ export default function AR11Page() {
     </main>
   );
 }
-

@@ -22,7 +22,7 @@ export default function LayoutWrapper({ children }: { children: React.ReactNode 
   return (
     <>
       {!hideShell && <Header isDashboard={isDashboard} />}
-      <main className="flex-grow flex flex-col">
+      <main className={`flex-grow flex flex-col${!hideShell ? ' pt-[84px]' : ''}`}>
         {children}
       </main>
       {!hideShell && <Footer />}

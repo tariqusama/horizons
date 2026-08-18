@@ -95,17 +95,28 @@ export default function ServicesCategory({ title, subtitle, pillText, cards = []
             {/* CTA Button */}
             <div className="mt-auto">
               {card.title === 'AR-11 Change of Address' || card.title === 'G-1145 E-Notification' || card.title === 'I-94 Travel History Guide' ? (
-                <Link
-                  href={
-                    card.title === 'AR-11 Change of Address' ? '/free/ar-11/start' :
-                      card.title === 'G-1145 E-Notification' ? '/free/g-1145/start' :
-                        '/free/i-94/start'
-                  }
-                  className="w-full bg-[#FF5A1F] hover:bg-[#E04512] text-white font-bold py-2.5 rounded-lg transition-colors duration-300 flex items-center justify-center text-[14px]"
-                >
-                  <span>Get Started</span>
-                  <ArrowRight className="w-4 h-4 ml-1.5" />
-                </Link>
+                card.title === 'I-94 Travel History Guide' ? (
+                  <a
+                    href="https://i94.cbp.dhs.gov/home"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full bg-[#FF5A1F] hover:bg-[#E04512] text-white font-bold py-2.5 rounded-lg transition-colors duration-300 flex items-center justify-center text-[14px]"
+                  >
+                    <span>Get Started</span>
+                    <ArrowRight className="w-4 h-4 ml-1.5" />
+                  </a>
+                ) : (
+                  <Link
+                    href={
+                      card.title === 'AR-11 Change of Address' ? '/free/ar-11/start' :
+                        '/free/g-1145/start'
+                    }
+                    className="w-full bg-[#FF5A1F] hover:bg-[#E04512] text-white font-bold py-2.5 rounded-lg transition-colors duration-300 flex items-center justify-center text-[14px]"
+                  >
+                    <span>Get Started</span>
+                    <ArrowRight className="w-4 h-4 ml-1.5" />
+                  </Link>
+                )
               ) : (
                 <button
                   onClick={() => setSelectedCardForModal(card)}

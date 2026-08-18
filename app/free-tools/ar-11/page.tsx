@@ -1,10 +1,9 @@
 "use client";
 
 import React, { useState } from 'react';
-import Link from 'next/link';
 import {
   Gift, Clock, Download, Shield, CircleAlert, FileText,
-  CircleCheckBig, ArrowRight, User, Phone, MapPin, Mail, Lock, BadgeCheck, Scale
+  CircleCheckBig, ArrowRight, Lock, BadgeCheck, Scale
 } from 'lucide-react';
 
 const US_STATES = [
@@ -44,13 +43,13 @@ const inputClass =
 const selectClass =
   "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50";
 
-function AddressBlock({ prefix, streetPlaceholder, cityPlaceholder }: { prefix: string; streetPlaceholder: string; cityPlaceholder: string }) {
+function AddressBlock({ prefix }: { prefix: string }) {
   const [unitType, setUnitType] = useState<string | null>(null);
   return (
     <div className="space-y-4">
       <div className="space-y-2">
         <label className="text-sm font-medium leading-none">Street Number and Name *</label>
-        <input className={inputClass} placeholder={streetPlaceholder} />
+        <input className={inputClass} placeholder="e.g. 123 Main Street" />
       </div>
       <div className="space-y-2">
         <div className="flex items-center gap-6">
@@ -79,7 +78,7 @@ function AddressBlock({ prefix, streetPlaceholder, cityPlaceholder }: { prefix: 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="space-y-2">
           <label className="text-sm font-medium leading-none">City or Town *</label>
-          <input className={inputClass} placeholder={cityPlaceholder} />
+          <input className={inputClass} placeholder="e.g. New York" />
         </div>
         <div className="space-y-2">
           <label className="text-sm font-medium leading-none">State</label>
@@ -98,16 +97,7 @@ function AddressBlock({ prefix, streetPlaceholder, cityPlaceholder }: { prefix: 
 }
 
 export default function AR11Page() {
-  const [receiptNumber, setReceiptNumber] = useState('');
-  const [receiptNumbers, setReceiptNumbers] = useState<string[]>([]);
   const [agreed, setAgreed] = useState(false);
-
-  const addReceiptNumber = () => {
-    if (receiptNumber.trim()) {
-      setReceiptNumbers([...receiptNumbers, receiptNumber.trim()]);
-      setReceiptNumber('');
-    }
-  };
 
   return (
     <main className="flex-grow bg-gradient-to-b from-background via-background to-muted/20">
@@ -196,8 +186,8 @@ export default function AR11Page() {
             </p>
             <ul className="space-y-3">
               {["Missed important USCIS notices", "Delays in case processing", "Potential immigration consequences"].map((item) => (
-                <li key={item} className="flex items-start gap-3 p-3 rounded-lg bg-destructive/5">
-                  <span className="w-2 h-2 rounded-full bg-destructive mt-2 flex-shrink-0" />
+                <li key={item} className="flex items-start gap-3 p-3 rounded-lg bg-red-50">
+                  <span className="w-2 h-2 rounded-full bg-red-500 mt-2 flex-shrink-0" />
                   <span className="text-base">{item}</span>
                 </li>
               ))}
@@ -284,26 +274,35 @@ export default function AR11Page() {
           </div>
 
           <form className="space-y-8">
-            {/* Personal Information */}
+
+            {/* ── Information About You ── */}
             <div className="rounded-lg border bg-card text-card-foreground shadow-sm">
               <div className="flex flex-col space-y-1.5 p-6">
-                <h3 className="text-2xl font-semibold leading-none tracking-tight flex items-center gap-2">
-                  <User className="w-5 h-5" /> Personal Information
+                <h3 className="text-2xl font-semibold leading-none tracking-tight">
+                  Information About You
                 </h3>
                 <p className="text-sm text-muted-foreground">Provide your personal details as they appear on your immigration documents.</p>
               </div>
               <div className="p-6 pt-0 space-y-6">
+                {/* Family Name | Given Name | Middle Name */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  {[["First Name *", "firstName"], ["Middle Name", "middleName"], ["Last Name *", "lastName"]].map(([label, name]) => (
-                    <div key={name} className="space-y-2">
-                      <label className="text-sm font-medium leading-none">{label}</label>
-                      <input name={name} className={inputClass} />
-                    </div>
-                  ))}
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium leading-none">Family Name (Last Name) *</label>
+                    <input name="familyName" className={inputClass} />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium leading-none">Given Name (First Name) *</label>
+                    <input name="givenName" className={inputClass} />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium leading-none">Middle Name (if applicable)</label>
+                    <input name="middleName" className={inputClass} />
+                  </div>
                 </div>
+                {/* A-Number | Date of Birth */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <label className="text-sm font-medium leading-none">A-Number (if available)</label>
+                    <label className="text-sm font-medium leading-none">Alien Registration Number (A-Number) (if any)</label>
                     <input name="aNumber" placeholder="A-" className={inputClass} />
                     <p className="text-sm text-muted-foreground">Your Alien Registration Number (9 digits, starting with A)</p>
                   </div>
@@ -312,110 +311,51 @@ export default function AR11Page() {
                     <input type="date" className={inputClass} />
                   </div>
                 </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium leading-none">Country of Birth *</label>
-                  <input name="countryOfBirth" placeholder="United States" className={inputClass} />
-                </div>
               </div>
             </div>
 
-            {/* Contact Information */}
-            <div className="rounded-lg border bg-card text-card-foreground shadow-sm">
-              <div className="flex flex-col space-y-1.5 p-6">
-                <h3 className="text-2xl font-semibold leading-none tracking-tight flex items-center gap-2">
-                  <Phone className="w-5 h-5" /> Contact Information
-                </h3>
-              </div>
-              <div className="p-6 pt-0 space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium leading-none">Email Address *</label>
-                    <input type="email" name="email" placeholder="john@example.com" className={inputClass} />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium leading-none">Phone Number *</label>
-                    <input type="tel" name="phone" placeholder="(555) 123-4567" className={inputClass} />
-                  </div>
-                </div>
-              </div>
-            </div>
+            {/* ── Information About Your Address ── */}
 
-            {/* Previous Address */}
+            {/* Present Physical Address */}
             <div className="rounded-lg border bg-card text-card-foreground shadow-sm">
               <div className="flex flex-col space-y-1.5 p-6">
-                <h3 className="text-2xl font-semibold leading-none tracking-tight flex items-center gap-2">
-                  <MapPin className="w-5 h-5" /> Previous Address
+                <h3 className="text-2xl font-semibold leading-none tracking-tight">
+                  Present Physical Address (New Address)
                 </h3>
-                <p className="text-sm text-muted-foreground">Enter your address before the change.</p>
+                <p className="text-sm text-muted-foreground">No PO Boxes. Enter your current address after the change.</p>
               </div>
               <div className="p-6 pt-0">
-                <AddressBlock prefix="prev" streetPlaceholder="123 Main Street" cityPlaceholder="New York" />
-              </div>
-            </div>
-
-            {/* Present Address */}
-            <div className="rounded-lg border bg-card text-card-foreground shadow-sm">
-              <div className="flex flex-col space-y-1.5 p-6">
-                <h3 className="text-2xl font-semibold leading-none tracking-tight flex items-center gap-2">
-                  <MapPin className="w-5 h-5" /> Present Address (New Address)
-                </h3>
-                <p className="text-sm text-muted-foreground">Enter your current address after the change.</p>
-              </div>
-              <div className="p-6 pt-0">
-                <AddressBlock prefix="pres" streetPlaceholder="456 Oak Avenue" cityPlaceholder="Los Angeles" />
+                <AddressBlock prefix="pres" />
               </div>
             </div>
 
             {/* Mailing Address */}
             <div className="rounded-lg border bg-card text-card-foreground shadow-sm">
               <div className="flex flex-col space-y-1.5 p-6">
-                <h3 className="text-2xl font-semibold leading-none tracking-tight flex items-center gap-2">
-                  <Mail className="w-5 h-5" /> Mailing Address (Optional)
+                <h3 className="text-2xl font-semibold leading-none tracking-tight">
+                  Mailing Address (optional)
                 </h3>
                 <p className="text-sm text-muted-foreground">Where USCIS should send your correspondence. Leave blank if same as present address.</p>
               </div>
               <div className="p-6 pt-0">
-                <AddressBlock prefix="mail" streetPlaceholder="123 Main Street" cityPlaceholder="New York" />
+                <AddressBlock prefix="mail" />
               </div>
             </div>
 
-            {/* Pending USCIS Cases */}
+            {/* Previous Physical Address */}
             <div className="rounded-lg border bg-card text-card-foreground shadow-sm">
               <div className="flex flex-col space-y-1.5 p-6">
-                <h3 className="text-2xl font-semibold leading-none tracking-tight flex items-center gap-2">
-                  <FileText className="w-5 h-5" /> Pending USCIS Cases (Optional)
+                <h3 className="text-2xl font-semibold leading-none tracking-tight">
+                  Previous Physical Address
                 </h3>
-                <p className="text-sm text-muted-foreground">If you have pending applications with USCIS, include their receipt numbers.</p>
+                <p className="text-sm text-muted-foreground">Enter your address before the change.</p>
               </div>
-              <div className="p-6 pt-0 space-y-3">
-                <div className="flex flex-col md:flex-row gap-3">
-                  <input
-                    value={receiptNumber}
-                    onChange={(e) => setReceiptNumber(e.target.value)}
-                    placeholder="MSC1234567890"
-                    className={`${inputClass} flex-1`}
-                  />
-                  <button
-                    type="button"
-                    onClick={addReceiptNumber}
-                    className="inline-flex items-center justify-center rounded-md border border-input bg-background px-4 h-10 text-sm font-medium hover:bg-accent transition-colors"
-                  >
-                    Add Receipt Number
-                  </button>
-                </div>
-                {receiptNumbers.length > 0 && (
-                  <ul className="space-y-1">
-                    {receiptNumbers.map((r, i) => (
-                      <li key={i} className="flex items-center gap-2 text-sm p-2 rounded-md bg-muted/50">
-                        <CircleCheckBig className="w-4 h-4 text-primary" /> {r}
-                      </li>
-                    ))}
-                  </ul>
-                )}
+              <div className="p-6 pt-0">
+                <AddressBlock prefix="prev" />
               </div>
             </div>
 
-            {/* Signature & Attestation */}
+            {/* ── Signature & Attestation ── */}
             <div className="rounded-lg border bg-card text-card-foreground shadow-sm">
               <div className="flex flex-col space-y-1.5 p-6">
                 <h3 className="text-2xl font-semibold leading-none tracking-tight">Signature &amp; Attestation</h3>
@@ -466,6 +406,7 @@ export default function AR11Page() {
                 </div>
               </div>
             </div>
+
           </form>
         </div>
       </div>
