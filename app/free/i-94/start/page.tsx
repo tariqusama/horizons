@@ -2,8 +2,105 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { Download } from 'lucide-react';
+import { Download, ChevronDown, Check, Search } from 'lucide-react';
 import jsPDF from 'jspdf';
+import { motion, AnimatePresence } from 'framer-motion';
+
+const COUNTRIES = [
+  "Afghanistan", "Albania", "Algeria", "Andorra", "Angola", "Antigua and Barbuda", "Argentina", "Armenia", "Australia", "Austria",
+  "Azerbaijan", "Bahamas", "Bahrain", "Bangladesh", "Barbados", "Belarus", "Belgium", "Belize", "Benin", "Bhutan",
+  "Bolivia", "Bosnia and Herzegovina", "Botswana", "Brazil", "Brunei", "Bulgaria", "Burkina Faso", "Burundi", "Côte d'Ivoire", "Cabo Verde",
+  "Cambodia", "Cameroon", "Canada", "Central African Republic", "Chad", "Chile", "China", "Colombia", "Comoros", "Congo (Congo-Brazzaville)",
+  "Costa Rica", "Croatia", "Cuba", "Cyprus", "Czechia", "Democratic Republic of the Congo", "Denmark", "Djibouti", "Dominica", "Dominican Republic",
+  "Ecuador", "Egypt", "El Salvador", "Equatorial Guinea", "Eritrea", "Estonia", "Eswatini", "Ethiopia", "Fiji", "Finland",
+  "France", "Gabon", "Gambia", "Georgia", "Germany", "Ghana", "Greece", "Grenada", "Guatemala", "Guinea",
+  "Guinea-Bissau", "Guyana", "Haiti", "Holy See", "Honduras", "Hungary", "Iceland", "India", "Indonesia", "Iran",
+  "Iraq", "Ireland", "Israel", "Italy", "Jamaica", "Japan", "Jordan", "Kazakhstan", "Kenya", "Kiribati",
+  "Kuwait", "Kyrgyzstan", "Laos", "Latvia", "Lebanon", "Lesotho", "Liberia", "Libya", "Liechtenstein", "Lithuania",
+  "Luxembourg", "Madagascar", "Malawi", "Malaysia", "Maldives", "Mali", "Malta", "Marshall Islands", "Mauritania", "Mauritius",
+  "Mexico", "Micronesia", "Moldova", "Monaco", "Mongolia", "Montenegro", "Morocco", "Mozambique", "Myanmar (formerly Burma)", "Namibia",
+  "Nauru", "Nepal", "Netherlands", "New Zealand", "Nicaragua", "Niger", "Nigeria", "North Korea", "North Macedonia", "Norway",
+  "Oman", "Pakistan", "Palau", "Palestine State", "Panama", "Papua New Guinea", "Paraguay", "Peru", "Philippines", "Poland",
+  "Portugal", "Qatar", "Romania", "Russia", "Rwanda", "Saint Kitts and Nevis", "Saint Lucia", "Saint Vincent and the Grenadines", "Samoa", "San Marino",
+  "Sao Tome and Principe", "Saudi Arabia", "Senegal", "Serbia", "Seychelles", "Sierra Leone", "Singapore", "Slovakia", "Slovenia", "Solomon Islands",
+  "Somalia", "South Africa", "South Korea", "South Sudan", "Spain", "Sri Lanka", "Sudan", "Suriname", "Sweden", "Switzerland",
+  "Syria", "Tajikistan", "Tanzania", "Thailand", "Timor-Leste", "Togo", "Tonga", "Trinidad and Tobago", "Tunisia", "Turkey",
+  "Turkmenistan", "Tuvalu", "Uganda", "Ukraine", "United Arab Emirates", "United Kingdom", "United States of America", "Uruguay", "Uzbekistan", "Vanuatu",
+  "Venezuela", "Vietnam", "Yemen", "Zambia", "Zimbabwe"
+];
+
+const CountryDropdown = ({ name, required, defaultValue }: { name: string, required?: boolean, defaultValue?: string }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [selected, setSelected] = useState(defaultValue || "");
+  const [search, setSearch] = useState("");
+  
+  const filteredCountries = COUNTRIES.filter(c => c.toLowerCase().includes(search.toLowerCase()));
+
+  return (
+    <div className="relative">
+      <input type="hidden" name={name} value={selected} required={required} />
+      
+      {isOpen && (
+        <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
+      )}
+
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        className="relative z-50 w-full h-12 bg-gray-50 border border-gray-200 rounded-xl px-4 flex items-center justify-between focus:outline-none focus:ring-2 focus:ring-[#1B3A64] focus:bg-white transition-all text-[#1B3A64]"
+      >
+        <span className={selected ? "text-[#1B3A64]" : "text-gray-400"}>{selected || "Select country"}</span>
+        <ChevronDown className={`w-5 h-5 text-gray-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+      </button>
+
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.2 }}
+            className="absolute z-50 w-full mt-2 bg-white border border-gray-100 rounded-xl shadow-xl overflow-hidden"
+          >
+            <div className="p-2 border-b border-gray-100 sticky top-0 bg-white">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <input
+                  type="text"
+                  placeholder="Search country..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  className="w-full h-10 pl-9 pr-4 bg-gray-50 border border-gray-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1B3A64]/20 transition-all"
+                  onClick={(e) => e.stopPropagation()}
+                />
+              </div>
+            </div>
+            <ul className="max-h-60 overflow-y-auto py-1 custom-scrollbar">
+              {filteredCountries.length > 0 ? (
+                filteredCountries.map((country) => (
+                  <li
+                    key={country}
+                    onClick={() => {
+                      setSelected(country);
+                      setIsOpen(false);
+                      setSearch("");
+                    }}
+                    className={`px-4 py-2.5 text-sm cursor-pointer flex items-center justify-between hover:bg-[#1B3A64]/5 transition-colors ${selected === country ? 'bg-[#1B3A64]/10 text-[#1B3A64] font-medium' : 'text-gray-600'}`}
+                  >
+                    {country}
+                    {selected === country && <Check className="w-4 h-4 text-[#1B3A64]" />}
+                  </li>
+                ))
+              ) : (
+                <li className="px-4 py-3 text-sm text-gray-500 text-center">No countries found</li>
+              )}
+            </ul>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
 
 export default function I94Page() {
   const [step, setStep] = useState<'form' | 'review'>('form');
@@ -150,15 +247,7 @@ export default function I94Page() {
                       </div>
                       <div>
                         <label className="block text-sm font-bold text-[#1B3A64] mb-1.5">Passport Country *</label>
-                        <select name="passportCountry" required defaultValue="" className="w-full h-12 bg-gray-50 border border-gray-200 rounded-xl px-4 focus:outline-none focus:ring-2 focus:ring-[#1B3A64] focus:bg-white transition-all text-[#1B3A64]">
-                          <option value="" disabled>Select country</option>
-                          <option>Ghana</option>
-                          <option>Nigeria</option>
-                          <option>Kenya</option>
-                          <option>United Kingdom</option>
-                          <option>India</option>
-                          <option>Mexico</option>
-                        </select>
+                        <CountryDropdown name="passportCountry" required />
                       </div>
                     </div>
 
