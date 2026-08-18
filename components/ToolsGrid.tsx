@@ -53,7 +53,8 @@ export default function ToolsGrid() {
       title: "FOIA Request (G-639)",
       description: "Request your immigration file from USCIS. Get your complete A-file records.",
       time: "10-15 minutes",
-      href: "/free/g-639/start",
+      href: "https://www.uscis.gov/records/request-records-through-the-freedom-of-information-act-or-privacy-act",
+      external: true,
       features: [
         "Pre-filled G-639",
         "Record type guidance",

@@ -38,7 +38,7 @@ const videoStories: Story[] = [
     route: 'IR-1 & IR-2 Family Visas',
     origin: 'Sierra Leone',
     badge: 'Petition Approved · Sierra Leone',
-    videoUrl: 'Horizon Pathways Testimony Judith .mp4',
+    videoUrl: 'IMG_1500.mp4',
     quote: '"They made the process feel easier and more manageable every step of the way."',
   },
   {
@@ -46,7 +46,7 @@ const videoStories: Story[] = [
     route: 'Adjustment of Status → Removal of Conditions',
     origin: 'New York',
     badge: 'Approved · New York',
-    videoUrl: 'IMG_8409.mp4',
+    videoUrl: 'HP_2.mp4',
     quote: '"A long-term relationship built on trust, support, and guidance - smooth from ESTA to Green Card and beyond."',
   },
   {
@@ -54,7 +54,7 @@ const videoStories: Story[] = [
     route: 'K-1 Fiancé Visa',
     origin: 'Botswana',
     badge: 'Approved · Botswana',
-    videoUrl: 'HP_2.mp4',
+    videoUrl: 'IMG_3241.mp4',
     quote: '"Simpler, less stressful, and more affordable - filed entirely from my phone with attorney review included."',
   },
   {
@@ -62,7 +62,7 @@ const videoStories: Story[] = [
     route: 'F-1 → Adjustment of Status',
     origin: 'China',
     badge: 'Approved · China',
-    videoUrl: 'IMG_1500.mp4',
+    videoUrl: 'IMG_8409.mp4',
     quote: '"A simpler, more affordable path from F-1 to Green Card - with Chinese document translation included."',
   },
   {
@@ -70,7 +70,7 @@ const videoStories: Story[] = [
     route: 'U.S. Naturalization',
     origin: 'U.S. Citizen',
     badge: 'Approved · U.S. Citizen',
-    videoUrl: 'IMG_3241.mp4',
+    videoUrl: 'Horizon Pathways Testimony Judith .mp4',
     quote: '"From dream to citizenship - guided through filing, documents, and interview prep every step of the way."',
   },
   {
@@ -192,7 +192,7 @@ export default function VideoTestimonialsSection() {
               <p className="mb-8 text-sm leading-relaxed text-[#5A6579] md:text-base">
                 {activeVideo.quote}
               </p>
-              
+
               {!isPlaying && (
                 <button
                   onClick={handlePlayMain}
@@ -210,58 +210,58 @@ export default function VideoTestimonialsSection() {
       {/* Grid of Testimonials */}
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 md:gap-8">
         {visibleStories.map((story) => (
-            <div
-              key={story.name}
-              className="group flex flex-col overflow-hidden rounded-[24px] border border-[#E9D2C2] bg-white shadow-[0_8px_25px_rgba(27,58,100,0.03)] transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_16px_35px_rgba(27,58,100,0.06)] hover:border-[#E3623D]"
-            >
-              {/* Top part: Video Player Thumbnail */}
-              <div className="relative aspect-[4/5] sm:aspect-video w-full bg-black overflow-hidden flex flex-col justify-center">
-                <div
-                  onClick={() => handleSelectVideo(story)}
-                  className="relative w-full h-full cursor-pointer group/player flex items-center justify-center"
+          <div
+            key={story.name}
+            className="group flex flex-col overflow-hidden rounded-[24px] border border-[#E9D2C2] bg-white shadow-[0_8px_25px_rgba(27,58,100,0.03)] transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_16px_35px_rgba(27,58,100,0.06)] hover:border-[#E3623D]"
+          >
+            {/* Top part: Video Player Thumbnail */}
+            <div className="relative aspect-[4/5] sm:aspect-video w-full bg-black overflow-hidden flex flex-col justify-center">
+              <div
+                onClick={() => handleSelectVideo(story)}
+                className="relative w-full h-full cursor-pointer group/player flex items-center justify-center"
+              >
+                <video
+                  className="relative z-[1] w-full h-full object-contain"
+                  preload="metadata"
+                  playsInline
+                  muted
                 >
-                  <video
-                    className="relative z-[1] w-full h-full object-contain"
-                    preload="metadata"
-                    playsInline
-                    muted
-                  >
-                    <source src={getVideoUrl(story.videoUrl) + '#t=1.5'} type={getMimeType(story.videoUrl)} />
-                  </video>
-                  {/* Dark overlay */}
-                  <div className="absolute inset-0 z-[2] bg-black/10 group-hover/player:bg-black/20 transition-colors duration-300" />
+                  <source src={getVideoUrl(story.videoUrl) + '#t=1.5'} type={getMimeType(story.videoUrl)} />
+                </video>
+                {/* Dark overlay */}
+                <div className="absolute inset-0 z-[2] bg-black/10 group-hover/player:bg-black/20 transition-colors duration-300" />
 
-                  {/* Play button overlay */}
-                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[3] flex h-14 w-14 items-center justify-center rounded-full bg-white text-[#E3623D] shadow-lg transition-transform duration-300 group-hover/player:scale-110">
-                    <Play size={18} className="fill-[#E3623D] translate-x-[1px]" />
-                  </div>
-
-                  {/* Badge */}
-                  <div className="absolute left-4 top-4 right-4 z-[3] flex justify-start pointer-events-none">
-                    <div className="rounded-full bg-white/95 border border-[#F3C3A8]/30 px-3 py-1 text-[11px] font-bold text-[#E3623D] flex items-center gap-1 shadow-sm max-w-full pointer-events-auto">
-                      <Sparkles size={10} className="fill-[#E3623D] stroke-none shrink-0" />
-                      <span className="truncate">{story.badge}</span>
-                    </div>
-                  </div>
+                {/* Play button overlay */}
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[3] flex h-14 w-14 items-center justify-center rounded-full bg-white text-[#E3623D] shadow-lg transition-transform duration-300 group-hover/player:scale-110">
+                  <Play size={18} className="fill-[#E3623D] translate-x-[1px]" />
                 </div>
-              </div>
 
-              {/* Bottom part: Card info */}
-              <div className="p-6 flex-1 flex flex-col justify-between bg-[#FCF6F2]/30 border-t border-[#E9D2C2]/40">
-                <div>
-                  <h4 className="text-base font-bold text-[#0A192F] group-hover:text-[#E3623D] transition-colors duration-200">
-                    {story.name}
-                  </h4>
-                  <p className="text-[11px] font-bold text-[#8A93A3] uppercase tracking-wider mt-0.5 mb-2">
-                    {story.route}
-                  </p>
-                  <p className="text-xs leading-relaxed text-[#5A6579] font-normal">
-                    {story.quote}
-                  </p>
+                {/* Badge */}
+                <div className="absolute left-4 top-4 right-4 z-[3] flex justify-start pointer-events-none">
+                  <div className="rounded-full bg-white/95 border border-[#F3C3A8]/30 px-3 py-1 text-[11px] font-bold text-[#E3623D] flex items-center gap-1 shadow-sm max-w-full pointer-events-auto">
+                    <Sparkles size={10} className="fill-[#E3623D] stroke-none shrink-0" />
+                    <span className="truncate">{story.badge}</span>
+                  </div>
                 </div>
               </div>
             </div>
-          ))}
+
+            {/* Bottom part: Card info */}
+            <div className="p-6 flex-1 flex flex-col justify-between bg-[#FCF6F2]/30 border-t border-[#E9D2C2]/40">
+              <div>
+                <h4 className="text-base font-bold text-[#0A192F] group-hover:text-[#E3623D] transition-colors duration-200">
+                  {story.name}
+                </h4>
+                <p className="text-[11px] font-bold text-[#8A93A3] uppercase tracking-wider mt-0.5 mb-2">
+                  {story.route}
+                </p>
+                <p className="text-xs leading-relaxed text-[#5A6579] font-normal">
+                  {story.quote}
+                </p>
+              </div>
+            </div>
+          </div>
+        ))}
       </div>
 
       {/* View More Button */}
