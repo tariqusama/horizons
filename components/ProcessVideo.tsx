@@ -1,5 +1,5 @@
 import React from 'react';
-import { Play, Clock, FileText, Users } from 'lucide-react';
+import { Clock, FileText, Users } from 'lucide-react';
 
 export default function ProcessVideo() {
   const items = [
@@ -20,8 +20,8 @@ export default function ProcessVideo() {
     },
   ];
 
-  // Replace this URL with the actual online video link you want to use
-  const VIDEO_URL = 'https://youtu.be/5iU9YL3bz30?si=QlRLnqyLaHhpnf42';
+  const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000';
+  const videoUrl = `${backendUrl}/storage/testmonials/${encodeURIComponent('Hpvid3 With Spanish Captions.mp4')}`;
 
   return (
     <section id="video-tour" className="w-full bg-white">
@@ -36,26 +36,22 @@ export default function ProcessVideo() {
         </p>
 
         <div className="mb-8">
-          <a
-            href={VIDEO_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-orange-600 font-semibold hover:underline"
-          >
-            ▶ Watch the video online
+          <a href="#video-player" className="text-orange-600 font-semibold hover:underline">
+            ▶ Watch the video
           </a>
         </div>
 
         {/* Video Player */}
-        <div className="relative w-full max-w-[900px] mx-auto aspect-[16/9] bg-black rounded-2xl overflow-hidden mb-8 shadow-[0_20px_40px_-10px_rgba(27,58,100,0.2)] border border-[#EDEFF3]">
-          <iframe 
-            src="https://www.youtube.com/embed/5iU9YL3bz30" 
-            title="Video Walkthrough" 
-            frameBorder="0" 
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-            allowFullScreen
-            className="absolute top-0 left-0 w-full h-full"
-          ></iframe>
+        <div id="video-player" className="relative w-full max-w-[900px] mx-auto aspect-[16/9] bg-black rounded-2xl overflow-hidden mb-8 shadow-[0_20px_40px_-10px_rgba(27,58,100,0.2)] border border-[#EDEFF3]">
+          <video
+            controls
+            preload="metadata"
+            playsInline
+            className="absolute top-0 left-0 w-full h-full object-contain"
+          >
+            <source src={videoUrl} type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
         </div>
 
         {/* Items row */}
