@@ -91,7 +91,7 @@ const getPackagePricing = (selectedGoal: string | null, answers: Record<number, 
   }
 
   if (selectedGoal === "Bring a fiancé(e) to the U.S.") {
-    return { title: "Petition for a Fiancé(e) outside the U.S. – USCIS Petition only", basic: "$549.99", advanced: "$789.99", premium: "$999.99" };
+    return { title: "Petition for a Fiancé(e) outside the U.S. – USCIS Petition only", basic: "$549.99", advanced: "$849.99", premium: "$1049.99" };
   }
   if (selectedGoal === "Bring a spouse to the U.S.") {
     return { title: "Petition for a Spouse outside the U.S. – USCIS Petition only", basic: "$549.99", advanced: "$789.99", premium: "$999.99" };
