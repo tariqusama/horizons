@@ -9,52 +9,7 @@ import InviteParticipantModal from "@/components/InviteParticipantModal";
 import { getChecklists } from '@/lib/api/cases';
 import { resolveDocuments } from '@/lib/utils/documentHelper';
 
-const getPlanPrice = (title: string, subtitle: string) => {
-    if (!title || !subtitle) return '--';
 
-    const isPremium = subtitle.includes('Premium');
-    const isAdvanced = subtitle.includes('Advanced');
-
-    if (title.includes('Adjust status')) {
-        if (isPremium) return '$1249.99';
-        if (isAdvanced) return '$949.99';
-        return '$599.99';
-    }
-    if (title.includes('Bring a fiancé(e)') || title.includes('K-1 Fiancé Visa')) {
-        if (isPremium) return '$1049.99';
-        if (isAdvanced) return '$849.99';
-        return '$549.99';
-    }
-    if (title.includes('Bring a spouse') || title.includes('Bring a sibling') || title.includes('relative') || title.includes('Petition for a')) {
-        if (isPremium) return '$999.99';
-        if (isAdvanced) return '$789.99';
-        return '$549.99';
-    }
-    if (title.includes('Remove conditions')) {
-        if (isPremium) return '$699.99';
-        if (isAdvanced) return '$499.99';
-        return '$399.99';
-    }
-    if (title.includes('Replace or fix')) {
-        if (isPremium) return '$599.99';
-        if (isAdvanced) return '$449.99';
-        return '$349.99';
-    }
-    if (title.includes('DACA')) {
-        if (isPremium) return '$539.99';
-        if (isAdvanced) return '$399.99';
-        return '$299.99';
-    }
-    if (title.includes('Citizenship')) {
-        if (isPremium) return '$649.99';
-        if (isAdvanced) return '$449.99';
-        return '$349.99';
-    }
-
-    if (isPremium) return '$599.99';
-    if (isAdvanced) return '$449.99';
-    return '$349.99';
-};
 
 const getApplicationStatusMeta = (status?: string) => {
     const normalized = (status || '').toString().trim().toLowerCase();
@@ -429,7 +384,7 @@ export default function DashboardPage() {
                                                         {app.subtitle ? app.subtitle.replace('Plan: ', '') : 'Advanced Plan'}
                                                     </span>
                                                     <span className="text-sm font-bold text-orange-600">
-                                                        {app.amount ? `$${Number(app.amount).toFixed(2)}` : getPlanPrice(app.title, app.subtitle)}
+                                                        {app.amount ? `$${Number(app.amount).toFixed(2)}` : '--'}
                                                     </span>
                                                 </div>
                                             </div>

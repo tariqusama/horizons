@@ -68,65 +68,6 @@ const getSignupBackgroundImage = (selectedGoal: string | null, currentStep: numb
   return stepImages.default;
 };
 
-const getPackagePricing = (selectedGoal: string | null, answers: Record<number, string>) => {
-  const defaultPricing = {
-    title: "Choose Your Plan",
-    basic: "$349.99",
-    advanced: "$449.99",
-    premium: "$599.99"
-  };
-
-  if (!selectedGoal) return defaultPricing;
-
-  if (selectedGoal === "Adjust status to permanent resident / get a Green Card while in US") {
-    if (answers[4] === "Spouse") {
-      return { title: "Marriage Green Card inside the U.S. – Concurrent Filing", basic: "$629.99", advanced: "$949.99", premium: "$1249.99" };
-    }
-    if (answers[4] === "Parent") {
-      return { title: "Parent Adjustment of Status inside the U.S. – Concurrent Filing", basic: "$599.99", advanced: "$949.99", premium: "$1249.99" };
-    }
-    if (answers[4] === "Child") {
-      return { title: "Child Adjustment of Status inside the U.S. – Concurrent Filing", basic: "$599.99", advanced: "$949.99", premium: "$1249.99" };
-    }
-  }
-
-  if (selectedGoal === "Bring a fiancé(e) to the U.S.") {
-    return { title: "Petition for a Fiancé(e) outside the U.S. – USCIS Petition only", basic: "$549.99", advanced: "$849.99", premium: "$1049.99" };
-  }
-  if (selectedGoal === "Bring a spouse to the U.S.") {
-    return { title: "Petition for a Spouse outside the U.S. – USCIS Petition only", basic: "$549.99", advanced: "$789.99", premium: "$999.99" };
-  }
-  if (selectedGoal === "Bring a sibling to the U.S.") {
-    return { title: "Petition for a Sibling outside the U.S. – USCIS Petition only", basic: "$549.99", advanced: "$789.99", premium: "$999.99" };
-  }
-  if (selectedGoal?.includes("relative to the U.S.")) {
-    if (answers[1] === "Child/Step Child") {
-      return { title: "Petition for a Child outside the U.S. – USCIS Petition only", basic: "$549.99", advanced: "$789.99", premium: "$999.99" };
-    }
-    if (answers[1] === "Parent") {
-      return { title: "Petition for a Parent outside the U.S. – USCIS Petition only", basic: "$549.99", advanced: "$789.99", premium: "$999.99" };
-    }
-    return { title: "Petition for a Relative outside the U.S. – USCIS Petition only", basic: "$549.99", advanced: "$789.99", premium: "$999.99" };
-  }
-
-  if (selectedGoal === "Remove conditions on residence (marriage-based conditional LPR)") {
-    return { title: "Petition to Remove Conditions on Conditional Residence", basic: "$399.99", advanced: "$499.99", premium: "$699.99" };
-  }
-
-  if (selectedGoal === "Replace or fix a Green Card") {
-    return { title: "Renew or Replace Permanent Resident Card", basic: "$349.99", advanced: "$449.99", premium: "$599.99" };
-  }
-
-  if (selectedGoal === "DACA (Deferred Action) — Renewal") {
-    return { title: "DACA Renewal (Deferred Action for Childhood Arrivals)", basic: "$299.99", advanced: "$399.99", premium: "$539.99" };
-  }
-
-  if (selectedGoal === "Apply for U.S. Citizenship (Naturalization)") {
-    return { title: "Application for U.S. Citizenship", basic: "$349.99", advanced: "$449.99", premium: "$649.99" };
-  }
-
-  return defaultPricing;
-};
 
 const defaultStripeKey = 'pk_test_51QQ24fAJEL5Up1VaSpBRWbAfKrBCobEsVPtv2yo8eFSRJYKHs3GtB78nuyteFvcU0Q1RW5MtKQ5TMNk6R9vxbd8u00cwahnxJ9';
 const stripeKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || defaultStripeKey;
@@ -435,7 +376,7 @@ function SignupFlowContent() {
         planDescription += " | Additional: " + addonNames.join(", ");
       }
 
-      const pricing = getPackagePricing(selectedGoal, answers);
+      const pricing = dynamicPricing || { title: selectedGoal };
       const planTitle = `${pricing.title} - ${selectedPlanName}`;
 
       // 3. Get Stripe Checkout URL
@@ -1469,7 +1410,7 @@ function SignupFlowContent() {
         });
       };
 
-      const pricing = getPackagePricing(selectedGoal, answers);
+      const pricing = dynamicPricing || { title: selectedGoal };
 
       return (
         <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 w-full max-w-7xl mx-auto px-6 pt-16 pb-8">
