@@ -152,7 +152,7 @@ export default function AR11Page() {
           ].map(({ Icon, title, desc, gradient, iconGradient, hoverOverlay, textColor, delay }) => (
             <div
               key={title}
-              className={`rounded-lg bg-card text-card-foreground relative overflow-hidden border-0 bg-gradient-to-br ${gradient} shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] hover:shadow-[0_12px_40px_rgb(0,0,0,0.08)] transition-all duration-300 hover:scale-[1.02] animate-fade-in`}
+              className={`rounded-lg bg-card text-card-foreground relative overflow-hidden border-0 bg-gradient-to-br ${gradient} shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_12px_40px_rgb(0,0,0,0.08)] transition-all duration-300 hover:scale-[1.02] animate-fade-in`}
               style={{ animationDelay: `${delay}ms` }}
             >
               <div className={`absolute inset-0 bg-gradient-to-br ${hoverOverlay} opacity-0 hover:opacity-100 transition-opacity duration-300`} />
@@ -170,7 +170,7 @@ export default function AR11Page() {
         </div>
 
         {/* ── Legal Warning ── */}
-        <div className="rounded-lg bg-card text-card-foreground mb-12 relative overflow-hidden border-0 bg-gradient-to-br from-orange-500/10 via-orange-500/5 to-background shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)]">
+        <div className="rounded-lg bg-card text-card-foreground mb-12 relative overflow-hidden border-0 bg-gradient-to-br from-orange-500/10 via-orange-500/5 to-background shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
           <div className="absolute top-0 right-0 w-32 h-32 bg-orange-500/10 rounded-full blur-3xl" />
           <div className="flex flex-col space-y-1.5 p-6 relative">
             <h3 className="font-semibold tracking-tight flex items-center gap-3 text-2xl">
@@ -196,7 +196,7 @@ export default function AR11Page() {
         </div>
 
         {/* ── What You'll Receive ── */}
-        <div className="rounded-lg bg-card text-card-foreground mb-12 border-0 bg-gradient-to-br from-background via-background to-muted/20 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)]">
+        <div className="rounded-lg bg-card text-card-foreground mb-12 border-0 bg-gradient-to-br from-background via-background to-muted/20 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
           <div className="flex flex-col space-y-1.5 p-6">
             <h3 className="font-semibold tracking-tight flex items-center gap-3 text-2xl">
               <div className="p-2 rounded-xl bg-primary/20">
@@ -229,7 +229,7 @@ export default function AR11Page() {
         </div>
 
         {/* ── What to Expect ── */}
-        <div className="rounded-lg bg-card text-card-foreground mb-12 relative overflow-hidden border-0 bg-gradient-to-br from-primary/5 via-background to-secondary/5 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)]">
+        <div className="rounded-lg bg-card text-card-foreground mb-12 relative overflow-hidden border-0 bg-gradient-to-br from-primary/5 via-background to-secondary/5 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
           <div className="absolute top-0 left-0 w-40 h-40 bg-primary/10 rounded-full blur-3xl" />
           <div className="flex flex-col space-y-1.5 p-6 relative">
             <h3 className="font-semibold tracking-tight flex items-center gap-3 text-2xl">
