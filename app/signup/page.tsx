@@ -99,7 +99,7 @@ const getPackagePricing = (selectedGoal: string | null, answers: Record<number, 
   if (selectedGoal === "Bring a sibling to the U.S.") {
     return { title: "Petition for a Sibling outside the U.S. – USCIS Petition only", basic: "$549.99", advanced: "$789.99", premium: "$999.99" };
   }
-  if (selectedGoal === "Bring another relative to the U.S.") {
+  if (selectedGoal?.includes("relative to the U.S.")) {
     if (answers[1] === "Child/Step Child") {
       return { title: "Petition for a Child outside the U.S. – USCIS Petition only", basic: "$549.99", advanced: "$789.99", premium: "$999.99" };
     }
@@ -189,7 +189,7 @@ function SignupFlowContent() {
     } else if (selectedGoal === "Bring a sibling to the U.S.") {
       baseQuestions.push({ question: "dummy", options: [] });
       if (answers[1] === "Yes") baseQuestions.push({ question: "dummy", options: [] });
-    } else if (selectedGoal === "Bring another relative to the U.S.") {
+    } else if (selectedGoal === "Bring relative to the U.S.") {
       if (answers[1] === "Child/Step Child") {
         baseQuestions.push({ question: "dummy", options: [] });
         if (answers[2] === "Yes") {
@@ -705,7 +705,7 @@ function SignupFlowContent() {
           }
         }
       }
-    } else if (selectedGoal === "Bring another relative to the U.S.") {
+    } else if (selectedGoal === "Bring relative to the U.S.") {
       if (answers[1] === "Child/Step Child") {
         baseQuestions.push({
           question: "Are you currently residing in the United States or have a US domicile? (US military members and employees working for the US government abroad can also select YES)",

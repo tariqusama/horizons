@@ -20,7 +20,7 @@ const getPlanPrice = (title: string, subtitle: string) => {
         if (isAdvanced) return '$949.99';
         return '$599.99';
     }
-    if (title.includes('Bring a fiancé(e)') || title.includes('Bring a spouse') || title.includes('Bring a sibling') || title.includes('Bring another relative') || title.includes('Petition for a')) {
+    if (title.includes('Bring a fiancé(e)') || title.includes('Bring a spouse') || title.includes('Bring a sibling') || title.includes('relative') || title.includes('Petition for a')) {
         if (isPremium) return '$999.99';
         if (isAdvanced) return '$789.99';
         return '$549.99';
