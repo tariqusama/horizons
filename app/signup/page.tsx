@@ -106,6 +106,7 @@ const getPackagePricing = (selectedGoal: string | null, answers: Record<number, 
     if (answers[1] === "Parent") {
       return { title: "Petition for a Parent outside the U.S. – USCIS Petition only", basic: "$549.99", advanced: "$789.99", premium: "$999.99" };
     }
+    return { title: "Petition for a Relative outside the U.S. – USCIS Petition only", basic: "$549.99", advanced: "$789.99", premium: "$999.99" };
   }
 
   if (selectedGoal === "Remove conditions on residence (marriage-based conditional LPR)") {
