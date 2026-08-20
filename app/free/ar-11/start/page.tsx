@@ -161,7 +161,26 @@ export default function AR11Page() {
       setTextField(ar11Form, 'TXT-299a-0-12', formData.givenName || "");
       setTextField(ar11Form, 'TXT-299a-0-13', formData.middleName || "");
       setTextField(ar11Form, 'TXT-299a-0-1', formData.dob || "");
-      setTextField(ar11Form, 'TXT-299a-0-0', formData.aNumber || "");
+      // Instead of setting the comb field (which gets squished when flattened), draw the A-Number manually
+      if (formData.aNumber) {
+        const { rgb, StandardFonts } = await import('pdf-lib');
+        const pages = ar11Doc.getPages();
+        const firstPage = pages[0];
+        const font = await ar11Doc.embedFont(StandardFonts.CourierBold);
+        const aNum = String(formData.aNumber).replace(/[^0-9]/g, '').substring(0, 9);
+        const startX = 203.998;
+        const startY = 600.001;
+        const cellWidth = 138.01 / 9;
+        for (let i = 0; i < aNum.length; i++) {
+          firstPage.drawText(aNum[i], {
+            x: startX + (i * cellWidth) + 4,
+            y: startY + 5,
+            size: 11,
+            font: font,
+            color: rgb(0, 0, 0),
+          });
+        }
+      }
       
       // Present Physical Address
       setTextField(ar11Form, 'TXT-299a-0-3', formData.pres_street || "");
