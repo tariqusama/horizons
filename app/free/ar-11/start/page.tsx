@@ -160,7 +160,17 @@ export default function AR11Page() {
       setTextField(ar11Form, 'TXT-299a-0-11', formData.familyName || "");
       setTextField(ar11Form, 'TXT-299a-0-12', formData.givenName || "");
       setTextField(ar11Form, 'TXT-299a-0-13', formData.middleName || "");
-      setTextField(ar11Form, 'TXT-299a-0-1', formData.dob || "");
+
+      let formattedDob = "";
+      if (formData.dob) {
+        const [year, month, day] = formData.dob.split('-');
+        if (year && month && day) {
+          formattedDob = `${month}/${day}/${year}`;
+        } else {
+          formattedDob = formData.dob;
+        }
+      }
+      setTextField(ar11Form, 'TXT-299a-0-1', formattedDob);
       // Instead of setting the comb field (which gets squished when flattened), draw the A-Number manually
       if (formData.aNumber) {
         const { rgb, StandardFonts } = await import('pdf-lib');
@@ -213,10 +223,7 @@ export default function AR11Page() {
       setTextField(ar11Form, 'TXT-299a-0-8', formData.mail_zip || "");
 
       // Signature & Date
-      const fullName = [formData.givenName, formData.middleName, formData.familyName].filter(Boolean).join(" ");
-      if (agreed) {
-        setTextField(ar11Form, 'TXT-299a-0-10', `${fullName} (Digitally Signed)`);
-      }
+      // The form will be printed and signed physically by the user
       const today = new Date().toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' });
       setTextField(ar11Form, 'TXT-299a-0-9', today);
 
@@ -506,7 +513,7 @@ export default function AR11Page() {
                       <div>
                         <span className="block font-semibold text-sm text-[#1B3A64] mb-1">I certify that the information provided is true and correct *</span>
                         <span className="block text-xs text-gray-500 leading-relaxed">
-                          By checking this box, you are electronically signing this form and attesting to the accuracy of all information provided.
+                          By checking this box, you attest to the accuracy of all information provided. You must print and sign the form physically.
                         </span>
                       </div>
                     </label>
