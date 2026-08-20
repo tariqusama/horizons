@@ -113,342 +113,116 @@ export default function AR11Page() {
   };
 
   const handleDownloadPDF = async () => {
-    const doc = new jsPDF({ format: 'letter', unit: 'mm' });
-    const pw = 215.9; // letter width
-    const ph = 279.4; // letter height
-    const m = 13.5; // margin
-    
-    let y = m + 5;
-    
-    // Header
-    // Load Seal Image asynchronously
-    const sealData = await new Promise<string | null>((resolve) => {
-      const img = new window.Image();
-      img.src = '/dhs_seal.png';
-      img.onload = () => {
-        const canvas = document.createElement('canvas');
-        canvas.width = img.width;
-        canvas.height = img.height;
-        const ctx = canvas.getContext('2d');
-        if (ctx) ctx.drawImage(img, 0, 0);
-        resolve(canvas.toDataURL('image/png'));
-      };
-      img.onerror = () => resolve(null);
-    });
+    try {
+      const { PDFDocument } = await import('pdf-lib');
 
-    if (sealData) {
-      doc.addImage(sealData, 'PNG', m + 5, y - 2, 20, 20);
-    } else {
-      // Fallback
-      doc.setDrawColor(0);
-      doc.setLineWidth(0.5);
-      doc.circle(m + 15, y + 8, 10, 'S');
-      doc.setFont("helvetica", "normal");
-      doc.setFontSize(6);
-      doc.text("DHS SEAL", m + 15, y + 9, { align: "center" });
-    }
+      // 1. Fetch and Load both PDFs
+      const ar11Bytes = await fetch('/ar-11.pdf').then(res => res.arrayBuffer());
+      const g1145Bytes = await fetch('/g-1145.pdf').then(res => res.arrayBuffer());
 
-    // Title
-    doc.setFont("times", "bold");
-    doc.setFontSize(16);
-    doc.text("Alien's Change of Address Card", pw / 2, y + 4, { align: "center" });
-    
-    doc.setFontSize(11);
-    doc.text("Department of Homeland Security", pw / 2, y + 11, { align: "center" });
-    doc.setFont("times", "normal");
-    doc.text("U.S. Citizenship and Immigration Services", pw / 2, y + 15.5, { align: "center" });
-    
-    doc.setFont("times", "bold");
-    doc.setFontSize(11);
-    doc.text("USCIS", pw - m, y + 11, { align: "right" });
-    doc.text("Form AR-11", pw - m, y + 15.5, { align: "right" });
-    
-    y += 18;
-    doc.setLineWidth(2.0); // Thick line
-    doc.line(m, y, pw - m, y);
-    doc.setLineWidth(0.4); // Thin line
-    doc.line(m, y + 1.2, pw - m, y + 1.2); 
-    y += 6;
-    
-    doc.setFont("times", "bold");
-    doc.setFontSize(9);
-    doc.text("NOTE: An asterisk (*) indicates a mandatory field that must be completed.", m, y);
-    y += 4;
-    
-    // Helper functions
-    const drawSection = (title: string, currentY: number) => {
-      doc.setFillColor(230, 230, 230);
-      doc.setDrawColor(0);
-      doc.setLineWidth(0.3);
-      doc.rect(m, currentY, pw - 2 * m, 5.5, 'DF'); // Shorter height
-      doc.setFont("times", "bold");
-      doc.setFontSize(11);
-      doc.text(title, m + 1.5, currentY + 4);
-      return currentY + 9;
-    };
-    
-    const drawField = (label: string, value: string, x: number, currentY: number, width: number, height: number = 5.5) => {
-      doc.setFont("times", "normal");
-      doc.setFontSize(8.5);
-      doc.text(label, x, currentY);
-      
-      doc.setDrawColor(0);
-      doc.setLineWidth(0.3);
-      doc.rect(x, currentY + 1.2, width, height, 'S');
-      
-      if (value) {
-        doc.setFont("helvetica", "normal");
-        doc.setFontSize(10);
-        const splitValue = doc.splitTextToSize(value, width - 2);
-        doc.text(splitValue, x + 1.5, currentY + 5);
-      }
-    };
-    
-    const drawCheckboxes = (label: string, options: string[], selectedValue: string, x: number, currentY: number) => {
-      doc.setFont("times", "normal");
-      doc.setFontSize(8.5);
-      // Special formatting for Apt. Ste. Flr.
-      if (label === "Apt. Ste. Flr.") {
-        doc.text("Apt.", x, currentY);
-        doc.text("Ste.", x + 6.5, currentY);
-        doc.text("Flr.", x + 13, currentY);
-        let currX = x;
-        options.forEach((opt, idx) => {
-          doc.setDrawColor(0);
-          doc.setLineWidth(0.3);
-          doc.rect(currX + (idx*0.5), currentY + 1.2, 4, 4, 'S');
-          if (selectedValue === opt) {
-            doc.setFont("helvetica", "bold");
-            doc.setFontSize(10);
-            doc.text("X", currX + 1 + (idx*0.5), currentY + 4.5);
+      const ar11Doc = await PDFDocument.load(ar11Bytes);
+      const g1145Doc = await PDFDocument.load(g1145Bytes);
+
+      const ar11Form = ar11Doc.getForm();
+      const g1145Form = g1145Doc.getForm();
+
+      // Helper to safely set text fields
+      const setTextField = (form: any, name: string, value: string) => {
+        try {
+          if (value) {
+            const field = form.getTextField(name);
+            field.setText(value);
           }
-          currX += 6;
-        });
-      } else {
-         doc.text(label, x, currentY);
+        } catch (e) {
+          console.error(`Could not set text field ${name}`, e);
+        }
+      };
+
+      // Helper to safely check checkboxes
+      const checkField = (form: any, name: string) => {
+        try {
+          const field = form.getCheckBox(name);
+          field.check();
+        } catch (e) {
+          console.error(`Could not check field ${name}`, e);
+        }
+      };
+
+      // 2. Fill AR-11 Form Fields
+      // Information About You
+      setTextField(ar11Form, 'TXT-299a-0-11', formData.familyName || "");
+      setTextField(ar11Form, 'TXT-299a-0-12', formData.givenName || "");
+      setTextField(ar11Form, 'TXT-299a-0-13', formData.middleName || "");
+      setTextField(ar11Form, 'TXT-299a-0-1', formData.dob || "");
+      setTextField(ar11Form, 'TXT-299a-0-0', formData.aNumber || "");
+
+      // Present Physical Address
+      setTextField(ar11Form, 'TXT-299a-0-3', formData.pres_street || "");
+      if (formData.pres_unit_type === 'Apt.') checkField(ar11Form, 'CHB-fb63-0-3');
+      if (formData.pres_unit_type === 'Ste.') checkField(ar11Form, 'CHB-fb63-0-5');
+      if (formData.pres_unit_type === 'Flr.') checkField(ar11Form, 'CHB-fb63-0-4');
+      setTextField(ar11Form, 'TXT-299a-0-18', formData.pres_unit_number || "");
+      setTextField(ar11Form, 'TXT-299a-0-2', formData.pres_city || "");
+      setTextField(ar11Form, 'State0', formData.pres_state || "");
+      setTextField(ar11Form, 'TXT-299a-0-4', formData.pres_zip || "");
+
+      // Previous Physical Address
+      setTextField(ar11Form, 'TXT-299a-0-16', formData.prev_street || "");
+      if (formData.prev_unit_type === 'Apt.') checkField(ar11Form, 'CHB-fb63-0-0');
+      if (formData.prev_unit_type === 'Ste.') checkField(ar11Form, 'CHB-fb63-0-2');
+      if (formData.prev_unit_type === 'Flr.') checkField(ar11Form, 'CHB-fb63-0-1');
+      setTextField(ar11Form, 'TXT-299a-0-14', formData.prev_unit_number || "");
+      setTextField(ar11Form, 'TXT-299a-0-15', formData.prev_city || "");
+      setTextField(ar11Form, 'state1', formData.prev_state || "");
+      setTextField(ar11Form, 'TXT-299a-0-17', formData.prev_zip || "");
+
+      // Mailing Address
+      setTextField(ar11Form, 'TXT-299a-0-7', formData.mail_street || "");
+      if (formData.mail_unit_type === 'Apt.') checkField(ar11Form, 'CHB-fb63-0-6');
+      if (formData.mail_unit_type === 'Ste.') checkField(ar11Form, 'CHB-fb63-0-8');
+      if (formData.mail_unit_type === 'Flr.') checkField(ar11Form, 'CHB-fb63-0-7');
+      setTextField(ar11Form, 'TXT-299a-0-5', formData.mail_unit_number || "");
+      setTextField(ar11Form, 'TXT-299a-0-6', formData.mail_city || "");
+      setTextField(ar11Form, 'st3', formData.mail_state || "");
+      setTextField(ar11Form, 'TXT-299a-0-8', formData.mail_zip || "");
+
+      // Signature & Date
+      const fullName = [formData.givenName, formData.middleName, formData.familyName].filter(Boolean).join(" ");
+      if (agreed) {
+        setTextField(ar11Form, 'TXT-299a-0-10', `${fullName} (Digitally Signed)`);
       }
-    };
-    
-    const drawLink = (text: string, x: number, currentY: number) => {
-      doc.setFont("times", "italic");
-      doc.setFontSize(7.5);
-      doc.setTextColor(0, 0, 255);
-      doc.text(text, x, currentY);
-      const textWidth = doc.getTextWidth(text);
-      doc.setDrawColor(0, 0, 255);
-      doc.setLineWidth(0.1);
-      doc.line(x, currentY + 0.5, x + textWidth, currentY + 0.5);
-      doc.setTextColor(0, 0, 0); // reset
-    };
-    
-    // --- Information About You ---
-    y = drawSection("Information About You", y);
-    
-    drawField("*Family Name (Last Name)", formData.familyName || "", m, y, 73);
-    drawField("*Given Name (First Name)", formData.givenName || "", m + 74, y, 60);
-    drawField("Middle Name (if applicable)", formData.middleName || "", m + 135, y, pw - 2*m - 135);
-    
-    y += 10.5;
-    
-    drawField("*Date of Birth (mm/dd/yyyy)", formData.dob || "", m, y, 45);
-    
-    doc.setFont("times", "normal");
-    doc.setFontSize(8.5);
-    doc.text("Alien Registration Number (A-Number) (if any)", m + 47, y);
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(9);
-    doc.text("► A-", m + 47, y + 5);
-    // Draw 9 individual boxes for A-Number
-    let aNumX = m + 55;
-    const aNumStr = formData.aNumber ? formData.aNumber.padEnd(9, ' ') : "         ";
-    for(let i=0; i<9; i++) {
-      doc.setDrawColor(0);
-      doc.setLineWidth(0.3);
-      doc.rect(aNumX, y + 1.2, 5.5, 5.5, 'S');
-      if (aNumStr[i] && aNumStr[i] !== ' ') {
-        doc.setFont("helvetica", "normal");
-        doc.setFontSize(10);
-        doc.text(aNumStr[i], aNumX + 1.5, y + 5);
+      const today = new Date().toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' });
+      setTextField(ar11Form, 'TXT-299a-0-9', today);
+
+      // Flatten AR-11 to bake the data in
+      ar11Form.flatten();
+
+      // 3. Fill G-1145 Form Fields
+      setTextField(g1145Form, 'A2', formData.familyName || "");
+      setTextField(g1145Form, 'A3', formData.givenName || "");
+      setTextField(g1145Form, 'A4', formData.middleName || "");
+      // Email and Phone would go in A5 and A6 if we collected them
+      
+      // Flatten G-1145
+      g1145Form.flatten();
+
+      // 4. Combine Documents (Append G-1145 to AR-11)
+      const copiedPages = await ar11Doc.copyPages(g1145Doc, g1145Doc.getPageIndices());
+      for (const page of copiedPages) {
+        ar11Doc.addPage(page);
       }
-      aNumX += 5.5;
+
+      // 5. Save and Download
+      const pdfBytes = await ar11Doc.save();
+      const blob = new Blob([pdfBytes as any], { type: 'application/pdf' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'AR-11-Form.pdf';
+      link.click();
+    } catch (err) {
+      console.error("Error generating PDF:", err);
+      alert("There was an error generating the official PDF. Please try again.");
     }
-    
-    y += 11;
-    
-    // --- Information About Your Address ---
-    y = drawSection("Information About Your Address", y);
-    
-    doc.setFont("times", "bold");
-    doc.setFontSize(9);
-    doc.text("*Present Physical Address (No PO Boxes)", m, y);
-    y += 5.5;
-    
-    drawField("*Street Number and Name", formData.pres_street || "", m, y, 122);
-    drawCheckboxes("Apt. Ste. Flr.", ["Apt.", "Ste.", "Flr."], formData.pres_unit_type || "", m + 124, y);
-    drawField("Number", formData.pres_unit_number || "", m + 145, y, pw - 2*m - 145);
-    
-    y += 10.5;
-    
-    drawField("*City or Town", formData.pres_city || "", m, y, 122);
-    drawField("*State", formData.pres_state || "", m + 124, y, 19);
-    drawField("*ZIP Code", formData.pres_zip || "", m + 145, y, pw - 2*m - 145);
-    
-    y += 9.5;
-    drawLink("(USPS ZIP Code Lookup)", pw - m - 40, y);
-    
-    y += 4;
-    
-    doc.setFont("times", "bold");
-    doc.setFontSize(9);
-    doc.text("Previous Physical Address", m, y);
-    y += 5.5;
-    
-    drawField("Street Number and Name", formData.prev_street || "", m, y, 122);
-    drawCheckboxes("Apt. Ste. Flr.", ["Apt.", "Ste.", "Flr."], formData.prev_unit_type || "", m + 124, y);
-    drawField("Number", formData.prev_unit_number || "", m + 145, y, pw - 2*m - 145);
-    
-    y += 10.5;
-    
-    drawField("City or Town", formData.prev_city || "", m, y, 122);
-    drawField("State", formData.prev_state || "", m + 124, y, 19);
-    drawField("ZIP Code", formData.prev_zip || "", m + 145, y, pw - 2*m - 145);
-    
-    y += 9.5;
-    
-    y += 4;
-    
-    doc.setFont("times", "bold");
-    doc.setFontSize(9);
-    doc.text("Mailing Address (optional)", m, y);
-    y += 5.5;
-    
-    drawField("Street Number and Name", formData.mail_street || "", m, y, 122);
-    drawCheckboxes("Apt. Ste. Flr.", ["Apt.", "Ste.", "Flr."], formData.mail_unit_type || "", m + 124, y);
-    drawField("Number", formData.mail_unit_number || "", m + 145, y, pw - 2*m - 145);
-    
-    y += 10.5;
-    
-    drawField("City or Town", formData.mail_city || "", m, y, 122);
-    drawField("State", formData.mail_state || "", m + 124, y, 19);
-    drawField("ZIP Code", formData.mail_zip || "", m + 145, y, pw - 2*m - 145);
-    
-    y += 9.5;
-    drawLink("(USPS ZIP Code Lookup)", pw - m - 40, y);
-    
-    y += 4;
-    
-    // --- Your Signature ---
-    y = drawSection("Your Signature", y);
-    
-    const fullName = [formData.givenName, formData.middleName, formData.familyName].filter(Boolean).join(" ");
-    drawField("*Your Signature", agreed ? `${fullName} (Digitally Signed)` : "", m, y, 145);
-    const today = new Date().toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' });
-    drawField("Date of Signature (mm/dd/yyyy)", today, m + 147, y, pw - 2*m - 147);
-    
-    y += 18;
-    
-    // Footer Page 1
-    doc.setDrawColor(0);
-    doc.setLineWidth(0.3);
-    doc.line(m, ph - m - 5, pw - m, ph - m - 5);
-    doc.setFont("times", "normal");
-    doc.setFontSize(8);
-    doc.text("Form AR-11   Edition 11/02/22", m, ph - m);
-    doc.text("Page 1 of 2", pw - m, ph - m, { align: "right" });
-
-    // --- PAGE 2 ---
-    doc.addPage();
-    y = m + 5;
-
-    // Double line header
-    doc.setLineWidth(1.5);
-    doc.line(m, y, pw - m, y);
-    doc.setLineWidth(0.3);
-    doc.line(m, y + 1, pw - m, y + 1); 
-    y += 5;
-
-    y = drawSection("Address Change Information and Instructions", y);
-
-    doc.setFont("times", "normal");
-    doc.setFontSize(9);
-    const instructions = "All aliens subject to registration requirements may use this form to report a change of address within 10 days of such change. For detailed instructions on how to update your address, please visit www.uscis.gov/addresschange. The collection of this information is required by Immigration and Nationality Act (INA) section 265 (8 U.S.C. 1305). U.S. Citizenship and Immigration Services (USCIS) uses the data collected on this form for statistical and record-keeping purposes, and may share this information with other Federal, state, local, and law enforcement officials. Failure to report a change of address is punishable by fine or imprisonment and/or removal from the United States.";
-    const splitInst = doc.splitTextToSize(instructions, pw - 2 * m);
-    doc.text(splitInst, m, y);
-
-    y += 28;
-
-    doc.setFont("times", "bold");
-    doc.setFontSize(9);
-    doc.text("NOTE: This form is not evidence of identity, age, or status claimed.", m, y);
-    y += 5;
-
-    const imp = "IMPORTANT: If you are in immigration proceedings, you must separately notify the Immigration Court of any address changes. Filing Form AR-11 with USCIS does not update your address with the Immigration Court.";
-    const splitImp = doc.splitTextToSize(imp, pw - 2 * m);
-    doc.text(splitImp, m, y);
-
-    y += 12;
-
-    y = drawSection("Instructions", y);
-    doc.setFont("times", "normal");
-    doc.setFontSize(9);
-    doc.text("Complete all fields on this form, sign and date the form, and mail it to:", m, y);
-
-    y += 5;
-
-    // Draw address box
-    doc.setDrawColor(0);
-    doc.setLineWidth(0.5);
-    const boxW = 60;
-    const boxX = (pw - boxW) / 2;
-    doc.rect(boxX, y, boxW, 20, 'S');
-
-    doc.setFont("times", "bold");
-    doc.text("U.S. Department of Homeland Security", pw/2, y + 5, { align: "center" });
-    doc.text("Citizenship and Immigration Services", pw/2, y + 9, { align: "center" });
-    doc.text("Attn: Change of Address", pw/2, y + 13, { align: "center" });
-    doc.text("1344 Pleasants Drive", pw/2, y + 17, { align: "center" });
-    doc.text("Harrisonburg, VA 22801", pw/2, y + 21, { align: "center" }); 
-
-    y += 26;
-
-    y = drawSection("DHS Privacy Notice", y);
-    doc.setFont("times", "bold");
-    doc.text("AUTHORITIES:", m, y);
-    doc.setFont("times", "normal");
-    const authText = "The information requested on this form is collected under the Immigration and Nationality Act (INA) section 265.";
-    doc.text(doc.splitTextToSize(authText, pw - 2*m - 25), m + 25, y);
-    y += 6;
-
-    doc.setFont("times", "bold");
-    doc.text("PURPOSE:", m, y);
-    doc.setFont("times", "normal");
-    const purText = "The primary purpose for providing the requested information on this form is to report a change of address. Except for those exempted, all aliens in the U.S. are required to report any change of address or new address. DHS uses the information you provide to contact you about the immigration benefit you are seeking.";
-    doc.text(doc.splitTextToSize(purText, pw - 2*m - 18), m + 18, y);
-    y += 14;
-
-    doc.setFont("times", "bold");
-    doc.text("DISCLOSURE:", m, y);
-    doc.setFont("times", "normal");
-    const disText = "The information you provide is mandatory. Failure to report a change of address may result in a fine, imprisonment and/or removal (8 U.S.C. sections 1227(a)(3) and 1306). Failure to comply could also jeopardize your ability to obtain a future visa or other immigration benefits.";
-    doc.text(doc.splitTextToSize(disText, pw - 2*m - 23), m + 23, y);
-    y += 14;
-
-    doc.setFont("times", "bold");
-    doc.text("ROUTINE USES:", m, y);
-    doc.setFont("times", "normal");
-    const routineText = "DHS may share the information you provide on this form with other Federal, state, local, and foreign government agencies and authorized organizations. DHS follows approved routine uses described in the associated published system of records notices [DHS/USCIS-001 - Alien File, Index, and National File Tracking System and DHS/USCIS-007 - Benefits Information System] and the published privacy impact assessments [DHS/USCIS/PIA-018 Alien Change of Address Card (AR-11)] which you can find at www.dhs.gov/privacy. DHS may also share this information, as appropriate, for law enforcement purposes or in the interest of national security.";
-    doc.text(doc.splitTextToSize(routineText, pw - 2*m - 27), m + 27, y);
-
-    // Footer Page 2
-    doc.setDrawColor(0);
-    doc.setLineWidth(0.3);
-    doc.line(m, ph - m - 5, pw - m, ph - m - 5);
-    doc.setFont("times", "normal");
-    doc.setFontSize(8);
-    doc.text("Form AR-11   Edition 11/02/22", m, ph - m);
-    doc.text("Page 2 of 2", pw - m, ph - m, { align: "right" });
-    
-    doc.save('AR-11-Form.pdf');
   };
 
   return (
