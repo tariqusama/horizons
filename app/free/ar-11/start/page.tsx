@@ -143,12 +143,25 @@ export default function AR11Page() {
         }
       };
 
+      // Helper to safely set dropdown fields
+      const setDropdown = (form: any, name: string, value: string) => {
+        try {
+          if (value) {
+            const field = form.getDropdown(name);
+            field.select(value);
+          }
+        } catch (e) {
+          console.error(`Could not set dropdown ${name}`, e);
+        }
+      };
+
       // 2. Fill AR-11 Form Fields
       // Information About You
       setTextField(ar11Form, 'TXT-299a-0-11', formData.familyName || "");
       setTextField(ar11Form, 'TXT-299a-0-12', formData.givenName || "");
       setTextField(ar11Form, 'TXT-299a-0-13', formData.middleName || "");
       setTextField(ar11Form, 'TXT-299a-0-1', formData.dob || "");
+      setTextField(ar11Form, 'TXT-299a-0-0', formData.aNumber || "");
       
       // Present Physical Address
       setTextField(ar11Form, 'TXT-299a-0-3', formData.pres_street || "");
@@ -157,7 +170,7 @@ export default function AR11Page() {
       if (formData.pres_unit_type === 'Flr.') checkField(ar11Form, 'CHB-fb63-0-4');
       setTextField(ar11Form, 'TXT-299a-0-18', formData.pres_unit_number || "");
       setTextField(ar11Form, 'TXT-299a-0-2', formData.pres_city || "");
-      setTextField(ar11Form, 'State0', formData.pres_state || "");
+      setDropdown(ar11Form, 'State0', formData.pres_state || "");
       setTextField(ar11Form, 'TXT-299a-0-4', formData.pres_zip || "");
 
       // Previous Physical Address
@@ -167,7 +180,7 @@ export default function AR11Page() {
       if (formData.prev_unit_type === 'Flr.') checkField(ar11Form, 'CHB-fb63-0-1');
       setTextField(ar11Form, 'TXT-299a-0-14', formData.prev_unit_number || "");
       setTextField(ar11Form, 'TXT-299a-0-15', formData.prev_city || "");
-      setTextField(ar11Form, 'state1', formData.prev_state || "");
+      setDropdown(ar11Form, 'state1', formData.prev_state || "");
       setTextField(ar11Form, 'TXT-299a-0-17', formData.prev_zip || "");
 
       // Mailing Address
@@ -177,7 +190,7 @@ export default function AR11Page() {
       if (formData.mail_unit_type === 'Flr.') checkField(ar11Form, 'CHB-fb63-0-7');
       setTextField(ar11Form, 'TXT-299a-0-5', formData.mail_unit_number || "");
       setTextField(ar11Form, 'TXT-299a-0-6', formData.mail_city || "");
-      setTextField(ar11Form, 'st3', formData.mail_state || "");
+      setDropdown(ar11Form, 'st3', formData.mail_state || "");
       setTextField(ar11Form, 'TXT-299a-0-8', formData.mail_zip || "");
 
       // Signature & Date
@@ -188,26 +201,8 @@ export default function AR11Page() {
       const today = new Date().toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' });
       setTextField(ar11Form, 'TXT-299a-0-9', today);
 
-      // Flatten AR-11 to bake the data in
-      ar11Form.flatten();
-
-      // Manually draw A-Number to fix comb field spacing
-      if (formData.aNumber) {
-        const firstPage = ar11Doc.getPages()[0];
-        const aNumStr = formData.aNumber.padEnd(9, ' ');
-        let aNumX = 204 + 4.5; // Start X + center offset
-        const aNumY = 600 + 4; // Bottom Y + baseline offset
-        for(let i=0; i<9; i++) {
-          if (aNumStr[i] && aNumStr[i] !== ' ') {
-            firstPage.drawText(aNumStr[i], {
-              x: aNumX,
-              y: aNumY,
-              size: 10,
-            });
-          }
-          aNumX += 15.33; // Width per comb box
-        }
-      }
+      // Do NOT flatten the form. Flattening destroys comb fields and removes text with non-standard embedded fonts.
+      // Leaving it interactive allows the PDF Viewer (e.g., Chrome, Acrobat) to correctly render the values.
 
       // 3. Save and Download
       const pdfBytes = await ar11Doc.save();
