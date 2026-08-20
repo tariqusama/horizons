@@ -73,7 +73,7 @@ function AddressBlock({ prefix, streetPlaceholder, cityPlaceholder }: { prefix: 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-1.5">
             <label className="text-sm font-semibold text-gray-700">Unit Number</label>
-            <input name={`${prefix}_unit_number`} className={inputClass} placeholder="4B" disabled={!unitType} />
+            <input name={`${prefix}_unit_number`} className={inputClass} placeholder="4B" />
           </div>
         </div>
       </div>
@@ -201,8 +201,8 @@ export default function AR11Page() {
       const today = new Date().toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' });
       setTextField(ar11Form, 'TXT-299a-0-9', today);
 
-      // Do NOT flatten the form. Flattening destroys comb fields and removes text with non-standard embedded fonts.
-      // Leaving it interactive allows the PDF Viewer (e.g., Chrome, Acrobat) to correctly render the values.
+      // Flatten the form to ensure state dropdowns, checkboxes, and formatted text fields render correctly in all PDF viewers.
+      ar11Form.flatten();
 
       // 3. Save and Download
       const pdfBytes = await ar11Doc.save();
