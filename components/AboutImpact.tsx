@@ -1,12 +1,35 @@
-import React from 'react';
+"use client";
+import React, { useState, useEffect } from 'react';
+import api from '@/lib/api';
 
 export default function AboutImpact() {
+  const [successStories, setSuccessStories] = useState(3012);
+
+  useEffect(() => {
+    // Fetch the number of new signups from the backend API
+    // Replace '/stats/signups' with your actual API endpoint if different.
+    api.get('/stats/signups')
+      .then((response) => {
+        // Assuming the API returns something like { count: 10 } or { total: 3022 }
+        const count = response.data?.count || 0;
+        const total = response.data?.total;
+        if (total) {
+          setSuccessStories(total);
+        } else {
+          setSuccessStories(3012 + count);
+        }
+      })
+      .catch((error) => {
+        console.error("Failed to fetch signup count", error);
+      });
+  }, []);
+
   const stats = [
     {
       value: "4+", label: "Years of Excellence", icon: "emoji_events",
     },
     {
-      value: "3,012+", label: "Success Stories", icon: "auto_awesome",
+      value: `${successStories.toLocaleString()}+`, label: "Success Stories", icon: "auto_awesome",
     },
     {
       value: "75+", label: "Countries Served", icon: "public",
