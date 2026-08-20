@@ -116,15 +116,10 @@ export default function AR11Page() {
     try {
       const { PDFDocument } = await import('pdf-lib');
 
-      // 1. Fetch and Load both PDFs
+      // 1. Fetch and Load AR-11 PDF
       const ar11Bytes = await fetch('/ar-11.pdf').then(res => res.arrayBuffer());
-      const g1145Bytes = await fetch('/g-1145.pdf').then(res => res.arrayBuffer());
-
       const ar11Doc = await PDFDocument.load(ar11Bytes);
-      const g1145Doc = await PDFDocument.load(g1145Bytes);
-
       const ar11Form = ar11Doc.getForm();
-      const g1145Form = g1145Doc.getForm();
 
       // Helper to safely set text fields
       const setTextField = (form: any, name: string, value: string) => {
@@ -154,8 +149,7 @@ export default function AR11Page() {
       setTextField(ar11Form, 'TXT-299a-0-12', formData.givenName || "");
       setTextField(ar11Form, 'TXT-299a-0-13', formData.middleName || "");
       setTextField(ar11Form, 'TXT-299a-0-1', formData.dob || "");
-      setTextField(ar11Form, 'TXT-299a-0-0', formData.aNumber || "");
-
+      
       // Present Physical Address
       setTextField(ar11Form, 'TXT-299a-0-3', formData.pres_street || "");
       if (formData.pres_unit_type === 'Apt.') checkField(ar11Form, 'CHB-fb63-0-3');
@@ -197,22 +191,25 @@ export default function AR11Page() {
       // Flatten AR-11 to bake the data in
       ar11Form.flatten();
 
-      // 3. Fill G-1145 Form Fields
-      setTextField(g1145Form, 'A2', formData.familyName || "");
-      setTextField(g1145Form, 'A3', formData.givenName || "");
-      setTextField(g1145Form, 'A4', formData.middleName || "");
-      // Email and Phone would go in A5 and A6 if we collected them
-      
-      // Flatten G-1145
-      g1145Form.flatten();
-
-      // 4. Combine Documents (Append G-1145 to AR-11)
-      const copiedPages = await ar11Doc.copyPages(g1145Doc, g1145Doc.getPageIndices());
-      for (const page of copiedPages) {
-        ar11Doc.addPage(page);
+      // Manually draw A-Number to fix comb field spacing
+      if (formData.aNumber) {
+        const firstPage = ar11Doc.getPages()[0];
+        const aNumStr = formData.aNumber.padEnd(9, ' ');
+        let aNumX = 204 + 4.5; // Start X + center offset
+        const aNumY = 600 + 4; // Bottom Y + baseline offset
+        for(let i=0; i<9; i++) {
+          if (aNumStr[i] && aNumStr[i] !== ' ') {
+            firstPage.drawText(aNumStr[i], {
+              x: aNumX,
+              y: aNumY,
+              size: 10,
+            });
+          }
+          aNumX += 15.33; // Width per comb box
+        }
       }
 
-      // 5. Save and Download
+      // 3. Save and Download
       const pdfBytes = await ar11Doc.save();
       const blob = new Blob([pdfBytes as any], { type: 'application/pdf' });
       const link = document.createElement('a');
