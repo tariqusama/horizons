@@ -59,6 +59,9 @@ export default function G1145Page() {
       setTextField(form, 'A5', formData.email || "");
       setTextField(form, 'A6', formData.mobilePhone || "");
 
+      // Flatten to ensure formatted fields like phone number render properly
+      form.flatten();
+
       // 3. Save and Download
       const outPdfBytes = await pdfDoc.save();
       const blob = new Blob([outPdfBytes as any], { type: 'application/pdf' });
