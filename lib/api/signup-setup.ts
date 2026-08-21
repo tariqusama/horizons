@@ -13,6 +13,7 @@ export interface SignupQuestion {
     id: number;
     signup_goal_id: number;
     question_text: string;
+    depends_on_answer?: string | null;
     options: any[] | null;
     disqualifying_options: string[] | null;
     skip_to_end_options: string[] | null;

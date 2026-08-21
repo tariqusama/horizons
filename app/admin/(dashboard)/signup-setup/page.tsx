@@ -119,6 +119,7 @@ function QuestionModal({
     services: Service[];
 }) {
     const [questionText, setQuestionText] = useState('');
+    const [dependsOnAnswer, setDependsOnAnswer] = useState('');
     const [optionsText, setOptionsText] = useState('');
     const [disqualifyingText, setDisqualifyingText] = useState('');
     const [skipToEndText, setSkipToEndText] = useState('');
@@ -129,6 +130,7 @@ function QuestionModal({
     useEffect(() => {
         if (question) {
             setQuestionText(question.question_text);
+            setDependsOnAnswer(question.depends_on_answer || '');
             setOptionsText(question.options ? question.options.join(', ') : '');
             setDisqualifyingText(question.disqualifying_options ? question.disqualifying_options.join(', ') : '');
             setSkipToEndText(question.skip_to_end_options ? question.skip_to_end_options.join(', ') : '');
@@ -136,6 +138,7 @@ function QuestionModal({
             setServiceMappings(question.service_mappings || {});
         } else {
             setQuestionText('');
+            setDependsOnAnswer('');
             setOptionsText('');
             setDisqualifyingText('');
             setSkipToEndText('');
@@ -156,6 +159,7 @@ function QuestionModal({
 
             await onSave({
                 question_text: questionText,
+                depends_on_answer: dependsOnAnswer.trim() || null,
                 options: options.length > 0 ? options : null,
                 disqualifying_options: disqualifying.length > 0 ? disqualifying : null,
                 skip_to_end_options: skipToEnd.length > 0 ? skipToEnd : null,
@@ -184,6 +188,11 @@ function QuestionModal({
                     <div>
                         <label className="block text-xs font-semibold text-slate-900 mb-1">Question Text</label>
                         <input required value={questionText} onChange={e => setQuestionText(e.target.value)} className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-indigo-500" placeholder="e.g. Are you married?" />
+                    </div>
+                    <div>
+                        <label className="block text-xs font-semibold text-slate-900 mb-1">Depends On Answer (Optional Branching)</label>
+                        <input value={dependsOnAnswer} onChange={e => setDependsOnAnswer(e.target.value)} className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-indigo-500" placeholder="e.g. Spouse" />
+                        <p className="text-xs text-slate-500 mt-1">If set, this question will only appear if the user previously selected this exact option text.</p>
                     </div>
                     <div>
                         <label className="block text-xs font-semibold text-slate-900 mb-1">Options (Comma separated)</label>
@@ -362,6 +371,21 @@ export default function SignupSetupPage() {
         setIsQuestionModalOpen(true);
     };
 
+    const openAddBranch = (goalId: number, branchOption: string) => {
+        setActiveGoalId(goalId);
+        setEditingQuestion({
+            id: 0,
+            signup_goal_id: goalId,
+            question_text: '',
+            depends_on_answer: branchOption,
+            options: null,
+            disqualifying_options: null,
+            skip_to_end_options: null,
+            order_index: (goals.find(g => g.id === goalId)?.questions?.length || 0) + 1
+        });
+        setIsQuestionModalOpen(true);
+    };
+
     return (
         <main className="flex-1 px-4 sm:px-6 pb-8 pt-2 bg-slate-50">
             <div className="mb-6 px-1 flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-end">
@@ -426,8 +450,25 @@ export default function SignupSetupPage() {
                                                             {q.question_text}
                                                         </p>
                                                         <div className="flex flex-wrap gap-2 text-xs">
+                                                            {q.depends_on_answer && (
+                                                                <span className="text-amber-700 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">Branch: If answer is "{q.depends_on_answer}"</span>
+                                                            )}
                                                             {q.options && q.options.length > 0 && (
-                                                                <span className="text-slate-600 bg-slate-100 px-2 py-0.5 rounded">Options: {q.options.join(', ')}</span>
+                                                                <div className="flex flex-wrap gap-1 items-center">
+                                                                    <span className="text-slate-500 font-medium mr-1">Options:</span>
+                                                                    {q.options.map(opt => (
+                                                                        <div key={opt} className="group relative inline-flex items-center text-slate-600 bg-slate-100 px-2 py-0.5 rounded">
+                                                                            <span>{opt}</span>
+                                                                            <button 
+                                                                                onClick={() => openAddBranch(goal.id, opt)}
+                                                                                className="ml-1.5 opacity-0 group-hover:opacity-100 text-indigo-500 hover:text-indigo-700 transition-opacity"
+                                                                                title={`Add a branching question for "${opt}"`}
+                                                                            >
+                                                                                <Icon.plus className="w-3 h-3" />
+                                                                            </button>
+                                                                        </div>
+                                                                    ))}
+                                                                </div>
                                                             )}
                                                             {q.disqualifying_options && q.disqualifying_options.length > 0 && (
                                                                 <span className="text-red-600 bg-red-50 px-2 py-0.5 rounded">Disqualifies: {q.disqualifying_options.join(', ')}</span>

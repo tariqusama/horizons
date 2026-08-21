@@ -13,6 +13,7 @@ type Question = {
   options: string[];
   disqualifyingOptions?: string[];
   skipToEndOptions?: string[];
+  depends_on_answer?: string | null;
 };
 
 
@@ -109,10 +110,13 @@ function SignupFlowContent() {
     // Only run if pathways is loaded and we have a selected goal
     if (!pathways || !selectedGoal) return;
 
-    // Get questions length to determine when to show pricing
-    let baseQuestions = [...(pathways[selectedGoal] || [])];
+    // Dynamically calculate visible questions based on current answers
+    const visibleQuestions = (pathways[selectedGoal] || []).filter(q => {
+      if (!q.depends_on_answer) return true;
+      return Object.values(answers).includes(q.depends_on_answer);
+    });
 
-    if (currentStep > 0 && currentStep === baseQuestions.length + 1 && !dynamicPricing && !isLoadingPricing) {
+    if (currentStep > 0 && currentStep === visibleQuestions.length + 1 && !dynamicPricing && !isLoadingPricing) {
       setIsLoadingPricing(true);
       api.post('/public/signup-pricing', { goal: selectedGoal, answers })
         .then(res => {
@@ -153,21 +157,7 @@ function SignupFlowContent() {
     wants_household_member: false
   });
 
-  const getServiceId = (goal: string | null, formAnswers: Record<number, string>) => {
-    if (!goal) return null;
-    if (goal.includes("Adjust status")) return 'aos';
-    if (goal.includes("fiancé(e)")) return 'fiance_petition';
-    if (goal.includes("spouse to the U.S.")) return 'spouse';
-    if (goal.includes("sibling to the U.S.")) return 'sibling';
-    if (goal.includes("another relative")) {
-      if (formAnswers[1] === "Child/Step Child") return 'child';
-      if (formAnswers[1] === "Parent") return 'parent';
-    }
-    if (goal.includes("Remove conditions")) return 'i751';
-    if (goal.includes("Replace or fix")) return 'i90';
-    if (goal.includes("Citizenship")) return 'n400';
-    return null;
-  };
+
 
   const stripe = useStripe();
   const elements = useElements();
@@ -302,7 +292,7 @@ function SignupFlowContent() {
           amount: amount,
           addons: addonsData,
           questionnaire: questionnaireAnswers,
-          service_id: getServiceId(selectedGoal, answers)
+          service_id: dynamicPricing?.service_id || null
         }, true);
       } catch (err: any) {
         // If they already registered (e.g. they clicked back), we can just proceed.
@@ -415,7 +405,7 @@ function SignupFlowContent() {
         amount: amount,
         addons: addonsData,
         questionnaire: questionnaireAnswers,
-        service_id: getServiceId(selectedGoal, answers)
+        service_id: dynamicPricing?.service_id || null
       }, true); // skip default redirect
       
       router.push('/welcome');
@@ -486,7 +476,11 @@ function SignupFlowContent() {
 
   const getQuestions = () => {
     if (!selectedGoal || !pathways) return [];
-    return [...(pathways[selectedGoal] || [])];
+    
+    return (pathways[selectedGoal] || []).filter(q => {
+      if (!q.depends_on_answer) return true;
+      return Object.values(answers).includes(q.depends_on_answer);
+    });
   };
 
   const questions = getQuestions();
