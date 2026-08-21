@@ -103,7 +103,7 @@ function SignupFlowContent() {
       });
   }, []);
 
-  const [dynamicPricing, setDynamicPricing] = useState<{ title: string, basic: string, advanced: string, premium: string } | null>(null);
+  const [dynamicPricing, setDynamicPricing] = useState<{ title: string, service_id?: number | null, basic: string, advanced: string, premium: string, processing_time?: string | null } | null>(null);
   const [isLoadingPricing, setIsLoadingPricing] = useState(false);
 
   React.useEffect(() => {
