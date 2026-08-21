@@ -307,9 +307,12 @@ export default function TimelineSection() {
   const selectedItem = caseTypes.find(c => c.id === selectedCase);
 
   return (
-    <section className="w-full py-16 px-6 md:px-12 lg:px-16 mx-auto bg-gradient-to-br from-orange-50/50 via-white to-orange-50/30 relative overflow-hidden">
-      <div className="absolute top-0 right-0 w-64 h-64 md:w-96 md:h-96 bg-orange-100/40 rounded-full blur-3xl"></div>
-      <div className="absolute bottom-0 left-0 w-64 h-64 md:w-96 md:h-96 bg-blue-50/40 rounded-full blur-3xl"></div>
+    <section className="w-full py-16 px-6 md:px-12 lg:px-16 mx-auto bg-gradient-to-br from-orange-50/50 via-white to-orange-50/30 relative">
+      {/* Background elements container with overflow-hidden to prevent horizontal scrolling, without clipping dropdown */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 right-0 w-64 h-64 md:w-96 md:h-96 bg-orange-100/40 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-0 left-0 w-64 h-64 md:w-96 md:h-96 bg-blue-50/40 rounded-full blur-3xl"></div>
+      </div>
       
       <div className="relative z-10 max-w-4xl mx-auto">
         <motion.div
