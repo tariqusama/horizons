@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { getNotifications, markAsRead, Notification } from '../lib/api/notifications';
 import { useAuth } from '@/contexts/AuthContext';
+import GoogleTranslate from './GoogleTranslate';
 
 export default function Header({ isDashboard = false }: { isDashboard?: boolean }) {
   const [showNotifications, setShowNotifications] = useState(false);
@@ -92,6 +93,7 @@ export default function Header({ isDashboard = false }: { isDashboard?: boolean 
 
             {/* Right Section for Marketing Site */}
             <div className="hidden md:flex items-center space-x-6">
+              <GoogleTranslate />
               {isLoggedIn ? (
                 <Link href="/dashboard" className="font-bold text-[#1B3A64] hover:text-orange-500 transition-colors text-[17px]">Dashboard</Link>
               ) : (
