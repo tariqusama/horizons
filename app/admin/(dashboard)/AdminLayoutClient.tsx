@@ -6,6 +6,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { getProfile, Profile } from '../../../lib/api/profile';
 import { getNotifications, markAsRead, clearAllNotifications, Notification } from '../../../lib/api/notifications';
 import { useAuth } from '@/contexts/AuthContext';
+import GoogleTranslate from '@/components/GoogleTranslate';
 
 /* ---------- Small inline icon set ---------- */
 const Icon = {
@@ -353,6 +354,10 @@ export default function AdminLayoutClient({ children }: { children: React.ReactN
                     <button className="w-10 h-10 rounded-full bg-white border border-slate-200/50 flex items-center justify-center text-slate-500 hover:text-slate-700 transition-colors shrink-0 hidden sm:flex">
                         <Icon.grid width={18} height={18} />
                     </button>
+
+                    <div className="shrink-0 flex items-center justify-center">
+                        <GoogleTranslate />
+                    </div>
 
                     <div className="relative shrink-0">
                         <button onClick={toggleNotifications} className="relative w-10 h-10 rounded-full bg-white border border-slate-200/50 flex items-center justify-center text-slate-500 hover:text-slate-700 transition-colors">

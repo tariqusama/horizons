@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { getNotifications, markAsRead, clearAllNotifications, Notification } from '@/lib/api/notifications';
+import GoogleTranslate from '@/components/GoogleTranslate';
 
 type MenuItem = { href: string; label: string; icon?: React.ReactNode; iconBg?: string; iconFg?: string };
 type MenuGroup = { title: string; collapsible?: boolean; defaultOpen?: boolean; items: MenuItem[] };
@@ -470,6 +471,10 @@ export default function ManagerLayoutClient({ children }: { children: React.Reac
                             placeholder="Search cases, clients, updates..."
                             className="w-full pl-4 pr-4 py-3 rounded-full border border-[#ECE9E2] bg-[#F8F9FA] text-sm text-[#1F2937] placeholder:text-[#9CA3AF] outline-none focus:border-orange-500 focus:bg-white transition"
                         />
+                    </div>
+
+                    <div className="shrink-0 flex items-center justify-center">
+                        <GoogleTranslate />
                     </div>
 
                     <div className="relative shrink-0">

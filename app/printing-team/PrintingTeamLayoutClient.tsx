@@ -6,6 +6,7 @@ import React, { useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { getNotifications, markAsRead, clearAllNotifications, Notification } from '@/lib/api/notifications';
+import GoogleTranslate from '@/components/GoogleTranslate';
 
 const navItems = [
     { label: 'Dashboard', href: '/printing-team', bg: '#FDECE2', fg: '#F97316' },
@@ -199,6 +200,10 @@ export default function PrintingTeamLayoutClient({ children }: { children: React
                             <path d="M5 12h14M12 5h7M12 19h7" />
                         </svg>
                     </button>
+
+                    <div className="shrink-0 flex items-center justify-center">
+                        <GoogleTranslate />
+                    </div>
 
                     <div className="relative shrink-0">
                         <button onClick={toggleNotifications} className="relative w-10 h-10 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-500 hover:text-slate-700 transition-colors">
