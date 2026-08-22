@@ -102,7 +102,7 @@ export default function GoogleTranslate() {
       `}} />
       <div 
         id="google_translate_element" 
-        className="inline-block flex items-center justify-center min-h-[40px] [&>div]:!inline-block [&>div>div]:!inline-block overflow-hidden"
+        className="flex items-center justify-center min-h-[40px] [&>div]:!inline-block [&>div>div]:!inline-block overflow-hidden"
       ></div>
     </>
   );

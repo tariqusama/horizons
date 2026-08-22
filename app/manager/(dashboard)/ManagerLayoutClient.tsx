@@ -465,7 +465,7 @@ export default function ManagerLayoutClient({ children }: { children: React.Reac
                         </svg>
                     </button>
 
-                    <div className="flex-1 relative min-w-0">
+                    <div className="flex-1 relative min-w-0 hidden sm:block">
                         <input
                             type="text"
                             placeholder="Search cases, clients, updates..."

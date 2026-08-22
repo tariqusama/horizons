@@ -183,7 +183,7 @@ export default function AttorneyLayoutClient({ children }: { children: React.Rea
                         </svg>
                     </button>
 
-                    <div className="flex-1 relative min-w-0">
+                    <div className="flex-1 relative min-w-0 hidden sm:block">
                         <svg className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="18" height="18">
                             <path d="M21 21l-4.35-4.35" />
                             <circle cx="10" cy="10" r="6" />

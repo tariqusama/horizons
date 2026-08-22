@@ -342,7 +342,7 @@ export default function AdminLayoutClient({ children }: { children: React.ReactN
                         <Icon.menu width={18} height={18} />
                     </button>
 
-                    <div className="flex-1 relative min-w-0 ">
+                    <div className="flex-1 relative min-w-0 hidden sm:block">
                         <Icon.search width={16} height={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
                         <input
                             type="text"
