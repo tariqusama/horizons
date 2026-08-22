@@ -92,16 +92,18 @@ export default function Header({ isDashboard = false }: { isDashboard?: boolean 
             </nav>
 
             {/* Right Section for Marketing Site */}
-            <div className="hidden md:flex items-center space-x-6">
+            <div className="flex items-center gap-3 md:gap-6">
               <GoogleTranslate />
-              {isLoggedIn ? (
-                <Link href="/dashboard" className="font-bold text-[#1B3A64] hover:text-orange-500 transition-colors text-[17px]">Dashboard</Link>
-              ) : (
-                <Link href="/login" className="font-bold text-[#1B3A64] hover:text-orange-500 transition-colors text-[17px]">Login</Link>
-              )}
-              <Link href="/signup" className="bg-[#FF6B35] hover:bg-[#E05B2C] text-white px-7 py-3 rounded-lg font-bold transition-colors text-[17px]">
-                Get Started
-              </Link>
+              <div className="hidden md:flex items-center space-x-6">
+                {isLoggedIn ? (
+                  <Link href="/dashboard" className="font-bold text-[#1B3A64] hover:text-orange-500 transition-colors text-[17px]">Dashboard</Link>
+                ) : (
+                  <Link href="/login" className="font-bold text-[#1B3A64] hover:text-orange-500 transition-colors text-[17px]">Login</Link>
+                )}
+                <Link href="/signup" className="bg-[#FF6B35] hover:bg-[#E05B2C] text-white px-7 py-3 rounded-lg font-bold transition-colors text-[17px]">
+                  Get Started
+                </Link>
+              </div>
             </div>
           </>
         ) : (
@@ -181,9 +183,6 @@ export default function Header({ isDashboard = false }: { isDashboard?: boolean 
             <Link href="/services" onClick={() => setIsMobileMenuOpen(false)} className={navLinkClass("/services", true)}>Services</Link>
             <Link href="/testimonials" onClick={() => setIsMobileMenuOpen(false)} className={navLinkClass("/testimonials", true)}>Testimonials</Link>
             {/* <Link href="/free-tools" onClick={() => setIsMobileMenuOpen(false)} className={navLinkClass("/free-tools", true)}>Free Tools</Link> */}
-            <div className="py-2 flex justify-center border-t border-gray-100 mt-2 pt-4">
-              <GoogleTranslate />
-            </div>
             <div className="flex flex-col gap-2 pt-2 border-t border-gray-100 mt-2">
               {isLoggedIn ? (
                 <Link href="/dashboard" onClick={() => setIsMobileMenuOpen(false)} className="font-bold text-[#1B3A64] text-lg text-center py-2">Dashboard</Link>
