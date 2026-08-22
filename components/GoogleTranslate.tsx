@@ -42,7 +42,13 @@ export default function GoogleTranslate() {
         }
         .goog-te-gadget {
             color: transparent !important;
-            font-size: 0px !important; /* Hides "Powered by" */
+            font-size: 0px !important; /* Hides "Powered by" and "Translate" text */
+        }
+        .goog-te-gadget > span {
+            display: none !important; /* Hides the "Translate" text wrapper if it exists */
+        }
+        .goog-te-gadget > div {
+            display: inline-block !important; /* Ensures the dropdown container remains visible */
         }
         .goog-te-gadget img {
             display: none !important; /* Hides the Google logo image */
