@@ -27,9 +27,48 @@ export default function GoogleTranslate() {
   }, []);
 
   return (
-    <div 
-      id="google_translate_element" 
-      className="inline-block [&>div]:!inline-block [&>div>div]:!inline-block h-[38px] overflow-hidden rounded-md border border-gray-200"
-    ></div>
+    <>
+      <style dangerouslySetInnerHTML={{__html: `
+        /* Hide the top translation banner */
+        .goog-te-banner-frame.skiptranslate, .goog-te-banner-frame {
+            display: none !important;
+        }
+        body {
+            top: 0px !important; 
+        }
+        /* Hide the Google logo and "Powered by" text */
+        .goog-logo-link {
+            display: none !important;
+        }
+        .goog-te-gadget {
+            color: transparent !important;
+        }
+        /* Style the select dropdown */
+        .goog-te-gadget .goog-te-combo {
+            color: #1B3A64 !important;
+            margin: 0 !important;
+            padding: 6px 8px !important;
+            border-radius: 6px !important;
+            border: 1px solid #E5E7EB !important;
+            outline: none !important;
+            font-size: 14px !important;
+            font-weight: 500 !important;
+            background-color: white !important;
+            cursor: pointer;
+        }
+        /* Hide hover tooltips over translated text */
+        #goog-gt-tt, .goog-te-balloon-frame {
+            display: none !important;
+        }
+        .goog-text-highlight {
+            background-color: transparent !important;
+            box-shadow: none !important;
+        }
+      `}} />
+      <div 
+        id="google_translate_element" 
+        className="inline-block [&>div]:!inline-block [&>div>div]:!inline-block h-[38px] overflow-hidden"
+      ></div>
+    </>
   );
 }
