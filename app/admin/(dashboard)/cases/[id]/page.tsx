@@ -280,6 +280,20 @@ export default function AdminCaseDetailPage() {
                         </div>
                     </div>
 
+                    {caseData.questionnaire_answers && Object.keys(caseData.questionnaire_answers).length > 0 && (
+                        <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
+                            <h2 className="text-lg font-bold text-gray-900 mb-6 border-b border-gray-100 pb-4">Questionnaire Answers</h2>
+                            <div className="space-y-4">
+                                {Object.entries(caseData.questionnaire_answers).map(([key, value]) => (
+                                    <div key={key} className="bg-gray-50 rounded-xl p-4 border border-gray-100">
+                                        <p className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Question {key}</p>
+                                        <p className="text-sm font-semibold text-gray-900">{String(value)}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
                     <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
                         <h2 className="text-lg font-bold text-gray-900 mb-6 border-b border-gray-100 pb-4">Submitted Documents</h2>
 
