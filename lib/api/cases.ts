@@ -38,6 +38,7 @@ export interface Application {
         created_at: string;
     }>;
     form_data?: Record<string, any>;
+    questionnaire_answers?: Record<string, any>;
     form_slug?: string;
     user?: {
         id: number;
