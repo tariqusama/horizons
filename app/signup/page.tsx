@@ -299,9 +299,15 @@ function SignupFlowContent() {
           service_id: dynamicPricing?.service_id || null
         }, true);
       } catch (err: any) {
-        // If they already registered (e.g. they clicked back), we can just proceed.
-        // Or if it fails for another reason, we might want to log it, but we'll try to proceed to payment.
-        console.log("Registration info:", err);
+        const errorMsg = err.response?.data?.message;
+        const hasEmailError = err.response?.data?.errors?.email;
+        // Only proceed if they already have an account with this email.
+        if (errorMsg === 'Email already exists' || hasEmailError) {
+          console.log("User already exists, proceeding to payment");
+        } else {
+          // If there is any other error (e.g. validation on phone, country, etc), STOP and show it!
+          throw err; 
+        }
       }
 
       // 2. Prepare description
