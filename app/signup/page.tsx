@@ -142,6 +142,8 @@ function SignupFlowContent() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [email, setEmail] = useState<string>('');
+  const [phone, setPhone] = useState<string>('');
+  const [country, setCountry] = useState<string>('');
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [otp, setOtp] = useState<string[]>(Array(6).fill(''));
   const [error, setError] = useState('');
@@ -285,13 +287,15 @@ function SignupFlowContent() {
           last_name: lastName,
           name: `${firstName} ${lastName}`,
           email,
+          phone,
+          country,
           password,
           password_confirmation: confirmPassword,
           goal: selectedGoal || '',
           plan: selectedPlanName,
           amount: amount,
           addons: addonsData,
-          questionnaire: questionnaireAnswers,
+          questionnaire: answers,
           service_id: dynamicPricing?.service_id || null
         }, true);
       } catch (err: any) {
@@ -398,13 +402,15 @@ function SignupFlowContent() {
         last_name: lastName,
         name: `${firstName} ${lastName}`,
         email,
+        phone,
+        country,
         password,
         password_confirmation: confirmPassword,
         goal: selectedGoal,
         plan: selectedPlanName,
         amount: amount,
         addons: addonsData,
-        questionnaire: questionnaireAnswers,
+        questionnaire: answers,
         service_id: dynamicPricing?.service_id || null
       }, true); // skip default redirect
       
@@ -857,6 +863,35 @@ function SignupFlowContent() {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       className="peer flex h-12 w-full rounded-xl border border-gray-200 bg-slate-50/50 pl-11 pr-4 py-2 text-base text-slate-900 shadow-[0_2px_10px_rgba(0,0,0,0.02)] outline-none transition-all duration-300 focus:bg-white focus:border-[#F97316] focus:ring-4 focus:ring-[#F97316]/10"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label htmlFor="phone" className="text-xs sm:text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                      Phone Number
+                    </label>
+                    <input
+                      id="phone"
+                      name="phone"
+                      type="tel"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      className="flex h-12 w-full rounded-xl border border-gray-200 bg-slate-50/50 px-4 py-2 text-base text-slate-900 shadow-[0_2px_10px_rgba(0,0,0,0.02)] outline-none transition-all duration-300 focus:bg-white focus:border-[#F97316] focus:ring-4 focus:ring-[#F97316]/10"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label htmlFor="country" className="text-xs sm:text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                      Country
+                    </label>
+                    <input
+                      id="country"
+                      name="country"
+                      type="text"
+                      value={country}
+                      onChange={(e) => setCountry(e.target.value)}
+                      className="flex h-12 w-full rounded-xl border border-gray-200 bg-slate-50/50 px-4 py-2 text-base text-slate-900 shadow-[0_2px_10px_rgba(0,0,0,0.02)] outline-none transition-all duration-300 focus:bg-white focus:border-[#F97316] focus:ring-4 focus:ring-[#F97316]/10"
                     />
                   </div>
                 </div>
