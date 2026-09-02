@@ -1332,7 +1332,6 @@ export default function AssignedCasesPage() {
                                                                                 ) : (
                                                                                     <span style={{
                                                                                         display: 'inline-block',
-                                                                                        fontSize: '0.85rem',
                                                                                         fontSize: '0.85rem', fontWeight: 700,
                                                                                         color: '#0f172a',
                                                                                         wordBreak: 'break-word',
