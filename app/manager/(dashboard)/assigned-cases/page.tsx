@@ -1241,28 +1241,46 @@ export default function AssignedCasesPage() {
 
                                 if (caseFormSchema && caseFormSchema.sections) {
                                     // Calculate progress
-                                    let totalFields = 0;
-                                    let completedFields = 0;
+                                    let totalFieldsForProgress = 0;
+                                    let completedFieldsForProgress = 0;
+                                    let hasAnyFields = false;
+                                    
                                     caseFormSchema.sections.forEach((section: any) => {
                                         section.questions?.forEach((q: any) => {
-                                            if (q.field_name && q.field_name !== 'name_group') {
-                                                totalFields++;
-                                                if (formData[q.field_name] !== undefined && formData[q.field_name] !== null && String(formData[q.field_name]).trim() !== '') {
-                                                    completedFields++;
+                                            if (q.field_name) {
+                                                hasAnyFields = true;
+                                                const isRequired = q.is_required !== false && q.is_required !== 0 && q.is_required !== '0' && q.is_required !== null && q.is_required !== undefined;
+                                                
+                                                if (isRequired) {
+                                                    totalFieldsForProgress++;
+                                                    
+                                                    if (q.field_name === 'name_group') {
+                                                        const first = formData['firstName'] || formData[`${q.field_name}_first`] || '';
+                                                        const last = formData['lastName'] || formData[`${q.field_name}_last`] || '';
+                                                        if (first && last) {
+                                                            completedFieldsForProgress++;
+                                                        }
+                                                    } else {
+                                                        const fieldVal = formData[q.field_name];
+                                                        const isFilled = fieldVal !== undefined && fieldVal !== null && String(fieldVal).trim() !== '';
+                                                        if (isFilled) {
+                                                            completedFieldsForProgress++;
+                                                        }
+                                                    }
                                                 }
                                             }
                                         });
                                     });
-                                    const progress = totalFields > 0 ? Math.round((completedFields / totalFields) * 100) : 0;
+                                    const progress = totalFieldsForProgress > 0 ? Math.round((completedFieldsForProgress / totalFieldsForProgress) * 100) : 100;
 
-                                    if (totalFields > 0) {
+                                    if (hasAnyFields) {
                                         return (
                                             <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', maxHeight: '420px', overflowY: 'auto', paddingRight: '4px' }}>
                                                 {/* Progress Bar */}
                                                 <div style={{ padding: '16px', background: '#f8fafc', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
                                                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
                                                         <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#334155' }}>Application Progress</span>
-                                                        <span style={{ fontSize: '0.85rem', fontWeight: 700, color: progress === 100 ? '#10b981' : '#3b82f6' }}>{progress}% ({completedFields}/{totalFields})</span>
+                                                        <span style={{ fontSize: '0.85rem', fontWeight: 700, color: progress === 100 ? '#10b981' : '#3b82f6' }}>{progress}% {totalFieldsForProgress > 0 ? `(${completedFieldsForProgress}/${totalFieldsForProgress})` : ''}</span>
                                                     </div>
                                                     <div style={{ width: '100%', height: '8px', background: '#e2e8f0', borderRadius: '4px', overflow: 'hidden' }}>
                                                         <div style={{ width: `${progress}%`, height: '100%', background: progress === 100 ? '#10b981' : '#3b82f6', borderRadius: '4px', transition: 'width 0.3s' }}></div>

@@ -108,7 +108,8 @@ const CheckoutForm = ({ selectedSubPlan, selectedTier, handleClose, getSelectedA
             // Reload the page to fetch the new application
             window.location.href = '/dashboard?payment=success';
         } catch (err: any) {
-            setPaymentError(err.message || 'Payment failed. Please try again.');
+            const serverMessage = err.response?.data?.message;
+            setPaymentError(serverMessage || err.message || 'Payment failed. Please try again.');
         } finally {
             setIsSubmitting(false);
         }
