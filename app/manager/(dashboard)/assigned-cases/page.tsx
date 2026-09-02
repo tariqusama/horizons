@@ -1284,9 +1284,39 @@ export default function AssignedCasesPage() {
                                                             </div>
                                                             <div style={{ background: '#ffffff' }}>
                                                                 {section.questions.map((q: any, fieldIdx: number) => {
-                                                                    if (q.field_name === 'name_group') return null;
+                                                                    // Special handling for name_group
+                                                                    if (q.field_name === 'name_group') {
+                                                                        const firstKey = 'firstName';
+                                                                        const middleKey = 'middleName';
+                                                                        const lastKey = 'lastName';
+                                                                        const first = formData[firstKey] || formData[`${q.field_name}_first`] || '';
+                                                                        const middle = formData[middleKey] || formData[`${q.field_name}_middle`] || '';
+                                                                        const last = formData[lastKey] || formData[`${q.field_name}_last`] || '';
+                                                                        const fullName = [first, middle, last].filter(Boolean).join(' ');
+                                                                        
+                                                                        return (
+                                                                            <div key={q.id || fieldIdx} className={`flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1.5 sm:gap-4 px-4 py-3 sm:px-5 sm:py-3.5 transition-colors ${fieldIdx < section.questions.length - 1 ? 'border-b border-[#f1f5f9]' : ''}`}>
+                                                                                <span className="text-[0.78rem] font-semibold text-[#64748b] sm:min-w-[120px] shrink-0" style={{ maxWidth: '60%' }}>
+                                                                                    {q.question_text || 'Full Legal Name'}
+                                                                                </span>
+                                                                                <div className="flex sm:justify-end w-full sm:w-auto">
+                                                                                    {fullName ? (
+                                                                                        <span style={{ display: 'inline-block', fontSize: '0.85rem', fontWeight: 700, color: '#0f172a', background: '#f8fafc', padding: '6px 12px', borderRadius: '8px', border: '1px solid #e2e8f0', wordBreak: 'break-word', textAlign: 'right' }}>
+                                                                                            {fullName}
+                                                                                        </span>
+                                                                                    ) : (
+                                                                                        <span style={{ fontSize: '0.72rem', fontWeight: 600, background: '#fef2f2', color: '#991b1b', padding: '3px 10px', borderRadius: '20px', border: '1px solid #fecaca' }}>Missing</span>
+                                                                                    )}
+                                                                                </div>
+                                                                            </div>
+                                                                        );
+                                                                    }
+
+                                                                    // For regular questions, check if empty and if required
                                                                     const fieldVal = formData[q.field_name];
                                                                     const isEmpty = fieldVal === undefined || fieldVal === null || String(fieldVal).trim() === '';
+                                                                    const isRequired = q.is_required !== false && q.is_required !== 0 && q.is_required !== '0';
+
                                                                     return (
                                                                         <div key={q.id || fieldIdx} className={`flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1.5 sm:gap-4 px-4 py-3 sm:px-5 sm:py-3.5 transition-colors ${fieldIdx < section.questions.length - 1 ? 'border-b border-[#f1f5f9]' : ''}`}>
                                                                             <span className="text-[0.78rem] font-semibold text-[#64748b] sm:min-w-[120px] shrink-0" style={{ maxWidth: '60%' }}>
@@ -1294,10 +1324,15 @@ export default function AssignedCasesPage() {
                                                                             </span>
                                                                             <div className="flex sm:justify-end w-full sm:w-auto">
                                                                                 {isEmpty ? (
-                                                                                    <span style={{ fontSize: '0.72rem', fontWeight: 600, background: '#fef2f2', color: '#991b1b', padding: '3px 10px', borderRadius: '20px', border: '1px solid #fecaca' }}>Missing</span>
+                                                                                    isRequired ? (
+                                                                                        <span style={{ fontSize: '0.72rem', fontWeight: 600, background: '#fef2f2', color: '#991b1b', padding: '3px 10px', borderRadius: '20px', border: '1px solid #fecaca' }}>Missing</span>
+                                                                                    ) : (
+                                                                                        <span style={{ fontSize: '0.72rem', fontWeight: 600, background: '#f1f5f9', color: '#64748b', padding: '3px 10px', borderRadius: '20px', border: '1px solid #e2e8f0' }}>Not provided</span>
+                                                                                    )
                                                                                 ) : (
                                                                                     <span style={{
                                                                                         display: 'inline-block',
+                                                                                        fontSize: '0.85rem',
                                                                                         fontSize: '0.85rem', fontWeight: 700,
                                                                                         color: '#0f172a',
                                                                                         wordBreak: 'break-word',

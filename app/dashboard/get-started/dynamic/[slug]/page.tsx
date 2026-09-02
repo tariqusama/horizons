@@ -196,18 +196,14 @@ export default function DynamicFormEnginePage() {
             const fallback = typeof formData._current_step === 'number' ? formData._current_step : 0;
             const newMaxStep = Math.max(formData[stepKey] || fallback, proposedNextStep);
 
-            // Save progress to backend
+                // Save progress to backend
             if (applicationId) {
                 const savePromise = api.put(`/applications/${applicationId}/save-progress`, {
                     form_data: { ...formData, [stepKey]: newMaxStep, _current_step: newMaxStep },
                     current_step: newMaxStep,
                 });
 
-                if (mode === 'edit' || currentStepIndex >= steps.length - 1) {
-                    await savePromise;
-                } else {
-                    savePromise.catch((err: any) => console.error('Background save failed', err));
-                }
+                await savePromise;
 
                 setFormData((prev: any) => ({ ...prev, [stepKey]: newMaxStep, _current_step: newMaxStep }));
             }
