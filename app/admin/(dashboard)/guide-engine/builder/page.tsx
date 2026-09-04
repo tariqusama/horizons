@@ -28,6 +28,7 @@ function FormBuilderContent() {
     // Modal States
     const [isSectionModalOpen, setIsSectionModalOpen] = useState(false);
     const [newSectionTitle, setNewSectionTitle] = useState('');
+    const [editingSectionId, setEditingSectionId] = useState<number | null>(null);
 
     const [isQuestionModalOpen, setIsQuestionModalOpen] = useState(false);
     const [activeSectionId, setActiveSectionId] = useState<number | null>(null);
@@ -386,22 +387,35 @@ function FormBuilderContent() {
 
     const openSectionModal = () => {
         setNewSectionTitle('');
+        setEditingSectionId(null);
         setIsSectionModalOpen(true);
     };
 
-    const handleAddSectionSubmit = async (e: React.FormEvent) => {
+    const openEditSectionModal = (section: any) => {
+        setNewSectionTitle(section.title);
+        setEditingSectionId(section.id);
+        setIsSectionModalOpen(true);
+    };
+
+    const handleSaveSectionSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            await api.post(`/admin/guide-engine/forms/${form.id}/sections`, {
-                title: newSectionTitle,
-                order: form.sections?.length || 0
-            });
+            if (editingSectionId) {
+                await api.put(`/admin/guide-engine/sections/${editingSectionId}`, {
+                    title: newSectionTitle
+                });
+            } else {
+                await api.post(`/admin/guide-engine/forms/${form.id}/sections`, {
+                    title: newSectionTitle,
+                    order: form.sections?.length || 0
+                });
+            }
             setIsSectionModalOpen(false);
             // Refresh single form
             api.get(`/admin/guide-engine/forms/${activeFormId}`).then(res => setForm(res.data));
         } catch (err) {
             console.error(err);
-            showAlert("Error", "Failed to add section.");
+            showAlert("Error", "Failed to save section.");
         }
     };
 
@@ -722,10 +736,13 @@ function FormBuilderContent() {
                                             Step {index + 1}: {section.title}
                                         </h3>
                                         <div className="flex gap-2">
-                                            <button onClick={() => openQuestionModal(section.id)} className="px-3 py-1.5 bg-orange-500 text-white rounded-md text-xs font-semibold hover:bg-orange-600">
+                                            <button onClick={() => openEditSectionModal(section)} className="px-3 py-1.5 text-[#5B6472] border border-[#ECE9E2] hover:bg-gray-50 rounded-md text-xs font-semibold bg-white transition-colors">
+                                                Edit Name
+                                            </button>
+                                            <button onClick={() => openQuestionModal(section.id)} className="px-3 py-1.5 bg-orange-500 text-white rounded-md text-xs font-semibold hover:bg-orange-600 transition-colors">
                                                 + Add Question
                                             </button>
-                                            <button onClick={() => handleDeleteSection(section.id)} className="px-3 py-1.5 text-red-500 hover:bg-red-50 rounded-md text-xs font-semibold">
+                                            <button onClick={() => handleDeleteSection(section.id)} className="px-3 py-1.5 text-red-500 hover:bg-red-50 rounded-md text-xs font-semibold transition-colors">
                                                 Delete Section
                                             </button>
                                         </div>
@@ -799,7 +816,7 @@ function FormBuilderContent() {
                                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
                             </button>
                         </div>
-                        <form onSubmit={handleAddSectionSubmit} className="p-6">
+                        <form onSubmit={handleSaveSectionSubmit} className="p-6">
                             <label className="block text-sm font-semibold text-[#101F38] mb-2">Section Title</label>
                             <input autoFocus required value={newSectionTitle} onChange={e => setNewSectionTitle(e.target.value)} placeholder="e.g. Personal Information" className="w-full border border-[#ECE9E2] rounded-lg px-3 py-2 text-sm focus:border-orange-500 outline-none mb-6" />
                             
