@@ -140,6 +140,7 @@ function FormBuilderContent() {
 
         setIsImporting(true);
         try {
+            const { PDFDocument, PDFName, PDFString, PDFHexString } = await import('pdf-lib');
             const arrayBuffer = await file.arrayBuffer();
             const pdfDoc = await PDFDocument.load(arrayBuffer);
             const formObj = pdfDoc.getForm();
@@ -147,8 +148,30 @@ function FormBuilderContent() {
 
             const parsedQuestions = fields.map((f, i) => {
                 const name = f.getName();
+                let humanReadable = name;
+                
+                try {
+                    // Try to get the alternate name (Tooltip) from the AcroField dictionary
+                    const acroField = (f as any).acroField;
+                    if (acroField && acroField.dict) {
+                        const tu = acroField.dict.get(PDFName.of('TU'));
+                        if (tu) {
+                            if (tu instanceof PDFString || tu instanceof PDFHexString) {
+                                humanReadable = tu.decodeText() || name;
+                            }
+                        }
+                    }
+                } catch (e) {
+                    console.error("Error reading field tooltip", e);
+                }
+
+                // If the tooltip is missing, default back to the raw name
+                if (!humanReadable || humanReadable.trim() === '') {
+                    humanReadable = name;
+                }
+
                 return {
-                    question_text: name,
+                    question_text: humanReadable,
                     field_name: name.replace(/[^a-zA-Z0-9_]/g, '_') + '_' + i,
                     field_type: 'text'
                 };
