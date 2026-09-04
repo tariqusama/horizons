@@ -1,7 +1,8 @@
 "use client";
 
-import React, { Suspense, useEffect, useState } from 'react';
+import React, { Suspense, useEffect, useState, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { PDFDocument } from 'pdf-lib';
 import api from '@/lib/api';
 
 function FormBuilderContent() {
@@ -126,6 +127,58 @@ function FormBuilderContent() {
         } catch (err) {
             console.error(err);
             showAlert("Error", "Failed to save question order.");
+        }
+    };
+
+    // PDF Import State and Logic
+    const [isImporting, setIsImporting] = useState(false);
+    const fileInputRef = useRef<HTMLInputElement>(null);
+
+    const handleImportPdf = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        setIsImporting(true);
+        try {
+            const arrayBuffer = await file.arrayBuffer();
+            const pdfDoc = await PDFDocument.load(arrayBuffer);
+            const formObj = pdfDoc.getForm();
+            const fields = formObj.getFields();
+
+            const parsedQuestions = fields.map((f, i) => {
+                const name = f.getName();
+                return {
+                    question_text: name,
+                    field_name: name.replace(/[^a-zA-Z0-9_]/g, '_') + '_' + i,
+                    field_type: 'text'
+                };
+            });
+
+            if (parsedQuestions.length === 0) {
+                showAlert('Error', 'No fields found in this PDF.');
+                setIsImporting(false);
+                return;
+            }
+
+            const payload = {
+                sections: [
+                    {
+                        title: 'Imported PDF Fields',
+                        questions: parsedQuestions
+                    }
+                ]
+            };
+
+            await api.post(`/admin/guide-engine/forms/${activeFormId}/import-pdf-fields`, payload);
+            
+            api.get(`/admin/guide-engine/forms/${activeFormId}`).then(res => setForm(res.data));
+            showAlert('Success', `Imported ${parsedQuestions.length} fields successfully.`);
+        } catch (error) {
+            console.error(error);
+            showAlert('Error', 'Failed to parse PDF or import fields.');
+        } finally {
+            setIsImporting(false);
+            if (fileInputRef.current) fileInputRef.current.value = '';
         }
     };
 
@@ -574,6 +627,16 @@ function FormBuilderContent() {
                                     <p className="text-sm text-[#5B6472]">Slug: /{form.slug}</p>
                                 </div>
                                 <div className="flex gap-2">
+                                    <input 
+                                        type="file" 
+                                        accept="application/pdf" 
+                                        ref={fileInputRef} 
+                                        onChange={handleImportPdf} 
+                                        className="hidden" 
+                                    />
+                                    <button onClick={() => fileInputRef.current?.click()} disabled={isImporting} className="px-4 py-2 border border-blue-200 text-blue-600 rounded-lg text-sm font-semibold hover:bg-blue-50 transition-colors disabled:opacity-50">
+                                        {isImporting ? 'Importing...' : 'Import from PDF'}
+                                    </button>
                                     <button onClick={() => handleToggleRequired(form.id)} className="px-4 py-2 border border-slate-200 text-slate-700 rounded-lg text-sm font-semibold hover:bg-slate-50 transition-colors">
                                         Toggle Required
                                     </button>
