@@ -379,7 +379,7 @@ function FormBuilderContent() {
                 help_text: finalHelpText || null,
                 field_name: newQuestionField,
                 field_type: newQuestionType,
-                is_required: true,
+                is_required: newQuestionType !== 'heading',
                 order: 0
             };
 
