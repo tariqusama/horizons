@@ -134,6 +134,30 @@ function FormBuilderContent() {
     const [isImporting, setIsImporting] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
+    const cleanTooltip = (text: string) => {
+        // 1. Split by periods. USCIS puts boilerplate instructions in earlier sentences.
+        const sentences = text.split('.').map(s => s.trim()).filter(s => s.length > 0);
+        let mainText = sentences[sentences.length - 1]; 
+
+        // If the last sentence is very short (e.g., just date format), grab the previous one too
+        if (mainText.length < 8 && sentences.length > 1) {
+            mainText = sentences[sentences.length - 2] + ' ' + mainText;
+        }
+
+        // 2. Remove common action verbs at the start
+        mainText = mainText.replace(/^(Enter|Provide|Type or print|Type)\s+/i, '');
+
+        // 3. Remove examples separated by semicolon
+        mainText = mainText.split(';')[0].trim();
+
+        // 4. Capitalize first letter
+        if (mainText.length > 0) {
+            mainText = mainText.charAt(0).toUpperCase() + mainText.slice(1);
+        }
+
+        return mainText;
+    };
+
     const handleImportPdf = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file) return;
@@ -151,13 +175,13 @@ function FormBuilderContent() {
                 let humanReadable = name;
                 
                 try {
-                    // Try to get the alternate name (Tooltip) from the AcroField dictionary
                     const acroField = (f as any).acroField;
                     if (acroField && acroField.dict) {
                         const tu = acroField.dict.get(PDFName.of('TU'));
                         if (tu) {
                             if (tu instanceof PDFString || tu instanceof PDFHexString) {
-                                humanReadable = tu.decodeText() || name;
+                                const decoded = tu.decodeText();
+                                if (decoded) humanReadable = cleanTooltip(decoded);
                             }
                         }
                     }
@@ -165,7 +189,6 @@ function FormBuilderContent() {
                     console.error("Error reading field tooltip", e);
                 }
 
-                // If the tooltip is missing, default back to the raw name
                 if (!humanReadable || humanReadable.trim() === '') {
                     humanReadable = name;
                 }
@@ -186,7 +209,7 @@ function FormBuilderContent() {
             const payload = {
                 sections: [
                     {
-                        title: 'Imported PDF Fields',
+                        title: file.name.replace('.pdf', '') + ' Fields',
                         questions: parsedQuestions
                     }
                 ]
