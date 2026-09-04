@@ -762,6 +762,7 @@ function FormBuilderContent() {
                                         <option value="date">Date</option>
                                         <option value="radio">Radio Buttons (Single Choice)</option>
                                         <option value="select">Dropdown Menu</option>
+                                        <option value="heading">Heading / Section Title</option>
                                     </select>
                                 </div>
 
