@@ -170,6 +170,12 @@ export default function DynamicFormEnginePage() {
                 return false;
             }
 
+            // Physical Address conditional logic (skip if mailing is same as physical)
+            const isPhysicalAddressField = q.field_name.startsWith('physical1') || q.field_name.startsWith('physical2') || q.field_name === 'headingPhysical1' || q.field_name === 'headingPhysical2' || q.field_name === 'headingAddressHistory';
+            if (isPhysicalAddressField && formData['mailingSameAsPhysical'] === 'Yes') {
+                return false;
+            }
+
             if (q.is_required) {
                 if (q.field_type === 'name_group') {
                     const firstKey = q.field_name === 'legalName' ? 'firstName' : `${q.field_name}_first`;
@@ -423,6 +429,12 @@ export default function DynamicFormEnginePage() {
 
                             // Form G-1145 conditional logic
                             if (q.field_name !== 'fileG1145' && q.field_name.startsWith('g1145') && formData['fileG1145'] !== 'yes') {
+                                return null;
+                            }
+
+                            // Physical Address conditional logic (hide if mailing is same as physical)
+                            const isPhysicalAddressFieldRender = q.field_name.startsWith('physical1') || q.field_name.startsWith('physical2') || q.field_name === 'headingPhysical1' || q.field_name === 'headingPhysical2' || q.field_name === 'headingAddressHistory';
+                            if (isPhysicalAddressFieldRender && formData['mailingSameAsPhysical'] === 'Yes') {
                                 return null;
                             }
 

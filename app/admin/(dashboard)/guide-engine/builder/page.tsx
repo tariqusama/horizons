@@ -38,6 +38,97 @@ function FormBuilderContent() {
     const [newQuestionOptions, setNewQuestionOptions] = useState([{ label: '', value: '' }]);
     const [editingQuestionId, setEditingQuestionId] = useState<number | null>(null);
 
+    // Drag and Drop States
+    const [draggedSectionIndex, setDraggedSectionIndex] = useState<number | null>(null);
+    const [draggedQuestionIndex, setDraggedQuestionIndex] = useState<{sectionId: number, questionIndex: number} | null>(null);
+
+    const handleSectionDragStart = (e: React.DragEvent, index: number) => {
+        setDraggedSectionIndex(index);
+        e.dataTransfer.effectAllowed = 'move';
+        if (e.dataTransfer) {
+            e.dataTransfer.setData('text/plain', index.toString());
+        }
+    };
+
+    const handleSectionDragOver = (e: React.DragEvent, index: number) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (draggedSectionIndex === null || draggedSectionIndex === index) return;
+        
+        const newSections = [...(form.sections || [])];
+        const draggedItem = newSections[draggedSectionIndex];
+        newSections.splice(draggedSectionIndex, 1);
+        newSections.splice(index, 0, draggedItem);
+        
+        setForm({ ...form, sections: newSections });
+        setDraggedSectionIndex(index);
+    };
+
+    const handleSectionDrop = async (e: React.DragEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (draggedSectionIndex === null) return;
+        setDraggedSectionIndex(null);
+        
+        try {
+            const updatedOrder = form.sections.map((s: any, i: number) => ({ id: s.id, order: i }));
+            await api.put(`/admin/guide-engine/forms/${form.id}/reorder-sections`, { sections: updatedOrder });
+        } catch (err) {
+            console.error(err);
+            showAlert("Error", "Failed to save section order.");
+        }
+    };
+
+    const handleQuestionDragStart = (e: React.DragEvent, sectionId: number, qIndex: number) => {
+        e.stopPropagation();
+        setDraggedQuestionIndex({ sectionId, questionIndex: qIndex });
+        e.dataTransfer.effectAllowed = 'move';
+        if (e.dataTransfer) {
+            e.dataTransfer.setData('text/plain', qIndex.toString());
+        }
+    };
+
+    const handleQuestionDragOver = (e: React.DragEvent, sectionId: number, qIndex: number) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (!draggedQuestionIndex || draggedQuestionIndex.sectionId !== sectionId || draggedQuestionIndex.questionIndex === qIndex) return;
+
+        const sectionIndex = form.sections.findIndex((s: any) => s.id === sectionId);
+        if (sectionIndex === -1) return;
+
+        const newSections = [...form.sections];
+        const section = { ...newSections[sectionIndex] };
+        const newQuestions = [...(section.questions || [])];
+
+        const draggedItem = newQuestions[draggedQuestionIndex.questionIndex];
+        newQuestions.splice(draggedQuestionIndex.questionIndex, 1);
+        newQuestions.splice(qIndex, 0, draggedItem);
+
+        section.questions = newQuestions;
+        newSections[sectionIndex] = section;
+        
+        setForm({ ...form, sections: newSections });
+        setDraggedQuestionIndex({ sectionId, questionIndex: qIndex });
+    };
+
+    const handleQuestionDrop = async (e: React.DragEvent, sectionId: number) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (!draggedQuestionIndex) return;
+        setDraggedQuestionIndex(null);
+        
+        const section = form.sections.find((s: any) => s.id === sectionId);
+        if (!section || !section.questions) return;
+
+        try {
+            const updatedOrder = section.questions.map((q: any, i: number) => ({ id: q.id, order: i }));
+            await api.put(`/admin/guide-engine/sections/${sectionId}/reorder-questions`, { questions: updatedOrder });
+        } catch (err) {
+            console.error(err);
+            showAlert("Error", "Failed to save question order.");
+        }
+    };
+
     // Custom Dialog Modal State
     const [dialogState, setDialogState] = useState<{
         isOpen: boolean;
@@ -506,9 +597,21 @@ function FormBuilderContent() {
                     ) : (
                         <div className="space-y-6">
                             {form.sections.map((section: any, index: number) => (
-                                <div key={section.id} className="bg-white rounded-2xl border border-[#ECE9E2] overflow-hidden shadow-sm">
+                                <div 
+                                    key={section.id} 
+                                    draggable
+                                    onDragStart={(e) => handleSectionDragStart(e, index)}
+                                    onDragOver={(e) => handleSectionDragOver(e, index)}
+                                    onDrop={handleSectionDrop}
+                                    className={`bg-white rounded-2xl border border-[#ECE9E2] overflow-hidden shadow-sm ${draggedSectionIndex === index ? 'opacity-50 ring-2 ring-orange-500' : ''}`}
+                                >
                                     <div className="bg-[#F8F9FA] px-6 py-4 border-b border-[#ECE9E2] flex flex-col sm:flex-row justify-between sm:items-center gap-4">
-                                        <h3 className="font-bold text-[#101F38]">Step {index + 1}: {section.title}</h3>
+                                        <h3 className="font-bold text-[#101F38] flex items-center gap-2">
+                                            <div className="cursor-grab active:cursor-grabbing text-gray-400 hover:text-gray-600">
+                                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 8h16M4 16h16" strokeLinecap="round"/></svg>
+                                            </div>
+                                            Step {index + 1}: {section.title}
+                                        </h3>
                                         <div className="flex gap-2">
                                             <button onClick={() => openQuestionModal(section.id)} className="px-3 py-1.5 bg-orange-500 text-white rounded-md text-xs font-semibold hover:bg-orange-600">
                                                 + Add Question
@@ -524,24 +627,36 @@ function FormBuilderContent() {
                                             <p className="text-sm text-[#5B6472] italic text-center py-4">No questions in this section yet.</p>
                                         ) : (
                                             <div className="space-y-4">
-                                                {section.questions?.map((q: any) => (
-                                                    <div key={q.id} className="border border-[#ECE9E2] rounded-xl p-4 hover:border-orange-500/30 transition-colors flex flex-col sm:flex-row justify-between sm:items-center gap-4">
-                                                        <div>
-                                                            <p className="font-bold text-[#101F38] mb-1">{q.question_text}</p>
-                                                            <div className="flex flex-wrap gap-2 text-xs text-[#5B6472] mt-2">
-                                                                <span className="bg-gray-100 px-2 py-0.5 rounded">Field: {q.field_name}</span>
-                                                                <span className="bg-blue-50 text-blue-600 px-2 py-0.5 rounded">Type: {q.field_type}</span>
-                                                                {q.is_required && <span className="bg-red-50 text-red-600 px-2 py-0.5 rounded">Required</span>}
+                                                {section.questions?.map((q: any, qIndex: number) => (
+                                                    <div 
+                                                        key={q.id} 
+                                                        draggable
+                                                        onDragStart={(e) => handleQuestionDragStart(e, section.id, qIndex)}
+                                                        onDragOver={(e) => handleQuestionDragOver(e, section.id, qIndex)}
+                                                        onDrop={(e) => handleQuestionDrop(e, section.id)}
+                                                        className={`border border-[#ECE9E2] rounded-xl p-4 hover:border-orange-500/30 transition-colors flex flex-col sm:flex-row justify-between sm:items-center gap-4 ${draggedQuestionIndex?.sectionId === section.id && draggedQuestionIndex?.questionIndex === qIndex ? 'opacity-50 ring-2 ring-orange-500' : ''}`}
+                                                    >
+                                                        <div className="flex items-start gap-3">
+                                                            <div className="pt-1 cursor-grab active:cursor-grabbing text-gray-400 hover:text-gray-600">
+                                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 8h16M4 16h16" strokeLinecap="round"/></svg>
                                                             </div>
-                                                            {q.options && q.options.length > 0 && (
-                                                                <div className="mt-3 flex flex-wrap gap-2">
-                                                                    {q.options.map((opt: any, idx: number) => (
-                                                                        <span key={idx} className="bg-orange-50 text-orange-800 text-[11px] px-2 py-1 rounded border border-orange-100">
-                                                                            <span className="font-semibold">{opt.option_label}</span> <span className="text-orange-400">({opt.option_value})</span>
-                                                                        </span>
-                                                                    ))}
+                                                            <div>
+                                                                <p className="font-bold text-[#101F38] mb-1">{q.question_text}</p>
+                                                                <div className="flex flex-wrap gap-2 text-xs text-[#5B6472] mt-2">
+                                                                    <span className="bg-gray-100 px-2 py-0.5 rounded">Field: {q.field_name}</span>
+                                                                    <span className="bg-blue-50 text-blue-600 px-2 py-0.5 rounded">Type: {q.field_type}</span>
+                                                                    {q.is_required && <span className="bg-red-50 text-red-600 px-2 py-0.5 rounded">Required</span>}
                                                                 </div>
-                                                            )}
+                                                                {q.options && q.options.length > 0 && (
+                                                                    <div className="mt-3 flex flex-wrap gap-2">
+                                                                        {q.options.map((opt: any, idx: number) => (
+                                                                            <span key={idx} className="bg-orange-50 text-orange-800 text-[11px] px-2 py-1 rounded border border-orange-100">
+                                                                                <span className="font-semibold">{opt.option_label}</span> <span className="text-orange-400">({opt.option_value})</span>
+                                                                            </span>
+                                                                        ))}
+                                                                    </div>
+                                                                )}
+                                                            </div>
                                                         </div>
                                                         <div className="flex gap-2">
                                                             <button onClick={() => openEditQuestionModal(section.id, q)} className="text-[#9CA3AF] hover:text-blue-500 transition-colors" title="Edit Question">
