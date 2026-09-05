@@ -237,32 +237,67 @@ function FormBuilderContent() {
                     !p.toLowerCase().includes('subform')
                 );
 
+                // 2. Try to get the Tooltip (TU) which usually contains the exact visual text in USCIS forms!
+                let tooltip = '';
+                try {
+                    // Access the internal AcroField dictionary to get the TU (Tooltip) entry
+                    const acroField = (f as any).acroField;
+                    if (acroField && acroField.dict) {
+                        const { PDFName, PDFString, PDFHexString } = await import('pdf-lib');
+                        const tu = acroField.dict.get(PDFName.of('TU'));
+                        if (tu instanceof PDFString || tu instanceof PDFHexString) {
+                            tooltip = tu.decodeText();
+                        }
+                    }
+                } catch (e) {
+                    console.error("Error reading tooltip", e);
+                }
+
                 let sectionName = 'General Information';
                 let fieldName = cleanName;
                 let middleParts = '';
 
-                if (meaningfulParts.length > 0) {
-                    fieldName = meaningfulParts[meaningfulParts.length - 1];
-                }
-
-                // Look for "Part X" in the cleanName for USCIS forms
-                const ptMatch = cleanName.match(/p(?:ar)?t\s*(\d+[A-Z]?)/i);
-                if (ptMatch) {
-                    sectionName = `Part ${ptMatch[1].toUpperCase()}`;
+                if (tooltip) {
+                    // USCIS tooltips often look like: "Part 1. Relationship. 1. I am filing this petition for my: Spouse"
+                    // Or: "Other Names Used. Family Name (Last Name)"
+                    const sentences = tooltip.split(/[.!?]\s+/);
                     
-                    // Extract anything between the Part and the Field Name to use as a Subheading/Prefix
-                    const partIndex = meaningfulParts.findIndex(p => /p(?:ar)?t\s*(\d+[A-Z]?)/i.test(p));
-                    if (partIndex !== -1 && meaningfulParts.length > partIndex + 2) {
-                        middleParts = meaningfulParts.slice(partIndex + 1, -1).join(' ') + ' - ';
+                    if (sentences.length >= 2) {
+                        // The first sentence is usually the Part (e.g. "Part 1")
+                        // The second is the section heading (e.g. "Relationship")
+                        if (/part \d+/i.test(sentences[0])) {
+                            sectionName = sentences[0] + (sentences[1] && sentences[1].length < 40 ? ' - ' + sentences[1] : '');
+                            fieldName = sentences.slice(sentences[1] && sentences[1].length < 40 ? 2 : 1).join('. ');
+                        } else {
+                            sectionName = sentences[0];
+                            fieldName = sentences.slice(1).join('. ');
+                        }
+                    } else {
+                        fieldName = tooltip;
                     }
-                } else if (meaningfulParts.length > 1) {
-                    sectionName = meaningfulParts[meaningfulParts.length - 2];
-                    if (meaningfulParts.length > 2) {
-                        middleParts = meaningfulParts.slice(1, -1).join(' ') + ' - ';
+                } else {
+                    // Fallback to structural name parsing if no tooltip exists
+                    if (meaningfulParts.length > 0) {
+                        fieldName = meaningfulParts[meaningfulParts.length - 1];
+                    }
+
+                    // Look for Part X or SB X
+                    const ptMatch = cleanName.match(/(?:p(?:ar)?t|sb)\s*(\d+[A-Z]?)/i);
+                    if (ptMatch) {
+                        sectionName = `Part ${ptMatch[1].toUpperCase()}`;
+                        const partIndex = meaningfulParts.findIndex(p => /(?:p(?:ar)?t|sb)\s*(\d+[A-Z]?)/i.test(p));
+                        if (partIndex !== -1 && meaningfulParts.length > partIndex + 2) {
+                            middleParts = meaningfulParts.slice(partIndex + 1, -1).join(' ') + ' - ';
+                        }
+                    } else if (meaningfulParts.length > 1) {
+                        sectionName = meaningfulParts[meaningfulParts.length - 2];
+                        if (meaningfulParts.length > 2) {
+                            middleParts = meaningfulParts.slice(1, -1).join(' ') + ' - ';
+                        }
                     }
                 }
 
-                // Convert camelCase/snake_case to Human Readable
+                // Convert camelCase/snake_case to Human Readable (only needed for structural names, not tooltips)
                 const humanize = (str: string) => {
                     return str
                         .replace(/([a-z])([A-Z])/g, '$1 $2') // insert space between camelCase
@@ -272,12 +307,12 @@ function FormBuilderContent() {
                         .trim();
                 };
 
-                const humanReadableSection = humanize(sectionName);
-                let humanReadableField = humanize(middleParts + fieldName);
+                const humanReadableSection = tooltip ? sectionName.trim() : humanize(sectionName);
+                let humanReadableField = tooltip ? fieldName.trim() : humanize(middleParts + fieldName);
                 
-                // Add a fallback if the field name is somehow empty after cleaning
-                if (!humanReadableField) {
-                    humanReadableField = "Unknown Field";
+                // Add a fallback if the field name is somehow empty
+                if (!humanReadableField || humanReadableField === ' ') {
+                    humanReadableField = tooltip ? "Unknown Field" : humanize(cleanName);
                 }
 
                 let type = 'text';
