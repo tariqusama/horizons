@@ -163,14 +163,51 @@ function FormBuilderContent() {
         const file = e.target.files?.[0];
         if (!file) return;
 
-        if (file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf')) {
-            showAlert('Error', 'Please select a valid PDF file. DOCX or other formats are not supported for this import tool.');
+        if (file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf') && !file.name.toLowerCase().endsWith('.docx')) {
+            showAlert('Error', 'Please select a valid PDF or DOCX file.');
             if (fileInputRef.current) fileInputRef.current.value = '';
             return;
         }
 
         setIsImporting(true);
         try {
+            if (file.name.toLowerCase().endsWith('.docx')) {
+                const mammoth = await import('mammoth');
+                const arrayBuffer = await file.arrayBuffer();
+                const result = await mammoth.extractRawText({ arrayBuffer });
+                const text = result.value;
+                const paragraphs = text.split(/\n+/).map(p => p.trim()).filter(p => p.length > 0);
+
+                const parsedQuestions = paragraphs.map((p, index) => ({
+                    question_text: p.substring(0, 250),
+                    field_name: 'doc_field_' + index,
+                    field_type: 'text',
+                    options: null
+                }));
+
+                if (parsedQuestions.length === 0) {
+                    showAlert('Error', 'No text found in this DOCX file.');
+                    setIsImporting(false);
+                    return;
+                }
+
+                const payload = {
+                    sections: [
+                        {
+                            title: file.name.replace('.docx', '') + ' Content',
+                            questions: parsedQuestions
+                        }
+                    ]
+                };
+
+                await api.post(`/admin/guide-engine/forms/${activeFormId}/import-pdf-fields`, payload);
+                api.get(`/admin/guide-engine/forms/${activeFormId}`).then(res => setForm(res.data));
+                showAlert('Success', `Imported ${parsedQuestions.length} text blocks successfully.`);
+                setIsImporting(false);
+                if (fileInputRef.current) fileInputRef.current.value = '';
+                return;
+            }
+
             const { PDFDocument, PDFCheckBox, PDFRadioGroup, PDFDropdown, PDFOptionList } = await import('pdf-lib');
             const arrayBuffer = await file.arrayBuffer();
             const pdfDoc = await PDFDocument.load(arrayBuffer);
@@ -761,7 +798,7 @@ function FormBuilderContent() {
                                 <div className="flex gap-2">
                                     <input 
                                         type="file" 
-                                        accept=".pdf" 
+                                        accept=".pdf,.docx" 
                                         ref={fileInputRef} 
                                         onChange={handleImportPdf} 
                                         className="hidden" 
