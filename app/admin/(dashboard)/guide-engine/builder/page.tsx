@@ -163,6 +163,12 @@ function FormBuilderContent() {
         const file = e.target.files?.[0];
         if (!file) return;
 
+        if (file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf')) {
+            showAlert('Error', 'Please select a valid PDF file. DOCX or other formats are not supported for this import tool.');
+            if (fileInputRef.current) fileInputRef.current.value = '';
+            return;
+        }
+
         setIsImporting(true);
         try {
             const { PDFDocument, PDFCheckBox, PDFRadioGroup, PDFDropdown, PDFOptionList } = await import('pdf-lib');
@@ -755,7 +761,7 @@ function FormBuilderContent() {
                                 <div className="flex gap-2">
                                     <input 
                                         type="file" 
-                                        accept="application/pdf" 
+                                        accept=".pdf" 
                                         ref={fileInputRef} 
                                         onChange={handleImportPdf} 
                                         className="hidden" 
