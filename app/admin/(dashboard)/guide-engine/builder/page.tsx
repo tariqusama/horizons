@@ -165,15 +165,41 @@ function FormBuilderContent() {
 
         setIsImporting(true);
         try {
-            const { PDFDocument, PDFName, PDFString, PDFHexString } = await import('pdf-lib');
+            const { PDFDocument, PDFName, PDFString, PDFHexString, PDFCheckBox, PDFRadioGroup, PDFDropdown, PDFOptionList } = await import('pdf-lib');
             const arrayBuffer = await file.arrayBuffer();
             const pdfDoc = await PDFDocument.load(arrayBuffer);
             const formObj = pdfDoc.getForm();
             const fields = formObj.getFields();
 
-            const parsedQuestions = fields.map((f, i) => {
+            const parsedQuestions = [];
+            
+            for (let i = 0; i < fields.length; i++) {
+                const f = fields[i];
                 const name = f.getName();
+                
+                // 1. Skip barcodes and internal buttons
+                const lowerName = name.toLowerCase();
+                if (lowerName.includes('barcode') || lowerName.includes('button')) {
+                    continue;
+                }
+
                 let humanReadable = name;
+                let type = 'text';
+                let options = null;
+
+                // 2. Determine correct type
+                if (f instanceof PDFCheckBox) {
+                    type = 'radio';
+                    options = [{ label: 'Yes', value: 'yes' }, { label: 'No', value: 'no' }];
+                } else if (f instanceof PDFRadioGroup) {
+                    type = 'radio';
+                    const opts = f.getOptions();
+                    options = opts.map(o => ({ label: o, value: o }));
+                } else if (f instanceof PDFDropdown || f instanceof PDFOptionList) {
+                    type = 'select';
+                    const opts = f.getOptions();
+                    options = opts.map(o => ({ label: o, value: o }));
+                }
                 
                 try {
                     const acroField = (f as any).acroField;
@@ -194,12 +220,13 @@ function FormBuilderContent() {
                     humanReadable = name;
                 }
 
-                return {
+                parsedQuestions.push({
                     question_text: humanReadable,
                     field_name: name.replace(/[^a-zA-Z0-9_]/g, '_') + '_' + i,
-                    field_type: 'text'
-                };
-            });
+                    field_type: type,
+                    options: options
+                });
+            }
 
             if (parsedQuestions.length === 0) {
                 showAlert('Error', 'No fields found in this PDF.');

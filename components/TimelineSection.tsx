@@ -351,6 +351,7 @@ export default function TimelineSection() {
               <div className="relative">
                 <button
                   type="button"
+                  suppressHydrationWarning
                   onClick={() => setIsOpen(!isOpen)}
                   className="w-full min-h-[44px] flex items-center justify-between bg-white border border-slate-300 rounded-lg px-4 py-3 text-left focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-500 transition-all cursor-pointer"
                 >
