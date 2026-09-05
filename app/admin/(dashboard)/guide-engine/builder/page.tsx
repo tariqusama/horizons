@@ -196,6 +196,7 @@ function FormBuilderContent() {
 
                 let sectionName = 'General Information';
                 let fieldName = cleanName;
+                let middleParts = '';
 
                 if (meaningfulParts.length > 0) {
                     fieldName = meaningfulParts[meaningfulParts.length - 1];
@@ -205,8 +206,17 @@ function FormBuilderContent() {
                 const ptMatch = cleanName.match(/p(?:ar)?t\s*(\d+[A-Z]?)/i);
                 if (ptMatch) {
                     sectionName = `Part ${ptMatch[1].toUpperCase()}`;
+                    
+                    // Extract anything between the Part and the Field Name to use as a Subheading/Prefix
+                    const partIndex = meaningfulParts.findIndex(p => /p(?:ar)?t\s*(\d+[A-Z]?)/i.test(p));
+                    if (partIndex !== -1 && meaningfulParts.length > partIndex + 2) {
+                        middleParts = meaningfulParts.slice(partIndex + 1, -1).join(' ') + ' - ';
+                    }
                 } else if (meaningfulParts.length > 1) {
                     sectionName = meaningfulParts[meaningfulParts.length - 2];
+                    if (meaningfulParts.length > 2) {
+                        middleParts = meaningfulParts.slice(1, -1).join(' ') + ' - ';
+                    }
                 }
 
                 // Convert camelCase/snake_case to Human Readable
@@ -220,7 +230,7 @@ function FormBuilderContent() {
                 };
 
                 const humanReadableSection = humanize(sectionName);
-                let humanReadableField = humanize(fieldName);
+                let humanReadableField = humanize(middleParts + fieldName);
                 
                 // Add a fallback if the field name is somehow empty after cleaning
                 if (!humanReadableField) {
