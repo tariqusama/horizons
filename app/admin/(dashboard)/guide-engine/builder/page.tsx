@@ -257,46 +257,6 @@ function FormBuilderContent() {
                 let fieldName = cleanName;
                 let middleParts = '';
 
-                if (tooltip) {
-                    // USCIS tooltips often look like: "Part 1. Relationship. 1. I am filing this petition for my: Spouse"
-                    // Or: "Other Names Used. Family Name (Last Name)"
-                    const sentences = tooltip.split(/[.!?]\s+/);
-                    
-                    if (sentences.length >= 2) {
-                        // The first sentence is usually the Part (e.g. "Part 1")
-                        // The second is the section heading (e.g. "Relationship")
-                        if (/part \d+/i.test(sentences[0])) {
-                            sectionName = sentences[0] + (sentences[1] && sentences[1].length < 40 ? ' - ' + sentences[1] : '');
-                            fieldName = sentences.slice(sentences[1] && sentences[1].length < 40 ? 2 : 1).join('. ');
-                        } else {
-                            sectionName = sentences[0];
-                            fieldName = sentences.slice(1).join('. ');
-                        }
-                    } else {
-                        fieldName = tooltip;
-                    }
-                } else {
-                    // Fallback to structural name parsing if no tooltip exists
-                    if (meaningfulParts.length > 0) {
-                        fieldName = meaningfulParts[meaningfulParts.length - 1];
-                    }
-
-                    // Look for Part X or SB X
-                    const ptMatch = cleanName.match(/(?:p(?:ar)?t|sb)\s*(\d+[A-Z]?)/i);
-                    if (ptMatch) {
-                        sectionName = `Part ${ptMatch[1].toUpperCase()}`;
-                        const partIndex = meaningfulParts.findIndex(p => /(?:p(?:ar)?t|sb)\s*(\d+[A-Z]?)/i.test(p));
-                        if (partIndex !== -1 && meaningfulParts.length > partIndex + 2) {
-                            middleParts = meaningfulParts.slice(partIndex + 1, -1).join(' ') + ' - ';
-                        }
-                    } else if (meaningfulParts.length > 1) {
-                        sectionName = meaningfulParts[meaningfulParts.length - 2];
-                        if (meaningfulParts.length > 2) {
-                            middleParts = meaningfulParts.slice(1, -1).join(' ') + ' - ';
-                        }
-                    }
-                }
-
                 // Convert camelCase/snake_case to Human Readable (only needed for structural names, not tooltips)
                 const humanize = (str: string) => {
                     return str
@@ -307,37 +267,88 @@ function FormBuilderContent() {
                         .trim();
                 };
 
-                const humanReadableSection = tooltip ? sectionName.trim() : humanize(sectionName);
-                let humanReadableField = tooltip ? fieldName.trim() : humanize(middleParts + fieldName);
+                // Fallback to structural name parsing if no tooltip exists or tooltip is bad
+                if (!tooltip || tooltip.length < 3) {
+                    if (meaningfulParts.length > 0) {
+                        fieldName = meaningfulParts[meaningfulParts.length - 1];
+                    }
+
+                    // Look for Part X FIRST
+                    let ptMatch = cleanName.match(/p(?:ar)?t\s*(\d+[A-Z]?)/i);
+                    let matchStr = /p(?:ar)?t\s*(\d+[A-Z]?)/i;
+                    
+                    // If no Part, look for SB (Section Block)
+                    if (!ptMatch) {
+                        ptMatch = cleanName.match(/sb\s*(\d+[A-Z]?)/i);
+                        matchStr = /sb\s*(\d+[A-Z]?)/i;
+                    }
+
+                    if (ptMatch) {
+                        sectionName = `Part ${ptMatch[1].toUpperCase()}`;
+                        const partIndex = meaningfulParts.findIndex(p => matchStr.test(p));
+                        if (partIndex !== -1 && meaningfulParts.length > partIndex + 2) {
+                            middleParts = meaningfulParts.slice(partIndex + 1, -1).join(' ') + ' - ';
+                        }
+                    } else if (meaningfulParts.length > 1) {
+                        sectionName = meaningfulParts[meaningfulParts.length - 2];
+                        if (meaningfulParts.length > 2) {
+                            middleParts = meaningfulParts.slice(1, -1).join(' ') + ' - ';
+                        }
+                    }
+                    
+                    sectionName = humanize(sectionName);
+                    fieldName = humanize(middleParts + fieldName);
+                } else {
+                    // Tooltip logic
+                    const sentences = tooltip.split(/[.!?]\s+/);
+                    if (sentences.length >= 2) {
+                        if (/part \d+/i.test(sentences[0])) {
+                            sectionName = sentences[0] + (sentences[1] && sentences[1].length < 40 ? ' - ' + sentences[1] : '');
+                            fieldName = sentences.slice(sentences[1] && sentences[1].length < 40 ? 2 : 1).join('. ');
+                        } else {
+                            sectionName = sentences[0];
+                            fieldName = sentences.slice(1).join('. ');
+                        }
+                    } else {
+                        sectionName = 'General Information';
+                        fieldName = tooltip;
+                    }
+                    sectionName = sectionName.trim();
+                    fieldName = fieldName.trim();
+                }
                 
                 // Add a fallback if the field name is somehow empty
-                if (!humanReadableField || humanReadableField === ' ') {
-                    humanReadableField = tooltip ? "Unknown Field" : humanize(cleanName);
+                if (!fieldName || fieldName === ' ') {
+                    fieldName = humanize(cleanName);
                 }
 
                 let type = 'text';
                 let options = null;
 
-                // 3. Determine correct type
-                if (f instanceof PDFCheckBox) {
+                // 3. Determine correct type using constructor name to avoid dynamic import instanceof issues
+                const typeName = f.constructor.name;
+                
+                if (typeName === 'PDFCheckBox') {
                     type = 'radio';
                     options = [{ label: 'Yes', value: 'yes' }, { label: 'No', value: 'no' }];
-                } else if (f instanceof PDFRadioGroup) {
+                } else if (typeName === 'PDFRadioGroup') {
                     type = 'radio';
-                    const opts = f.getOptions();
-                    options = opts.map(o => ({ label: o, value: o }));
-                } else if (f instanceof PDFDropdown || f instanceof PDFOptionList) {
+                    const opts = (f as any).getOptions();
+                    options = opts.map((o: string) => ({ label: o, value: o }));
+                } else if (typeName === 'PDFDropdown' || typeName === 'PDFOptionList') {
                     type = 'select';
-                    const opts = f.getOptions();
-                    options = opts.map(o => ({ label: o, value: o }));
+                    const opts = (f as any).getOptions();
+                    options = opts.map((o: string) => ({ label: o, value: o }));
+                } else if (fieldName.toLowerCase().includes('date') || cleanName.toLowerCase().includes('date')) {
+                    type = 'date';
                 }
 
-                if (!sectionsMap[humanReadableSection]) {
-                    sectionsMap[humanReadableSection] = [];
+                if (!sectionsMap[sectionName]) {
+                    sectionsMap[sectionName] = [];
                 }
 
-                sectionsMap[humanReadableSection].push({
-                    question_text: humanReadableField,
+                sectionsMap[sectionName].push({
+                    question_text: fieldName,
                     field_name: rawName.replace(/[^a-zA-Z0-9_]/g, '_') + '_' + i,
                     field_type: type,
                     options: options
