@@ -401,7 +401,7 @@ function FormBuilderContent() {
         e.preventDefault();
         try {
             if (editingSectionId) {
-                await api.put(`/admin/guide-engine/sections/${editingSectionId}`, {
+                await api.post(`/admin/guide-engine/sections/${editingSectionId}/update`, {
                     title: newSectionTitle
                 });
             } else {
