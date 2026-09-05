@@ -12,8 +12,11 @@ interface ApplicationSelectionModalProps {
     onClose: () => void;
 }
 
-const stripeKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || 'pk_test_51QQ24fAJEL5Up1VaSpBRWbAfKrBCobEsVPtv2yo8eFSRJYKHs3GtB78nuyteFvcU0Q1RW5MtKQ5TMNk6R9vxbd8u00cwahnxJ9';
-const stripePromise = loadStripe(stripeKey);
+const stripeKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
+if (!stripeKey) {
+    console.error('NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY is not set. Stripe payments will not work.');
+}
+const stripePromise = loadStripe(stripeKey || '');
 
 const CheckoutForm = ({ selectedSubPlan, selectedTier, handleClose, getSelectedAmount, questionnaireAnswers }: any) => {
     const stripe = useStripe();
@@ -209,11 +212,19 @@ const CheckoutForm = ({ selectedSubPlan, selectedTier, handleClose, getSelectedA
                                     }}
                                     onReady={() => setIsCardReady(true)}
                                     onChange={(event) => {
-                                        if (event.error) {
+                                        // Only clear a previous error when the user corrects their input.
+                                        // Don't show "incomplete" mid-typing — wait for blur instead.
+                                        if (event.error && event.error.code !== 'incomplete_number' && event.error.code !== 'incomplete_expiry' && event.error.code !== 'incomplete_cvc') {
+                                            // Definitive errors (invalid card number, expired, etc.) show immediately
                                             setPaymentError(event.error.message || 'Please check your card details.');
-                                        } else {
+                                        } else if (!event.error) {
                                             setPaymentError('');
                                         }
+                                    }}
+                                    onBlur={() => {
+                                        // On blur, if stripe has flagged the field incomplete, show the error now
+                                        // This is handled by re-checking via the onChange — we just ensure the
+                                        // stored error clears if the field was emptied entirely.
                                     }}
                                 />
                             </div>

@@ -70,9 +70,11 @@ const getSignupBackgroundImage = (selectedGoal: string | null, currentStep: numb
 };
 
 
-const defaultStripeKey = 'pk_test_51QQ24fAJEL5Up1VaSpBRWbAfKrBCobEsVPtv2yo8eFSRJYKHs3GtB78nuyteFvcU0Q1RW5MtKQ5TMNk6R9vxbd8u00cwahnxJ9';
-const stripeKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || defaultStripeKey;
-const stripePromise = loadStripe(stripeKey);
+const stripeKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
+if (!stripeKey) {
+    console.error('NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY is not set. Stripe payments will not work.');
+}
+const stripePromise = loadStripe(stripeKey || '');
 const hasStripeEnvKey = Boolean(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
 
 function SignupFlowContent() {

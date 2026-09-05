@@ -174,35 +174,133 @@ function FormBuilderContent() {
             if (file.name.toLowerCase().endsWith('.docx')) {
                 const mammoth = await import('mammoth');
                 const arrayBuffer = await file.arrayBuffer();
-                const result = await mammoth.extractRawText({ arrayBuffer });
-                const text = result.value;
-                const paragraphs = text.split(/\n+/).map(p => p.trim()).filter(p => p.length > 0);
 
-                const parsedQuestions = paragraphs.map((p, index) => ({
-                    question_text: p.substring(0, 250),
-                    field_name: 'doc_field_' + index,
-                    field_type: 'text',
-                    options: null
-                }));
+                // Use convertToHtml so we can detect headings and structure
+                const result = await mammoth.convertToHtml({ arrayBuffer });
+                const html = result.value;
 
-                if (parsedQuestions.length === 0) {
-                    showAlert('Error', 'No text found in this DOCX file.');
+                // Parse HTML into a DOM so we can inspect tag names
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const nodes = Array.from(doc.body.children);
+
+                // Helper: infer field type from question text
+                const inferFieldType = (text: string): { type: string; options: { label: string; value: string }[] | null } => {
+                    const lower = text.toLowerCase();
+
+                    // Yes / No questions → radio
+                    if (/\b(yes|no)\b/.test(lower) || /\b(are you|do you|have you|is your|were you|did you)\b/.test(lower)) {
+                        return { type: 'radio', options: [{ label: 'Yes', value: 'yes' }, { label: 'No', value: 'no' }] };
+                    }
+                    // Date fields → date
+                    if (/\b(date|dob|birth|expir|issued|arrival|departure)\b/.test(lower)) {
+                        return { type: 'date', options: null };
+                    }
+                    // Gender / marital / citizenship dropdowns → select
+                    if (/\b(gender|sex|marital status|nationality|country|state|citizenship|race|ethnicity)\b/.test(lower)) {
+                        return { type: 'select', options: null };
+                    }
+                    // Phone / email / number → text (default anyway, but explicit)
+                    return { type: 'text', options: null };
+                };
+
+                // Build sections by treating h1/h2/h3 as section boundaries
+                const sectionsMap: { title: string; questions: any[] }[] = [];
+                let currentSectionTitle = file.name.replace(/\.docx$/i, '');
+                let currentQuestions: any[] = [];
+                let fieldIndex = 0;
+
+                const pushSection = () => {
+                    if (currentQuestions.length > 0) {
+                        sectionsMap.push({ title: currentSectionTitle, questions: currentQuestions });
+                    }
+                };
+
+                // Helper: push a text block as a question into currentQuestions
+                const pushQuestion = (rawText: string) => {
+                    const trimmed = rawText.trim();
+                    if (trimmed.length < 2) return;
+                    const { type, options } = inferFieldType(trimmed);
+                    currentQuestions.push({
+                        question_text: trimmed.substring(0, 250),
+                        field_name: 'doc_field_' + fieldIndex++,
+                        field_type: type,
+                        options: options
+                    });
+                };
+
+                for (const node of nodes) {
+                    const tagName = node.tagName.toLowerCase();
+                    const text = node.textContent?.trim() || '';
+                    if (!text) continue;
+
+                    const isHeading = tagName === 'h1' || tagName === 'h2' || tagName === 'h3' || tagName === 'h4' || tagName === 'h5' || tagName === 'h6';
+
+                    if (isHeading) {
+                        // Only "Part X" headings create a new section.
+                        // Sub-headings like "Your Full Name", "Mailing Address" stay inside
+                        // the current Part section as heading-type questions.
+                        if (/^part\s+\d+/i.test(text)) {
+                            pushSection();
+                            currentSectionTitle = text.substring(0, 255);
+                            currentQuestions = [];
+                        } else {
+                            // Sub-heading within the current section
+                            currentQuestions.push({
+                                question_text: text.substring(0, 250),
+                                field_name: 'doc_heading_' + fieldIndex++,
+                                field_type: 'heading',
+                                options: null
+                            });
+                        }
+                    } else if (tagName === 'p') {
+                        pushQuestion(text);
+                    } else if (tagName === 'ul' || tagName === 'ol') {
+                        // ul/ol are top-level but their li items are nested — iterate them directly
+                        const listItems = Array.from(node.querySelectorAll('li'));
+                        for (const li of listItems) {
+                            pushQuestion(li.textContent?.trim() || '');
+                        }
+                    } else if (tagName === 'table') {
+                        // Walk row-by-row; extract first cell per row as the question label
+                        const rows = Array.from(node.querySelectorAll('tr'));
+                        for (const row of rows) {
+                            const cells = Array.from(row.querySelectorAll('td, th'));
+                            if (cells.length === 0) continue;
+                            const firstCellText = cells[0].textContent?.trim() || '';
+                            if (firstCellText.length >= 2) {
+                                // If a "Part X" heading is inside a table cell, treat it as a new section
+                                if (/^part\s+\d+/i.test(firstCellText)) {
+                                    pushSection();
+                                    currentSectionTitle = firstCellText.substring(0, 255);
+                                    currentQuestions = [];
+                                } else {
+                                    pushQuestion(firstCellText);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // Push the last section
+                pushSection();
+
+                // Final safety: remove any sections that ended up with 0 questions
+                // (can happen if headings appear with no content between them)
+                const validSections = sectionsMap.filter(s => s.questions.length > 0);
+
+                if (validSections.length === 0) {
+                    showAlert('Error', 'No text content found in this DOCX file. Make sure the document has readable paragraphs or list items.');
                     setIsImporting(false);
                     return;
                 }
 
-                const payload = {
-                    sections: [
-                        {
-                            title: file.name.replace('.docx', '') + ' Content',
-                            questions: parsedQuestions
-                        }
-                    ]
-                };
+                const totalQuestions = validSections.reduce((acc, s) => acc + s.questions.length, 0);
 
+                const payload = { sections: validSections };
                 await api.post(`/admin/guide-engine/forms/${activeFormId}/import-pdf-fields`, payload);
                 api.get(`/admin/guide-engine/forms/${activeFormId}`).then(res => setForm(res.data));
-                showAlert('Success', `Imported ${parsedQuestions.length} text blocks successfully.`);
+                showAlert('Success', `Imported ${totalQuestions} fields across ${validSections.length} section(s) successfully.`);
                 setIsImporting(false);
                 if (fileInputRef.current) fileInputRef.current.value = '';
                 return;
@@ -325,20 +423,21 @@ function FormBuilderContent() {
                 let type = 'text';
                 let options = null;
 
-                // 3. Determine correct type using constructor name to avoid dynamic import instanceof issues
-                const typeName = f.constructor.name;
-                
-                if (typeName === 'PDFCheckBox') {
+                // 3. Determine correct type using Duck Typing to bypass all minification and dynamic import issues
+                if (typeof (f as any).isChecked === 'function') {
+                    // PDFCheckBox
                     type = 'radio';
                     options = [{ label: 'Yes', value: 'yes' }, { label: 'No', value: 'no' }];
-                } else if (typeName === 'PDFRadioGroup') {
-                    type = 'radio';
+                } else if (typeof (f as any).getOptions === 'function') {
+                    // PDFRadioGroup, PDFDropdown, PDFOptionList
                     const opts = (f as any).getOptions();
                     options = opts.map((o: string) => ({ label: o, value: o }));
-                } else if (typeName === 'PDFDropdown' || typeName === 'PDFOptionList') {
-                    type = 'select';
-                    const opts = (f as any).getOptions();
-                    options = opts.map((o: string) => ({ label: o, value: o }));
+                    
+                    if (typeof (f as any).isEditable === 'function') {
+                        type = 'select'; // PDFDropdown
+                    } else {
+                        type = 'radio'; // PDFRadioGroup
+                    }
                 } else if (fieldName.toLowerCase().includes('date') || cleanName.toLowerCase().includes('date')) {
                     type = 'date';
                 }
@@ -375,9 +474,14 @@ function FormBuilderContent() {
             api.get(`/admin/guide-engine/forms/${activeFormId}`).then(res => setForm(res.data));
             const totalFields = formattedSections.reduce((acc, sec) => acc + sec.questions.length, 0);
             showAlert('Success', `Imported ${totalFields} fields successfully.`);
-        } catch (error) {
-            console.error(error);
-            showAlert('Error', 'Failed to parse PDF or import fields.');
+        } catch (error: any) {
+            console.error('Import error:', error);
+            // Log full Laravel validation errors if present (422)
+            if (error?.response?.data) {
+                console.error('Server validation errors:', JSON.stringify(error.response.data, null, 2));
+            }
+            const msg = error?.response?.data?.message || 'Failed to parse file or import fields.';
+            showAlert('Error', msg);
         } finally {
             setIsImporting(false);
             if (fileInputRef.current) fileInputRef.current.value = '';
@@ -520,6 +624,29 @@ function FormBuilderContent() {
                 } catch (err) {
                     console.error(err);
                     showAlert("Error", "Failed to unlink form.");
+                }
+            }
+        );
+    };
+
+    const handleDeleteForm = (formId: number, formName: string) => {
+        showConfirm(
+            "⚠️ Delete Form Permanently",
+            `This will permanently delete "${formName}" and ALL its sections, questions, and options from the database. This action CANNOT be undone. Are you sure?`,
+            async () => {
+                try {
+                    await api.delete(`/admin/guide-engine/forms/${formId}`);
+                    const matchingForms = await loadAllForms();
+                    if (matchingForms.length > 0) {
+                        setActiveFormId(matchingForms[0].id);
+                    } else {
+                        setActiveFormId(null);
+                        setForm(null);
+                    }
+                    showAlert('Success', `Form "${formName}" has been permanently deleted.`);
+                } catch (err) {
+                    console.error(err);
+                    showAlert("Error", "Failed to delete the form.");
                 }
             }
         );
@@ -857,6 +984,9 @@ function FormBuilderContent() {
                                     </button>
                                     <button onClick={() => handleUnlinkForm(form.id)} className="px-4 py-2 border border-red-200 text-red-500 rounded-lg text-sm font-semibold hover:bg-red-50 transition-colors">
                                         Unlink Form
+                                    </button>
+                                    <button onClick={() => handleDeleteForm(form.id, form.name)} className="px-4 py-2 bg-red-600 text-white rounded-lg text-sm font-semibold hover:bg-red-700 transition-colors">
+                                        🗑️ Delete Form
                                     </button>
                                     <button onClick={openSectionModal} className="px-4 py-2 bg-[#1b2559] text-white rounded-lg text-sm font-semibold hover:bg-[#101F38] transition-colors">
                                         + Add Section (Step)
