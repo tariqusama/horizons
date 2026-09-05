@@ -230,7 +230,20 @@ function FormBuilderContent() {
                 // Helper: push a text block as a question into currentQuestions
                 const pushQuestion = (rawText: string) => {
                     const trimmed = rawText.trim();
-                    if (trimmed.length < 2) return;
+                    if (trimmed.length < 2 && !/^(apt|ste|flr)\.?$/i.test(trimmed)) return;
+                    
+                    // USCIS specific fix: If the text is just "Ste." or "Flr.", it means a fragmented 
+                    // "Apt. Ste. Flr." block. Append it to the previous question instead of making a new one.
+                    if (/^(apt|ste|flr)\.?$/i.test(trimmed)) {
+                        if (currentQuestions.length > 0) {
+                            currentQuestions[currentQuestions.length - 1].question_text += ' ' + trimmed;
+                        }
+                        return;
+                    }
+
+                    // USCIS specific fix: If text ends with "Apt." and next is "Ste.", we might just catch it here
+                    // If we encounter a string that is exactly "Apt. Ste. Flr.", we keep it as one question.
+
                     const { type, options } = inferFieldType(trimmed);
                     currentQuestions.push({
                         question_text: trimmed.substring(0, 250),
@@ -1075,7 +1088,18 @@ function FormBuilderContent() {
                                                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 8h16M4 16h16" strokeLinecap="round"/></svg>
                                                             </div>
                                                             <div>
-                                                                <p className="font-bold text-[#101F38] mb-1">{q.question_text}</p>
+                                                                {q.field_type === 'heading' ? (
+                                                                    <div className={`p-3 mb-2 rounded-lg text-sm font-semibold flex gap-2 items-start ${
+                                                                        q.question_text.includes('WARNING') || q.question_text.includes('PENALTIES') ? 'bg-red-50 text-red-800 border border-red-200' :
+                                                                        q.question_text.includes('NOTE') ? 'bg-blue-50 text-blue-800 border border-blue-200' :
+                                                                        'bg-gray-100 text-gray-800 border border-gray-200'
+                                                                    }`}>
+                                                                        <span className="shrink-0">{q.question_text.includes('WARNING') || q.question_text.includes('PENALTIES') ? '⚠️' : q.question_text.includes('NOTE') ? 'ℹ️' : '📋'}</span>
+                                                                        <span>{q.question_text}</span>
+                                                                    </div>
+                                                                ) : (
+                                                                    <p className="font-bold text-[#101F38] mb-1">{q.question_text}</p>
+                                                                )}
                                                                 <div className="flex flex-wrap gap-2 text-xs text-[#5B6472] mt-2">
                                                                     <span className="bg-gray-100 px-2 py-0.5 rounded">Field: {q.field_name}</span>
                                                                     <span className="bg-blue-50 text-blue-600 px-2 py-0.5 rounded">Type: {q.field_type}</span>
