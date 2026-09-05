@@ -263,7 +263,8 @@ function FormBuilderContent() {
             await api.post(`/admin/guide-engine/forms/${activeFormId}/import-pdf-fields`, payload);
             
             api.get(`/admin/guide-engine/forms/${activeFormId}`).then(res => setForm(res.data));
-            showAlert('Success', `Imported ${parsedQuestions.length} fields successfully.`);
+            const totalFields = formattedSections.reduce((acc, sec) => acc + sec.questions.length, 0);
+            showAlert('Success', `Imported ${totalFields} fields successfully.`);
         } catch (error) {
             console.error(error);
             showAlert('Error', 'Failed to parse PDF or import fields.');
