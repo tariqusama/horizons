@@ -165,29 +165,61 @@ function FormBuilderContent() {
 
         setIsImporting(true);
         try {
-            const { PDFDocument, PDFName, PDFString, PDFHexString, PDFCheckBox, PDFRadioGroup, PDFDropdown, PDFOptionList } = await import('pdf-lib');
+            const { PDFDocument, PDFCheckBox, PDFRadioGroup, PDFDropdown, PDFOptionList } = await import('pdf-lib');
             const arrayBuffer = await file.arrayBuffer();
             const pdfDoc = await PDFDocument.load(arrayBuffer);
             const formObj = pdfDoc.getForm();
             const fields = formObj.getFields();
 
-            const parsedQuestions = [];
+            const sectionsMap: { [key: string]: any[] } = {};
             
             for (let i = 0; i < fields.length; i++) {
                 const f = fields[i];
-                const name = f.getName();
+                const rawName = f.getName();
                 
                 // 1. Skip barcodes and internal buttons
-                const lowerName = name.toLowerCase();
+                const lowerName = rawName.toLowerCase();
                 if (lowerName.includes('barcode') || lowerName.includes('button')) {
                     continue;
                 }
 
-                let humanReadable = name;
+                // 2. Parse structural name (e.g. form1[0].Page1[0].Part1[0].LastName[0])
+                const parts = rawName.split('.');
+                const cleanParts = parts.map(p => p.replace(/\[\d+\]/g, '').replace(/_\d+/g, ''));
+                const meaningfulParts = cleanParts.filter(p => 
+                    !p.toLowerCase().includes('form') && 
+                    !p.toLowerCase().includes('pageset') && 
+                    !p.toLowerCase().includes('page') && 
+                    !p.toLowerCase().includes('subform')
+                );
+
+                let sectionName = 'General Information';
+                let fieldName = rawName;
+
+                if (meaningfulParts.length > 0) {
+                    fieldName = meaningfulParts[meaningfulParts.length - 1];
+                    if (meaningfulParts.length > 1) {
+                        sectionName = meaningfulParts[meaningfulParts.length - 2];
+                    }
+                }
+
+                // Convert camelCase/snake_case to Human Readable
+                const humanize = (str: string) => {
+                    return str
+                        .replace(/([A-Z])/g, ' $1') // insert space before caps
+                        .replace(/_/g, ' ') // replace underscores with space
+                        .replace(/\s+/g, ' ') // remove double spaces
+                        .replace(/^./, (s) => s.toUpperCase()) // capitalize first letter
+                        .trim();
+                };
+
+                const humanReadableSection = humanize(sectionName);
+                const humanReadableField = humanize(fieldName);
+
                 let type = 'text';
                 let options = null;
 
-                // 2. Determine correct type
+                // 3. Determine correct type
                 if (f instanceof PDFCheckBox) {
                     type = 'radio';
                     options = [{ label: 'Yes', value: 'yes' }, { label: 'No', value: 'no' }];
@@ -200,47 +232,32 @@ function FormBuilderContent() {
                     const opts = f.getOptions();
                     options = opts.map(o => ({ label: o, value: o }));
                 }
-                
-                try {
-                    const acroField = (f as any).acroField;
-                    if (acroField && acroField.dict) {
-                        const tu = acroField.dict.get(PDFName.of('TU'));
-                        if (tu) {
-                            if (tu instanceof PDFString || tu instanceof PDFHexString) {
-                                const decoded = tu.decodeText();
-                                if (decoded) humanReadable = cleanTooltip(decoded);
-                            }
-                        }
-                    }
-                } catch (e) {
-                    console.error("Error reading field tooltip", e);
+
+                if (!sectionsMap[humanReadableSection]) {
+                    sectionsMap[humanReadableSection] = [];
                 }
 
-                if (!humanReadable || humanReadable.trim() === '') {
-                    humanReadable = name;
-                }
-
-                parsedQuestions.push({
-                    question_text: humanReadable,
-                    field_name: name.replace(/[^a-zA-Z0-9_]/g, '_') + '_' + i,
+                sectionsMap[humanReadableSection].push({
+                    question_text: humanReadableField,
+                    field_name: rawName.replace(/[^a-zA-Z0-9_]/g, '_') + '_' + i,
                     field_type: type,
                     options: options
                 });
             }
 
-            if (parsedQuestions.length === 0) {
+            const formattedSections = Object.keys(sectionsMap).map(secTitle => ({
+                title: secTitle,
+                questions: sectionsMap[secTitle]
+            }));
+
+            if (formattedSections.length === 0) {
                 showAlert('Error', 'No fields found in this PDF.');
                 setIsImporting(false);
                 return;
             }
 
             const payload = {
-                sections: [
-                    {
-                        title: file.name.replace('.pdf', '') + ' Fields',
-                        questions: parsedQuestions
-                    }
-                ]
+                sections: formattedSections
             };
 
             await api.post(`/admin/guide-engine/forms/${activeFormId}/import-pdf-fields`, payload);
