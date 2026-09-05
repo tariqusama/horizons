@@ -44,6 +44,17 @@ function FormBuilderContent() {
     const [draggedSectionIndex, setDraggedSectionIndex] = useState<number | null>(null);
     const [draggedQuestionIndex, setDraggedQuestionIndex] = useState<{sectionId: number, questionIndex: number} | null>(null);
 
+    // Collapse/Expand state
+    const [collapsedSections, setCollapsedSections] = useState<number[]>([]);
+
+    const toggleSection = (sectionId: number) => {
+        setCollapsedSections(prev => 
+            prev.includes(sectionId) 
+                ? prev.filter(id => id !== sectionId)
+                : [...prev, sectionId]
+        );
+    };
+
     const handleSectionDragStart = (e: React.DragEvent, index: number) => {
         setDraggedSectionIndex(index);
         e.dataTransfer.effectAllowed = 'move';
@@ -1014,12 +1025,23 @@ function FormBuilderContent() {
                                     className={`bg-white rounded-2xl border border-[#ECE9E2] overflow-hidden shadow-sm ${draggedSectionIndex === index ? 'opacity-50 ring-2 ring-orange-500' : ''}`}
                                 >
                                     <div className="bg-[#F8F9FA] px-6 py-4 border-b border-[#ECE9E2] flex flex-col sm:flex-row justify-between sm:items-center gap-4">
-                                        <h3 className="font-bold text-[#101F38] flex items-center gap-2">
-                                            <div className="cursor-grab active:cursor-grabbing text-gray-400 hover:text-gray-600">
-                                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 8h16M4 16h16" strokeLinecap="round"/></svg>
-                                            </div>
-                                            Step {index + 1}: {section.title}
-                                        </h3>
+                                        <div className="flex items-center gap-2">
+                                            <button 
+                                                onClick={() => toggleSection(section.id)} 
+                                                className="p-1 hover:bg-gray-200 rounded text-gray-500 transition-colors"
+                                                title={collapsedSections.includes(section.id) ? "Expand Section" : "Collapse Section"}
+                                            >
+                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`transform transition-transform ${collapsedSections.includes(section.id) ? '-rotate-90' : 'rotate-0'}`}>
+                                                    <polyline points="6 9 12 15 18 9"></polyline>
+                                                </svg>
+                                            </button>
+                                            <h3 className="font-bold text-[#101F38] flex items-center gap-2">
+                                                <div className="cursor-grab active:cursor-grabbing text-gray-400 hover:text-gray-600">
+                                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 8h16M4 16h16" strokeLinecap="round"/></svg>
+                                                </div>
+                                                Step {index + 1}: {section.title}
+                                            </h3>
+                                        </div>
                                         <div className="flex gap-2">
                                             <button onClick={() => openEditSectionModal(section)} className="px-3 py-1.5 text-[#5B6472] border border-[#ECE9E2] hover:bg-gray-50 rounded-md text-xs font-semibold bg-white transition-colors">
                                                 Edit Name
@@ -1033,12 +1055,13 @@ function FormBuilderContent() {
                                         </div>
                                     </div>
                                     
-                                    <div className="p-6">
-                                        {section.questions?.length === 0 ? (
-                                            <p className="text-sm text-[#5B6472] italic text-center py-4">No questions in this section yet.</p>
-                                        ) : (
-                                            <div className="space-y-4">
-                                                {section.questions?.map((q: any, qIndex: number) => (
+                                    {!collapsedSections.includes(section.id) && (
+                                        <div className="p-6">
+                                            {section.questions?.length === 0 ? (
+                                                <p className="text-sm text-[#5B6472] italic text-center py-4">No questions in this section yet.</p>
+                                            ) : (
+                                                <div className="space-y-4">
+                                                    {section.questions?.map((q: any, qIndex: number) => (
                                                     <div 
                                                         key={q.id} 
                                                         draggable
@@ -1082,6 +1105,7 @@ function FormBuilderContent() {
                                             </div>
                                         )}
                                     </div>
+                                    )}
                                 </div>
                             ))}
                         </div>
