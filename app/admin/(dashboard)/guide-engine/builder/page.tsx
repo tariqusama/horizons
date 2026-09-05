@@ -183,10 +183,11 @@ function FormBuilderContent() {
                     continue;
                 }
 
-                // 2. Parse structural name (e.g. form1[0].Page1[0].Part1[0].LastName[0])
-                const parts = rawName.split('.');
-                const cleanParts = parts.map(p => p.replace(/\[\d+\]/g, '').replace(/_\d+/g, ''));
-                const meaningfulParts = cleanParts.filter(p => 
+                // 2. Parse structural name (e.g. form1[0].Page1[0].Part1[0].LastName[0] or SB9_Pt8Line3_Unit_0_428)
+                const cleanName = rawName.replace(/\[\d+\]/g, '').replace(/(_\d+)+$/, ''); 
+                const parts = cleanName.split(/[._]/);
+                const meaningfulParts = parts.filter(p => 
+                    p.length > 0 &&
                     !p.toLowerCase().includes('form') && 
                     !p.toLowerCase().includes('pageset') && 
                     !p.toLowerCase().includes('page') && 
@@ -194,19 +195,24 @@ function FormBuilderContent() {
                 );
 
                 let sectionName = 'General Information';
-                let fieldName = rawName;
+                let fieldName = cleanName;
 
                 if (meaningfulParts.length > 0) {
                     fieldName = meaningfulParts[meaningfulParts.length - 1];
-                    if (meaningfulParts.length > 1) {
-                        sectionName = meaningfulParts[meaningfulParts.length - 2];
-                    }
+                }
+
+                // Look for "Part X" in the cleanName for USCIS forms
+                const ptMatch = cleanName.match(/p(?:ar)?t\s*(\d+[A-Z]?)/i);
+                if (ptMatch) {
+                    sectionName = `Part ${ptMatch[1].toUpperCase()}`;
+                } else if (meaningfulParts.length > 1) {
+                    sectionName = meaningfulParts[meaningfulParts.length - 2];
                 }
 
                 // Convert camelCase/snake_case to Human Readable
                 const humanize = (str: string) => {
                     return str
-                        .replace(/([A-Z])/g, ' $1') // insert space before caps
+                        .replace(/([a-z])([A-Z])/g, '$1 $2') // insert space between camelCase
                         .replace(/_/g, ' ') // replace underscores with space
                         .replace(/\s+/g, ' ') // remove double spaces
                         .replace(/^./, (s) => s.toUpperCase()) // capitalize first letter
@@ -214,7 +220,12 @@ function FormBuilderContent() {
                 };
 
                 const humanReadableSection = humanize(sectionName);
-                const humanReadableField = humanize(fieldName);
+                let humanReadableField = humanize(fieldName);
+                
+                // Add a fallback if the field name is somehow empty after cleaning
+                if (!humanReadableField) {
+                    humanReadableField = "Unknown Field";
+                }
 
                 let type = 'text';
                 let options = null;
