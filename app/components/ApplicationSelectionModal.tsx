@@ -4,7 +4,8 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { loadStripe } from '@stripe/stripe-js';
 import { CardElement, Elements, useElements, useStripe } from '@stripe/react-stripe-js';
-import api from '../../lib/api';
+import { useAuth } from '@/contexts/AuthContext';
+import api, { getStoredToken } from '../../lib/api';
 import { Users, Clock, CheckCircle2, ArrowRight, Heart, Home, Flag, CreditCard, RefreshCw } from 'lucide-react';
 
 interface ApplicationSelectionModalProps {
@@ -19,21 +20,43 @@ if (!stripeKey) {
 const stripePromise = loadStripe(stripeKey || '');
 
 const CheckoutForm = ({ selectedSubPlan, selectedTier, handleClose, getSelectedAmount, questionnaireAnswers }: any) => {
+    const { user } = useAuth();
     const stripe = useStripe();
     const elements = useElements();
     const router = useRouter();
 
     const [isTermsChecked, setIsTermsChecked] = useState(false);
-    const [cardholderName, setCardholderName] = useState('');
-    const [billingEmail, setBillingEmail] = useState('');
+    const [cardholderName, setCardholderName] = useState(user?.name || '');
+    const [billingEmail, setBillingEmail] = useState(user?.email || '');
     const [paymentError, setPaymentError] = useState('');
     const [isCardReady, setIsCardReady] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
+    useEffect(() => {
+        if (user?.name && !cardholderName) setCardholderName(user.name);
+        if (user?.email && !billingEmail) setBillingEmail(user.email);
+    }, [user]);
+
     const completePurchase = async () => {
-        if (!isTermsChecked) return;
+        if (!isTermsChecked) {
+            setPaymentError('Please accept the Terms and Conditions to proceed.');
+            return;
+        }
+
+        const token = getStoredToken();
+        if (!token && !user) {
+            setPaymentError('Your session has expired. Please refresh the page and log in again.');
+            return;
+        }
+
         if (!cardholderName.trim() || !billingEmail.trim()) {
             setPaymentError('Please enter your cardholder name and email.');
+            return;
+        }
+
+        const amount = getSelectedAmount();
+        if (!amount || amount < 0.5) {
+            setPaymentError('Invalid plan price. Please select a valid package or contact support.');
             return;
         }
 
@@ -56,7 +79,6 @@ const CheckoutForm = ({ selectedSubPlan, selectedTier, handleClose, getSelectedA
         setIsSubmitting(true);
         setPaymentError('');
 
-        const amount = getSelectedAmount();
         const planDescription = `${selectedSubPlan.title} - ${selectedTier}`;
 
         try {
@@ -230,7 +252,12 @@ const CheckoutForm = ({ selectedSubPlan, selectedTier, handleClose, getSelectedA
                             </div>
                         </div>
                         <p className="text-xs text-slate-500">By providing your card information, you allow Horizon Pathways, Inc. to charge your card for future payments in accordance with their terms.</p>
-                        {paymentError && <p className="text-sm text-red-600">{paymentError}</p>}
+                        {paymentError && <p className="text-sm text-red-600 font-medium">{paymentError}</p>}
+                        {!stripeKey && (
+                            <p className="text-xs text-amber-700 bg-amber-50 p-2.5 rounded-lg border border-amber-200">
+                                Warning: Stripe publishable key is not configured. Payments will not process.
+                            </p>
+                        )}
                     </div>
                 </div>
 
@@ -260,10 +287,10 @@ const CheckoutForm = ({ selectedSubPlan, selectedTier, handleClose, getSelectedA
 
                 <button
                     onClick={completePurchase}
-                    disabled={!isTermsChecked || isSubmitting || !isCardReady}
-                    className={`w-full py-3 rounded-xl text-sm font-semibold text-white transition-colors ${isTermsChecked && isCardReady ? 'bg-gradient-to-b from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 shadow-lg shadow-orange-500/30 hover:shadow-orange-500/50' : 'bg-slate-400 cursor-not-allowed opacity-50 shadow-none'}`}
+                    disabled={!isTermsChecked || isSubmitting || !isCardReady || !stripeKey}
+                    className={`w-full py-3 rounded-xl text-sm font-semibold text-white transition-colors ${isTermsChecked && isCardReady && !isSubmitting && stripeKey ? 'bg-gradient-to-b from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 shadow-lg shadow-orange-500/30 hover:shadow-orange-500/50 cursor-pointer' : 'bg-slate-400 cursor-not-allowed opacity-50 shadow-none'}`}
                 >
-                    {isSubmitting ? 'Processing payment...' : isCardReady ? 'Complete Purchase →' : 'Loading card field...'}
+                    {isSubmitting ? 'Processing payment...' : !stripeKey ? 'Stripe Not Configured' : !isCardReady ? 'Loading card field...' : 'Complete Purchase →'}
                 </button>
             </div>
         </div>
@@ -314,9 +341,10 @@ export default function ApplicationSelectionModal({ isOpen, onClose }: Applicati
                         headerTitle: cat.title,
                         headerSubtitle: cat.subtitle,
                         subPlans: cat.services.map((srv: any) => {
-                            const basicPkg = srv.packages.find((p: any) => p.name.includes('Basic'));
-                            const advancedPkg = srv.packages.find((p: any) => p.name.includes('Advanced'));
-                            const premiumPkg = srv.packages.find((p: any) => p.name.includes('Premium'));
+                            const packages = Array.isArray(srv.packages) ? srv.packages : [];
+                            const basicPkg = packages.find((p: any) => p.name && p.name.toLowerCase().includes('basic'));
+                            const advancedPkg = packages.find((p: any) => p.name && p.name.toLowerCase().includes('advanced'));
+                            const premiumPkg = packages.find((p: any) => p.name && p.name.toLowerCase().includes('premium'));
                             
                             let requirements = [];
                             try {
@@ -329,14 +357,19 @@ export default function ApplicationSelectionModal({ isOpen, onClose }: Applicati
                                 requirements = [];
                             }
 
+                            const fallbackBasePrice = parseFloat((srv.starting_price || '$0').replace(/[^0-9.]/g, '')) || 0;
+                            const basePrice = basicPkg ? Number(basicPkg.price) : fallbackBasePrice;
+                            const advancedPrice = advancedPkg ? Number(advancedPkg.price) : (basePrice > 0 ? basePrice + 100 : 0);
+                            const premiumPrice = premiumPkg ? Number(premiumPkg.price) : (basePrice > 0 ? basePrice + 200 : 0);
+
                             return {
                                 id: srv.id,
                                 title: srv.title,
                                 subtitle: srv.subtitle,
                                 iconType: 'users',
-                                basePrice: basicPkg ? basicPkg.price : parseFloat((srv.starting_price || '$0').replace(/[^0-9.]/g, '')),
-                                advancedPrice: advancedPkg ? advancedPkg.price : 0,
-                                premiumPrice: premiumPkg ? premiumPkg.price : 0,
+                                basePrice,
+                                advancedPrice,
+                                premiumPrice,
                                 processingTime: srv.processing_time,
                                 requirements: requirements
                             };
