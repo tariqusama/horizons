@@ -58,12 +58,13 @@ const CheckoutForm = ({ selectedSubPlan, selectedTier, handleClose, getSelectedA
             return;
         }
 
-        let amount = getSelectedAmount();
+        let originalAmount = getSelectedAmount();
+        let finalAmount = originalAmount;
         if (isPromoApplied && discountAmount > 0) {
-            amount = Math.max(0, amount - discountAmount);
+            finalAmount = Math.max(0, originalAmount - discountAmount);
         }
 
-        if (amount === undefined || amount < 0.5) {
+        if (finalAmount === undefined || (finalAmount < 0.5 && finalAmount > 0)) {
             setPaymentError('Invalid plan price. Please select a valid package or contact support.');
             return;
         }
@@ -73,13 +74,13 @@ const CheckoutForm = ({ selectedSubPlan, selectedTier, handleClose, getSelectedA
             return;
         }
 
-        if (!isCardReady) {
+        if (finalAmount > 0 && !isCardReady) {
             setPaymentError('Card input is not ready yet. Please wait a moment.');
             return;
         }
 
         const cardElement = elements.getElement(CardElement);
-        if (!cardElement) {
+        if (finalAmount > 0 && !cardElement) {
             setPaymentError('Card input is not available. Please refresh the page or try again.');
             return;
         }
@@ -90,27 +91,31 @@ const CheckoutForm = ({ selectedSubPlan, selectedTier, handleClose, getSelectedA
         const planDescription = `${selectedSubPlan.title} - ${selectedTier}`;
 
         try {
-            const { error: paymentMethodError, paymentMethod } = await stripe.createPaymentMethod({
-                type: 'card',
-                card: cardElement,
-                billing_details: {
-                    name: cardholderName,
-                    email: billingEmail,
-                },
-            });
+            let paymentMethodId = null;
+            if (finalAmount > 0) {
+                const { error: paymentMethodError, paymentMethod } = await stripe.createPaymentMethod({
+                    type: 'card',
+                    card: cardElement!,
+                    billing_details: {
+                        name: cardholderName,
+                        email: billingEmail,
+                    },
+                });
 
-            if (paymentMethodError) {
-                setPaymentError(paymentMethodError.message || 'Payment method creation failed.');
-                setIsSubmitting(false);
-                return;
+                if (paymentMethodError) {
+                    setPaymentError(paymentMethodError.message || 'Payment method creation failed.');
+                    setIsSubmitting(false);
+                    return;
+                }
+                paymentMethodId = paymentMethod.id;
             }
 
             const response = await api.post('/payment/process', {
-                amount,
+                amount: originalAmount,
                 email: billingEmail,
                 plan: planDescription,
                 goal: selectedSubPlan.subtitle || selectedSubPlan.title,
-                payment_method_id: paymentMethod.id,
+                payment_method_id: paymentMethodId,
                 ...(isPromoApplied && promoCode ? { promo_code: promoCode } : {})
             });
 
@@ -128,7 +133,7 @@ const CheckoutForm = ({ selectedSubPlan, selectedTier, handleClose, getSelectedA
 
             // Create the application in the database
             await api.post('/applications', {
-                amount,
+                amount: originalAmount,
                 plan: planDescription,
                 goal: selectedSubPlan.subtitle || selectedSubPlan.title,
                 package_name: selectedSubPlan.title,
