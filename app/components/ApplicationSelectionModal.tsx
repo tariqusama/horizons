@@ -31,6 +31,10 @@ const CheckoutForm = ({ selectedSubPlan, selectedTier, handleClose, getSelectedA
     const [paymentError, setPaymentError] = useState('');
     const [isCardReady, setIsCardReady] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [promoCode, setPromoCode] = useState('');
+    const [isPromoApplied, setIsPromoApplied] = useState(false);
+    const [promoError, setPromoError] = useState('');
+    const [discountAmount, setDiscountAmount] = useState(0);
 
     useEffect(() => {
         if (user?.name && !cardholderName) setCardholderName(user.name);
@@ -54,8 +58,12 @@ const CheckoutForm = ({ selectedSubPlan, selectedTier, handleClose, getSelectedA
             return;
         }
 
-        const amount = getSelectedAmount();
-        if (!amount || amount < 0.5) {
+        let amount = getSelectedAmount();
+        if (isPromoApplied && discountAmount > 0) {
+            amount = Math.max(0, amount - discountAmount);
+        }
+
+        if (amount === undefined || amount < 0.5) {
             setPaymentError('Invalid plan price. Please select a valid package or contact support.');
             return;
         }
@@ -261,11 +269,77 @@ const CheckoutForm = ({ selectedSubPlan, selectedTier, handleClose, getSelectedA
                     </div>
                 </div>
 
-                <div className="border border-[#e2e8f0] rounded-xl p-4 flex justify-between items-center mb-6 bg-white">
-                    <span className="text-[#5A6579] font-medium">Total</span>
-                    <span className="text-2xl font-black text-[#1B3A64]">
-                        ${selectedTier === 'Premium' ? selectedSubPlan.premiumPrice : selectedTier === 'Advanced' ? selectedSubPlan.advancedPrice : selectedSubPlan.basePrice}
-                    </span>
+                <div className="border border-[#e2e8f0] rounded-xl p-4 mb-6 bg-white flex flex-col gap-3">
+                    <label className="text-sm font-semibold text-slate-900" htmlFor="promo-code">Promo Code</label>
+                    <div className="flex gap-2">
+                        <input
+                            id="promo-code"
+                            type="text"
+                            value={promoCode}
+                            onChange={(e) => {
+                                setPromoCode(e.target.value.toUpperCase());
+                                setPromoError('');
+                            }}
+                            disabled={isPromoApplied}
+                            placeholder="Enter promo code"
+                            className="flex-1 rounded-xl border border-[#d1d5db] bg-white px-4 py-3 text-sm text-slate-900 focus:border-[#1B3A64] focus:ring-[#1B3A64]/20 outline-none transition disabled:bg-slate-50 disabled:text-slate-500"
+                        />
+                        {isPromoApplied ? (
+                            <button
+                                onClick={() => {
+                                    setIsPromoApplied(false);
+                                    setPromoCode('');
+                                    setDiscountAmount(0);
+                                }}
+                                className="px-4 py-3 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-700 text-sm font-semibold transition"
+                            >
+                                Remove
+                            </button>
+                        ) : (
+                            <button
+                                onClick={() => {
+                                    if (!promoCode.trim()) {
+                                        setPromoError('Please enter a promo code');
+                                        return;
+                                    }
+                                    // TODO: Implement actual promo code validation here
+                                    if (promoCode === 'DISCOUNT10') {
+                                        setIsPromoApplied(true);
+                                        setDiscountAmount(10);
+                                        setPromoError('');
+                                    } else {
+                                        setPromoError('Invalid promo code');
+                                    }
+                                }}
+                                className="px-6 py-3 rounded-xl bg-[#1B3A64] hover:bg-[#132a4a] text-white text-sm font-semibold transition"
+                            >
+                                Apply
+                            </button>
+                        )}
+                    </div>
+                    {promoError && <p className="text-sm text-red-600 font-medium">{promoError}</p>}
+                    {isPromoApplied && <p className="text-sm text-green-600 font-medium">Promo code applied successfully!</p>}
+                </div>
+
+                <div className="border border-[#e2e8f0] rounded-xl p-4 flex flex-col mb-6 bg-white gap-2">
+                    <div className="flex justify-between items-center">
+                        <span className="text-[#5A6579] font-medium">Subtotal</span>
+                        <span className="text-xl font-bold text-[#1B3A64]">
+                            ${getSelectedAmount()}
+                        </span>
+                    </div>
+                    {isPromoApplied && discountAmount > 0 && (
+                        <div className="flex justify-between items-center text-green-600">
+                            <span className="font-medium">Discount ({promoCode})</span>
+                            <span className="text-lg font-bold">-${discountAmount}</span>
+                        </div>
+                    )}
+                    <div className="border-t border-slate-200 my-2 pt-2 flex justify-between items-center">
+                        <span className="text-[#5A6579] font-medium">Total</span>
+                        <span className="text-2xl font-black text-[#1B3A64]">
+                            ${Math.max(0, getSelectedAmount() - discountAmount)}
+                        </span>
+                    </div>
                 </div>
 
                 <label className="flex items-start gap-3 cursor-pointer mb-4">
