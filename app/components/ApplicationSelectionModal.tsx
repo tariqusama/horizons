@@ -291,6 +291,7 @@ const CheckoutForm = ({ selectedSubPlan, selectedTier, handleClose, getSelectedA
                                     setIsPromoApplied(false);
                                     setPromoCode('');
                                     setDiscountAmount(0);
+                                    setPromoError('');
                                 }}
                                 className="px-4 py-3 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-700 text-sm font-semibold transition"
                             >
@@ -303,24 +304,35 @@ const CheckoutForm = ({ selectedSubPlan, selectedTier, handleClose, getSelectedA
                                         setPromoError('Please enter a promo code');
                                         return;
                                     }
+                                    setPromoError('');
                                     try {
                                         const response = await api.post('/payment/validate-promo', {
                                             promo_code: promoCode
                                         });
                                         if (response.data.status === 'success') {
-                                            setIsPromoApplied(true);
-                                            const coupon = response.data.coupon;
-                                            if (coupon.amount_off) {
-                                                setDiscountAmount(coupon.amount_off / 100);
-                                            } else if (coupon.percent_off) {
+                                            const amount_off = response.data.amount_off;
+                                            const percent_off = response.data.percent_off;
+                                            
+                                            if (amount_off) {
+                                                setDiscountAmount(amount_off / 100);
+                                                setIsPromoApplied(true);
+                                                setPromoError('');
+                                            } else if (percent_off) {
                                                 const amount = getSelectedAmount();
-                                                setDiscountAmount(Number((amount * (coupon.percent_off / 100)).toFixed(2)));
+                                                setDiscountAmount(Number((amount * (percent_off / 100)).toFixed(2)));
+                                                setIsPromoApplied(true);
+                                                setPromoError('');
+                                            } else {
+                                                setPromoError('This promo code is not applicable.');
+                                                setIsPromoApplied(false);
                                             }
-                                            setPromoError('');
                                         } else {
                                             setPromoError(response.data.message || 'Invalid promo code');
+                                            setIsPromoApplied(false);
                                         }
                                     } catch (err: any) {
+                                        setIsPromoApplied(false);
+                                        setDiscountAmount(0);
                                         setPromoError(err.response?.data?.message || 'Invalid promo code');
                                     }
                                 }}
