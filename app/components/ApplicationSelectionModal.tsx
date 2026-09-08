@@ -111,6 +111,7 @@ const CheckoutForm = ({ selectedSubPlan, selectedTier, handleClose, getSelectedA
                 plan: planDescription,
                 goal: selectedSubPlan.subtitle || selectedSubPlan.title,
                 payment_method_id: paymentMethod.id,
+                ...(isPromoApplied && promoCode ? { promo_code: promoCode } : {})
             });
 
             if (response.data.status === 'requires_action' && response.data.client_secret) {
@@ -297,18 +298,30 @@ const CheckoutForm = ({ selectedSubPlan, selectedTier, handleClose, getSelectedA
                             </button>
                         ) : (
                             <button
-                                onClick={() => {
+                                onClick={async () => {
                                     if (!promoCode.trim()) {
                                         setPromoError('Please enter a promo code');
                                         return;
                                     }
-                                    // TODO: Implement actual promo code validation here
-                                    if (promoCode === 'DISCOUNT10') {
-                                        setIsPromoApplied(true);
-                                        setDiscountAmount(10);
-                                        setPromoError('');
-                                    } else {
-                                        setPromoError('Invalid promo code');
+                                    try {
+                                        const response = await api.post('/payment/validate-promo', {
+                                            promo_code: promoCode
+                                        });
+                                        if (response.data.status === 'success') {
+                                            setIsPromoApplied(true);
+                                            const coupon = response.data.coupon;
+                                            if (coupon.amount_off) {
+                                                setDiscountAmount(coupon.amount_off / 100);
+                                            } else if (coupon.percent_off) {
+                                                const amount = getSelectedAmount();
+                                                setDiscountAmount(Number((amount * (coupon.percent_off / 100)).toFixed(2)));
+                                            }
+                                            setPromoError('');
+                                        } else {
+                                            setPromoError(response.data.message || 'Invalid promo code');
+                                        }
+                                    } catch (err: any) {
+                                        setPromoError(err.response?.data?.message || 'Invalid promo code');
                                     }
                                 }}
                                 className="px-6 py-3 rounded-xl bg-[#1B3A64] hover:bg-[#132a4a] text-white text-sm font-semibold transition"
