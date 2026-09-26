@@ -267,7 +267,7 @@ function SignupFlowContent() {
     try {
       // 1. Register the user so their account exists when they return from Stripe
       // Prepare payment sum
-      const baseAmount = parseFloat(selectedPlanPrice.replace('$', '')) || 0;
+      const baseAmount = parseFloat(selectedPlanPrice.replace(/[^0-9.]/g, '')) || 0;
       const addonsList = [
         { id: 'translation', name: 'Document Translation (per page)', price: 25 },
         { id: 'notary', name: 'Certified Copy & E-Notary', price: 15 },
@@ -382,7 +382,7 @@ function SignupFlowContent() {
       }
 
       // Extract raw amount (e.g., "$349.99" -> 349.99)
-      const baseAmount = parseFloat(selectedPlanPrice.replace('$', '')) || 0;
+      const baseAmount = parseFloat(selectedPlanPrice.replace(/[^0-9.]/g, '')) || 0;
       const addonsList = [
         { id: 'translation', name: 'Document Translation (per page)', price: 25 },
         { id: 'notary', name: 'Certified Copy & E-Notary', price: 15 },
@@ -1139,7 +1139,7 @@ function SignupFlowContent() {
         { id: 'expedited', name: 'Expedited Form Preparation (48hrs)', description: 'Priority preparation of the full application packet', price: 100 }
       ];
 
-      const baseAmount = parseFloat(selectedPlanPrice.replace('$', '')) || 0;
+      const baseAmount = parseFloat(selectedPlanPrice.replace(/[^0-9.]/g, '')) || 0;
       const addonsTotal = selectedAddons.reduce((sum, addonId) => sum + ((addons.find(a => a.id === addonId)?.price || 0) * (addonQuantities[addonId] || 1)), 0);
       const totalAmount = baseAmount + addonsTotal;
 
@@ -1230,23 +1230,37 @@ function SignupFlowContent() {
                   These services are completely optional and are not required to complete your application. Select them only if you need the additional assistance.
                 </p>
                 <div className="space-y-3">
-                  {addons.map(addon => (
-                    <div
-                      key={addon.id}
-                      className="flex items-center justify-between rounded-lg border border-gray-200 p-4 transition-all duration-200 hover:bg-gray-50 cursor-pointer"
-                    >
-                      <div className="flex flex-1 items-start space-x-3">
-                        <div className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded border-2 border-gray-300 mt-0.5" />
-                        <div className="flex-1">
-                          <div className="text-sm font-medium text-gray-900">{addon.name}</div>
-                          <div className="mt-1 text-xs text-gray-600">{addon.description}</div>
+                  {addons.map(addon => {
+                    const isSelected = selectedAddons.includes(addon.id);
+                    return (
+                      <div
+                        key={addon.id}
+                        onClick={() => toggleAddon(addon.id)}
+                        className={`flex items-center justify-between rounded-lg border p-4 transition-all duration-200 cursor-pointer ${
+                          isSelected ? 'border-orange-500 bg-orange-50/30' : 'border-gray-200 hover:bg-gray-50'
+                        }`}
+                      >
+                        <div className="flex flex-1 items-start space-x-3">
+                          <div className={`flex h-5 w-5 flex-shrink-0 items-center justify-center rounded border-2 mt-0.5 transition-colors ${
+                            isSelected ? 'border-orange-500 bg-orange-500 text-white' : 'border-gray-300'
+                          }`}>
+                            {isSelected && (
+                              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                              </svg>
+                            )}
+                          </div>
+                          <div className="flex-1">
+                            <div className="text-sm font-medium text-gray-900">{addon.name}</div>
+                            <div className="mt-1 text-xs text-gray-600">{addon.description}</div>
+                          </div>
+                        </div>
+                        <div className="flex-shrink-0 text-right">
+                          <div className="font-semibold text-gray-900">${addon.price * (addonQuantities[addon.id] || 1)}</div>
                         </div>
                       </div>
-                      <div className="flex-shrink-0 text-right">
-                        <div className="font-semibold text-gray-900">${addon.price * (addonQuantities[addon.id] || 1)}</div>
-                      </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             </div>
