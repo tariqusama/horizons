@@ -15,6 +15,8 @@ interface Application {
     next_step: string;
     created_at: string;
     form_slug?: string;
+    amount?: number;
+    paid_amount?: number;
 }
 
 const getApplicationStatusMeta = (status?: string) => {
@@ -62,25 +64,9 @@ export default function DashboardApplicationsPage() {
         router.push(statusMeta.route);
     };
 
-    const getPlanDetails = (goal: string, subtitle: string) => {
+    const getPlanDetails = (subtitle: string) => {
         const isAdvanced = subtitle.toLowerCase().includes('advanced');
         const isPremium = subtitle.toLowerCase().includes('premium');
-
-        let price = isPremium ? "$649.99" : isAdvanced ? "$449.99" : "$349.99";
-
-        if (goal === "Replace or fix a Green Card") {
-            price = isPremium ? "$599.99" : isAdvanced ? "$449.99" : "$349.99";
-        } else if (goal.includes("fiancé(e) or spouse")) {
-            price = isPremium ? "$999.99" : isAdvanced ? "$789.99" : "$549.99";
-        } else if (goal.includes("Adjust status")) {
-            price = isPremium ? "$1249.99" : isAdvanced ? "$949.99" : "$599.99";
-        } else if (goal.includes("Remove conditions")) {
-            price = isPremium ? "$699.99" : isAdvanced ? "$499.99" : "$399.99";
-        } else if (goal.includes("DACA")) {
-            price = isPremium ? "$539.99" : isAdvanced ? "$399.99" : "$299.99";
-        } else if (goal.includes("Citizenship")) {
-            price = isPremium ? "$649.99" : isAdvanced ? "$449.99" : "$349.99";
-        }
 
         const bullets = isPremium
             ? ["Everything in Advanced Plan", "Attorney prep & signature", "24/7 dedicated support"]
@@ -88,7 +74,7 @@ export default function DashboardApplicationsPage() {
                 ? ["Everything in Basic Plan", "Certified translation services", "Legal review by an immigration attorney"]
                 : ["Step-by-step guidance", "Automatic form filling", "Error checking"];
 
-        return { price, bullets };
+        return { bullets };
     };
 
     const formatDate = (dateString: string) => {
@@ -123,7 +109,8 @@ export default function DashboardApplicationsPage() {
                         You don't have any active applications yet.
                     </div>
                 ) : applications.map((app) => {
-                    const { price, bullets } = getPlanDetails(app.title, app.subtitle);
+                    const { bullets } = getPlanDetails(app.subtitle);
+                    const price = app.amount ? `$${Number(app.amount).toFixed(2)}` : '--';
                     const planName = app.subtitle.replace('Plan: ', '') + ' Plan';
                     const statusMeta = getApplicationStatusMeta(app.status);
 
@@ -153,9 +140,27 @@ export default function DashboardApplicationsPage() {
                                     <span className={`text-[12px] font-bold px-3 py-1 rounded-full ${statusMeta.tone === 'success' ? 'bg-emerald-100 text-emerald-700' : statusMeta.tone === 'danger' ? 'bg-rose-100 text-rose-700' : statusMeta.tone === 'info' ? 'bg-sky-100 text-sky-700' : statusMeta.tone === 'warning' ? 'bg-amber-100 text-amber-700' : 'bg-[#E6F0FF] text-[#1D4ED8]'}`}>
                                         {statusMeta.label}
                                     </span>
-                                    <span className="bg-[#E6F0FF] text-[#1D4ED8] text-[12px] font-bold px-3 py-1 rounded-full">
-                                        paid
-                                    </span>
+                                    {(() => {
+                                        const totalAmount = Number(app.amount || 0);
+                                        const paidAmt = Number((app as any).paid_amount || 0);
+                                        const isPaid = totalAmount > 0 && paidAmt >= totalAmount;
+                                        const isUnpaid = totalAmount > 0 && paidAmt < totalAmount;
+                                        if (isPaid) {
+                                            return (
+                                                <span className="bg-emerald-100 text-emerald-700 text-[12px] font-bold px-3 py-1 rounded-full">
+                                                    Paid
+                                                </span>
+                                            );
+                                        }
+                                        if (isUnpaid) {
+                                            return (
+                                                <span className="bg-rose-100 text-rose-700 text-[12px] font-bold px-3 py-1 rounded-full">
+                                                    Payment Pending
+                                                </span>
+                                            );
+                                        }
+                                        return null;
+                                    })()}
                                 </div>
                             </div>
 

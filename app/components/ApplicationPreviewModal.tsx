@@ -10,32 +10,7 @@ interface ApplicationPreviewModalProps {
 }
 
 export default function ApplicationPreviewModal({ isOpen, onClose, applicationId }: ApplicationPreviewModalProps) {
-    const [previewData, setPreviewData] = useState<any>({
-        i90: {
-            dob: '2026-07-26',
-            ssn: 'dfdf4534',
-            gender: 'Female',
-            aNumber: 'sdadsfr453653',
-            lastName: 'Shafique',
-            firstName: 'Shehryar',
-            middleName: 'dfdvcv',
-            otherNames: 'Yes',
-            countryOfBirth: 'United Kingdom',
-            dateOfAdmission: '2026-07-20',
-            fatherFirstName: 'dfdsfd',
-            motherFirstName: 'dsfsd',
-            classOfAdmission: 'dsfsd',
-            uscisOnlineAccount: 'dfdcvfgfdg',
-            portOfAdmissionCity: 'Islamabad',
-            countryOfCitizenship: 'United Kingdom',
-            portOfAdmissionState: 'dffgdfg'
-        },
-        g1145: {
-            lastName: 'Shafique',
-            firstName: 'Shehryar',
-            middleName: 'dfdvcv'
-        }
-    });
+    const [previewData, setPreviewData] = useState<any>({});
 
     useEffect(() => {
         if (!isOpen) return;

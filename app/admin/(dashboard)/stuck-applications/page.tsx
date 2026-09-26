@@ -241,67 +241,15 @@ export default function AdminStuckApplicationsPage() {
 
     const allItems = cases.map(toCaseItem);
 
-    // Mock data for demonstration
-    const mockItems: CaseItem[] = [
-        {
-            id: 1,
-            caseName: 'I-485 Adjustment of Status',
-            caseType: 'Critical',
-            email: 'john.doe@email.com',
-            daysStuck: 8,
-            created: '10/15/2024',
-            progressPct: 15,
-            status: 'Pending',
-        },
-        {
-            id: 2,
-            caseName: 'I-130 Petition for Spouse',
-            caseType: 'Critical',
-            email: 'jane.smith@email.com',
-            daysStuck: 11,
-            created: '10/10/2024',
-            progressPct: 45,
-            status: 'Paid',
-        },
-        {
-            id: 3,
-            caseName: 'N-400 Naturalization',
-            caseType: 'Critical',
-            email: 'mike.johnson@email.com',
-            daysStuck: 14,
-            created: '10/5/2024',
-            progressPct: 25,
-            status: 'Paid',
-        },
-        {
-            id: 4,
-            caseName: 'I-751 Remove Conditions',
-            caseType: 'Critical',
-            email: 'sarah.williams@email.com',
-            daysStuck: 8,
-            created: '10/8/2024',
-            progressPct: 85,
-            status: 'Paid',
-        },
-        {
-            id: 5,
-            caseName: 'DACA Renewal',
-            caseType: 'Critical',
-            email: 'alex.brown@email.com',
-            daysStuck: 21,
-            created: '9/28/2024',
-            progressPct: 30,
-            status: 'Paid',
-        },
-    ];
 
-    const displayItems = allItems.length > 0 ? allItems : mockItems;
+    const displayItems = allItems;
 
-    // Stat cards data
+
+    // Stat cards data — computed from real data
     const statCards = [
         {
             label: 'Total Stuck',
-            value: '5',
+            value: String(allItems.length),
             sub: 'Applications need attention',
             bgColor: 'bg-orange-50',
             borderColor: 'border-orange-200',
@@ -311,7 +259,7 @@ export default function AdminStuckApplicationsPage() {
         },
         {
             label: 'Critical',
-            value: '2',
+            value: String(allItems.filter(i => i.daysStuck > 7).length),
             sub: 'Inactive for 7+ days',
             bgColor: 'bg-red-50',
             borderColor: 'border-red-200',

@@ -295,11 +295,19 @@ export default function DashboardPage() {
                                 </span>
                             </div>
                             <div className="mt-6 flex items-end gap-2">
-                                <p className="text-3xl font-bold text-slate-900">{applications.length > 0 ? '100%' : '0%'}</p>
+                                {(() => {
+                                    const total = ownedApplications.length;
+                                    const approved = ownedApplications.filter(a =>
+                                        ['approved', 'approved by admin', 'approved by uscis'].includes((a.status || '').toString().trim().toLowerCase())
+                                    ).length;
+                                    if (total === 0) return <p className="text-3xl font-bold text-slate-900">N/A</p>;
+                                    return <p className="text-3xl font-bold text-slate-900">{Math.round((approved / total) * 100)}%</p>;
+                                })()}
                             </div>
-                            <p className="text-xs text-slate-500 mt-1">Application success rate</p>
+                            <p className="text-xs text-slate-500 mt-1">Approved applications</p>
                         </div>
                     )}
+
                 </div>
 
                 <div className="grid gap-6 lg:grid-cols-3">

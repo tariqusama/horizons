@@ -117,7 +117,7 @@ export default function AdminDashboard() {
             >
                 <h1 className="text-2xl md:text-[26px] font-black text-[#101F38] tracking-tight">Welcome to Horizon Pathways</h1>
                 <p className="text-[#5B6472] mt-2 font-medium max-w-2xl text-sm">
-                    Monitor your data protection compliance status, manage assessments, and track risk mitigation progress.
+                    Manage all immigration cases, clients, staff assignments, revenue, and system settings from a single control panel.
                 </p>
             </div>
 

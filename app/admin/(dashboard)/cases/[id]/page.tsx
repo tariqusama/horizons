@@ -535,7 +535,7 @@ export default function AdminCaseDetailPage() {
                                     </div>
 
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
-                                        {Object.entries(editFormJson).map(([key, val]) => {
+                                        {Object.entries(editFormJson).filter(([key]) => !key.startsWith('_')).map(([key, val]) => {
                                             const isObject = typeof val === 'object' && val !== null;
                                             const isLongString = typeof val === 'string' && val.length > 50;
                                             const isFullWidth = isObject || isLongString;

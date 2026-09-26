@@ -96,22 +96,8 @@ export default function DashboardCaseStatusPage() {
                     <p className="text-sm uppercase tracking-[0.28em] text-orange-500">Expected next step</p>
                     <h3 className="mt-4 text-2xl font-black text-[#1B3A64]">{application.next_step}</h3>
                     <p className="mt-4 text-base leading-7 text-[#5A6579]">
-                        USCIS is reviewing your proof of relationship and financial support. Submitting the final items now closes any gaps before the decision.
+                        Our team is actively working on your case. Please ensure all requested documents are submitted to avoid delays.
                     </p>
-                    <ul className="mt-8 space-y-4 text-sm text-[#5A6579]">
-                        <li className="flex items-center gap-3">
-                            <span className="inline-flex h-3 w-3 rounded-full bg-gradient-to-b from-orange-500 to-orange-600" />
-                            Certified translations for foreign language documents
-                        </li>
-                        <li className="flex items-center gap-3">
-                            <span className="inline-flex h-3 w-3 rounded-full bg-gradient-to-b from-orange-500 to-orange-600" />
-                            Updated employment verification and pay stubs
-                        </li>
-                        <li className="flex items-center gap-3">
-                            <span className="inline-flex h-3 w-3 rounded-full bg-gradient-to-b from-orange-500 to-orange-600" />
-                            Proof of residence and joint financial evidence
-                        </li>
-                    </ul>
                 </div>
 
                 <div className="rounded-[40px] bg-gradient-to-b from-orange-500 to-orange-600/5 p-10 shadow-[0_25px_70px_rgba(61,68,101,0.08)]">

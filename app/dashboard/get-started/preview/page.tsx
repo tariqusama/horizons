@@ -51,20 +51,36 @@ export default function ApplicationPreviewPage() {
 
     // Build sections from previewData
     const formSectionMap: Record<string, { label: string; editPath: string }> = {
-        i90: { label: 'Form I-90', editPath: '/dashboard/get-started/i-90' },
-        g1145: { label: 'Form G-1145', editPath: '/dashboard/get-started/g-1145' },
+        i90: { label: 'Form I-90', editPath: '/dashboard/get-started/dynamic/i-90' },
+        'i-90': { label: 'Form I-90', editPath: '/dashboard/get-started/dynamic/i-90' },
+        g1145: { label: 'Form G-1145', editPath: '/dashboard/get-started/dynamic/g-1145' },
+        'g-1145': { label: 'Form G-1145', editPath: '/dashboard/get-started/dynamic/g-1145' },
         i130: { label: 'Form I-130 (Petition)', editPath: '/dashboard/get-started/dynamic/i-130' },
+        'i-130': { label: 'Form I-130 (Petition)', editPath: '/dashboard/get-started/dynamic/i-130' },
         i130a: { label: 'Form I-130A (Spouse Supp.)', editPath: '/dashboard/get-started/dynamic/i-130a' },
+        'i-130a': { label: 'Form I-130A (Spouse Supp.)', editPath: '/dashboard/get-started/dynamic/i-130a' },
         i485: { label: 'Form I-485', editPath: '/dashboard/get-started/dynamic/i-485' },
+        'i-485': { label: 'Form I-485', editPath: '/dashboard/get-started/dynamic/i-485' },
         i864: { label: 'Form I-864', editPath: '/dashboard/get-started/dynamic/i-864' },
+        'i-864': { label: 'Form I-864', editPath: '/dashboard/get-started/dynamic/i-864' },
+        'i-864a': { label: 'Form I-864A', editPath: '/dashboard/get-started/dynamic/i-864a' },
         i751: { label: 'Form I-751', editPath: '/dashboard/get-started/dynamic/i-751' },
+        'i-751': { label: 'Form I-751', editPath: '/dashboard/get-started/dynamic/i-751' },
         i765: { label: 'Form I-765', editPath: '/dashboard/get-started/dynamic/i-765' },
+        'i-765': { label: 'Form I-765', editPath: '/dashboard/get-started/dynamic/i-765' },
+        'i-765ws': { label: 'Form I-765WS', editPath: '/dashboard/get-started/dynamic/i-765ws' },
         i821d: { label: 'Form I-821D', editPath: '/dashboard/get-started/dynamic/i-821d' },
+        'i-821d': { label: 'Form I-821D', editPath: '/dashboard/get-started/dynamic/i-821d' },
         n400: { label: 'Form N-400', editPath: '/dashboard/get-started/dynamic/n-400' },
+        'n-400': { label: 'Form N-400', editPath: '/dashboard/get-started/dynamic/n-400' },
+        'i-131': { label: 'Form I-131', editPath: '/dashboard/get-started/dynamic/i-131' },
+        'i-129f': { label: 'Form I-129F', editPath: '/dashboard/get-started/dynamic/i-129f' },
+        beneficiary_invite: { label: 'Beneficiary Invite', editPath: '/dashboard/applications' },
+        beneficiary_response: { label: 'Beneficiary Information', editPath: '/dashboard/applications' },
     };
 
     const nestedSections = Object.keys(previewData).filter(k => typeof previewData[k] === 'object' && previewData[k] !== null);
-    const flatFields = Object.keys(previewData).filter(k => !k.startsWith('_current_step') && typeof previewData[k] !== 'object' && previewData[k] !== null && previewData[k] !== '');
+    const flatFields = Object.keys(previewData).filter(k => !k.startsWith('_') && typeof previewData[k] !== 'object' && previewData[k] !== null && previewData[k] !== '');
 
     return (
         <div className={styles.pageWrapper}>
