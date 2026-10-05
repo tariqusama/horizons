@@ -5,6 +5,14 @@ import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
 import api, { initCsrf } from '@/lib/api';
 
+const passwordRequirements = [
+    { label: 'At least 8 characters', test: (value: string) => value.length >= 8 },
+    { label: 'One uppercase letter', test: (value: string) => /[A-Z]/.test(value) },
+    { label: 'One lowercase letter', test: (value: string) => /[a-z]/.test(value) },
+    { label: 'One number', test: (value: string) => /\d/.test(value) },
+    { label: 'One special character', test: (value: string) => /[^A-Za-z0-9]/.test(value) },
+];
+
 function ResetPasswordForm() {
     const searchParams = useSearchParams();
     const router = useRouter();
@@ -21,6 +29,19 @@ function ResetPasswordForm() {
     const [error, setError] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
+
+    const passwordValidation = passwordRequirements.map((requirement) => ({
+        ...requirement,
+        passed: requirement.test(password),
+    }));
+    const passwordScore = passwordValidation.filter((item) => item.passed).length;
+    const passwordStrength = password.length === 0
+        ? 'Enter a password'
+        : passwordScore <= 2
+          ? 'Weak'
+          : passwordScore <= 4
+            ? 'Fair'
+            : 'Strong';
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
@@ -161,7 +182,65 @@ function ResetPasswordForm() {
                                 {showPassword ? 'Hide' : 'Show'}
                             </button>
                         </div>
-                        <p className="mt-1 text-xs text-[#5B6472]">Minimum 8 characters</p>
+
+                        {/* Password Strength Indicator */}
+                        {password.length === 0 ? (
+                            <p className="mt-2 text-xs text-[#5B6472]">Must be at least 8 characters.</p>
+                        ) : (
+                            <div className="mt-3 overflow-hidden rounded-2xl bg-gradient-to-br from-white to-slate-50/80 backdrop-blur-xl border border-[#ECE9E2] p-4 shadow-sm">
+                                <div className="mb-3 flex items-center justify-between">
+                                    <p className="text-[11px] font-bold tracking-widest uppercase text-slate-500">Password strength</p>
+                                    <span className={`inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider transition-colors duration-300 ${
+                                        passwordScore <= 2
+                                            ? 'bg-red-50 text-red-600'
+                                            : passwordScore <= 4
+                                              ? 'bg-amber-50 text-amber-600'
+                                              : 'bg-emerald-50 text-emerald-600'
+                                    }`}>
+                                        <span className={`h-1.5 w-1.5 rounded-full transition-colors duration-300 ${
+                                            passwordScore <= 2
+                                                ? 'bg-red-500 animate-pulse'
+                                                : passwordScore <= 4
+                                                  ? 'bg-amber-500 animate-pulse'
+                                                  : 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]'
+                                        }`} />
+                                        {passwordStrength}
+                                    </span>
+                                </div>
+
+                                <div className="w-full h-1.5 rounded-full bg-slate-100 overflow-hidden mb-3">
+                                    <div
+                                        className={`h-full rounded-full transition-all duration-500 ease-out ${
+                                            passwordScore <= 2
+                                                ? 'bg-gradient-to-r from-red-500 to-orange-400'
+                                                : passwordScore <= 4
+                                                  ? 'bg-gradient-to-r from-amber-400 to-yellow-400'
+                                                  : 'bg-gradient-to-r from-emerald-400 to-teal-400'
+                                        }`}
+                                        style={{ width: passwordScore <= 2 ? '30%' : passwordScore <= 4 ? '66%' : '100%' }}
+                                    />
+                                </div>
+
+                                <div className="grid gap-1.5 sm:grid-cols-2">
+                                    {passwordValidation.map((item) => (
+                                        <div key={item.label} className="flex items-center gap-2 py-0.5 transition-all duration-300">
+                                            <div className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-full transition-all duration-300 ${
+                                                item.passed
+                                                    ? 'bg-emerald-500 text-white shadow-[0_0_8px_rgba(16,185,129,0.3)] scale-110'
+                                                    : 'bg-slate-200 text-transparent'
+                                            }`}>
+                                                <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" className={item.passed ? 'opacity-100' : 'opacity-0'}>
+                                                    <path d="M20 6L9 17l-5-5" />
+                                                </svg>
+                                            </div>
+                                            <div className={`text-xs font-medium transition-colors duration-300 ${item.passed ? 'text-slate-800' : 'text-slate-400'}`}>
+                                                {item.label}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
                     </div>
 
                     <div>
