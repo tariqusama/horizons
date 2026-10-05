@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, Suspense } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
 import api, { initCsrf } from '@/lib/api';
@@ -20,7 +20,10 @@ function ResetPasswordForm() {
     const token = searchParams.get('token') || '';
     const emailParam = searchParams.get('email') || '';
 
-    const [email, setEmail] = useState(emailParam);
+    const [accountEmail, setAccountEmail] = useState(emailParam);
+    const [isVerifyingToken, setIsVerifyingToken] = useState(true);
+    const [tokenError, setTokenError] = useState('');
+
     const [password, setPassword] = useState('');
     const [passwordConfirmation, setPasswordConfirmation] = useState('');
     const [showPassword, setShowPassword] = useState(false);
@@ -29,6 +32,48 @@ function ResetPasswordForm() {
     const [error, setError] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
+
+    // Verify token on mount and retrieve account email securely
+    useEffect(() => {
+        if (!token) {
+            setIsVerifyingToken(false);
+            setTokenError('Missing password reset token. Please request a new reset link.');
+            return;
+        }
+
+        let isMounted = true;
+
+        const verify = async () => {
+            try {
+                await initCsrf();
+                const res = await api.post('/password/verify-token', {
+                    token,
+                    email: emailParam || undefined,
+                });
+
+                if (isMounted) {
+                    if (res.data?.email) {
+                        setAccountEmail(res.data.email);
+                    }
+                    setIsVerifyingToken(false);
+                }
+            } catch (err: any) {
+                if (isMounted) {
+                    const msg =
+                        err.response?.data?.message ||
+                        'This password reset link is invalid or has expired.';
+                    setTokenError(msg);
+                    setIsVerifyingToken(false);
+                }
+            }
+        };
+
+        verify();
+
+        return () => {
+            isMounted = false;
+        };
+    }, [token, emailParam]);
 
     const passwordValidation = passwordRequirements.map((requirement) => ({
         ...requirement,
@@ -69,7 +114,7 @@ function ResetPasswordForm() {
             await initCsrf();
             const response = await api.post('/password/reset', {
                 token,
-                email,
+                email: accountEmail || undefined,
                 password,
                 password_confirmation: passwordConfirmation,
             });
@@ -100,62 +145,91 @@ function ResetPasswordForm() {
                 </p>
             </div>
 
-            {message ? (
-                <div className="mb-4 rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
-                    <p className="font-semibold">{message}</p>
-                    {isSuccess && (
-                        <p className="mt-1 text-xs text-green-600">Redirecting to login in 3 seconds...</p>
-                    )}
+            {isVerifyingToken ? (
+                <div className="py-8 text-center">
+                    <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-orange-500 border-r-transparent align-[-0.125em]" />
+                    <p className="mt-3 text-sm text-[#5B6472]">Verifying your reset link...</p>
                 </div>
-            ) : null}
+            ) : tokenError ? (
+                <div className="space-y-4">
+                    <div className="rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+                        <div className="flex items-start gap-3">
+                            <svg className="h-5 w-5 shrink-0 text-red-500" viewBox="0 0 20 20" fill="currentColor">
+                                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                            </svg>
+                            <div>
+                                <p className="font-semibold text-red-800">Invalid or Expired Link</p>
+                                <p className="mt-1 text-xs text-red-700">{tokenError}</p>
+                            </div>
+                        </div>
+                    </div>
 
-            {error ? (
-                <div className="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-                    {error}
+                    <Link
+                        href="/forgot-password"
+                        className="inline-block w-full rounded-2xl bg-[#101F38] px-4 py-3 text-center text-sm font-semibold text-white transition hover:bg-[#0A1526]"
+                    >
+                        Request a New Reset Link
+                    </Link>
+
+                    <div className="text-center text-sm text-[#5B6472]">
+                        <Link href="/login" className="font-semibold text-orange-500 hover:text-[#C93500]">
+                            Back to Sign in
+                        </Link>
+                    </div>
                 </div>
-            ) : null}
+            ) : isSuccess ? (
+                <div className="space-y-4">
+                    <div className="rounded-2xl border border-green-200 bg-green-50 p-4 text-sm text-green-700">
+                        <div className="flex items-start gap-3">
+                            <svg className="h-5 w-5 shrink-0 text-green-500" viewBox="0 0 20 20" fill="currentColor">
+                                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                            </svg>
+                            <div>
+                                <p className="font-semibold text-green-800">Password Reset Complete</p>
+                                <p className="mt-1 text-xs text-green-700">{message}</p>
+                                <p className="mt-2 text-xs text-green-600">Redirecting to login in 3 seconds...</p>
+                            </div>
+                        </div>
+                    </div>
 
-            {!token && (
-                <div className="mb-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
-                    <p className="font-medium">No valid reset token was found in this link.</p>
-                    <p className="mt-1 text-xs text-amber-700">
-                        Please request a new reset link from the{' '}
-                        <Link href="/forgot-password" className="font-semibold underline hover:text-amber-900">
-                            Forgot Password
-                        </Link>{' '}
-                        page.
-                    </p>
-                </div>
-            )}
-
-            {isSuccess ? (
-                <div className="mt-6 text-center">
                     <Link
                         href="/login"
-                        className="inline-block w-full rounded-2xl bg-[#101F38] px-4 py-3 text-sm font-semibold text-white transition hover:bg-[#0A1526]"
+                        className="inline-block w-full rounded-2xl bg-[#101F38] px-4 py-3 text-center text-sm font-semibold text-white transition hover:bg-[#0A1526]"
                     >
-                        Go to Sign In
+                        Go to Sign In Now
                     </Link>
                 </div>
             ) : (
                 <form className="space-y-5" onSubmit={handleSubmit}>
-                    <div>
-                        <label htmlFor="email" className="block text-sm font-medium text-[#101F38]">
-                            Email Address<span className="text-orange-500">*</span>
-                        </label>
-                        <div className="mt-2">
-                            <input
-                                id="email"
-                                name="email"
-                                type="email"
-                                required
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                placeholder="you@example.com"
-                                className="w-full rounded-2xl border border-[#E5E3DC] bg-white px-4 py-3 text-sm text-[#101F38] placeholder-[#B7B4AA] focus:outline-none focus:ring-2 focus:ring-orange-500/40 focus:border-orange-500 transition-colors"
-                            />
+                    {/* Read-Only Account Badge (No editable input box) */}
+                    {accountEmail ? (
+                        <div className="rounded-2xl border border-[#ECE9E2] bg-[#F8F7F4] px-4 py-3 flex items-center justify-between">
+                            <div className="flex items-center gap-3 min-w-0">
+                                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white border border-[#E5E3DC] text-[#101F38] shadow-sm">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                        <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/>
+                                        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                                    </svg>
+                                </div>
+                                <div className="min-w-0">
+                                    <p className="text-[11px] font-bold uppercase tracking-wider text-[#5B6472]">Account</p>
+                                    <p className="text-sm font-semibold text-[#101F38] truncate">{accountEmail}</p>
+                                </div>
+                            </div>
+                            <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-semibold text-emerald-700 border border-emerald-200">
+                                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                                    <path d="M20 6L9 17l-5-5"/>
+                                </svg>
+                                Verified
+                            </span>
                         </div>
-                    </div>
+                    ) : null}
+
+                    {error ? (
+                        <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                            {error}
+                        </div>
+                    ) : null}
 
                     <div>
                         <label htmlFor="password" className="block text-sm font-medium text-[#101F38]">
