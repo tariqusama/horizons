@@ -214,10 +214,12 @@ export default function DynamicFormEnginePage() {
                 setFormData((prev: any) => ({ ...prev, [stepKey]: newMaxStep, _current_step: newMaxStep }));
             }
 
-            if (mode === 'edit') {
-                router.push(`/dashboard/get-started/overview?form=${slug}`);
-            } else if (subStepIndex < totalSubSteps - 1) {
+            if (subStepIndex < totalSubSteps - 1) {
+                // More sub-steps remain in this section — go to next sub-step
                 setSubStepIndex(subStepIndex + 1);
+            } else if (mode === 'edit') {
+                // In edit mode: finished all sub-steps of this section → go back to overview
+                router.push(`/dashboard/get-started/overview?form=${slug}`);
             } else if (currentStepIndex < steps.length - 1) {
                 setCurrentStepIndex(currentStepIndex + 1);
                 setSubStepIndex(0);
@@ -338,13 +340,44 @@ export default function DynamicFormEnginePage() {
                         <h2 className={styles.sectionMainTitle}>{currentStep?.sectionTitle}</h2>
                         {(() => {
                             const totalSubSteps = Math.ceil((currentStep?.questions || []).length / QUESTIONS_PER_PAGE);
-                            return totalSubSteps > 1 ? (
-                                <p className={styles.sectionSubtitle} style={{ fontWeight: 600, color: '#F0501A' }}>
-                                    {currentStep?.subSectionTitle ? currentStep.subSectionTitle + ' — ' : ''}Part {subStepIndex + 1} of {totalSubSteps}
-                                </p>
-                            ) : (
-                                <p className={styles.sectionSubtitle}>{currentStep?.subSectionTitle}</p>
-                            );
+                            if (totalSubSteps > 1) {
+                                return (
+                                    <>
+                                        <p className={styles.sectionSubtitle} style={{ fontWeight: 600, color: '#F0501A', marginBottom: '1rem' }}>
+                                            {currentStep?.subSectionTitle ? currentStep.subSectionTitle + ' — ' : ''}Part {subStepIndex + 1} of {totalSubSteps}
+                                        </p>
+                                        {/* Sub-step dot navigation */}
+                                        <div className={styles.subStepNav}>
+                                            <span className={styles.subStepNavLabel}>Jump to part:</span>
+                                            <div className={styles.subStepDots}>
+                                                {Array.from({ length: totalSubSteps }).map((_, i) => (
+                                                    <button
+                                                        key={i}
+                                                        type="button"
+                                                        title={`Part ${i + 1} of ${totalSubSteps}`}
+                                                        className={`${styles.subStepDot} ${i === subStepIndex ? styles.subStepDotActive : ''} ${i < subStepIndex ? styles.subStepDotDone : ''}`}
+                                                        onClick={() => {
+                                                            setSubStepIndex(i);
+                                                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                                                        }}
+                                                    >
+                                                        {i < subStepIndex ? '✓' : i + 1}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                            <button
+                                                type="button"
+                                                className={styles.subStepNextBtn}
+                                                onClick={handleNext}
+                                                disabled={isSaving}
+                                            >
+                                                {isSaving ? 'Saving...' : subStepIndex < totalSubSteps - 1 ? `Next Part (${subStepIndex + 2} of ${totalSubSteps}) →` : 'Finish This Section →'}
+                                            </button>
+                                        </div>
+                                    </>
+                                );
+                            }
+                            return <p className={styles.sectionSubtitle}>{currentStep?.subSectionTitle}</p>;
                         })()}
                         <hr className={styles.sectionDivider} />
                     </div>
@@ -765,27 +798,49 @@ export default function DynamicFormEnginePage() {
                         });
                         })()}
                     </div>
+                </div>
+            </div>
 
-                    {/* Navigation Buttons */}
-                    <div className={styles.footerActions}>
-                        <button 
-                            type="button" 
-                            className={styles.btnExit} 
-                            onClick={handlePrev} 
+            {/* Sticky Navigation Bar — always visible at bottom */}
+            <div className={styles.stickyFooterBar}>
+                <div className={styles.stickyFooterInner}>
+                    {/* Step counter */}
+                    <span className={styles.stickyStepLabel}>
+                        {(() => {
+                            const allQ = currentStep?.questions || [];
+                            const totalSub = Math.ceil(allQ.length / QUESTIONS_PER_PAGE);
+                            if (totalSub > 1) {
+                                return `📄 Part ${subStepIndex + 1} of ${totalSub}  (Section ${currentStepIndex + 1} of ${totalSteps})`;
+                            }
+                            return `📋 Section ${currentStepIndex + 1} of ${totalSteps}`;
+                        })()}
+                    </span>
+
+                    <div className={styles.stickyFooterBtns}>
+                        <button
+                            type="button"
+                            className={styles.btnExit}
+                            onClick={handlePrev}
                             disabled={isSaving}
                         >
                             <span className={styles.btnIcon}>&larr;</span>
-                            <span className={styles.btnText}>{currentStepIndex === 0 ? 'Exit' : 'Previous'}</span>
+                            <span className={styles.btnText}>{currentStepIndex === 0 && subStepIndex === 0 ? 'Exit' : 'Previous'}</span>
                         </button>
-                        <button 
-                            type="button" 
-                            className={styles.btnSaveContinue} 
-                            onClick={handleNext} 
+                        <button
+                            type="button"
+                            className={styles.btnSaveContinue}
+                            onClick={handleNext}
                             disabled={isSaving}
                         >
-                            {/* Assuming there might be a gear or loading icon here, separating text cleanly */}
                             <span className={styles.btnText}>
-                                {isSaving ? 'Saving...' : (currentStepIndex === totalSteps - 1 ? 'Finish and Continue' : 'Save and Continue')}
+                                {isSaving ? 'Saving...' : (() => {
+                                    const allQ = currentStep?.questions || [];
+                                    const totalSub = Math.ceil(allQ.length / QUESTIONS_PER_PAGE);
+                                    if (totalSub > 1 && subStepIndex < totalSub - 1) {
+                                        return `Next Part (${subStepIndex + 2} of ${totalSub}) →`;
+                                    }
+                                    return currentStepIndex === totalSteps - 1 ? 'Finish and Continue →' : 'Save and Continue →';
+                                })()}
                             </span>
                         </button>
                     </div>
