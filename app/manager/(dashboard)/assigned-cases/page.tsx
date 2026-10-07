@@ -18,6 +18,7 @@ import {
 } from '@/lib/api/cases';
 import { getStorageUrl } from '@/lib/api';
 import { getChecklistKeyFromService, forceDownload } from '@/lib/utils/documentHelper';
+import { formatFieldLabel } from '@/lib/utils/formatters';
 
 const Icon = {
     search: (p: any) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>,
@@ -1338,7 +1339,7 @@ export default function AssignedCasesPage() {
                                                                     return (
                                                                         <div key={q.id || fieldIdx} className={`flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1.5 sm:gap-4 px-4 py-3 sm:px-5 sm:py-3.5 transition-colors ${fieldIdx < section.questions.length - 1 ? 'border-b border-[#f1f5f9]' : ''}`}>
                                                                             <span className="text-[0.78rem] font-semibold text-[#64748b] sm:min-w-[120px] shrink-0" style={{ maxWidth: '60%' }}>
-                                                                                {q.question_text || q.field_name}
+                                                                                {q.question_text || formatFieldLabel(q.field_name)}
                                                                             </span>
                                                                             <div className="flex sm:justify-end w-full sm:w-auto">
                                                                                 {isEmpty ? (
@@ -1403,7 +1404,7 @@ export default function AssignedCasesPage() {
                                                     {/* Section header */}
                                                     <div style={{ background: p.bg, padding: '14px 18px', display: 'flex', alignItems: 'center', gap: '10px', borderBottom: `1.5px solid ${p.border}` }}>
                                                         <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: p.dot, flexShrink: 0, boxShadow: `0 0 6px ${p.dot}` }}></span>
-                                                        <span style={{ fontSize: '0.72rem', fontWeight: 800, letterSpacing: '0.1em', textTransform: 'uppercase', color: p.label }}>{sectionKey}</span>
+                                                        <span style={{ fontSize: '0.72rem', fontWeight: 800, letterSpacing: '0.1em', textTransform: 'uppercase', color: p.label }}>{formatFieldLabel(sectionKey)}</span>
                                                         {nestedEntries && (
                                                             <span style={{ marginLeft: 'auto', fontSize: '0.68rem', fontWeight: 700, background: 'rgba(255,255,255,0.7)', color: p.label, padding: '2px 10px', borderRadius: '20px', border: `1px solid ${p.border}` }}>
                                                                 {nestedEntries.length} fields
@@ -1417,7 +1418,7 @@ export default function AssignedCasesPage() {
                                                                 const isEmpty = fieldVal === null || fieldVal === undefined || String(fieldVal).trim() === '';
                                                                 return (
                                                                     <div key={fieldKey} className={`flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1.5 sm:gap-4 px-4 py-3 sm:px-5 sm:py-3.5 transition-colors ${fieldIdx < nestedEntries.length - 1 ? 'border-b border-[#f1f5f9]' : ''}`}>
-                                                                        <span className="text-[0.78rem] font-semibold text-[#64748b] sm:min-w-[120px] shrink-0">{fieldKey}</span>
+                                                                        <span className="text-[0.78rem] font-semibold text-[#64748b] sm:min-w-[120px] shrink-0">{formatFieldLabel(fieldKey)}</span>
                                                                         <div className="flex sm:justify-end w-full sm:w-auto">
                                                                             <span style={{
                                                                                 display: 'inline-block',

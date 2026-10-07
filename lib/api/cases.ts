@@ -39,6 +39,7 @@ export interface Application {
     }>;
     form_data?: Record<string, any>;
     questionnaire_answers?: Record<string, any>;
+    questionnaire_with_questions?: Array<{ key: string; question: string; answer: any }>;
     form_slug?: string;
     user?: {
         id: number;

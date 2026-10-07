@@ -7,6 +7,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import api from '@/lib/api';
 import { jsPDF } from 'jspdf';
 import { toPng } from 'html-to-image';
+import { formatFieldLabel, getQuestionnaireLabel } from '@/lib/utils/formatters';
 
 export default function AdminCaseDetailPage() {
     const params = useParams();
@@ -14,6 +15,7 @@ export default function AdminCaseDetailPage() {
     const { user } = useAuth();
 
     const [caseData, setCaseData] = useState<any | null>(null);
+    const [pathways, setPathways] = useState<Record<string, any> | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [isUpdating, setIsUpdating] = useState(false);
     const [showModal, setShowModal] = useState(false);
@@ -85,7 +87,13 @@ export default function AdminCaseDetailPage() {
 
         const loadData = async () => {
             try {
-                const resp = await api.get('/admin/applications');
+                const [resp, pathwaysRes] = await Promise.all([
+                    api.get('/admin/applications'),
+                    api.get('/public/signup-pathways').catch(() => null)
+                ]);
+                if (pathwaysRes?.data?.pathways) {
+                    setPathways(pathwaysRes.data.pathways);
+                }
                 const allCases = resp.data as any[];
                 const specificCase = allCases.find(c => c.id === Number(id));
                 if (specificCase) {
@@ -280,16 +288,30 @@ export default function AdminCaseDetailPage() {
                         </div>
                     </div>
 
-                    {caseData.questionnaire_answers && Object.keys(caseData.questionnaire_answers).length > 0 && (
+                    {((Array.isArray(caseData.questionnaire_with_questions) && caseData.questionnaire_with_questions.length > 0) ||
+                      (caseData.questionnaire_answers && Object.keys(caseData.questionnaire_answers).length > 0)) && (
                         <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-4 sm:p-6">
                             <h2 className="text-lg font-bold text-gray-900 mb-6 border-b border-gray-100 pb-4">Questionnaire Answers</h2>
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                {Object.entries(caseData.questionnaire_answers).map(([key, value]) => (
-                                    <div key={key} className="bg-gray-50 rounded-xl p-4 border border-gray-100 break-words">
-                                        <p className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Question {key}</p>
-                                        <p className="text-sm font-semibold text-gray-900">{String(value)}</p>
-                                    </div>
-                                ))}
+                                {Array.isArray(caseData.questionnaire_with_questions) && caseData.questionnaire_with_questions.length > 0 ? (
+                                    caseData.questionnaire_with_questions.map((item: any, idx: number) => (
+                                        <div key={item.key || idx} className="bg-gray-50 rounded-xl p-4 border border-gray-100 break-words">
+                                            <p className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">
+                                                {item.question}
+                                            </p>
+                                            <p className="text-sm font-semibold text-gray-900">{String(item.answer)}</p>
+                                        </div>
+                                    ))
+                                ) : (
+                                    Object.entries(caseData.questionnaire_answers).map(([key, value]) => (
+                                        <div key={key} className="bg-gray-50 rounded-xl p-4 border border-gray-100 break-words">
+                                            <p className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">
+                                                {getQuestionnaireLabel(key, caseData.questionnaire_answers, caseData.title, pathways)}
+                                            </p>
+                                            <p className="text-sm font-semibold text-gray-900">{String(value)}</p>
+                                        </div>
+                                    ))
+                                )}
                             </div>
                         </div>
                     )}
@@ -540,8 +562,8 @@ export default function AdminCaseDetailPage() {
                                             const isLongString = typeof val === 'string' && val.length > 50;
                                             const isFullWidth = isObject || isLongString;
                                             
-                                            // Format key nicely (e.g. NAME_GROUP_FIRST -> Name Group First)
-                                            const displayKey = key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                                            // Format key nicely with spaces (e.g. petitionerFamilyName -> Petitioner Family Name)
+                                            const displayKey = formatFieldLabel(key);
 
                                             return (
                                                 <div key={key} className={isFullWidth ? "md:col-span-2" : ""}>
