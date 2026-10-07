@@ -303,10 +303,10 @@ export default function AdminCaseDetailPage() {
                                         </div>
                                     ))
                                 ) : (
-                                    Object.entries(caseData.questionnaire_answers).map(([key, value]) => (
+                                    Object.entries(caseData.questionnaire_answers || {}).map(([key, value]) => (
                                         <div key={key} className="bg-gray-50 rounded-xl p-4 border border-gray-100 break-words">
                                             <p className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">
-                                                {getQuestionnaireLabel(key, caseData.questionnaire_answers, caseData.title, pathways)}
+                                                {getQuestionnaireLabel(key, caseData.questionnaire_answers || {}, caseData.title, pathways)}
                                             </p>
                                             <p className="text-sm font-semibold text-gray-900">{String(value)}</p>
                                         </div>
