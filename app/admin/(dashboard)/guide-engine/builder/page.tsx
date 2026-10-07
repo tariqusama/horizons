@@ -37,6 +37,7 @@ function FormBuilderContent() {
     const [newQuestionImageBase64, setNewQuestionImageBase64] = useState('');
     const [newQuestionField, setNewQuestionField] = useState('');
     const [newQuestionType, setNewQuestionType] = useState('text');
+    const [newQuestionIsRequired, setNewQuestionIsRequired] = useState(true);
     const [newQuestionOptions, setNewQuestionOptions] = useState([{ label: '', value: '' }]);
     const [editingQuestionId, setEditingQuestionId] = useState<number | null>(null);
 
@@ -749,6 +750,7 @@ function FormBuilderContent() {
         setNewQuestionImageBase64('');
         setNewQuestionField('');
         setNewQuestionType('text');
+        setNewQuestionIsRequired(true);
         setNewQuestionOptions([{ label: '', value: '' }]);
         setIsQuestionModalOpen(true);
     };
@@ -770,6 +772,7 @@ function FormBuilderContent() {
         
         setNewQuestionField(question.field_name);
         setNewQuestionType(question.field_type);
+        setNewQuestionIsRequired(question.is_required !== undefined && question.is_required !== null ? Boolean(question.is_required) : true);
         
         if (question.options && question.options.length > 0) {
             setNewQuestionOptions(question.options.map((opt: any) => ({
@@ -781,6 +784,29 @@ function FormBuilderContent() {
         }
         
         setIsQuestionModalOpen(true);
+    };
+
+    const handleToggleQuestionRequired = async (question: any) => {
+        try {
+            const updated = !question.is_required;
+            await api.put(`/admin/guide-engine/questions/${question.id}`, {
+                question_text: question.question_text,
+                help_text: question.help_text,
+                field_name: question.field_name,
+                field_type: question.field_type,
+                is_required: updated,
+                order: question.order ?? 0,
+                options: (question.options || []).map((o: any, idx: number) => ({
+                    label: o.option_label,
+                    value: o.option_value,
+                    order: o.order ?? idx
+                }))
+            });
+            api.get(`/admin/guide-engine/forms/${activeFormId}`).then(res => setForm(res.data));
+        } catch (err) {
+            console.error(err);
+            showAlert("Error", "Failed to update required status.");
+        }
     };
 
     const handleAddQuestionSubmit = async (e: React.FormEvent) => {
@@ -798,7 +824,7 @@ function FormBuilderContent() {
                 help_text: finalHelpText || null,
                 field_name: newQuestionField,
                 field_type: newQuestionType,
-                is_required: newQuestionType !== 'heading',
+                is_required: newQuestionType === 'heading' ? false : Boolean(newQuestionIsRequired),
                 order: 0
             };
 
@@ -1100,10 +1126,23 @@ function FormBuilderContent() {
                                                                 ) : (
                                                                     <p className="font-bold text-[#101F38] mb-1">{q.question_text}</p>
                                                                 )}
-                                                                <div className="flex flex-wrap gap-2 text-xs text-[#5B6472] mt-2">
+                                                                <div className="flex flex-wrap gap-2 text-xs text-[#5B6472] mt-2 items-center">
                                                                     <span className="bg-gray-100 px-2 py-0.5 rounded">Field: {q.field_name}</span>
                                                                     <span className="bg-blue-50 text-blue-600 px-2 py-0.5 rounded">Type: {q.field_type}</span>
-                                                                    {q.is_required && <span className="bg-red-50 text-red-600 px-2 py-0.5 rounded">Required</span>}
+                                                                    {q.field_type !== 'heading' && (
+                                                                        <button
+                                                                            type="button"
+                                                                            onClick={() => handleToggleQuestionRequired(q)}
+                                                                            className={`px-2 py-0.5 rounded font-medium transition-colors cursor-pointer ${
+                                                                                q.is_required 
+                                                                                    ? 'bg-red-50 text-red-600 hover:bg-red-100' 
+                                                                                    : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+                                                                            }`}
+                                                                            title="Click to toggle Required / Optional"
+                                                                        >
+                                                                            {q.is_required ? 'Required' : 'Optional'}
+                                                                        </button>
+                                                                    )}
                                                                 </div>
                                                                 {q.options && q.options.length > 0 && (
                                                                     <div className="mt-3 flex flex-wrap gap-2">
@@ -1224,6 +1263,29 @@ function FormBuilderContent() {
                                         <option value="heading">Heading / Section Title</option>
                                     </select>
                                 </div>
+
+                                {newQuestionType !== 'heading' && (
+                                    <div className="flex items-center justify-between p-3.5 bg-gray-50 border border-[#ECE9E2] rounded-xl transition-all">
+                                        <div>
+                                            <label htmlFor="is-required-toggle" className="text-sm font-semibold text-[#101F38] block cursor-pointer">
+                                                Required Question
+                                            </label>
+                                            <p className="text-xs text-[#5B6472]">
+                                                {newQuestionIsRequired ? 'Applicant must answer this question to proceed' : 'Optional question that applicant can leave blank'}
+                                            </p>
+                                        </div>
+                                        <label className="relative inline-flex items-center cursor-pointer">
+                                            <input
+                                                id="is-required-toggle"
+                                                type="checkbox"
+                                                checked={newQuestionIsRequired}
+                                                onChange={e => setNewQuestionIsRequired(e.target.checked)}
+                                                className="sr-only peer"
+                                            />
+                                            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
+                                        </label>
+                                    </div>
+                                )}
 
                                 {(newQuestionType === 'radio' || newQuestionType === 'select') && (
                                     <div className="mt-4 p-4 bg-gray-50 rounded-xl border border-gray-100">
